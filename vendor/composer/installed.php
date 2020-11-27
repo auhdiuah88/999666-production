@@ -1,12 +1,12 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => 'v7.29.0',
-    'version' => '7.29.0.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => '0514697fd9a43141d8deb450c8bdd5bee3b4c1ad',
     'name' => 'laravel/laravel',
   ),
   'versions' => 
@@ -28,6 +28,15 @@
       array (
       ),
       'reference' => '283a40c901101e66de7061bd359252c013dcc43c',
+    ),
+    'cakephp/chronos' => 
+    array (
+      'pretty_version' => '2.0.6',
+      'version' => '2.0.6.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '30baea51824076719921c6c2d720bfd6b49e6dca',
     ),
     'cordoval/hamcrest-php' => 
     array (
@@ -415,14 +424,23 @@
       ),
       'reference' => '93f6d565a07045baa0e4b941ae1f733cd5984d65',
     ),
-    'laravel/laravel' => 
+    'laravel/horizon' => 
     array (
-      'pretty_version' => 'v7.29.0',
-      'version' => '7.29.0.0',
+      'pretty_version' => 'v4.3.0',
+      'version' => '4.3.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => 'fda753c79ddef7ee4f16fb34cd3fc3fd64d4f114',
+    ),
+    'laravel/laravel' => 
+    array (
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '0514697fd9a43141d8deb450c8bdd5bee3b4c1ad',
     ),
     'laravel/tinker' => 
     array (
@@ -644,6 +662,15 @@
       ),
       'reference' => 'ebd3963f9ba330f98a8fe6ccf5390839e868af75',
     ),
+    'predis/predis' => 
+    array (
+      'pretty_version' => 'v1.1.6',
+      'version' => '1.1.6.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '9930e933c67446962997b05201c69c2319bf26de',
+    ),
     'psr/container' => 
     array (
       'pretty_version' => '1.0.0',
@@ -705,8 +732,8 @@
     array (
       'provided' => 
       array (
-        0 => '1.0',
-        1 => '1.0.0',
+        0 => '1.0.0',
+        1 => '1.0',
       ),
     ),
     'psr/simple-cache' => 
