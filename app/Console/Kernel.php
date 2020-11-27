@@ -25,6 +25,14 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command("CheckNewOrOld")
+            ->hourly()
+            ->withoutOverlapping()
+            ->runInBackground();
+        $schedule->command("Generate_Number")
+            ->hourly()
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**

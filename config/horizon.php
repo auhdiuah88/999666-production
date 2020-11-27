@@ -172,16 +172,18 @@ return [
                 'balance' => 'simple',
                 'processes' => 10,
                 'tries' => 1,
+//                'nice' => 0,
             ],
         ],
 
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default'],
+                'queue' => ['Settlement_Queue'],
                 'balance' => 'simple',
-                'processes' => 3,
+                'processes' => 10,
                 'tries' => 1,
+                'nice' => 0,
             ],
         ],
     ],
