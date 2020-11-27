@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::post('/get_prize_opening_data', "Game\GameController@Get_Prize_Opening_Data");
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+//
+//Route::post('/get_prize_opening_data', "Game\GameController@Get_Prize_Opening_Data");
 
 
 // 登录退出接口
