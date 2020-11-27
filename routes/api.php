@@ -17,7 +17,6 @@ Route::post("/login", "Api\UserController@Login");
 Route::post("/register", "Api\UserController@Register");
 Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
 Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
-Route::get('/test', "Game\GameController@test");
 Route::group(["namespace" => "Api"], function () {
     Route::post("/sendCode", "UserController@sendMessage");
     Route::post("/groupUrl", "SystemController@getWhatsAppGroupUrl"); // 获取群组URL，首页的客服按钮
