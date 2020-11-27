@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post("/test1", "Api\UserController@Login");
-Route::post("/login", "Api\UserController@Login");
+
+//Route::post("/login", "Api\UserController@Login");
+Route::post("/login1", "Api\UserController@Login");
 Route::post("/register", "Api\UserController@Register");
 Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
 Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
