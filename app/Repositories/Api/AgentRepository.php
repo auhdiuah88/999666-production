@@ -38,7 +38,7 @@ class AgentRepository extends BaseRepository
 
     public function getExtensionUser($id, $offset, $limit)
     {
-        return $this->Cx_User->where("one_recommend_id", $id)->whereOr("two_recommend_id", $id)->offset($offset)->limit($limit)->orderByDesc("reg_time")->get()->toArray();
+        return $this->Cx_User->where("one_recommend_id", $id)->whereOr("two_recommend_id", $id)->select(["id", "phone", "nickname"])->offset($offset)->limit($limit)->orderByDesc("reg_time")->get()->toArray();
     }
 
     public function countExtensionUser($id)
