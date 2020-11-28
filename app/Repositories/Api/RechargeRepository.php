@@ -5,27 +5,31 @@ namespace App\Repositories\Api;
 
 
 use App\Models\Cx_User_Recharge_Log;
+use App\Models\Cx_Withdrawal_Record;
 use App\Mongodb;
 
 class RechargeRepository
 {
     protected $cx_User_Recharge_Log;
+    protected $cx_Withdrawal_Record;
 
 
     public $_data = [];
 
     public function __construct(
-        Cx_User_Recharge_Log $cx_User_Recharge_Log
+        Cx_User_Recharge_Log $cx_User_Recharge_Log,
+        Cx_Withdrawal_Record $cx_Withdrawal_Record
     )
     {
         $this->cx_User_Recharge_Log = $cx_User_Recharge_Log;
+        $this->cx_Withdrawal_Record = $cx_Withdrawal_Record;
     }
 
     /**
      *  添加充值记录
      */
     public function addRechargeLog(object $user, $money, $order_no, $pay_type, $pltf_order_id = '',
-                                   $native_url = '', $verify_money = '', $match_code = '',$sign='')
+                                   $native_url = '', $verify_money = '', $match_code = '', $sign = '')
     {
         $data = [
             'is_first_recharge' => $user->is_first_recharge,
@@ -57,9 +61,9 @@ class RechargeRepository
      */
     public function getRechargeLogs($status = 1, $limit = 10, $page = 1)
     {
-       return $this->cx_User_Recharge_Log->where('status', $status)->orderBy('time', 'desc')
-           ->select('order_no','time','money','status','native_url')
-           ->paginate($limit, ['*'], 'page', $page)->getCollection();
+        return $this->cx_User_Recharge_Log->where('status', $status)->orderBy('time', 'desc')
+            ->select('order_no', 'time', 'money', 'status', 'native_url')
+            ->paginate($limit, ['*'], 'page', $page)->getCollection();
     }
 
     /**
@@ -81,12 +85,11 @@ class RechargeRepository
     /**
      * 更新充值记录状态
      */
-    public function updateRechargeLog(object $rechargeLog, $status = 2,$money)
+    public function updateRechargeLog(object $rechargeLog, $status = 2, $money)
     {
         $rechargeLog->arrive_time = time();
         $rechargeLog->arrive_money = $money;
         $rechargeLog->status = $status;
         $rechargeLog->save();
     }
-
 }
