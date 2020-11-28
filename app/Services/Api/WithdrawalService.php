@@ -161,6 +161,11 @@ class WithdrawalService extends PayService
             return false;
         }
 
+        if ($withdrawlLog->status == 2) {
+            $this->_msg = '已成功提现,无需再回调';
+            return false;
+        }
+
         DB::beginTransaction();
         try {
             $user = $this->UserRepository->findByIdUser($withdrawlLog->user_id);

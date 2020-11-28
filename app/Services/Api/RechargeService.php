@@ -133,6 +133,11 @@ class RechargeService extends PayService
             return false;
         }
 
+        if ($rechargeLog->status == 2) {
+            $this->_msg = '已成功充值,无需再回调';
+            return false;
+        }
+
         DB::beginTransaction();
         try {
             $user = $this->userRepository->findByIdUser($rechargeLog->user_id);
