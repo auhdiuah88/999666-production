@@ -18,7 +18,7 @@ class PayService extends BaseService
     /**
      * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
      */
-    protected static function generateSign(array $params)
+    public static function generateSign(array $params)
     {
         ksort($params);
         $string = [];
