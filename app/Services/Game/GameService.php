@@ -202,7 +202,7 @@ class GameService
     public function Settlement_Queue_Test()
     {
 
-        $this->Ssc_FourService->ssc_sd(46357);
+        $this->Ssc_FourService->ssc_sd(46357,1);
         exit;
 
     }
