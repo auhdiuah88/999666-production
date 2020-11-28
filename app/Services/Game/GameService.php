@@ -188,7 +188,7 @@ class GameService
     }
     //手动开奖
     public function Sd_Prize_Opening($number,$play_id){
-        if($this->GameRepository->Game_Is_Queue($play_id)){
+        if(!$this->GameRepository->Game_Is_Queue($play_id)){
             return false;
         }
         if($this->GameRepository->Carried_Sd_Prize($number,$play_id)){
