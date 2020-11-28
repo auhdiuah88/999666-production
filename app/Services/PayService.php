@@ -22,8 +22,8 @@ class PayService extends BaseService
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = strtolower(implode('&', $string)) . self::$secretkey;
-        dd($sign);
+//        $sign = strtolower(implode('&', $string)) . self::$secretkey;
+        $sign = (implode('&', $string)) . self::$secretkey;
         return md5($sign);
     }
 
