@@ -52,4 +52,30 @@ class WithdrawalRepository
             $query->select("id", "nickname");
         }])->where("charge_user_id", $user_id)->orderByDesc("create_time")->get()->toArray();
     }
+
+    /**
+     *  添加提款记录
+     */
+    public function addWithdrawalLog(object $user, $money, $order_no, $pltf_order_no, $upi_id,$account_holder,$bank_number,$bank_name,$ifsc_code,$sign)
+    {
+        $data = [
+            'user_id' => $user->id,
+            'phone' => $user->phone,
+            'nickname' => $user->nickname,
+            'money' => $money,
+            'create_time' => time(),
+            'order_no' => $order_no,
+            'pltf_order_no' => $pltf_order_no,
+            'upi_id' => $upi_id,
+            'account_holder' => $account_holder,
+            'bank_number' => $bank_number,
+            'bank_name' => $bank_name,
+            'ifsc_code' => $ifsc_code,
+            'sign' => $sign,
+            'pay_status' => 0,
+            'type' => 0,
+            'status' => 0,
+        ];
+        $this->Cx_Withdrawal_Record->insert($data);
+    }
 }

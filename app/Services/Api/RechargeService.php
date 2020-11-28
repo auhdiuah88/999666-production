@@ -3,10 +3,10 @@
 
 namespace App\Services\Api;
 
-
 use App\Common\Common;
 use App\Repositories\Api\RechargeRepository;
 use App\Repositories\Api\UserRepository;
+use App\Repositories\Api\WithdrawalRepository;
 use App\Services\Library\Auth;
 use App\Services\Library\Netease\IM;
 use App\Services\Library\Netease\SMS;
@@ -18,25 +18,28 @@ class RechargeService extends \App\Services\BaseService
 {
     private $userRepository;
     private $rechargeRepository;
+    private $withdrawalRepository;
     private $requestService;
 
-    protected static $url = 'http://ipay-in.yynn.me/pay';
+    protected static $url = 'http://ipay-in.yynn.me';
     protected static $merchantID = 10175;
     protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
 
     public function __construct(UserRepository $userRepository,
                                 RechargeRepository $rechargeRepository,
+                                WithdrawalRepository $withdrawalRepository,
                                 RequestService $requestService
     )
     {
         $this->userRepository = $userRepository;
         $this->rechargeRepository = $rechargeRepository;
+        $this->withdrawalRepository = $withdrawalRepository;
 
         $this->requestService = $requestService;
     }
 
     /**
-     * 充值请求生成充值订单
+     * 充值请求生成充值订单-二维码
      */
     public function rechargeOrder($request)
     {
@@ -55,55 +58,41 @@ class RechargeService extends \App\Services\BaseService
         ];
         $params['sign'] = self::generateSign($params);
 
-        $res = $this->requestService->postJsonData(self::$url, $params);
+        $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
             return false;
         }
         $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $res['pltf_order_id'], $res['native_url'],
-                                $res['verify_money'], $res['match_code'], $params['sign']);
+            $res['verify_money'], $res['match_code'], $params['sign']);
         return $res;
     }
 
     /**
-     * 充值记录
+     * 充值订单查询
+     *
+     * 建议商户在接收到异步通知后，主动查询一次订单状态和通知状态对比。不建议采用轮询方式过于频繁的执行查询请求
      */
-    public function rechargeLog($request)
+    public function orderQuery($order_no, $pltf_order_id)
     {
-        return $this->rechargeRepository->getRechargeLogs($request->status, $request->limit, $request->page);
-    }
-
-    /**
-     * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
-     */
-    private static function generateSign(array $params)
-    {
-        ksort($params);
-        $string = [];
-        foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
-        }
-        $sign = strtolower(implode('&', $string)) . self::$secretkey;
-        return md5($sign);
-    }
-
-
-    /**
-     * 生成订单号
-     */
-    private function onlyosn()
-    {
-        @date_default_timezone_set("Asia/Shanghai");
-        $order_id_main = date('YmdHis') . rand(10000000, 99999999);
-        //订单号码主体长度
-        $order_id_len = strlen($order_id_main);
-        $order_id_sum = 0;
-        for ($i = 0; $i < $order_id_len; $i++) {
-            $order_id_sum += (int)(substr($order_id_main, $i, 1));
-        }
-        //唯一订单号码（YYYYMMDDHHIISSNNNNNNNNCC）
-        $osn = $order_id_main . str_pad((100 - $order_id_sum % 100) % 100, 2, '0', STR_PAD_LEFT); //生成唯一订单号
-        return $osn;
+        $params = [
+            'out_trade_no' => $order_no,
+            'pltf_order_id' => $pltf_order_id,
+        ];
+        return $this->requestService->postJsonData(self::$url . '/orderQuery', $params);
+        /**  {
+         * rtn_code: 1000,
+         * rtn_msg: "查询成功",
+         * api_name: "quickpay.all.native",
+         * shop_id: 10175,
+         * out_trade_no: "202011241459256363921725",
+         * pltf_order_id: "6696202011241459266672",
+         * money: "200.00",
+         * pay_status: 2,
+         * confirm_status: 0,
+         * order_des: "支付充值"
+         * }
+         */
     }
 
     /**
@@ -112,20 +101,20 @@ class RechargeService extends \App\Services\BaseService
     public function rechargeCallback($request)
     {
         /** {
-             * "api_name": "quickpay.all.native.callback",
-             * "money": "500",
-             * "order_des": "充值",
-             * "out_trade_no": "202010271647290000000001",
-             * "pay_result": "success",
-             * "pltf_order_id": "9843202010271647304254",
-             * "shop_id": "10164",
-             * "sign": "3e124d9265284e06d9563aeb54302f6f"
+         * "api_name": "quickpay.all.native.callback",
+         * "money": "500",
+         * "order_des": "充值",
+         * "out_trade_no": "202010271647290000000001",
+         * "pay_result": "success",
+         * "pltf_order_id": "9843202010271647304254",
+         * "shop_id": "10164",
+         * "sign": "3e124d9265284e06d9563aeb54302f6f"
          * }
          */
         if ($request->shop_id <> self::$merchantID
             || $request->api_name <> 'quickpay.all.native.callback'
             || $request->pay_result <> 'success'
-        ){
+        ) {
             $this->_msg = '参数错误';
             return false;
         }
@@ -179,5 +168,95 @@ class RechargeService extends \App\Services\BaseService
         return true;
     }
 
+    /**
+     * 充值记录
+     */
+    public function rechargeLog($request)
+    {
+        return $this->rechargeRepository->getRechargeLogs($request->status, $request->limit, $request->page);
+    }
+
+    /**
+     * 请求出金订单 (提款)
+     *
+     * 商户可自助申请出金/代付
+     *
+     * UPI就是把之前转账时所需要填写的繁琐信息直接整合成一个字符串ID，不用再输入银行卡号等。这个UPI ID可以是一个人的名字，身份证号，手机号，邮箱，任意字符串等。
+     */
+    public function withdrawalOrder($request, $money, $upi_id, $account_holder, $bank_number, $bank_name, $ifsc_code)
+    {
+        $user_id = $this->getUserId($request->header("token"));
+        $user = $this->userRepository->findByIdUser($user_id);
+
+        $order_no = $this->onlyosn();
+        $params = [
+            'shop_id' => self::$merchantID,
+            'out_trade_no' => $order_no,
+            'money' => $money,
+            'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
+            'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'bank_number' => $bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'ifsc_code' => $ifsc_code, // IFSC编号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'notify_url' => url('api/withdrawal_callback'), // 回调url，用来接收订单支付结果
+        ];
+        $params['sign'] = self::generateSign($params);
+// 示例
+        <<<EOP
+"account_holder": "Adarsh",
+"bank_name": "CanaraBank",
+"bank_number": "8888808000756",
+"ifsc_code": "CNRB0003745",
+"money": "475",
+"notify_url": "http://www.baidu.com",
+"out_trade_no": "8O2010291150433851",
+"shop_id": "10120",
+"upi_id": "88888888",
+"sign": "941012af1ce5cd5261024b719f6b22ab"
+EOP;
+
+        $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
+        if ($res['rtn_code'] <> 1000) {
+            $this->_msg = $res['rtn_msg'];
+            return false;
+        }
+        $this->withdrawalRepository->addWithdrawalLog($user, $money, $order_no, $res['pltf_order_no'], $params['sign']);
+//        (object $user, $money, $order_no, $pltf_order_no, $upi_id,$account_holder,$bank_number,$bank_name,$ifsc_code,$sign)
+//        public function addWithdrawalLog(object $user,$money,$order_no,$pltf_order_no,$sign)
+        return $res;
+    }
+
+    /**
+     * 出金订单查询
+     *
+     * 商户可以主动查询出金订单状态
+     * 建议商户在接收到异步通知后，主动查询一次订单状态和通知状态对比。不建议采用轮询方式过于频繁的执行查询请求
+     */
+    public function withdrawalQuery($order_no)
+    {
+        $params = [
+            "out_trade_no" => $order_no,
+            "shop_id" =>  self::$merchantID
+        ];
+        return $this->requestService->postJsonData(self::$url . '/withdrawalQuery', $params);
+    }
+
+
+
+// 自身工具方法
+
+    /**
+     * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
+     */
+    protected static function generateSign(array $params)
+    {
+        ksort($params);
+        $string = [];
+        foreach ($params as $key => $value) {
+            $string[] = $key . '=' . $value;
+        }
+        $sign = strtolower(implode('&', $string)) . self::$secretkey;
+        return md5($sign);
+    }
 }
 
