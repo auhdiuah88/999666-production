@@ -107,7 +107,7 @@ class GameController extends Controller
         if ($data) {
             return $this->AppReturn(200, '手动开奖设置成功', $data);
         } else {
-            return $this->AppReturn(413, '该期已进入开奖队列，无法执行手动开奖');
+            return $this->AppReturn(413, '该期已进入开奖队列，无法执行手动开奖,或未知错误');
         }
 
     }
