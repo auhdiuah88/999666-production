@@ -192,7 +192,7 @@ class GameService
             return false;
         }
         if($this->GameRepository->Carried_Sd_Prize($number,$play_id)){
-            echo 1;
+
             return true;
         }else{
             return false;
