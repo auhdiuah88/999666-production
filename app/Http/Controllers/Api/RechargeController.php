@@ -55,7 +55,7 @@ class RechargeController extends Controller
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
-        return $this->AppReturn(200, '充值记录', $this->rechargeService->rechargeLog($request));
+        return $this->AppReturn(200, '充值记录:', $this->rechargeService->rechargeLog($request));
     }
 
     /**
