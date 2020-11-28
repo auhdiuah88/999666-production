@@ -166,6 +166,6 @@ class WithdrawalController extends Controller
         if ($this->WithdrawalService->withdrawalCallback($request)) {
             return 'success';
         }
-        return 'fail';
+        return $this->WithdrawalService->_msg;
     }
 }
