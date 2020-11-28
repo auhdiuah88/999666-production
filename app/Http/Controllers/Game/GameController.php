@@ -50,7 +50,7 @@ class GameController extends Controller
 
     public function Settlement_Queue_Test()
     {
-        $this->GameService->Settlement_Queue_Test();
+        $this->GameService->Settlement_Queue_Sd();
     }
 
     public function Get_Prize_Opening_Data(Request $request)
