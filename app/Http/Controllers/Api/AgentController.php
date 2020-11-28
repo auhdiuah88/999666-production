@@ -19,7 +19,17 @@ class AgentController extends Controller
 
     public function getAgentInformation(Request $request)
     {
-        $this->AgentService->getAgentInformation($request->post("id"), $request->post("status"));
+        $this->AgentService->getAgentInformation($request->header("token"), $request->post("status"));
+        return $this->AppReturn(
+            $this->AgentService->_code,
+            $this->AgentService->_msg,
+            $this->AgentService->_data
+        );
+    }
+
+    public function getExtensionUser(Request $request)
+    {
+        $this->AgentService->getExtensionUser($request->header("token"), $request->post("page"), $request->post("limit"));
         return $this->AppReturn(
             $this->AgentService->_code,
             $this->AgentService->_msg,

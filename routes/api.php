@@ -25,7 +25,7 @@ Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test"
 // 充值回调
 Route::post('/recharge_callback', "Api\RechargeController@rechargeCallback");
 // 提款回调
-Route::post('/withdrawal_callback', "Api\WithdrawalController@withdrawalCallback");
+Route::post('/withdrawal_callback', "Api\RechargeController@withdrawalCallback");
 
 Route::group(["namespace" => "Api"], function () {
     Route::post("/sendCode", "UserController@sendMessage");
@@ -51,7 +51,8 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/recharge", "RechargeController@recharge");        //  用户充值-得到充值链接
         Route::post("/rechargelog", "RechargeController@rechargeLog");  //  充值记录
         Route::post("/recommend", "AgentController@getAgentInformation"); // 查询代理
-        Route::post("/withdrawal", "WithdrawalController@withdrawal");    //  用户提款-请求出金订单
+        Route::post("/withdrawal", "RechargeController@withdrawal");    //  用户提款-请求出金订单
+        Route::post("/extension", "AgentController@getExtensionUser"); //促销记录
     });
     Route::group(["prefix" => "bank"], function () {
         Route::get("/findAll", "InfoController@getBanks"); // 查询用户银行卡
