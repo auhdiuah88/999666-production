@@ -318,10 +318,10 @@ class GameRepository
     {
         return $this->Cx_Game_Play->where("id", $game_p_id)->first();
     }
-    //获取可结算的期数
+    //获取可结算自动开奖的期数
     public function Get_Settlement()
     {
-        $data = $this->Cx_Game_Play->where('status', 0)->where('end_time', "<=", time())->where('is_queue', 0)->get();
+        $data = $this->Cx_Game_Play->where('status', 0)->where('is_status', 0)->where('end_time', "<=", time())->where('is_queue', 0)->get();
         if (count($data) > 0) {
             $arr = array();
             foreach ($data as $val) {
@@ -332,6 +332,40 @@ class GameRepository
             return $data;
         } else {
             return $data;
+        }
+    }
+    //获取可结算手动开奖的期数
+    public function Get_Settlement_Sd()
+    {
+        $data = $this->Cx_Game_Play->where('status', 0)->where('is_status', 1)->where('end_time', "<=", time())->where('is_queue', 0)->get();
+        if (count($data) > 0) {
+            $arr = array();
+            foreach ($data as $val) {
+                array_push($arr, $val->id);
+            }
+            $this->Cx_Game_Play->whereIn('id', $arr)->update(['is_queue' => 1]);
+
+            return $data;
+        } else {
+            return $data;
+        }
+    }
+    //根据期数id判断是否已添加进队列
+    public function Game_Is_Queue($play_id){
+        $data = $this->Cx_Game_Play->where('id', $play_id)->first();
+        if($data->is_queue==0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    //执行手动开奖设置
+    public function Carried_Sd_Prize($number,$play_id){
+
+        if($this->Cx_Game_Play->where('id', $play_id)->update(['is_status' => 1,'prize_number' => $number])){
+            return true;
+        }else{
+            return false;
         }
     }
     //根据下注项id分组查询下注项总金额

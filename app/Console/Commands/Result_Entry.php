@@ -41,5 +41,6 @@ class Result_Entry extends Command
     public function handle()
     {
         $this->GameService->Settlement_Queue();
+        $this->GameService->Settlement_Queue_Sd();
     }
 }

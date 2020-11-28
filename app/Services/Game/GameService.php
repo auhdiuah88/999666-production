@@ -5,6 +5,7 @@ namespace App\Services\Game;
 
 
 use App\Jobs\GameSettlement;
+use App\Jobs\GameSettlement_Sd;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Api\UserRepository;
 use App\Services\Game\Ssc_TwoService;
@@ -169,6 +170,32 @@ class GameService
         }
 
 
+    }
+    /*结算定时任务
+    *获取可结算的期数添加入消费队列
+    */
+    public function Settlement_Queue_Sd()
+    {
+        $data = $this->GameRepository->Get_Settlement_Sd();
+        if (count($data) > 0) {
+            foreach ($data as $val) {
+                GameSettlement_Sd::dispatch($val->id, $val->game_id)->onQueue('Settlement_Queue_Sd');
+            }
+            return true;
+        }
+
+
+    }
+    //手动开奖
+    public function Sd_Prize_Opening($number,$play_id){
+        if($this->GameRepository->Game_Is_Queue($play_id)){
+            return false;
+        }
+        if($this->GameRepository->Carried_Sd_Prize($number,$play_id)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function Settlement_Queue_Test()

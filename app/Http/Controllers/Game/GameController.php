@@ -82,6 +82,35 @@ class GameController extends Controller
         }
 
     }
+    public function Sd_Prize_Opening(Request $request)
+    {
+
+        $rules = [
+            "number" => "required|max:9|integer",
+            "game_play_id" => "required|integer",
+
+
+        ];
+        $massages = [
+            "number.required" => "游戏不能为空",
+            "number.max" => "游戏必须小于等于9",
+            "number.integer" => "游戏必须为整型",
+            "game_play_id.integer" => "期数必须为整型",
+            "game_play_id.required" => "期数不能为空",
+        ];
+        $validator = Validator::make($request->all(), $rules, $massages);
+        if ($validator->fails()) {
+            return $this->AppReturn(414, $validator->errors()->first());
+        }
+        $data = $this->GameService->Sd_Prize_Opening($request->input("number"), $request->input("game_play_id"));
+
+        if ($data) {
+            return $this->AppReturn(200, '手动开奖设置成功', $data);
+        } else {
+            return $this->AppReturn(413, '该期已进入开奖队列，无法执行手动开奖');
+        }
+
+    }
 
 
 

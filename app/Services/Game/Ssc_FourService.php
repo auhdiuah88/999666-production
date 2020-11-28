@@ -179,6 +179,43 @@ class Ssc_FourService
 //        dd($arr);
 
     }
+    public function ssc_sd($play_id,$prize_number)
+    {
+        $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);
+        if($Is_Executive_Prize<=0){
+            return false;
+        }
+        $arr=array();
+        $b_money=$this->GameRepository->Get_Betting_Sum($play_id);
+        $result=$prize_number;//随机获取一个开奖号码
+        $result1=$prize_number;//存入数据库使用的开奖号码
+        $this->lostmoney=0;//输的钱
+        $this->winmoney=0;//赢得钱
+        $this->winmoney1=0;
+        $this->Calculation($play_id,$prize_number);
+        if($b_money==0){
+            $this->Executive_Prize($play_id,$result,3,$this->winmoney,$this->lostmoney,$b_money,$result1);
+            return true;
+            exit;
+        }
+
+        if($b_money==0){
+            return true;
+            exit;
+        }
+        if($b_money>$this->lostmoney){
+            $isWin=1;
+        }else if($b_money<$this->lostmoney){
+            $isWin=2;
+        }else{
+            $isWin=3;
+        }
+        //执行开奖
+        $this->Executive_Prize($play_id,$prize_number,$isWin,$this->winmoney,$this->lostmoney,$b_money,$prize_number);
+        return true;
+
+
+    }
     public function ssc_se($play_id)
     {
         $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);

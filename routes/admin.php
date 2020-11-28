@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 //});
 //
 Route::post('/get_prize_opening_data', "Game\GameController@Get_Prize_Opening_Data");
+Route::post('/sd_pize_opening', "Game\GameController@Sd_Prize_Opening");
 
 
 // 登录退出接口

@@ -185,6 +185,14 @@ return [
                 'tries' => 1,
                 'nice' => 0,
             ],
+            'supervisor-2' => [
+                'connection' => 'redis',
+                'queue' => ['Settlement_Queue_Sd'],
+                'balance' => 'simple',
+                'processes' => 10,
+                'tries' => 1,
+                'nice' => 0,
+            ],
         ],
     ],
 ];
