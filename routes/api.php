@@ -40,6 +40,7 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
 
         Route::post("/recharge", "RechargeController@recharge");        //  用户充值-得到充值链接
         Route::post("/rechargelog", "RechargeController@rechargeLog");  //  充值记录
+        Route::post("/recommend", "AgentController@getAgentInformation"); // 查询代理
     });
     Route::group(["prefix" => "bank"], function () {
         Route::get("/findAll", "InfoController@getBanks"); // 查询用户银行卡
