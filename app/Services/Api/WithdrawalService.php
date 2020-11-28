@@ -159,7 +159,6 @@ class WithdrawalService extends PayService
             return false;
         }
 
-        // 充值成功
 //        $money = $request->money;
         $where = [
             'order_no' => $request->out_trade_no,
@@ -172,13 +171,13 @@ class WithdrawalService extends PayService
             return false;
         }
 
-        $money = $withdrawlLog->money;
-
 //        if ($withdrawlLog->status == 1) {
         if ($withdrawlLog->pay_status == 1) {
             $this->_msg = '已成功提现,无需再回调';
             return false;
         }
+
+        $money = $withdrawlLog->money;
 
         DB::beginTransaction();
         try {
