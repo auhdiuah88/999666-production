@@ -162,5 +162,9 @@ class WithdrawalController extends Controller
     public function withdrawalCallback(Request $request)
     {
         Log::channel('mytest')->info('withdrawalCallback', $request->all());
+        if ($this->WithdrawalService->withdrawalCallback($request)) {
+            return 'success';
+        }
+        return 'fail';
     }
 }

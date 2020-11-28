@@ -56,7 +56,7 @@ class WithdrawalRepository
     /**
      *  添加提款记录
      */
-    public function addWithdrawalLog(object $user, $money, $order_no, $pltf_order_no, $upi_id,$account_holder,$bank_number,$bank_name,$ifsc_code,$sign)
+    public function addWithdrawalLog(object $user, $money, $order_no, $pltf_order_no, $upi_id, $account_holder, $bank_number, $bank_name, $ifsc_code, $sign)
     {
         $data = [
             'user_id' => $user->id,
@@ -79,5 +79,23 @@ class WithdrawalRepository
         $this->Cx_Withdrawal_Record->insert($data);
     }
 
+    /**
+     * 根据条件查询充值信息
+     */
+    public function getWithdrawalInfoByCondition(array $where)
+    {
+        return $this->Cx_Withdrawal_Record->where($where)->first();
+    }
 
+    /**
+     * 更新提现记录状态
+     */
+    public function updateWithdrawalLog(object $withdrawlLog, $status = 1,$pay_status=1, $money)
+    {
+        $withdrawlLog->status = $status;
+        $withdrawlLog->pay_status = $pay_status;
+        $withdrawlLog->payment = $money;
+        $withdrawlLog->loan_time = time();
+        $withdrawlLog->save();
+    }
 }

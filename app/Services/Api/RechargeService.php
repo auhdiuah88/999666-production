@@ -147,12 +147,6 @@ class RechargeService extends PayService
                 }
             }
 
-            $dq_balance = $user->balance;    // 当前余额
-            $wc_balance = bcadd($dq_balance, $money, 2);   // 变动后余额
-
-            $user->balance = $wc_balance;
-            $user->total_recharge = bcadd($user->total_recharge, $money, 2);
-
             // 记录充值成功余额变动
             $this->userRepository->updateRechargeBalance($user, $money);
 

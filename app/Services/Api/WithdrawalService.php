@@ -9,6 +9,7 @@ use App\Repositories\Api\WithdrawalRepository;
 use App\Services\BaseService;
 use App\Services\PayService;
 use App\Services\RequestService;
+use Illuminate\Support\Facades\DB;
 
 class WithdrawalService extends PayService
 {
@@ -127,6 +128,56 @@ class WithdrawalService extends PayService
         $this->WithdrawalRepository->addWithdrawalLog($user, $money, $order_no, $res['pltf_order_no'], $params['upi_id'],
             $params['account_holder'],$params['bank_number'],$params['bank_name'],$params['ifsc_code'], $params['sign']);
         return $res;
+    }
+
+    /**
+     *  出金订单回调
+     */
+    public function withdrawalCallback($request)
+    {
+        /**
+            "money": "2000",
+            "out_trade_no": "1912968483419341DA",
+            "pltf_order_id": "17800000000000297866",
+            "rtn_code": "success",
+            "sign": "f6c45be47606e0d84b20dbfb42b64e82"
+         */
+        if ( $request->rtn_code <> 'success' ) {
+            $this->_msg = '参数错误';
+            return false;
+        }
+
+        // 充值成功
+        $money = $request->money;
+        $where = [
+            'order_no' => $request->out_trade_no,
+            'pltf_order_id' => $request->pltf_order_id,
+//            'money' => $money
+        ];
+        $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
+        if (!$withdrawlLog) {
+            $this->_msg = '找不到此出金订单';
+            return false;
+        }
+
+        DB::beginTransaction();
+        try {
+            $user = $this->UserRepository->findByIdUser($withdrawlLog->user_id);
+
+            // 记录充值成功余额变动
+            $this->UserRepository->updateBalance($user, -$money, 3, "成功出金{$money}");
+
+            // 更新充值成功记录
+            $this->WithdrawalRepository->updateWithdrawalLog($withdrawlLog, 1, 1, $money);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+//            $this->rechargeRepository->updateRechargeLog($rechargeLog, 3, $money);
+            $this->_msg = $e->getMessage();
+            return false;
+        }
+        return true;
     }
 
     /**
