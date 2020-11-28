@@ -25,7 +25,7 @@ Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test"
 // 充值回调
 Route::post('/recharge_callback', "Api\RechargeController@rechargeCallback");
 // 提款回调
-Route::post('/withdrawal_callback', "Api\RechargeController@withdrawalCallback");
+Route::post('/withdrawal_callback', "Api\WithdrawalController@withdrawalCallback");
 
 Route::group(["namespace" => "Api"], function () {
     Route::post("/sendCode", "UserController@sendMessage");

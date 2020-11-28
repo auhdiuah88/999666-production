@@ -113,6 +113,18 @@ class RechargeService extends PayService
          * "sign": "3e124d9265284e06d9563aeb54302f6f"
          * }
          */
+        /**
+        {
+            "api_name": "quickpay.all.native.callback",
+            "money": "1000.00",
+            "order_des": "支付充值",
+            "out_trade_no": "202011281705253715973623",
+            "pay_result": "success",
+            "pltf_order_id": "2618202011281705264062",
+            "shop_id": 10120,
+            "sign": "9583e721c90d7b86e68b676a81219f4d"
+        }
+         */
         if ($request->shop_id <> self::$merchantID
             || $request->api_name <> 'quickpay.all.native.callback'
             || $request->pay_result <> 'success'

@@ -161,7 +161,8 @@ class WithdrawalService extends PayService
             return false;
         }
 
-        if ($withdrawlLog->status == 2) {
+//        if ($withdrawlLog->status == 1) {
+        if ($withdrawlLog->pay_status == 1) {
             $this->_msg = '已成功提现,无需再回调';
             return false;
         }
