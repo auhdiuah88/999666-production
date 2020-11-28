@@ -89,7 +89,7 @@ class WithdrawalService extends PayService
      *
      * UPI就是把之前转账时所需要填写的繁琐信息直接整合成一个字符串ID，不用再输入银行卡号等。这个UPI ID可以是一个人的名字，身份证号，手机号，邮箱，任意字符串等。
      */
-    public function withdrawalOrder($request, $money, $upi_id, $account_holder, $bank_number, $bank_name, $ifsc_code)
+    public function withdrawalOrder($request)
     {
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->UserRepository->findByIdUser($user_id);
