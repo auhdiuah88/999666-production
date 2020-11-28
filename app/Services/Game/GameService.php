@@ -179,7 +179,7 @@ class GameService
         $data = $this->GameRepository->Get_Settlement_Sd();
         if (count($data) > 0) {
             foreach ($data as $val) {
-                GameSettlement_Sd::dispatch($val->id, $val->game_id)->onQueue('Settlement_Queue_Sd');
+                GameSettlement_Sd::dispatch($val->id, $val->game_id,$val->prize_number)->onQueue('Settlement_Queue_Sd');
             }
             return true;
         }
