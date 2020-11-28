@@ -352,12 +352,18 @@ class GameRepository
     }
     //根据期数id判断是否已添加进队列
     public function Game_Is_Queue($play_id){
-        $data = $this->Cx_Game_Play->where('id', $play_id)->first();
-        if($data->is_queue==0){
-            return true;
+        $count=$this->Cx_Game_Play->where('id', $play_id)->count();
+        if ($count>0){
+            $data = $this->Cx_Game_Play->where('id', $play_id)->first();
+            if($data->is_queue==0){
+                return true;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
+
     }
     //执行手动开奖设置
     public function Carried_Sd_Prize($number,$play_id){

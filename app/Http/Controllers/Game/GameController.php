@@ -92,9 +92,9 @@ class GameController extends Controller
 
         ];
         $massages = [
-            "number.required" => "游戏不能为空",
-            "number.max" => "游戏必须小于等于9",
-            "number.integer" => "游戏必须为整型",
+            "number.required" => "开奖号不能为空",
+            "number.max" => "开奖号必须小于等于9",
+            "number.integer" => "开奖号必须为整型",
             "game_play_id.integer" => "期数必须为整型",
             "game_play_id.required" => "期数不能为空",
         ];
