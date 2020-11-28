@@ -9,6 +9,7 @@ use App\Repositories\Api\WithdrawalRepository;
 use App\Services\BaseService;
 use App\Services\PayService;
 use App\Services\RequestService;
+use Illuminate\Support\Facades\DB;
 
 class WithdrawalService extends PayService
 {
@@ -95,16 +96,17 @@ class WithdrawalService extends PayService
         $user = $this->UserRepository->findByIdUser($user_id);
 
         $order_no = $this->onlyosn();
+        $money = $request->money;
         $params = [
-            'shop_id' => self::$merchantID,
-            'out_trade_no' => $order_no,
-            'money' => $request->money,
-            'upi_id' => $request->upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
             'account_holder' => $request->account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'bank_number' => $request->bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'bank_name' => $request->bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'bank_number' => $request->bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'ifsc_code' => $request->ifsc_code, // IFSC编号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'money' => $money,
             'notify_url' => url('api/withdrawal_callback'), // 回调url，用来接收订单支付结果
+            'out_trade_no' => $order_no,
+            'shop_id' => self::$merchantID,
+            'upi_id' => $request->upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
         ];
         $params['sign'] = self::generateSign($params);
 // 示例
@@ -127,6 +129,75 @@ class WithdrawalService extends PayService
         $this->WithdrawalRepository->addWithdrawalLog($user, $money, $order_no, $res['pltf_order_no'], $params['upi_id'],
             $params['account_holder'],$params['bank_number'],$params['bank_name'],$params['ifsc_code'], $params['sign']);
         return $res;
+    }
+
+    /**
+     *  出金订单回调
+     */
+    public function withdrawalCallback($request)
+    {
+        /**
+            "money": "2000",
+            "out_trade_no": "1912968483419341DA",
+            "pltf_order_id": "17800000000000297866",
+            "rtn_code": "success",
+            "sign": "f6c45be47606e0d84b20dbfb42b64e82"
+         */
+
+        /**
+        {
+                "money": "54.36",
+                "out_trade_no": "202011281743443450333436",
+                "pltf_order_id": "2559202011281743444014",
+                "rtn_code": "success",
+                "sign": "2463f17f8400c0416d0dd86c28208508"
+        }
+         */
+
+        if ( $request->rtn_code <> 'success' ) {
+            $this->_msg = '参数错误';
+            return false;
+        }
+
+        // 充值成功
+//        $money = $request->money;
+        $where = [
+            'order_no' => $request->out_trade_no,
+            'pltf_order_no' => $request->pltf_order_id,
+//            'money' => $money
+        ];
+        $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
+        if (!$withdrawlLog) {
+            $this->_msg = '找不到此出金订单';
+            return false;
+        }
+
+        $money = $withdrawlLog->money;
+
+//        if ($withdrawlLog->status == 1) {
+        if ($withdrawlLog->pay_status == 1) {
+            $this->_msg = '已成功提现,无需再回调';
+            return false;
+        }
+
+        DB::beginTransaction();
+        try {
+            $user = $this->UserRepository->findByIdUser($withdrawlLog->user_id);
+
+            // 记录充值成功余额变动
+            $this->UserRepository->updateBalance($user, -$money, 3, "成功出金{$money}");
+
+            // 更新充值成功记录
+            $this->WithdrawalRepository->updateWithdrawalLog($withdrawlLog, 1, 1, $money);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+//            $this->rechargeRepository->updateRechargeLog($rechargeLog, 3, $money);
+            $this->_msg = $e->getMessage();
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -38,7 +38,7 @@ class RechargeController extends Controller
         if (!$result = $this->rechargeService->rechargeOrder($request)) {
             return $this->AppReturn(400, $this->rechargeService->_msg, new \StdClass());
         }
-        return $this->AppReturn(200, '用户充值-请求充值订单二维码', $result);
+        return $this->AppReturn(200, '用户充值-充值订单二维码', $result);
     }
 
     /**
@@ -55,7 +55,7 @@ class RechargeController extends Controller
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
-        return $this->AppReturn(200, '充值记录', $this->rechargeService->rechargeLog($request));
+        return $this->AppReturn(200, '充值记录:', $this->rechargeService->rechargeLog($request));
     }
 
     /**

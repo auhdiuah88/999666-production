@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Api\WithdrawalService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class WithdrawalController extends Controller
@@ -139,7 +140,7 @@ class WithdrawalController extends Controller
     public function withdrawal(Request $request)
     {
         $rules = [
-            'money' => "required|float",
+            'money' => "required",
             'upi_id' => "required",
             'account_holder' => "required",
             'bank_number' => "required",
@@ -162,5 +163,9 @@ class WithdrawalController extends Controller
     public function withdrawalCallback(Request $request)
     {
         Log::channel('mytest')->info('withdrawalCallback', $request->all());
+        if ($this->WithdrawalService->withdrawalCallback($request)) {
+            return 'success';
+        }
+        return 'fail';
     }
 }

@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Crypt;
 class PayService extends BaseService
 {
     protected static $url = 'http://ipay-in.yynn.me';
-    protected static $merchantID = 10175;
-    protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
+//    protected static $merchantID = 10175;
+//    protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
+
+    protected static $merchantID = 10120;
+    protected static $secretkey = 'j3phc11lg986dx3tkai120ngpxy7a2sw';
 
     /**
      * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
@@ -22,7 +25,8 @@ class PayService extends BaseService
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = strtolower(implode('&', $string)) . self::$secretkey;
+//        $sign = strtolower(implode('&', $string)) . self::$secretkey;
+        $sign = (implode('&', $string)) . self::$secretkey;
         return md5($sign);
     }
 
