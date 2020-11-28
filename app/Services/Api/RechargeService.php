@@ -11,10 +11,11 @@ use App\Services\Library\Auth;
 use App\Services\Library\Netease\IM;
 use App\Services\Library\Netease\SMS;
 use App\Services\Library\Upload;
+use App\Services\PayService;
 use App\Services\RequestService;
 use Illuminate\Support\Facades\DB;
 
-class RechargeService extends \App\Services\BaseService
+class RechargeService extends PayService
 {
     private $userRepository;
     private $rechargeRepository;
@@ -174,89 +175,6 @@ class RechargeService extends \App\Services\BaseService
     public function rechargeLog($request)
     {
         return $this->rechargeRepository->getRechargeLogs($request->status, $request->limit, $request->page);
-    }
-
-    /**
-     * 请求出金订单 (提款)
-     *
-     * 商户可自助申请出金/代付
-     *
-     * UPI就是把之前转账时所需要填写的繁琐信息直接整合成一个字符串ID，不用再输入银行卡号等。这个UPI ID可以是一个人的名字，身份证号，手机号，邮箱，任意字符串等。
-     */
-    public function withdrawalOrder($request, $money, $upi_id, $account_holder, $bank_number, $bank_name, $ifsc_code)
-    {
-        $user_id = $this->getUserId($request->header("token"));
-        $user = $this->userRepository->findByIdUser($user_id);
-
-        $order_no = $this->onlyosn();
-        $params = [
-            'shop_id' => self::$merchantID,
-            'out_trade_no' => $order_no,
-            'money' => $money,
-            'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
-            'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'bank_number' => $bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'ifsc_code' => $ifsc_code, // IFSC编号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'notify_url' => url('api/withdrawal_callback'), // 回调url，用来接收订单支付结果
-        ];
-        $params['sign'] = self::generateSign($params);
-// 示例
-        <<<EOP
-"account_holder": "Adarsh",
-"bank_name": "CanaraBank",
-"bank_number": "8888808000756",
-"ifsc_code": "CNRB0003745",
-"money": "475",
-"notify_url": "http://www.baidu.com",
-"out_trade_no": "8O2010291150433851",
-"shop_id": "10120",
-"upi_id": "88888888",
-"sign": "941012af1ce5cd5261024b719f6b22ab"
-EOP;
-
-        $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
-        if ($res['rtn_code'] <> 1000) {
-            $this->_msg = $res['rtn_msg'];
-            return false;
-        }
-        $this->withdrawalRepository->addWithdrawalLog($user, $money, $order_no, $res['pltf_order_no'], $params['sign']);
-//        (object $user, $money, $order_no, $pltf_order_no, $upi_id,$account_holder,$bank_number,$bank_name,$ifsc_code,$sign)
-//        public function addWithdrawalLog(object $user,$money,$order_no,$pltf_order_no,$sign)
-        return $res;
-    }
-
-    /**
-     * 出金订单查询
-     *
-     * 商户可以主动查询出金订单状态
-     * 建议商户在接收到异步通知后，主动查询一次订单状态和通知状态对比。不建议采用轮询方式过于频繁的执行查询请求
-     */
-    public function withdrawalQuery($order_no)
-    {
-        $params = [
-            "out_trade_no" => $order_no,
-            "shop_id" =>  self::$merchantID
-        ];
-        return $this->requestService->postJsonData(self::$url . '/withdrawalQuery', $params);
-    }
-
-
-
-// 自身工具方法
-
-    /**
-     * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
-     */
-    protected static function generateSign(array $params)
-    {
-        ksort($params);
-        $string = [];
-        foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
-        }
-        $sign = strtolower(implode('&', $string)) . self::$secretkey;
-        return md5($sign);
     }
 }
 

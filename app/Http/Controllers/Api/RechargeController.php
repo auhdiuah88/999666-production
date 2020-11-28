@@ -59,29 +59,6 @@ class RechargeController extends Controller
     }
 
     /**
-     * 用户提款-请求出金订单
-     */
-    public function withdrawal(Request $request)
-    {
-        $rules = [
-            'money' => "required|float",
-            'upi_id' => "required",
-            'account_holder' => "required",
-            'bank_number' => "required",
-            'bank_name' => "required",
-            'ifsc_code' => "required",
-        ];
-        $validator = Validator::make($request->post(), $rules);
-        if ($validator->fails()) {
-            return $this->AppReturn(414, $validator->errors()->first());
-        }
-        if (!$result = $this->rechargeService->withdrawalOrder($request)) {
-            return $this->AppReturn(400, $this->rechargeService->_msg, new \StdClass());
-        }
-        return $this->AppReturn(200, '用户提款-请求出金订单', $result);
-    }
-
-    /**
      * 充值回调接口
      */
     public function rechargeCallback(Request $request)
@@ -92,13 +69,5 @@ class RechargeController extends Controller
             return 'success';
         }
         return 'fail';
-    }
-
-    /**
-     * 提款回调
-     */
-    public function withdrawalCallback(Request $request)
-    {
-        Log::channel('mytest')->info('withdrawalCallback', $request->all());
     }
 }
