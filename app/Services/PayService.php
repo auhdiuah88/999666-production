@@ -23,6 +23,7 @@ class PayService extends BaseService
             $string[] = $key . '=' . $value;
         }
         $sign = strtolower(implode('&', $string)) . self::$secretkey;
+        dd($sign);
         return md5($sign);
     }
 
