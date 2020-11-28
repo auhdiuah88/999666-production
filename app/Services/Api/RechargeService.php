@@ -22,10 +22,6 @@ class RechargeService extends PayService
     private $withdrawalRepository;
     private $requestService;
 
-//    protected static $url = 'http://ipay-in.yynn.me';
-//    protected static $merchantID = 10175;
-//    protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
-
     public function __construct(UserRepository $userRepository,
                                 RechargeRepository $rechargeRepository,
                                 WithdrawalRepository $withdrawalRepository,
