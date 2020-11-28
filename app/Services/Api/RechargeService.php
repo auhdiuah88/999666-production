@@ -22,9 +22,9 @@ class RechargeService extends PayService
     private $withdrawalRepository;
     private $requestService;
 
-    protected static $url = 'http://ipay-in.yynn.me';
-    protected static $merchantID = 10175;
-    protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
+//    protected static $url = 'http://ipay-in.yynn.me';
+//    protected static $merchantID = 10175;
+//    protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
 
     public function __construct(UserRepository $userRepository,
                                 RechargeRepository $rechargeRepository,
@@ -62,6 +62,7 @@ class RechargeService extends PayService
         $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
+            $this->_data = $res;
             return false;
         }
         $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $res['pltf_order_id'], $res['native_url'],
