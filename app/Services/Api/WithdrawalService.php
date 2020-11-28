@@ -143,16 +143,27 @@ class WithdrawalService extends PayService
             "rtn_code": "success",
             "sign": "f6c45be47606e0d84b20dbfb42b64e82"
          */
+
+        /**
+        {
+                "money": "54.36",
+                "out_trade_no": "202011281743443450333436",
+                "pltf_order_id": "2559202011281743444014",
+                "rtn_code": "success",
+                "sign": "2463f17f8400c0416d0dd86c28208508"
+        }
+         */
+
         if ( $request->rtn_code <> 'success' ) {
             $this->_msg = '参数错误';
             return false;
         }
 
         // 充值成功
-        $money = $request->money;
+//        $money = $request->money;
         $where = [
             'order_no' => $request->out_trade_no,
-            'pltf_order_id' => $request->pltf_order_id,
+            'pltf_order_no' => $request->pltf_order_id,
 //            'money' => $money
         ];
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
@@ -160,6 +171,8 @@ class WithdrawalService extends PayService
             $this->_msg = '找不到此出金订单';
             return false;
         }
+
+        $money = $withdrawlLog->money;
 
 //        if ($withdrawlLog->status == 1) {
         if ($withdrawlLog->pay_status == 1) {
