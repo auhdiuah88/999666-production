@@ -139,7 +139,7 @@ class WithdrawalController extends Controller
     public function withdrawal(Request $request)
     {
         $rules = [
-            'money' => "required|float",
+            'money' => "required",
             'upi_id' => "required",
             'account_holder' => "required",
             'bank_number' => "required",
