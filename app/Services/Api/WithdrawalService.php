@@ -98,18 +98,17 @@ class WithdrawalService extends PayService
         $order_no = $this->onlyosn();
         $money = $request->money;
         $params = [
-            'shop_id' => self::$merchantID,
-            'out_trade_no' => $order_no,
-            'money' => $money,
-            'upi_id' => $request->upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
             'account_holder' => $request->account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'bank_number' => $request->bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'bank_name' => $request->bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'bank_number' => $request->bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'ifsc_code' => $request->ifsc_code, // IFSC编号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'money' => $money,
             'notify_url' => url('api/withdrawal_callback'), // 回调url，用来接收订单支付结果
+            'out_trade_no' => $order_no,
+            'shop_id' => self::$merchantID,
+            'upi_id' => $request->upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
         ];
         $params['sign'] = self::generateSign($params);
-        dd($params);
 // 示例
 //"account_holder": "Adarsh",
 //"bank_name": "CanaraBank",
