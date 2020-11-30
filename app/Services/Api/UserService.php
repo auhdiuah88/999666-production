@@ -227,11 +227,9 @@ class UserService
             return false;
         }
         $result = $this->sendcode($phone);
-        var_dump($result);
-        exit;
         if ($result['code'] <> 200) {
             $this->error_code = 414;
-            $this->error = $result;
+            $this->error = '短信验证码发送失败';
             return false;
         }
         Redis::set($key . $phone, $result["obj"]);
@@ -263,7 +261,9 @@ class UserService
         if ($result["status"] == 0) {
             return ["code" => 200, "obj" => $code];
         }
-        return $result;
+        echo var_dump($result);
+        exit;
+        return ["code" => 402];
     }
 
     /**
