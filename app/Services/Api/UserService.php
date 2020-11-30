@@ -184,8 +184,10 @@ class UserService
                     $one = $this->UserRepository->findByIdUser($agent["one_id"]);
                     $data["one_recommend_phone"] = $one->phone;
                     $data["two_recommend_id"] = $agent["two_id"];
-                    $two = $this->UserRepository->findByIdUser($agent["two_id"]);
-                    $data["two_recommend_phone"] = $two->phone;
+                    if (isset($agent["two_id"])){
+                        $two = $this->UserRepository->findByIdUser($agent["two_id"]);
+                        $data["two_recommend_phone"] = $two->phone;
+                    }
                 }
             }
         }
