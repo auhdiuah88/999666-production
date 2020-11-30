@@ -119,9 +119,7 @@ class WithdrawalService extends PayService
             $this->_msg = '不支持的方式';
             return false;
         }
-
         $order_no = $this->onlyosn();
-
         $params = [
             'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
@@ -135,7 +133,6 @@ class WithdrawalService extends PayService
         ];
         $params['sign'] = self::generateSign($params);
         $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
-        print_r($res);die;
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
             return false;
