@@ -101,6 +101,7 @@ class UserRepository
                 $arr["two_id"] = null;
             }
         }
+        dd($arr);
         return ["user" => $data, "agent" => $arr];
     }
 
