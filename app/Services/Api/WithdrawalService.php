@@ -135,7 +135,7 @@ class WithdrawalService extends PayService
         ];
         $params['sign'] = self::generateSign($params);
 
-        dd($params);
+        print_r($params);die;
         $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
