@@ -22,11 +22,11 @@ class TestController extends Controller
         dd($res['agent']);
     }
 
-    public function updateRechargeBalance(object $user, $money)
-    {
-        $user->is_first_recharge = (int)$user->is_first_recharge + 1;  // 累计充值次数
-        dd($user->is_first_recharge);
-        $user->total_recharge = bcadd($user->total_recharge, $money, 2);  // 累计充值金额
-
-    }
+//    public function updateRechargeBalance(object $user, $money)
+//    {
+//        $user->is_first_recharge = (int)$user->is_first_recharge + 1;  // 累计充值次数
+//        dd($user->is_first_recharge);
+//        $user->total_recharge = bcadd($user->total_recharge, $money, 2);  // 累计充值金额
+//
+//    }
 }
