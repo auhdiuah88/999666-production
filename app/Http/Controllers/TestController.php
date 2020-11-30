@@ -17,6 +17,14 @@ class TestController extends Controller
     public function test(RechargeService $rechargeService,UserRepository $userRepository
     ){
         $user = $userRepository->findByIdUser(15);
-        $userRepository->updateRechargeBalance($user, 20);
+        $this->updateRechargeBalance($user, 20);
+    }
+
+    public function updateRechargeBalance(object $user, $money)
+    {
+        $user->is_first_recharge = (int)$user->is_first_recharge + 1;  // 累计充值次数
+        dd($user->is_first_recharge);
+        $user->total_recharge = bcadd($user->total_recharge, $money, 2);  // 累计充值金额
+
     }
 }
