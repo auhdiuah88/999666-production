@@ -63,7 +63,7 @@ class RechargeController extends Controller
      */
     public function rechargeCallback(Request $request)
     {
-        Log::channel('mytest')->info('rechargeCallback', $request->all());
+//        Log::channel('mytest')->info('rechargeCallback', $request->all());
 
         if ($this->rechargeService->rechargeCallback($request)) {
             return 'success';

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Crypt;
 class PayService extends BaseService
 {
     protected static $url = 'http://ipay-in.yynn.me';
+
+    // 正式环境
     protected static $merchantID = 10175;
     protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
 

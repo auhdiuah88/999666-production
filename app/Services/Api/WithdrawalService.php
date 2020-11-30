@@ -159,6 +159,15 @@ class WithdrawalService extends PayService
             return false;
         }
 
+        // 验证签名
+//        $params = $request->post();
+//        $sign = $params['sign'];
+//        unset($params['sign']);
+//        if (PayService::generateSign($params) <> $sign){
+//            $this->_msg = '签名错误';
+//            return false;
+//        }
+
 //        $money = $request->money;
         $where = [
             'order_no' => $request->out_trade_no,

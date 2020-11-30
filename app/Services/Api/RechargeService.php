@@ -98,17 +98,6 @@ class RechargeService extends PayService
      */
     public function rechargeCallback($request)
     {
-        /** {
-         * "api_name": "quickpay.all.native.callback",
-         * "money": "500",
-         * "order_des": "充值",
-         * "out_trade_no": "202010271647290000000001",
-         * "pay_result": "success",
-         * "pltf_order_id": "9843202010271647304254",
-         * "shop_id": "10164",
-         * "sign": "3e124d9265284e06d9563aeb54302f6f"
-         * }
-         */
         /**
         {
             "api_name": "quickpay.all.native.callback",
@@ -121,6 +110,8 @@ class RechargeService extends PayService
             "sign": "9583e721c90d7b86e68b676a81219f4d"
         }
          */
+
+        // 验证参数
         if ($request->shop_id <> self::$merchantID
             || $request->api_name <> 'quickpay.all.native.callback'
             || $request->pay_result <> 'success'
@@ -128,6 +119,15 @@ class RechargeService extends PayService
             $this->_msg = '参数错误';
             return false;
         }
+
+        // 验证签名
+//        $params = $request->post();
+//        $sign = $params['sign'];
+//        unset($params['sign']);
+//        if (PayService::generateSign($params) <> $sign){
+//            $this->_msg = '签名错误';
+//            return false;
+//        }
 
         // 充值成功
         $money = $request->money;
@@ -151,9 +151,9 @@ class RechargeService extends PayService
         try {
             $user = $this->userRepository->findByIdUser($rechargeLog->user_id);
 
-            if ($user->is_first_recharge == 0 && $money >= 200) {
-                $user->is_first_recharge = 1; // 是否第一次充值
-
+            // 是否第一次充值
+            if ((int)$user->is_first_recharge == 0 && $money >= 200) {
+//                $user->is_first_recharge = 1;
                 $referrensUser = $this->userRepository->findByIdUser($user->two_recommend_id);  // 给推荐我注册的人，推荐充值数加1
                 if ($referrensUser) {
                     $referrensUser->rec_ok_count += 1;
@@ -164,7 +164,7 @@ class RechargeService extends PayService
             // 记录充值成功余额变动
             $this->userRepository->updateRechargeBalance($user, $money);
 
-            // 更新充值成功记录
+            // 更新充值成功记录的状态
             $this->rechargeRepository->updateRechargeLog($rechargeLog, 2, $money);
 
             DB::commit();

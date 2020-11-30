@@ -32,7 +32,7 @@ class RechargeRepository
                                    $native_url = '', $verify_money = '', $match_code = '', $sign = '')
     {
         $data = [
-            'is_first_recharge' => $user->is_first_recharge,
+            'is_first_recharge' => $user->is_first_recharge == 0 ? 1 : 0,
             'user_id' => $user->id,
             'phone' => $user->phone,
             'nickname' => $user->nickname,
