@@ -95,8 +95,11 @@ class WithdrawalService extends PayService
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->UserRepository->findByIdUser($user_id);
 
+        $money = $request->money;
+        $bank_id = $request->bank_id;
+
         if ($mode == 'bank') {
-            $user_bank = $this->UserRepository->getBankByBankId($request->bank_id);
+            $user_bank = $this->UserRepository->getBankByBankId($bank_id);
             if ($user_bank->user_id <> $user_id) {
                 $this->_msg = '银行卡不匹配';
                 return false;
@@ -118,7 +121,7 @@ class WithdrawalService extends PayService
         }
 
         $order_no = $this->onlyosn();
-        $money = $request->money;
+
         $params = [
             'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
@@ -131,18 +134,8 @@ class WithdrawalService extends PayService
             'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
         ];
         $params['sign'] = self::generateSign($params);
-// 示例
-//"account_holder": "Adarsh",
-//"bank_name": "CanaraBank",
-//"bank_number": "8888808000756",
-//"ifsc_code": "CNRB0003745",
-//"money": "475",
-//"notify_url": "http://www.baidu.com",
-//"out_trade_no": "8O2010291150433851",
-//"shop_id": "10120",
-//"upi_id": "88888888",
-//"sign": "941012af1ce5cd5261024b719f6b22ab"
 
+        dd($params);
         $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
