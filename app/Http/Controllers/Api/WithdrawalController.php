@@ -149,8 +149,8 @@ class WithdrawalController extends Controller
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
-        $request->upi_id = 'xxxx';
-        if (!$result = $this->WithdrawalService->withdrawalOrder($request)) {
+
+        if (!$result = $this->WithdrawalService->withdrawalOrder($request,'bank')) {
             return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
         }
         return $this->AppReturn(200, '用户提款-请求出金订单', $result);
@@ -172,7 +172,7 @@ class WithdrawalController extends Controller
         $request->bank_number = 'xxxx';
         $request->bank_name = 'xxxx';
         $request->ifsc_code = 'xxxx';
-        if (!$result = $this->WithdrawalService->withdrawalOrder($request)) {
+        if (!$result = $this->WithdrawalService->withdrawalOrder($request,'upi')) {
             return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
         }
         return $this->AppReturn(200, '用户提款-请求出金订单', $result);

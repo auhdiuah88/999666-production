@@ -8,6 +8,7 @@ use App\Models\Cx_Charge_Logs;
 use App\Models\Cx_System;
 use App\Models\Cx_User;
 use App\Models\Cx_User_Balance_Logs;
+use App\Models\Cx_User_Bank;
 use App\Mongodb;
 use Illuminate\Support\Facades\Cache;
 
@@ -15,20 +16,23 @@ use Illuminate\Support\Facades\Cache;
 class UserRepository
 {
     protected $Cx_User, $Cx_System, $Cx_Charge_Logs, $Cx_User_Balance_Logs;
-
+    private $cx_User_Bank;
 
     public $_data = [];
 
     public function __construct(Cx_User $cx_User,
                                 Cx_System $cx_System,
                                 Cx_Charge_Logs $charge_Logs,
-                                Cx_User_Balance_Logs $Cx_User_Balance_Logs
+                                Cx_User_Balance_Logs $Cx_User_Balance_Logs,
+                                Cx_User_Bank $cx_User_Bank
     )
     {
         $this->Cx_User = $cx_User;
         $this->Cx_System = $cx_System;
         $this->Cx_Charge_Logs = $charge_Logs;
         $this->Cx_User_Balance_Logs = $Cx_User_Balance_Logs;
+
+        $this->cx_User_Bank = $cx_User_Bank;
     }
 
     public function getcode()
@@ -360,7 +364,15 @@ class UserRepository
     //检查用户是否拥有改张银行卡
     public function isBank($user_id, $bank_id)
     {
-        return $this->Cx_User_Bank->where("id", $bank_id)->where('user_id', $user_id)->count();
+        return $this->cx_User_Bank->where("id", $bank_id)->where('user_id', $user_id)->count();
+    }
+
+    /**
+     * 根据银行卡ID查找我的银行卡
+     */
+    public function getBankByBankId($bank_id)
+    {
+        return $this->cx_User_Bank->find($bank_id);
     }
 
     public function Withdrawal_List($limit, $offset, $user_id)
