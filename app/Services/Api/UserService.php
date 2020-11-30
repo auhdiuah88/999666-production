@@ -261,7 +261,7 @@ class UserService
         if ($result["status"] == 0) {
             return ["code" => 200, "obj" => $code];
         }
-        return ["code" => 402];
+        return $result;
     }
 
     /**
