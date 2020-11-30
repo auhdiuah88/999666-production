@@ -180,6 +180,7 @@ class UserService
             } else {
                 $agent = $list["agent"];
                 if (isset($agent["one_id"])) {
+
                     $data["one_recommend_id"] = $agent["two_id"]; // null
                     $data["two_recommend_id"] = $agent["one_id"];
 

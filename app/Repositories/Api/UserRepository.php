@@ -96,8 +96,10 @@ class UserRepository
                 $arr["one_id"] = $data->one_recommend_id;
                 $arr["two_id"] = $data->id;
             } elseif (!empty($data->one_recommend_id) && !empty($data->two_recommend_id)) {
-                $arr["one_id"] = $data->two_recommend_id;
-                $arr["two_id"] = $data->id;
+//                $arr["one_id"] = $data->two_recommend_id;
+//                $arr["two_id"] = $data->id;
+                $arr["one_id"] = $data->id;
+                $arr["two_id"] = $data->two_recommend_id;
             } else {
                 $arr["one_id"] = $data->id;
                 $arr["two_id"] = null;
