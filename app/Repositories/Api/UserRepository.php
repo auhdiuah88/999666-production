@@ -88,8 +88,10 @@ class UserRepository
         $data = $this->Cx_User->where("code", $code)->first();
         if (isset($data->id)) {
             if (!empty($data->two_recommend_id) && empty($data->one_recommend_id)) {
-                $arr["one_id"] = $data->two_recommend_id;
-                $arr["two_id"] = $data->id;
+//                $arr["one_id"] = $data->two_recommend_id;  //
+//                $arr["two_id"] = $data->id;
+                $arr["one_id"] = $data->id;  //
+                $arr["two_id"] = $data->two_recommend_id;
             } elseif (!empty($data->one_recommend_id) && empty($data->two_recommend_id)) {
                 $arr["one_id"] = $data->one_recommend_id;
                 $arr["two_id"] = $data->id;
