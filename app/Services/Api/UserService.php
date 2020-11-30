@@ -261,8 +261,7 @@ class UserService
         if ($result["status"] == 0) {
             return ["code" => 200, "obj" => $code];
         }
-        echo var_dump($result);
-        exit;
+
         return ["code" => 402];
     }
 
