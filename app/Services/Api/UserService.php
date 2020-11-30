@@ -229,7 +229,7 @@ class UserService
         $result = $this->sendcode($phone);
         if ($result['code'] <> 200) {
             $this->error_code = 414;
-            $this->error = '短信验证码发送失败';
+            $this->error = 'Failed to send SMS verification code';
             return false;
         }
         Redis::set($key . $phone, $result["obj"]);
