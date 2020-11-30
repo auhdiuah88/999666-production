@@ -134,9 +134,8 @@ class WithdrawalService extends PayService
             'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
         ];
         $params['sign'] = self::generateSign($params);
-
-        print_r($params);die;
         $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
+        print_r($res);die;
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
             return false;
