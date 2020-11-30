@@ -96,7 +96,7 @@ class WithdrawalService extends PayService
         $user = $this->UserRepository->findByIdUser($user_id);
 
         if ($mode == 'bank') {
-            $user_bank = $this->UserRepository->getBankByBankId($user_id);
+            $user_bank = $this->UserRepository->getBankByBankId($request->bank_id);
             if ($user_bank->user_id <> $user_id) {
                 $this->_msg = '银行卡不匹配';
                 return false;
