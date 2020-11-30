@@ -165,9 +165,12 @@ class UserService
             return false;
         }
         unset($data["sms_code"]);
-        if($data["code"]=="" || empty($data["code"])){
-            unset($data["code"]);
+        if(isset($data["code"])){
+            if($data["code"]=="" || empty($data["code"])){
+                unset($data["code"]);
+            }
         }
+
         // 判断是否有代理
         if (array_key_exists("code", $data)) {
             $list = $this->UserRepository->findAgentByCode($data["code"]);
