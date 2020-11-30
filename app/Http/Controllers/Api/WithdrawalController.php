@@ -135,13 +135,11 @@ class WithdrawalController extends Controller
 
 
     /**
-     * 用户提款-请求出金订单
+     * 用户银行卡提现-请求出金订单
      */
-    public function withdrawal(Request $request)
-    {
+    public function withdrawalByBank(Request $request) {
         $rules = [
             'money' => "required",
-            'upi_id' => "required",
             'account_holder' => "required",
             'bank_number' => "required",
             'bank_name' => "required",
@@ -151,6 +149,29 @@ class WithdrawalController extends Controller
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
+        $request->upi_id = 'xxxx';
+        if (!$result = $this->WithdrawalService->withdrawalOrder($request)) {
+            return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
+        }
+        return $this->AppReturn(200, '用户提款-请求出金订单', $result);
+    }
+
+    /**
+     * 用户upi_id提现-请求出金订单
+     */
+    public function withdrawalByUpiID(Request $request) {
+        $rules = [
+            'money' => "required",
+            'upi_id' => "required",
+        ];
+        $validator = Validator::make($request->post(), $rules);
+        if ($validator->fails()) {
+            return $this->AppReturn(414, $validator->errors()->first());
+        }
+        $request->account_holder = 'xxxx';
+        $request->bank_number = 'xxxx';
+        $request->bank_name = 'xxxx';
+        $request->ifsc_code = 'xxxx';
         if (!$result = $this->WithdrawalService->withdrawalOrder($request)) {
             return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
         }
