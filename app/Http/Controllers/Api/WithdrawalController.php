@@ -133,17 +133,17 @@ class WithdrawalController extends Controller
         );
     }
 
-
     /**
      * 用户银行卡提现-请求出金订单
      */
     public function withdrawalByBank(Request $request) {
         $rules = [
             'money' => "required",
-            'account_holder' => "required",
-            'bank_number' => "required",
-            'bank_name' => "required",
-            'ifsc_code' => "required",
+//            'account_holder' => "required",
+//            'bank_number' => "required",
+//            'bank_name' => "required",
+//            'ifsc_code' => "required",
+            'bank_id' => "required",
         ];
         $validator = Validator::make($request->post(), $rules);
         if ($validator->fails()) {
