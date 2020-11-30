@@ -179,13 +179,13 @@ class UserService
                 $data["customer_service_id"] = $list["user"]->id;
             } else {
                 $agent = $list["agent"];
-                if (isset($agent["one_id"])) {
-                    $data["two_recommend_id"] = $agent["one_id"];
-                    $two = $this->UserRepository->findByIdUser($agent["one_id"]);
+                if (isset($agent["two_id"])) {
+                    $data["two_recommend_id"] = $agent["two_id"];
+                    $two = $this->UserRepository->findByIdUser($agent["two_id"]);
                     $data["two_recommend_phone"] = $two->phone;
-                    if (isset($agent["two_id"])){
-                        $data["one_recommend_id"] = $agent["two_id"];
-                        $one = $this->UserRepository->findByIdUser($agent["two_id"]);
+                    if (isset($agent["one_id"])){
+                        $data["one_recommend_id"] = $agent["one_id"];
+                        $one = $this->UserRepository->findByIdUser($agent["one_id"]);
                         $data["one_recommend_phone"] = $one->phone;
                     }
                 }
