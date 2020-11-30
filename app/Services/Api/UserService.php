@@ -227,6 +227,8 @@ class UserService
             return false;
         }
         $result = $this->sendcode($phone);
+        var_dump($result);
+        exit;
         if ($result['code'] <> 200) {
             $this->error_code = 414;
             $this->error = $result;
