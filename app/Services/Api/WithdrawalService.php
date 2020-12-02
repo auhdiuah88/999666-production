@@ -223,7 +223,7 @@ class WithdrawalService extends PayService
     public function withdrawalCallback($request)
     {
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback', $request->all());
+//        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback', $request->all());
 
 //        if ($request->rtn_code <> 'success') {
 //            $this->_msg = '参数错误';
