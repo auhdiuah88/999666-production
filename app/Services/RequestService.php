@@ -31,11 +31,14 @@ class RequestService
         return $response->json();
     }
 
-    public function postJsonData($url, $params, $headers = [])
+    public function postJsonData($url, $params, $headers = [],$respType = 'json')
     {
         $params = $this->paramsFilter($params);
         $response = Http::withHeaders($headers)->post($url, $params);
-        return $response->json();
+        if ($respType == 'json'){
+            return $response->json();
+        }
+        return $response->body();
     }
 
     public function get($url, $params = [], $headers = [])

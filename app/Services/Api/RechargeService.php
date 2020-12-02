@@ -60,9 +60,6 @@ class RechargeService extends PayService
             'time' => time(),
         ];
         $params['sign'] = self::generateSign($params);
-
-        dd($params);
-
         $res = $this->requestService->postJsonData(self::$url . '/order/place', $params);
         dd($res);
 //        if ($res['rtn_code'] <> 1000) {
