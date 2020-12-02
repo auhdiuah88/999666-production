@@ -9,6 +9,7 @@ use App\Repositories\Api\WithdrawalRepository;
 use App\Services\BaseService;
 use App\Services\PayService;
 use App\Services\RequestService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class WithdrawalService extends PayService
@@ -90,7 +91,7 @@ class WithdrawalService extends PayService
      *
      * UPI就是把之前转账时所需要填写的繁琐信息直接整合成一个字符串ID，不用再输入银行卡号等。这个UPI ID可以是一个人的名字，身份证号，手机号，邮箱，任意字符串等。
      */
-    public function withdrawalOrder($request, $mode = 'bank')
+    public function withdrawalOrder(Request $request, $mode = 'bank')
     {
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->UserRepository->findByIdUser($user_id);
@@ -109,62 +110,72 @@ class WithdrawalService extends PayService
             $bank_number = $user_bank->bank_num;
             $ifsc_code = $user_bank->ifsc_code;
             $upi_id = 'xxxx';
+            $type = 1;
         } else if ($mode == 'upi') {
             $account_holder = 'xxxx';
             $bank_name = 'xxxx';
             $bank_number = 'xxxx';
             $ifsc_code = 'xxxx';
             $upi_id = $request->upi_id;
+            $type = 2;
         } else {
             $this->_msg = '不支持的方式';
             return false;
         }
         $order_no = $this->onlyosn();
         $params = [
-            'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'bank_number' => $bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'ifsc_code' => $ifsc_code, // IFSC编号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'type' => $type,    // 1 银行卡 2 Paytm 3代付
+            'mch_id' => self::$merchantID,
+            'order_sn' => $order_no,
             'money' => $money,
-            'notify_url' => url('api/withdrawal_callback'), // 回调url，用来接收订单支付结果
-            'out_trade_no' => $order_no,
-            'shop_id' => self::$merchantID,
-            'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
+            'goods_desc' => '提现',
+            'client_ip' => $request->ip(),
+            'notify_url' => url('api/withdrawal_callback'),
+            'time' => time(),
+            'bank_type_name' => $bank_name,  // 收款银行（类型为1不可空，长度0-200）
+            'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
+            'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
+            'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
+            'nation' => 'India',    // 国家 (类型为1不可空,长度0-200)
+
+            'paytm_account' => $upi_id, // Paytm账号 (类型为2不可空,长度0-200)
+            'bank_tel' => '',  // 收款手机号 （类型为3不可空，长度0-20）
+            'bank_email' => ''  // 收款邮箱（类型为3不可空，长度0-100）
+
         ];
         $params['sign'] = self::generateSign($params);
-        $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
+
+        $res = $this->requestService->postJsonData(self::$url . '/order/cashout', $params);
+
+        dd($res);
+
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
             return false;
         }
-        $this->WithdrawalRepository->addWithdrawalLog($user, $money, $order_no, $res['pltf_order_no'], $params['upi_id'],
-            $params['account_holder'], $params['bank_number'], $params['bank_name'], $params['ifsc_code'], $params['sign']);
+        $pltf_order_no = '';
+        $this->WithdrawalRepository->addWithdrawalLog($user, $money, $order_no, $pltf_order_no,$upi_id,
+            $account_holder, $bank_number, $bank_name, $ifsc_code, $params['sign']);
         return $res;
     }
 
     /**
      *  出金订单回调
+     *
+    请求参数	参数名	数据类型	可空	说明
+    商户单号	sh_order	string	否	商户系统的业务单号
+    平台单号	pt_order	string	否	支付平台的订单号
+    订单金额	money	float	否	与支付提交的金额一致
+    支付完成时间	time	int	否	系统时间戳UTC秒/毫秒（10/13位））
+    订单状态	state	int	否	订单状态
+    0已提交       1已接单
+    2超时补单     3订单失败
+    4交易完成     5未接单
+    商品描述	    goods_desc	string	否	订单描述或备注信息
+    签名	sign	string	否	见签名算法
      */
     public function withdrawalCallback($request)
     {
-        /**
-         * "money": "2000",
-         * "out_trade_no": "1912968483419341DA",
-         * "pltf_order_id": "17800000000000297866",
-         * "rtn_code": "success",
-         * "sign": "f6c45be47606e0d84b20dbfb42b64e82"
-         */
-
-        /**
-         * {
-         * "money": "54.36",
-         * "out_trade_no": "202011281743443450333436",
-         * "pltf_order_id": "2559202011281743444014",
-         * "rtn_code": "success",
-         * "sign": "2463f17f8400c0416d0dd86c28208508"
-         * }
-         */
-
         if ($request->rtn_code <> 'success') {
             $this->_msg = '参数错误';
             return false;
@@ -178,7 +189,6 @@ class WithdrawalService extends PayService
 //            $this->_msg = '签名错误';
 //            return false;
 //        }
-
 //        $money = $request->money;
         $where = [
             'order_no' => $request->out_trade_no,
@@ -198,7 +208,6 @@ class WithdrawalService extends PayService
         }
 
         $money = $withdrawlLog->money;
-
         DB::beginTransaction();
         try {
             $user = $this->UserRepository->findByIdUser($withdrawlLog->user_id);
@@ -220,7 +229,7 @@ class WithdrawalService extends PayService
     }
 
     /**
-     * 出金订单查询
+     * 提现查询
      *
      * 商户可以主动查询出金订单状态
      * 建议商户在接收到异步通知后，主动查询一次订单状态和通知状态对比。不建议采用轮询方式过于频繁的执行查询请求
@@ -228,9 +237,11 @@ class WithdrawalService extends PayService
     public function withdrawalQuery($order_no)
     {
         $params = [
-            "out_trade_no" => $order_no,
-            "shop_id" => self::$merchantID
+            "mch_id" => self::$merchantID,
+            "out_order_sn" => $order_no,
+            "time" => time(),
         ];
+        $params['sign'] = self::generateSign($params);
         return $this->requestService->postJsonData(self::$url . '/withdrawalQuery', $params);
     }
 }

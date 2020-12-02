@@ -29,7 +29,7 @@ class RechargeController extends Controller
     {
         $rules = [
             "money" => "required|integer",
-            "pay_type" => "required",   // 充值方式
+            "pay_type" => "required",       // 充值方式
         ];
         $validator = Validator::make($request->post(), $rules);
         if ($validator->fails()) {

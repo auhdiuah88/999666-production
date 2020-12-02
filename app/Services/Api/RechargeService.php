@@ -13,6 +13,7 @@ use App\Services\Library\Netease\SMS;
 use App\Services\Library\Upload;
 use App\Services\PayService;
 use App\Services\RequestService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class RechargeService extends PayService
@@ -36,81 +37,135 @@ class RechargeService extends PayService
     }
 
     /**
-     * 充值请求生成充值订单-二维码
+     * 充值下单接口-通用
+     * POST方式
      */
-    public function rechargeOrder($request)
+    public function rechargeOrder(Request $request)
     {
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->userRepository->findByIdUser($user_id);
         $pay_type = $request->pay_type;
         $money = $request->money;
         $order_no = $this->onlyosn();
+        $pay_type = 1;
         $params = [
-            'api_name' => 'quickpay.all.native',
+            'mch_id' => self::$merchantID,
+            'ptype' => $pay_type,       // Paytm支付：1     银行卡：3
+            'order_sn' => $order_no,
             'money' => $money,
+            'goods_desc' => '充值',
+            'client_ip' => $request->ip(),
+            'format' => 'https://www.baidu.com',
             'notify_url' => url('api/recharge_callback'),
-            'order_des' => '支付充值',
-            'out_trade_no' => $order_no,
-            'shop_id' => self::$merchantID,
+            'time' => time(),
         ];
         $params['sign'] = self::generateSign($params);
-
-        $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
-        if ($res['rtn_code'] <> 1000) {
-            $this->_msg = $res['rtn_msg'];
-            $this->_data = $res;
-            return false;
-        }
+        $res = $this->requestService->postJsonData(self::$url . '/order/place', $params);
+        dd($res);
+//        if ($res['rtn_code'] <> 1000) {
+//            $this->_msg = $res['rtn_msg'];
+//            $this->_data = $res;
+//            return false;
+//        }
         $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $res['pltf_order_id'], $res['native_url'],
             $res['verify_money'], $res['match_code'], $params['sign']);
         return $res;
     }
 
+    /***
+     * 充值下单接口-JSON封装请求
+     * GET方式
+     */
+    public function rechargeOrder2(Request $request)
+    {
+        $user_id = $this->getUserId($request->header("token"));
+        $user = $this->userRepository->findByIdUser($user_id);
+        $pay_type = $request->pay_type;
+        $money = $request->money;
+        $order_no = $this->onlyosn();
+        $pay_type = 1;
+        $params = [
+            'mch_id' => self::$merchantID,
+            'ptype' => $pay_type,
+            'order_sn' => $order_no,
+            'money' => $money,
+            'goods_desc' => '充值',
+            'client_ip' => $request->ip(),
+            'format' => 'https://www.baidu.com',
+            'notify_url' => url('api/recharge_callback'),
+            'time' => time(),
+        ];
+        $params['sign'] = self::generateSign($params);
+        $params = urlencode(json_encode($params));
+        $res = $this->requestService->get(self::$url . '/order/getUrl?json='.$params);
+        dd($res);
+        if ($res['rtn_code'] <> 1000) {
+            $this->_msg = $res['rtn_msg'];
+            $this->_data = $res;
+            return false;
+        }
+        $pltf_order_id = '123456';
+        $native_url = '';
+//        $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $pltf_order_id, $native_url,
+//            $res['verify_money'], $res['match_code'], $params['sign']);
+        $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type);
+        return $res;
+    }
+
+    /**
+     * 充值下单接口-跳转选择支付类型页面
+     */
+    public function rechargeTypeSelect(Request $request){
+        $money = $request->money;
+        $order_no = $this->onlyosn();
+        $params = [
+            'mch_id' => self::$merchantID,
+            'order_sn' => $order_no,
+            'money' => $money,
+            'goods_desc' => '充值',
+            'client_ip' => $request->ip(),
+            'format' => 'https://www.baidu.com',
+            'notify_url' => url('api/recharge_callback'),
+            'time' => time(),
+        ];
+        $params['sign'] = self::generateSign($params);
+        $res = $this->requestService->postJsonData(self::$url . '/order/placeForIndex',$params);
+        dd($res);
+    }
+
     /**
      * 充值订单查询
-     *
-     * 建议商户在接收到异步通知后，主动查询一次订单状态和通知状态对比。不建议采用轮询方式过于频繁的执行查询请求
      */
-    public function orderQuery($order_no, $pltf_order_id)
+    public function orderQuery($order_no,$pltf_order_id = '')
     {
         $params = [
-            'out_trade_no' => $order_no,
-            'pltf_order_id' => $pltf_order_id,
+            'mch_id' => self::$merchantID,
+            'out_order_sn' => $order_no,
+            'time' => time(),
         ];
-        return $this->requestService->postJsonData(self::$url . '/orderQuery', $params);
-        /**  {
-         * rtn_code: 1000,
-         * rtn_msg: "查询成功",
-         * api_name: "quickpay.all.native",
-         * shop_id: 10175,
-         * out_trade_no: "202011241459256363921725",
-         * pltf_order_id: "6696202011241459266672",
-         * money: "200.00",
-         * pay_status: 2,
-         * confirm_status: 0,
-         * order_des: "支付充值"
-         * }
-         */
+        $params['sign'] = self::generateSign($params);
+        return $this->requestService->postJsonData(self::$url . '/order/query', $params);
     }
 
     /**
      *  充值回调
+     *
+     * 请求参数	参数名	数据类型	可空	说明
+        商户单号	sh_order	string	否	商户系统的业务单号
+        平台单号	pt_order	string	否	支付平台的订单号
+        订单金额	 money	float	否	与支付提交的金额一致
+        支付完成时间	time	int	否	系统时间戳UTC秒（10位）
+        订单状态	state	int	否	订单状态
+        0 已提交       1 已接单
+        2 超时补单     3 订单失败
+        4 交易完成     5 未接单
+        商品描述	goods_desc	string	否	订单描述或备注信息
+        签名	    sign	string	否	见签名算法
+     *
+     * 收到回调处理完业务之后请输出固定的 success
      */
     public function rechargeCallback($request)
     {
-        /**
-        {
-            "api_name": "quickpay.all.native.callback",
-            "money": "1000.00",
-            "order_des": "支付充值",
-            "out_trade_no": "202011281705253715973623",
-            "pay_result": "success",
-            "pltf_order_id": "2618202011281705264062",
-            "shop_id": 10120,
-            "sign": "9583e721c90d7b86e68b676a81219f4d"
-        }
-         */
-
         // 验证参数
         if ($request->shop_id <> self::$merchantID
             || $request->api_name <> 'quickpay.all.native.callback'
@@ -119,16 +174,6 @@ class RechargeService extends PayService
             $this->_msg = '参数错误';
             return false;
         }
-
-        // 验证签名
-//        $params = $request->post();
-//        $sign = $params['sign'];
-//        unset($params['sign']);
-//        if (PayService::generateSign($params) <> $sign){
-//            $this->_msg = '签名错误';
-//            return false;
-//        }
-
         // 充值成功
         $money = $request->money;
         $where = [

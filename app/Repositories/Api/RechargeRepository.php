@@ -45,13 +45,12 @@ class RechargeRepository
             'pay_company' => '',
             'pay_type' => $pay_type,
 //            'msg' => $msg,
-
-            'sign' => $sign,
             'pltf_order_id' => $pltf_order_id,
             'native_url' => $native_url,
             'verify_money' => $verify_money,
             'match_code' => $match_code,
             'expire' => 600,
+            'sign' => $sign,
         ];
         $this->cx_User_Recharge_Log->insert($data);
     }

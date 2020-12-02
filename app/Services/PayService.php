@@ -6,19 +6,20 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Crypt;
 
+/**
+ *
+ */
 class PayService extends BaseService
 {
-    protected static $url = 'http://ipay-in.yynn.me';
+//    protected static $url = 'http://ipay-in.yynn.me';
+    protected static $url = 'http://payqqqbank.payto89.com';
 
     // 正式环境
     protected static $merchantID = 10175;
-    protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
-
-//    protected static $merchantID = 10120;
-//    protected static $secretkey = 'j3phc11lg986dx3tkai120ngpxy7a2sw';
+    protected static $secretkey = '4e70f59ec59149a6b81d26aafed8f6fb';
 
     /**
-     * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
+     * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
     public static function generateSign(array $params)
     {
@@ -28,7 +29,8 @@ class PayService extends BaseService
             $string[] = $key . '=' . $value;
         }
 //        $sign = strtolower(implode('&', $string)) . self::$secretkey;
-        $sign = (implode('&', $string)) . self::$secretkey;
+//        $sign = (implode('&', $string)) . self::$secretkey;
+        $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
         return md5($sign);
     }
 
