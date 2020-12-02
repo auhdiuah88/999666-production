@@ -66,3 +66,11 @@ location /admin/ {
         break;
     }
  }
+ 
+ add_header 'Access-Control-Allow-Origin' '*';
+ 
+ add_header 'Access-Control-Allow-Origin' '*' always;
+ add_header 'Access-Control-Allow-Credentials' 'true';
+ add_header 'Access-Control-Allow-Methods' 'GET, POST, PATCH, DELETE, PUT, OPTIONS';
+ add_header 'Access-Control-Allow-Headers' 'did,Language,dtype,DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,  Access-Control-Expose-Headers, token, Authorization';
+ add_header 'Access-Control-Max-Age' 1728000;
