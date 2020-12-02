@@ -36,11 +36,54 @@ class RechargeService extends PayService
         $this->requestService = $requestService;
     }
 
+    public function test($ip){
+        $order_no =  $this->onlyosn();
+        $money = 20000;
+        $params = [
+            'mch_id' => self::$merchantID,
+            'ptype' => 1,                   // Paytm支付：1     银行卡：3
+            'order_sn' => $order_no,
+            'money' => $money,
+            'goods_desc' => '充值',
+            'client_ip' => $ip,
+            'format' => 'https://www.baidu.com',
+            'notify_url' => url('api/recharge_callback'),
+            'time' => time(),
+        ];
+        $params['sign'] = self::generateSign($params);
+
+        $res = $this->requestService->postFormData(self::$url . '/order/place', $params,[],'body');
+        // 写入文件
+        $path = public_path('a.html');
+        file_put_contents($path,$res);
+
+        return $res;
+}
+    public function test2($ip){
+        $order_no =  $this->onlyosn();
+        $money = 20000;
+        $params = [
+            'mch_id' => self::$merchantID,
+            'ptype' => 1,
+            'order_sn' => $order_no,
+            'money' => $money,
+            'goods_desc' => '充值',
+            'client_ip' => $ip,
+            'format' => 'page',
+            'notify_url' => url('api/recharge_callback'),
+            'time' => time(),
+        ];
+        $params['sign'] = self::generateSign($params);
+        $params = urlencode(json_encode($params));
+        $res = $this->requestService->get(self::$url . '/order/getUrl?json='.$params);
+        return $res;
+    }
+
     /**
      * 充值下单接口-通用
-     * POST方式
+     * POST方式  返回html源码
      */
-    public function rechargeOrder(Request $request)
+    public function rechargeOrderHtml(Request $request)
     {
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->userRepository->findByIdUser($user_id);
@@ -60,26 +103,20 @@ class RechargeService extends PayService
             'time' => time(),
         ];
         $params['sign'] = self::generateSign($params);
-        $res = $this->requestService->postJsonData(self::$url . '/order/place', $params,'body');
-        dd($res);
-//        if ($res['rtn_code'] <> 1000) {
-//            $this->_msg = $res['rtn_msg'];
-//            $this->_data = $res;
-//            return false;
-//        }
-        $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $res['pltf_order_id'], $res['native_url'],
-            $res['verify_money'], $res['match_code'], $params['sign']);
+        $res = $this->requestService->postJsonData(self::$url . '/order/place', $params,[],'body');
+        $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type);
         return $res;
     }
 
     /***
      * 充值下单接口-JSON封装请求
-     * GET方式
+     * GET方式  返回支付URL链接
      */
-    public function rechargeOrder2(Request $request)
+    public function rechargeOrder(Request $request)
     {
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->userRepository->findByIdUser($user_id);
+
         $pay_type = $request->pay_type;
         $money = $request->money;
         $order_no = $this->onlyosn();
@@ -91,25 +128,27 @@ class RechargeService extends PayService
             'money' => $money,
             'goods_desc' => '充值',
             'client_ip' => $request->ip(),
-            'format' => 'https://www.baidu.com',
+            'format' => 'page',
             'notify_url' => url('api/recharge_callback'),
             'time' => time(),
         ];
+
         $params['sign'] = self::generateSign($params);
         $params = urlencode(json_encode($params));
         $res = $this->requestService->get(self::$url . '/order/getUrl?json='.$params);
-        dd($res);
-        if ($res['rtn_code'] <> 1000) {
-            $this->_msg = $res['rtn_msg'];
+
+        if ($res['code'] <> 1) {
+            $this->_msg = $res['msg'];
             $this->_data = $res;
             return false;
         }
-        $pltf_order_id = '123456';
-        $native_url = '';
-//        $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $pltf_order_id, $native_url,
-//            $res['verify_money'], $res['match_code'], $params['sign']);
         $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type);
-        return $res;
+        $resData = [
+            'native_url' => $res['data']['url'],
+            'out_trade_no' => $order_no,
+            'mch_id' => self::$merchantID,
+        ];
+        return $resData;
     }
 
     /**

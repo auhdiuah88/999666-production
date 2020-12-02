@@ -16,6 +16,7 @@ class RequestService
     {
         return $this->header;
     }
+
     /**
      * @param array $header
      */
@@ -24,29 +25,35 @@ class RequestService
         $this->header = $header;
     }
 
-    public function postFormData($url, $params, $headers = [])
+    public function postFormData($url, $params, $headers = [], $respType = 'json')
     {
         $params = $this->paramsFilter($params);
         $response = Http::withHeaders($headers)->asForm()->post($url, $params);
-        return $response->json();
-    }
-
-    public function postJsonData($url, $params, $headers = [],$respType = 'json')
-    {
-        $params = $this->paramsFilter($params);
-        $response = Http::withHeaders($headers)->post($url, $params);
-        if ($respType == 'json'){
+        if ($respType == 'json') {
             return $response->json();
         }
         return $response->body();
     }
 
-    public function get($url, $params = [], $headers = [])
+    public function postJsonData($url, $params, $headers = [], $respType = 'json')
+    {
+        $params = $this->paramsFilter($params);
+        $response = Http::withHeaders($headers)->post($url, $params);
+        if ($respType == 'json') {
+            return $response->json();
+        }
+        return $response->body();
+    }
+
+    public function get($url, $params = [], $headers = [], $respType = 'json')
     {
         $params = $this->paramsFilter($params);
         $params = http_build_query($params);
-        $url = $params? $url.'?'.$params: $url;
+        $url = $params ? $url . '?' . $params : $url;
         $response = Http::withHeaders($headers)->get($url);
+        if ($respType == 'json') {
+            return $response->json();
+        }
         return $response->body();
     }
 

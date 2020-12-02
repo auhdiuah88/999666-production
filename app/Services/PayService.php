@@ -28,8 +28,6 @@ class PayService extends BaseService
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-//        $sign = strtolower(implode('&', $string)) . self::$secretkey;
-//        $sign = (implode('&', $string)) . self::$secretkey;
         $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
         return md5($sign);
     }
@@ -37,7 +35,7 @@ class PayService extends BaseService
     /**
      * 生成订单号
      */
-    protected function onlyosn()
+    public function onlyosn()
     {
         @date_default_timezone_set("Asia/Shanghai");
         $order_id_main = date('YmdHis') . rand(10000000, 99999999);

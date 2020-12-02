@@ -66,6 +66,20 @@ location /admin/ {
         break;
     }
  }
+ #  rewrite ^.+api/?(.*)$ /$1 break;
+ 
+ location /admin {    
+        rewrite ^/admin/(.*)$   /admin/$1 break;
+        include uwsgi_params; 
+        proxy_pass http://api.999666.in; 
+ }
+ 
+ location /admin/ {
+ 		#proxy_set_header X-Real-IP $remote_addr;
+ 		#proxy_set_header REMOTE-HOST $remote_addr;
+ 		#proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+ 		proxy_pass    http://api.999666.in;  
+ }
  
  add_header 'Access-Control-Allow-Origin' '*';
  
@@ -74,3 +88,22 @@ location /admin/ {
  add_header 'Access-Control-Allow-Methods' 'GET, POST, PATCH, DELETE, PUT, OPTIONS';
  add_header 'Access-Control-Allow-Headers' 'did,Language,dtype,DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,  Access-Control-Expose-Headers, token, Authorization';
  add_header 'Access-Control-Max-Age' 1728000;
+ 
+ 
+ location /admin {    
+         rewrite ^/admin/(.*)$   /admin/$1 break;
+         include uwsgi_params; 
+         proxy_pass http://api.999666.in; 
+ }
+ 
+ rewrite ^.+admin/(.*)$ /$1 break;
+ location /admin {
+     include uwsgi_params;
+     proxy_pass http://api.999666.in/admin;
+ }
+ 
+ location /bpi {
+     rewrite ^.+bpi/?(.*)$ /$1 break;
+     include uwsgi_params;
+     proxy_pass https://cdnopenapialifc.agaege.com/;
+ }
