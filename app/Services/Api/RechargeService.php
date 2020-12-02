@@ -114,6 +114,8 @@ class RechargeService extends PayService
      */
     public function rechargeOrder(Request $request)
     {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', $request->all());
+
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->userRepository->findByIdUser($user_id);
 
