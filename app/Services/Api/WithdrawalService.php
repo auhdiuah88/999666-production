@@ -230,18 +230,24 @@ class WithdrawalService extends PayService
 //            return false;
 //        }
 
+        if ($request->state <> 4) {
+            $this->_msg = '交易未完成';
+            return false;
+        }
+
         // 验证签名
-//        $params = $request->post();
-//        $sign = $params['sign'];
-//        unset($params['sign']);
-//        if (PayService::generateSign($params) <> $sign){
-//            $this->_msg = '签名错误';
-//            return false;
-//        }
+        $params = $request->post();
+        $sign = $params['sign'];
+        unset($params['sign']);
+        if (PayService::generateSign($params) <> $sign) {
+            $this->_msg = '签名错误';
+            return false;
+        }
+
 //        $money = $request->money;
         $where = [
             'order_no' => $request->sh_order,
-            'pltf_order_no' => $request->pltf_order_id,
+//            'pltf_order_no' => $request->pltf_order_id,
 //            'money' => $money
         ];
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
