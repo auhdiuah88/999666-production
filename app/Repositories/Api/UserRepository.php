@@ -138,7 +138,7 @@ class UserRepository
             "time" => time(),
             "msg" => $msg,
             "money" => abs($money),
-            "is_first_recharge" => $user->is_first_recharge,
+            "is_first_recharge" => $user->is_first_recharge == 1?1:0,
         ];
         return $this->Cx_User_Balance_Logs->insert($data);
     }
