@@ -133,6 +133,7 @@ class WithdrawalService extends PayService
         $bank_id = $request->bank_id;
 
         $onlyParams = [];  // 各个支付独有的参数
+        $upi_id = '';
         if ($mode == 'bank') {
             $user_bank = $this->UserRepository->getBankByBankId($bank_id);
             if ($user_bank->user_id <> $user_id) {
