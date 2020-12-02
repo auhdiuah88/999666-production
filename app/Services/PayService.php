@@ -15,7 +15,7 @@ class PayService extends BaseService
     protected static $url = 'http://payqqqbank.payto89.com';
 
     // 正式环境
-    protected static $merchantID = 10175;
+    protected static $merchantID = 262593573;
     protected static $secretkey = '4e70f59ec59149a6b81d26aafed8f6fb';
 
     /**

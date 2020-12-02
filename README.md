@@ -59,3 +59,10 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+location /admin/ {
+    if (!-e $request_filename) {
+        rewrite ^/admin/(.*)$ https://api.999666.in/admin/$1 last;
+        break;
+    }
+ }
