@@ -137,7 +137,7 @@ class UserRepository
             "wc_balance" => $wc_balance,
             "time" => time(),
             "msg" => $msg,
-            "money" => $money,
+            "money" => abs($money),
             "is_first_recharge" => $user->is_first_recharge,
         ];
         return $this->Cx_User_Balance_Logs->insert($data);

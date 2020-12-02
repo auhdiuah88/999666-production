@@ -29,6 +29,8 @@ class TestController extends Controller
 //       $order_no = '202012021647087553622134';
 //       $res =  $rechargeService->test2($order_no);
 //        return $res;
+        $money = -384384;
+        dd(abs($money));
 
         $request->bank_id = 29;
         $request->money = 100;
