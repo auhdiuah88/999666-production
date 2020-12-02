@@ -84,6 +84,39 @@ class WithdrawalService extends PayService
     }
 
 
+    public function testTix(Request $request, $mode = 'bank') {
+        $money = $request->money;
+        $bank_id = $request->bank_id;
+
+        if ($mode == 'bank') {
+            $user_bank = $this->UserRepository->getBankByBankId($bank_id);
+            $account_holder = $user_bank->account_holder;
+            $bank_name = $user_bank->bank_type_id;
+            $bank_number = $user_bank->bank_num;
+            $ifsc_code = $user_bank->ifsc_code;
+            $type = 1;
+        }
+        $order_no = $this->onlyosn();
+        $params = [
+            'type' => $type,    // 1 银行卡 2 Paytm 3代付
+            'mch_id' => self::$merchantID,
+            'order_sn' => $order_no,
+            'money' => $money,
+            'goods_desc' => '提现',
+            'client_ip' => $request->ip(),
+            'notify_url' => url('api/withdrawal_callback'),
+            'time' => time(),
+            'bank_type_name' => $bank_name,  // 收款银行（类型为1不可空，长度0-200）
+            'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
+            'bank_card' => $bank_number.'388385483848348',   // 收款卡号（类型为1,3不可空，长度9-26
+            'ifsc' => $ifsc_code.'388385483848',   // ifsc代码 （类型为1,3不可空，长度9-26）
+            'nation' => 'India',    // 国家 (类型为1不可空,长度0-200)
+        ];
+        $params['sign'] = self::generateSign($params);
+        $res = $this->requestService->postFormData(self::$url_cashout . '/order/cashout', $params);
+        return $res;
+    }
+
     /**
      * 请求出金订单 (提款)
      *
@@ -99,6 +132,7 @@ class WithdrawalService extends PayService
         $money = $request->money;
         $bank_id = $request->bank_id;
 
+        $onlyParams = [];  // 各个支付独有的参数
         if ($mode == 'bank') {
             $user_bank = $this->UserRepository->getBankByBankId($bank_id);
             if ($user_bank->user_id <> $user_id) {
@@ -109,8 +143,14 @@ class WithdrawalService extends PayService
             $bank_name = $user_bank->bank_type_id;
             $bank_number = $user_bank->bank_num;
             $ifsc_code = $user_bank->ifsc_code;
-            $upi_id = 'xxxx';
             $type = 1;
+            $onlyParams = [
+                'bank_type_name' => $bank_name,  // 收款银行（类型为1不可空，长度0-200）
+                'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
+                'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
+                'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
+                'nation' => 'India',    // 国家 (类型为1不可空,长度0-200)
+            ];
         } else if ($mode == 'upi') {
             $account_holder = 'xxxx';
             $bank_name = 'xxxx';
@@ -118,10 +158,20 @@ class WithdrawalService extends PayService
             $ifsc_code = 'xxxx';
             $upi_id = $request->upi_id;
             $type = 2;
-        } else {
+            $onlyParams = [
+                'paytm_account', $upi_id   // Paytm账号 (类型为2不可空,长度0-200)
+            ];
+        } else if ($mode == 'dai'){
+            $type = 3;
+            $onlyParams = [
+                'bank_tel' => '',  // 收款手机号 （类型为3不可空，长度0-20）
+                'bank_email' => ''  // 收款邮箱（类型为3不可空，长度0-100)
+            ];
+        }  else {
             $this->_msg = '不支持的方式';
             return false;
         }
+
         $order_no = $this->onlyosn();
         $params = [
             'type' => $type,    // 1 银行卡 2 Paytm 3代付
@@ -132,25 +182,13 @@ class WithdrawalService extends PayService
             'client_ip' => $request->ip(),
             'notify_url' => url('api/withdrawal_callback'),
             'time' => time(),
-            'bank_type_name' => $bank_name,  // 收款银行（类型为1不可空，长度0-200）
-            'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
-            'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
-            'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
-            'nation' => 'India',    // 国家 (类型为1不可空,长度0-200)
-
-            'paytm_account' => $upi_id, // Paytm账号 (类型为2不可空,长度0-200)
-            'bank_tel' => '',  // 收款手机号 （类型为3不可空，长度0-20）
-            'bank_email' => ''  // 收款邮箱（类型为3不可空，长度0-100）
-
         ];
+        $params = array_merge($params, $onlyParams);
         $params['sign'] = self::generateSign($params);
 
-        $res = $this->requestService->postJsonData(self::$url . '/order/cashout', $params);
-
-        dd($res);
-
-        if ($res['rtn_code'] <> 1000) {
-            $this->_msg = $res['rtn_msg'];
+        $res = $this->requestService->postFormData(self::$url_cashout . '/order/cashout', $params);
+        if ($res['code'] <> 1) {
+            $this->_msg = $res['msg'];
             return false;
         }
         $pltf_order_no = '';
@@ -177,12 +215,12 @@ class WithdrawalService extends PayService
     public function withdrawalCallback($request)
     {
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', $request->all());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback', $request->all());
 
-        if ($request->rtn_code <> 'success') {
-            $this->_msg = '参数错误';
-            return false;
-        }
+//        if ($request->rtn_code <> 'success') {
+//            $this->_msg = '参数错误';
+//            return false;
+//        }
 
         // 验证签名
 //        $params = $request->post();

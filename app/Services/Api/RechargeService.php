@@ -227,11 +227,23 @@ class RechargeService extends PayService
 //            $this->_msg = '参数错误';
 //            return false;
 //        }
+
+        /**
+             {
+                "money": "600.000000",
+                "pt_order": "CS202012027806900907909",
+                "sign": "fccb49f152389993cda616d63951ce2f",
+                "sh_order": "202012021721455575793327",
+                "time": "1606901066",
+                "state": "4",
+                "goods_desc": "充值"
+            }
+         */
+
         if ($request->state <> 4) {
             $this->_msg = '交易未完成';
             return false;
         }
-
         // 验证签名
         $params = $request->post();
         $sign = $params['sign'];
@@ -246,7 +258,7 @@ class RechargeService extends PayService
         $where = [
             'order_no' => $request->sh_order,
 //            'pltf_order_id' => $request->pltf_order_id,
-            'money' => $money
+//            'money' => $money
         ];
         $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
         if (!$rechargeLog) {

@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Crypt;
 class PayService extends BaseService
 {
 //    protected static $url = 'http://ipay-in.yynn.me';
-    protected static $url = 'http://payqqqbank.payto89.com';
+    protected static $url = 'http://payqqqbank.payto89.com';  // 支付网关
+
+    protected static $url_cashout = 'http://tqqqbank.payto89.com:82'; // 提现网关
 
     // 正式环境
     protected static $merchantID = 262593573;
