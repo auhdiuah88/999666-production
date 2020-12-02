@@ -51,7 +51,7 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/recharge", "RechargeController@recharge");        //  用户充值-得到充值链接
         Route::post("/rechargelog", "RechargeController@rechargeLog");  //  充值记录
         Route::post("/recommend", "AgentController@getAgentInformation"); // 查询代理
-        Route::post("/withdrawal", "WithdrawalController@withdrawalByBank");        //  申请paytm银行卡提现-请求出金订单
+        Route::post("/withdrawal", "WithdrawalController@withdrawalBydai");        //  申请代付提现-请求出金订单
         Route::post("/withdrawalbyupi", "WithdrawalController@withdrawalByUpiID");  //  申请paytm-upi_id提现-请求出金订单
         Route::post("/extension", "AgentController@getExtensionUser");    // 促销记录
     });

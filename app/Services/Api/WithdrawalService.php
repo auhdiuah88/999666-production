@@ -134,16 +134,20 @@ class WithdrawalService extends PayService
 
         $onlyParams = [];  // 各个支付独有的参数
         $upi_id = '';
+
+        $user_bank = $this->UserRepository->getBankByBankId($bank_id);
+        if ($user_bank->user_id <> $user_id) {
+            $this->_msg = '银行卡不匹配';
+            return false;
+        }
+        $account_holder = $user_bank->account_holder;
+        $bank_name = $user_bank->bank_type_id;
+        $bank_number = $user_bank->bank_num;
+        $ifsc_code = $user_bank->ifsc_code;
+        $phone = $user_bank->phone;
+        $mail = $user_bank->mail;
+
         if ($mode == 'bank') {
-            $user_bank = $this->UserRepository->getBankByBankId($bank_id);
-            if ($user_bank->user_id <> $user_id) {
-                $this->_msg = '银行卡不匹配';
-                return false;
-            }
-            $account_holder = $user_bank->account_holder;
-            $bank_name = $user_bank->bank_type_id;
-            $bank_number = $user_bank->bank_num;
-            $ifsc_code = $user_bank->ifsc_code;
             $type = 1;
             $onlyParams = [
                 'bank_type_name' => $bank_name,  // 收款银行（类型为1不可空，长度0-200）
@@ -151,6 +155,15 @@ class WithdrawalService extends PayService
                 'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
                 'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
                 'nation' => 'India',    // 国家 (类型为1不可空,长度0-200)
+            ];
+        } else if ($mode == 'dai') {
+            $type = 3;
+            $onlyParams = [
+                'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
+                'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
+                'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
+                'bank_tel' => $phone,   // 收款手机号（类型为3不可空，长度0-20）
+                'bank_email' => $mail,   // 收款邮箱（类型为3不可空，长度0-100）
             ];
         } else if ($mode == 'upi') {
             $account_holder = 'xxxx';
@@ -162,13 +175,7 @@ class WithdrawalService extends PayService
             $onlyParams = [
                 'paytm_account', $upi_id   // Paytm账号 (类型为2不可空,长度0-200)
             ];
-        } else if ($mode == 'dai'){
-            $type = 3;
-            $onlyParams = [
-                'bank_tel' => '',  // 收款手机号 （类型为3不可空，长度0-20）
-                'bank_email' => ''  // 收款邮箱（类型为3不可空，长度0-100)
-            ];
-        }  else {
+        }else {
             $this->_msg = '不支持的方式';
             return false;
         }
@@ -233,7 +240,7 @@ class WithdrawalService extends PayService
 //        }
 //        $money = $request->money;
         $where = [
-            'order_no' => $request->out_trade_no,
+            'order_no' => $request->sh_order,
             'pltf_order_no' => $request->pltf_order_id,
 //            'money' => $money
         ];

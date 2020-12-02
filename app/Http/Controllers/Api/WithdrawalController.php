@@ -140,7 +140,6 @@ class WithdrawalController extends Controller
         $rules = [
             'money' => "required",
             'bank_id' => "required",
-
 //            'account_holder' => "required",
 //            'bank_number' => "required",
 //            'bank_name' => "required",
@@ -174,6 +173,24 @@ class WithdrawalController extends Controller
         $request->bank_name = 'xxxx';
         $request->ifsc_code = 'xxxx';
         if (!$result = $this->WithdrawalService->withdrawalOrder($request,'upi')) {
+            return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
+        }
+        return $this->AppReturn(200, '用户提款-请求出金订单', $result);
+    }
+
+    /**
+     * 用户银行卡提现-请求出金订单
+     */
+    public function withdrawalBydai(Request $request) {
+        $rules = [
+            'money' => "required",
+            'bank_id' => "required",
+        ];
+        $validator = Validator::make($request->post(), $rules);
+        if ($validator->fails()) {
+            return $this->AppReturn(414, $validator->errors()->first());
+        }
+        if (!$result = $this->WithdrawalService->withdrawalOrder($request,'dai')) {
             return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
         }
         return $this->AppReturn(200, '用户提款-请求出金订单', $result);
