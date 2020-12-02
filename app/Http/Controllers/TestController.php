@@ -18,10 +18,14 @@ class TestController extends Controller
     public function test(RechargeService $rechargeService,
     Request $request
     ){
+//       $order_no = '202012021633299414236929';
+//        $order_no = '202012021633299414236929';
+//        $res =  $rechargeService->orderQuery($order_no);
+//        return $res;
 
-//       $res =  $rechargeService->test($request->ip());
-       $res =  $rechargeService->test2($request->ip());
-//        dd($res);
+       $order_no = '202012021647087553622134';
+       $res =  $rechargeService->test2($order_no);
+
         return $res;
     }
 }

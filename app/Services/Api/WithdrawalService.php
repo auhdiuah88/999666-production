@@ -176,6 +176,9 @@ class WithdrawalService extends PayService
      */
     public function withdrawalCallback($request)
     {
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', $request->all());
+
         if ($request->rtn_code <> 'success') {
             $this->_msg = '参数错误';
             return false;

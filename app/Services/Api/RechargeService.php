@@ -41,7 +41,7 @@ class RechargeService extends PayService
         $money = 20000;
         $params = [
             'mch_id' => self::$merchantID,
-            'ptype' => 1,                   // Paytm支付：1     银行卡：3
+            'ptype' => 100,                   // Paytm支付：1     银行卡：3
             'order_sn' => $order_no,
             'money' => $money,
             'goods_desc' => '充值',
@@ -61,10 +61,10 @@ class RechargeService extends PayService
 }
     public function test2($ip){
         $order_no =  $this->onlyosn();
-        $money = 20000;
+        $money = 200;
         $params = [
             'mch_id' => self::$merchantID,
-            'ptype' => 1,
+            'ptype' => 100,
             'order_sn' => $order_no,
             'money' => $money,
             'goods_desc' => '充值',
@@ -120,7 +120,12 @@ class RechargeService extends PayService
         $pay_type = $request->pay_type;
         $money = $request->money;
         $order_no = $this->onlyosn();
-        $pay_type = 1;
+        /**
+            Paytm支付：1     银行卡：3
+            UPI:100           UPI:120
+            UPI:121
+         */
+        $pay_type = 100;
         $params = [
             'mch_id' => self::$merchantID,
             'ptype' => $pay_type,
@@ -139,7 +144,11 @@ class RechargeService extends PayService
 
         if ($res['code'] <> 1) {
             $this->_msg = $res['msg'];
-            $this->_data = $res;
+            $this->_data =[
+                        'native_url' => '',
+                        'out_trade_no' => $order_no,
+                        'mch_id' => self::$merchantID,
+                    ];
             return false;
         }
         $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type);
@@ -153,6 +162,7 @@ class RechargeService extends PayService
 
     /**
      * 充值下单接口-跳转选择支付类型页面
+     * post 方式
      */
     public function rechargeTypeSelect(Request $request){
         $money = $request->money;
@@ -168,7 +178,7 @@ class RechargeService extends PayService
             'time' => time(),
         ];
         $params['sign'] = self::generateSign($params);
-        $res = $this->requestService->postJsonData(self::$url . '/order/placeForIndex',$params);
+        $res = $this->requestService->postFormData(self::$url . '/order/placeForIndex',$params);
         dd($res);
     }
 
@@ -183,18 +193,18 @@ class RechargeService extends PayService
             'time' => time(),
         ];
         $params['sign'] = self::generateSign($params);
-        return $this->requestService->postJsonData(self::$url . '/order/query', $params);
+        return $this->requestService->postFormData(self::$url . '/order/query', $params);
     }
 
     /**
      *  充值回调
      *
      * 请求参数	参数名	数据类型	可空	说明
-        商户单号	sh_order	string	否	商户系统的业务单号
-        平台单号	pt_order	string	否	支付平台的订单号
-        订单金额	 money	float	否	与支付提交的金额一致
+        商户单号	    sh_order	string	否	商户系统的业务单号
+        平台单号	    pt_order	string	否	支付平台的订单号
+        订单金额	    money	float	否	与支付提交的金额一致
         支付完成时间	time	int	否	系统时间戳UTC秒（10位）
-        订单状态	state	int	否	订单状态
+        订单状态	    state	int	否	订单状态
         0 已提交       1 已接单
         2 超时补单     3 订单失败
         4 交易完成     5 未接单
@@ -205,20 +215,36 @@ class RechargeService extends PayService
      */
     public function rechargeCallback($request)
     {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', $request->all());
+
         // 验证参数
-        if ($request->shop_id <> self::$merchantID
-            || $request->api_name <> 'quickpay.all.native.callback'
-            || $request->pay_result <> 'success'
-        ) {
-            $this->_msg = '参数错误';
+//        if ($request->shop_id <> self::$merchantID
+//            || $request->api_name <> 'quickpay.all.native.callback'
+//            || $request->pay_result <> 'success'
+//        ) {
+//            $this->_msg = '参数错误';
+//            return false;
+//        }
+        if ($request->state <> 4) {
+            $this->_msg = '交易未完成';
             return false;
         }
+
+        // 验证签名
+        $params = $request->post();
+        $sign = $params['sign'];
+        unset($params['sign']);
+        if (PayService::generateSign($params) <> $sign){
+            $this->_msg = '签名错误';
+            return false;
+        }
+
         // 充值成功
         $money = $request->money;
         $where = [
-            'order_no' => $request->out_trade_no,
-            'pltf_order_id' => $request->pltf_order_id,
-//            'money' => $money
+            'order_no' => $request->sh_order,
+//            'pltf_order_id' => $request->pltf_order_id,
+            'money' => $money
         ];
         $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
         if (!$rechargeLog) {
