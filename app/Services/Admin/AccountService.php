@@ -6,6 +6,7 @@ namespace App\Services\Admin;
 
 use App\Repositories\Admin\AccountRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\Crypt;
 
 class AccountService extends BaseService
 {
@@ -32,6 +33,7 @@ class AccountService extends BaseService
     {
         $data["is_customer_service"] = 1;
         $data["reg_time"] = time();
+        $data["password"] = Crypt::encrypt($data["password"]);
         if ($this->AccountRepository->addAccount($data)) {
             $this->_msg = "添加成功";
         } else {
@@ -42,6 +44,9 @@ class AccountService extends BaseService
 
     public function editAccount($data)
     {
+        if (array_key_exists("password", $data)) {
+            $data["password"] = Crypt::encrypt($data["password"]);
+        }
         if ($this->AccountRepository->editAccount($data)) {
             $this->_msg = "编辑成功";
         } else {
