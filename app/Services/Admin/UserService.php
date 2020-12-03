@@ -116,10 +116,14 @@ class UserService extends BaseService
 
     public function assembleData($data)
     {
-        $one = $this->UserRepository->findById($data["one_recommend_id"]);
-        $two = $this->UserRepository->findById($data["two_recommend_id"]);
-        $data["one_recommend_phone"] = $one->phone;
-        $data["two_recommend_phone"] = $two->phone;
+        if (array_key_exists("one_recommend_id", $data) && $data["one_recommend_id"]) {
+            $one = $this->UserRepository->findById($data["one_recommend_id"]);
+            $data["one_recommend_phone"] = $one->phone;
+        }
+        if (array_key_exists("two_recommend_id", $data) && $data["two_recommend_id"]) {
+            $two = $this->UserRepository->findById($data["two_recommend_id"]);
+            $data["two_recommend_phone"] = $two->phone;
+        }
         return $data;
     }
 
