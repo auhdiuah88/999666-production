@@ -97,6 +97,7 @@ class WithdrawalRepository
         $withdrawlLog->payment = $money;
         $withdrawlLog->loan_time = time();
         $withdrawlLog->approval_time = time();
+
         $withdrawlLog->save();
     }
 }
