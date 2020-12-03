@@ -7,6 +7,7 @@ namespace App\Services\Admin;
 use App\Repositories\Admin\UserRepository as Repository;
 use App\Repositories\Api\UserRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\Crypt;
 
 class UserService extends BaseService
 {
@@ -32,19 +33,39 @@ class UserService extends BaseService
 
     public function addUser($data)
     {
+        if ($this->ApiUserRepository->findByPhone($data["phone"])) {
+            $this->_code = 402;
+            $this->_msg = "账号已存在";
+            return false;
+        }
         $data["reg_time"] = time();
         $data["code"] = $this->ApiUserRepository->getcode();
+        $data["password"] = Crypt::encrypt($data["password"]);
+        if (!array_key_exists("nickname", $data)) {
+            $data["nickname"] = "用户" . md5($data["phone"]);
+        }
+        $data["reg_source_id"] = 1;
+        $data["is_login"] = 1;
+        $data["is_transaction"] = 1;
+        $data["is_recharge"] = 1;
+        $data["is_withdrawal"] = 1;
+        $data["is_withdrawal"] = 1;
         $data = $this->assembleData($data);
         if ($this->UserRepository->addUser($data)) {
             $this->_msg = "添加成功";
+            return true;
         } else {
             $this->_code = 402;
             $this->_msg = "添加失败";
+            return false;
         }
     }
 
     public function editUser($data)
     {
+        if (array_key_exists("password", $data)) {
+            $data["password"] = Crypt::encrypt($data["password"]);
+        }
         $data = $this->assembleData($data);
         if ($this->UserRepository->editUser($data)) {
             $this->_msg = "修改成功";

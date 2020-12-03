@@ -50,6 +50,11 @@ class UserRepository
         }
     }
 
+    public function findByPhone($phone)
+    {
+        return $this->Cx_User->where("phone", $phone)->first();
+    }
+
     public function CreateCode()
     {
         $code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -138,7 +143,7 @@ class UserRepository
             "time" => time(),
             "msg" => $msg,
             "money" => abs($money),
-            "is_first_recharge" => $user->is_first_recharge == 1?1:0,
+            "is_first_recharge" => $user->is_first_recharge == 1 ? 1 : 0,
         ];
         return $this->Cx_User_Balance_Logs->insert($data);
     }

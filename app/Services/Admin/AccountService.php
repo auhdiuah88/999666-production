@@ -31,6 +31,11 @@ class AccountService extends BaseService
 
     public function addAccount($data)
     {
+        if ($this->AccountRepository->findByPhone($data["phone"])) {
+            $this->_code = 402;
+            $this->_msg = "账号已存在";
+            return false;
+        }
         $data["is_customer_service"] = 1;
         $data["reg_time"] = time();
         $data["password"] = Crypt::encrypt($data["password"]);
@@ -43,11 +48,14 @@ class AccountService extends BaseService
         $data["is_recharge"] = 1;
         $data["is_withdrawal"] = 1;
         $data["is_withdrawal"] = 1;
+        $data["code"] = $this->AccountRepository->getCode();
         if ($this->AccountRepository->addAccount($data)) {
             $this->_msg = "添加成功";
+            return true;
         } else {
             $this->_code = 402;
             $this->_msg = "添加失败";
+            return false;
         }
     }
 
