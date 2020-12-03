@@ -44,12 +44,6 @@ class UserService extends BaseService
         if (!array_key_exists("nickname", $data)) {
             $data["nickname"] = "用户" . md5($data["phone"]);
         }
-        $data["reg_source_id"] = 1;
-        $data["is_login"] = 1;
-        $data["is_transaction"] = 1;
-        $data["is_recharge"] = 1;
-        $data["is_withdrawal"] = 1;
-        $data["is_withdrawal"] = 1;
         $data = $this->assembleData($data);
         if ($this->UserRepository->addUser($data)) {
             $this->_msg = "添加成功";
