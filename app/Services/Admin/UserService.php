@@ -41,7 +41,7 @@ class UserService extends BaseService
         $data["reg_time"] = time();
         $data["code"] = $this->ApiUserRepository->getcode();
         $data["password"] = Crypt::encrypt($data["password"]);
-        if (!array_key_exists("nickname", $data)) {
+        if (!array_key_exists("nickname", $data)  && !$data["nickname"]) {
             $data["nickname"] = "用户" . md5($data["phone"]);
         }
         $data = $this->assembleData($data);
