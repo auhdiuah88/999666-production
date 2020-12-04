@@ -30,7 +30,7 @@ class HomeService extends BaseService
             $timeMap = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
         }
 
-        if (array_key_exists("reg_source_id", $data) && $data["reg_source_id"]) {
+        if (array_key_exists("reg_source_id", $data)) {
             $ids = $this->HomeRepository->getRegSourceIds($data["reg_source_id"]);
         } else {
             $ids = $this->HomeRepository->getIds();
