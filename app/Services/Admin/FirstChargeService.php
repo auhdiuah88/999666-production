@@ -25,13 +25,7 @@ class FirstChargeService extends BaseService
 
     public function searchChargeLogs($data)
     {
-        if (array_key_exists("phone", $data["conditions"])) {
-            $ids = array_column($this->FirstChargeRepository->findUsers($data["conditions"]["phone"]), "id");
-            unset($data["conditions"]["phone"]);
-            unset($data["ops"]["phone"]);
-            $data["conditions"]["user_id"] = $ids;
-            $data["ops"]["user_id"] = "in";
-        }
+        $data = $this->getUserIds($data);
         $list = $this->FirstChargeRepository->searchChargeLogs($data, ($data["page"] - 1) * $data["limit"], $data["limit"]);
         $total = $this->FirstChargeRepository->countSearchChargeLogs($data);
         $this->_data = ["total" => $total, "list" => $list];
