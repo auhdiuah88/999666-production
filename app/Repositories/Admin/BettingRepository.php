@@ -9,7 +9,6 @@ use App\Models\Cx_Game_Config;
 use App\Models\Cx_Game_Play;
 use App\Models\Cx_User;
 use App\Repositories\BaseRepository;
-use Illuminate\Support\Facades\DB;
 
 class BettingRepository extends BaseRepository
 {
@@ -45,9 +44,7 @@ class BettingRepository extends BaseRepository
 
     public function searchBettingLogs($data, $offset, $limit)
     {
-        DB::connection()->enableQueryLog();
-        $this->whereCondition($data, $this->getModel())->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->toArray();
-        dd(DB::getQueryLog());
+        return $this->whereCondition($data, $this->getModel())->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countSearchBettingLogs($data)
