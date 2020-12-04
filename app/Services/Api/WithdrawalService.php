@@ -111,8 +111,7 @@ class WithdrawalService extends PayService
     }
 
     /**
-     * 代理请求提现订单 (提款)  先由后台审核，审核后由后台提交
-     *
+     * 代理请求提现订单 (提款佣金)  先由后台审核，审核后由后台提交
      */
     public function addAgentRecord(Request $request)
     {
@@ -127,7 +126,7 @@ class WithdrawalService extends PayService
     }
 
     /**
-     * 请求提现订单 (提款)  先由后台审核，审核后由后台提交
+     * 请求提现订单 (提款余额)  先由后台审核，审核后由后台提交
      */
     public function withdrawalOrder(Request $request)
     {
@@ -145,7 +144,6 @@ class WithdrawalService extends PayService
      */
     private function addWithdrawlLog(Request $request, $type = 1)
     {
-
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->UserRepository->findByIdUser($user_id);
 
@@ -163,7 +161,7 @@ class WithdrawalService extends PayService
             return false;
         }
 
-        // 0:用户提现
+        // 0:用户提现 余额提现
         if ($type == 0) {
             $system = $this->systemRepository->getSystem();
             if ((int)$system->multiple > 0) {
@@ -176,6 +174,14 @@ class WithdrawalService extends PayService
                 $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
                 return false;
             }
+            $user->balance = bcsub($user->freeze_money,$money,2);
+            $user->freeze_money = bcsub($user->freeze_money,$money,2);
+            $user->save();
+        } elseif ($type == 1) {
+            //  0:代理提现  佣金提现
+            $user->commission= bcsub($user->commission,$money);
+            $user->freeze_agent_money= bcadd($user->freeze_agent_money,$money);
+            $user->save();
         }
         $account_holder = $user_bank->account_holder;
         $bank_name = $user_bank->bank_type_id;
@@ -245,16 +251,43 @@ class WithdrawalService extends PayService
             return false;
         }
 
-        $money = $withdrawlLog->money;
+        $money = $withdrawlLog->money;      // 申请金额
+        $payment = $withdrawlLog->payment;  // 手续费之后的金额
         DB::beginTransaction();
         try {
             $user = $this->UserRepository->findByIdUser($withdrawlLog->user_id);
 
-            // 记录充值成功余额变动
-            $this->UserRepository->updateBalance($user, -$money, 3, "成功出金{$money}");
+            // 普通用户
+            if ($withdrawlLog->type == 0) {
+                // 记录充值成功余额变动
+                $dq_balance = bcadd($user->balance,$user->freeze_money,2);     // 当前余额 (总余额+冻结金额)
+                $wc_balance = bcsub($dq_balance, $money, 2);                   // 变动后余额
+                $this->UserRepository->addBalanceLog($user, $money, 3, "成功提现{$money}",$dq_balance,$wc_balance);
+
+                // 更新用户金额
+                $user->freeze_money = bcsub($user->freeze_money, $money,2); // 减掉冻结资金
+                $user->cl_withdrawal = bcadd($user->cl_withdrawal + $money,2); // 累计提现
+                $user->save();
+
+             // 代理用户
+            } elseif ($withdrawlLog->type == 1) {
+                // 记录充值成功余额变动
+                $dq_commission = bcadd($user->commission,$user->freeze_agent_money,2);     // 当前余额 (总佣金余额+冻结佣金金额)
+                $wc_commission = bcsub($dq_commission, $money, 2);                            // 变动后余额
+                $order_no = $withdrawlLog->order_no;
+                $this->UserRepository->addCommissionLogs($user, $money, $dq_commission, $wc_commission, $order_no);
+
+                // 更新用户金额
+                $user->freeze_agent_money = bcsub($user->freeze_agent_money, $money,2); // 减掉代理冻结代理资金
+                $user->cl_commission = bcadd($user->cl_commission + $money,2);
+                $user->save();
+            }
 
             // 更新充值成功记录
-            $this->WithdrawalRepository->updateWithdrawalLog($withdrawlLog, 1, 1, $money);
+//            $this->WithdrawalRepository->updateWithdrawalLog($withdrawlLog, 1, 1, $money);
+            $withdrawlLog->pay_status = 1;
+            $withdrawlLog->loan_time = time();
+            $withdrawlLog->save();
 
             DB::commit();
         } catch (\Exception $e) {
