@@ -137,9 +137,11 @@ class GameController extends Controller
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
-        $data = $this->GameService->Betting($request);
-        if ($data) {
-            return $this->AppReturn(200, '投注成功');
+        $balance = $this->GameService->Betting($request);
+        if ($balance) {
+            $data['balance']=$balance;
+            $data['msg']="投注成功";
+            return $this->AppReturn(200, $data);
         } else {
             return $this->AppReturn(413, '余额不足或不在该期允许投注时间内');
         }

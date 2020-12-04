@@ -85,9 +85,9 @@ class GameService
             return false;
         }
         //进行投注
-        if ($this->GameRepository->Betting($user_info, $data)) {
+        if ($balance=$this->GameRepository->Betting($user_info, $data)) {
             $this->CalculateRevenue($user_info, $data["money"]);
-            return true;
+            return $balance;
         }
     }
 
