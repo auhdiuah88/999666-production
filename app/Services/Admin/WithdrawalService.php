@@ -111,6 +111,7 @@ class WithdrawalService extends BaseService
 
     public function searchRecord($data)
     {
+        $data = $this->getUserIds($data, "user_id");
         $list = $this->WithdrawalRepository->searchRecord($data, ($data["page"] - 1) * $data["limit"], $data["limit"]);
         $total = $this->WithdrawalRepository->countSearchRecord($data);
         $this->_data = ["total" => $total, "list" => $list];
