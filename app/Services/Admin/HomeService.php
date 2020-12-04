@@ -35,6 +35,7 @@ class HomeService extends BaseService
         } else {
             $ids = $this->HomeRepository->getIds();
         }
+        dd($timeMap, $ids);
         $this->_data = $this->getContext($timeMap, $ids);
     }
 
