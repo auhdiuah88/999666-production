@@ -28,10 +28,7 @@ abstract class BaseService
     {
         $conditions = $data["conditions"];
         $ops = $data["ops"];
-        DB::connection()->enableQueryLog();
-        $this->getConditions($data, new Cx_User())->get("id")->toArray();
-        dd(DB::getQueryLog());
-//        $ids = array_column(, "id");
+        $ids = array_column($this->getConditions($data, new Cx_User())->get("id")->toArray(), "id");
         if (array_key_exists("phone", $conditions)) {
             unset($data["conditions"]["phone"]);
             $data["conditions"]["user_id"] = $ids;
@@ -59,6 +56,7 @@ abstract class BaseService
         }
 
         if (array_key_exists("reg_source_id", $data["conditions"])) {
+            dd($data);
             if ($data["conditions"]["reg_source_id"]) {
                 $model = $model->where(function ($query) use ($data) {
                     $query->where("reg_source_id", $data["conditions"]["reg_source_id"]);
