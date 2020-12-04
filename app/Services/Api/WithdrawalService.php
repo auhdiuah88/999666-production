@@ -22,6 +22,8 @@ class WithdrawalService extends PayService
     private $requestService;
     private $payContext;
 
+    public static $service_charge = 45;  // 手续费
+
     public function __construct(WithdrawalRepository $repository,
                                 UserRepository $userRepository,
                                 RequestService $requestService,
@@ -59,26 +61,6 @@ class WithdrawalService extends PayService
     public function getMessage($id)
     {
         $this->_data = $this->WithdrawalRepository->getMessage($id);
-    }
-
-    public function addAgentRecord($data, $token)
-    {
-        $userId = $this->getUserId($token);
-        $user = $this->UserRepository->findByIdUser($userId);
-        $data["user_id"] = $userId;
-        $data["create_time"] = time();
-        $data["type"] = 1;
-        $data["service_charge"] = 45;
-        $data["order_no"] = time() . $userId;
-        $data["phone"] = $user->phone;
-        $data["nickname"] = $user->nickname;
-        $data["payment"] = $data["money"] - 45;
-        if ($this->WithdrawalRepository->addRecord($data)) {
-            $this->_msg = "提现申请成功";
-        } else {
-            $this->_code = 402;
-            $this->_msg = "提现申请失败";
-        }
     }
 
     public function getAgentWithdrawalRecord($token)
@@ -128,52 +110,30 @@ class WithdrawalService extends PayService
     }
 
     /**
+     * 代理请求提现订单 (提款)  先由后台审核，审核后由后台提交
+     *
+     */
+    public function addAgentRecord(Request $request)
+    {
+        $request->money = $request->mony;
+        if (!$data =  $this->addWithdrawlLog($request,$type=1)){
+            return false;
+        }
+        $onlydata["service_charge"] = self::$service_charge;  // 手续费
+        $onlydata["payment"] = bcsub($data["money"] , self::$service_charge,2);
+        $data = array_merge($data, $onlydata);
+        return $this->WithdrawalRepository->addRecord($data);
+    }
+
+    /**
      * 请求提现订单 (提款)  先由后台审核，审核后由后台提交
      */
     public function withdrawalOrder(Request $request)
     {
-        $user_id = $this->getUserId($request->header("token"));
-        $user = $this->UserRepository->findByIdUser($user_id);
-        $money = $request->money;
-        $bank_id = $request->bank_id;
-
-        $system = $this->systemRepository->getSystem();
-//        $user->cl_withdrawal;   // 累计提现
-//        $user->total_recharge;  // 充值累计总金额
-//        $user->cl_betting;      // 累计下注金额
-
-        if ((int)$system->multiple > 0) {
-            if (((float)$user->total_recharge * (int)$system->multiple) < $money) {
-                $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
-                return false;
-            }
-        }
-
-        if (((float)$user->cl_betting -  $user->cl_withdrawal) < $money * (int)$system->multiple) {
-            $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
+        if (!$data =  $this->addWithdrawlLog($request,$type=0)){
             return false;
         }
-
-        $user_bank = $this->UserRepository->getBankByBankId($bank_id);
-        if ($user_bank->user_id <> $user_id) {
-            $this->_msg = 'The bank card does not match';
-            return false;
-        }
-
-        $account_holder = $user_bank->account_holder;
-        $bank_name = $user_bank->bank_type_id;
-        $bank_number = $user_bank->bank_num;
-        $ifsc_code = $user_bank->ifsc_code;
-
-        $phone = $user_bank->phone;
-        $mail = $user_bank->mail;
-
-        $pltf_order_no = '';
-        $upi_id = '';
-        $order_no = PayStrategy::onlyosn();
-
-        return  $this->WithdrawalRepository->addWithdrawalLog($user, $money, $order_no, $pltf_order_no,$upi_id,
-            $account_holder, $bank_number, $bank_name, $ifsc_code);
+        return $this->WithdrawalRepository->addRecord($data);
     }
 
     /**

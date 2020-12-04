@@ -98,19 +98,21 @@ class WithdrawalController extends Controller
             "bank_id" => "required",
             "money" => "required"
         ];
-        $massages = [
-            "bank_id.required" => "银行卡id不能为空",
-            "money.required" => "提现金额不能为空"
-        ];
-        $validator = Validator::make($data, $rules, $massages);
+        $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
-        $this->WithdrawalService->addAgentRecord($data, $request->header("token"));
-        return $this->AppReturn(
-            $this->WithdrawalService->_code,
-            $this->WithdrawalService->_msg
-        );
+        if ($this->WithdrawalService->addAgentRecord($request));
+
+        if (!$result = $this->WithdrawalService->addAgentRecord($request)) {
+            return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
+        }
+        return $this->AppReturn(200, 'ok');
+
+//        return $this->AppReturn(
+//            $this->WithdrawalService->_code,
+//            $this->WithdrawalService->_msg
+//        );
     }
 
     public function getAgentWithdrawalRecord(Request $request)
@@ -150,10 +152,10 @@ class WithdrawalController extends Controller
             return $this->AppReturn(414, $validator->errors()->first());
         }
 
-        if (!$result = $this->WithdrawalService->withdrawalOrder($request,'bank')) {
+        if (!$result = $this->WithdrawalService->withdrawalOrder($request)) {
             return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
         }
-        return $this->AppReturn(200, '用户提款-请求出金订单', $result);
+        return $this->AppReturn(200, 'ok',  new \StdClass());
     }
 
     /**

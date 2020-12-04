@@ -25,6 +25,9 @@ class WithdrawalService extends BaseService
         $this->_data = ["total" => $total, "list" => $list];
     }
 
+    /**
+     * 审核
+     */
     public function auditRecord($data)
     {
         if ($data["status"] == 1) {

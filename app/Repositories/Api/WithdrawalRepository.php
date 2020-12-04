@@ -56,29 +56,32 @@ class WithdrawalRepository
     /**
      *  添加提款记录
      */
-    public function addWithdrawalLog(object $user, $money, $order_no, $pltf_order_no, $upi_id, $account_holder, $bank_number, $bank_name, $ifsc_code, $sign='')
-    {
-        $data = [
-            'user_id' => $user->id,
-            'phone' => $user->phone,
-            'nickname' => $user->nickname,
-            'money' => $money,
-            'create_time' => time(),
-            'order_no' => $order_no,
-            'pltf_order_no' => $pltf_order_no,
-            'upi_id' => $upi_id,
-            'account_holder' => $account_holder,
-            'bank_number' => $bank_number,
-            'bank_name' => $bank_name,
-            'ifsc_code' => $ifsc_code,
-            'sign' => $sign,
-            'pay_status' => 0,
-            'type' => 0,
-            'status' => 0,
-//            'email' => $user->email,
-        ];
-        return $this->Cx_Withdrawal_Record->insert($data);
-    }
+//    public function addWithdrawalLog(object $user, $money, $order_no, $pltf_order_no, $upi_id, $account_holder, $bank_number, $bank_name, $ifsc_code, $email,$type=0)
+//    {
+//        $data = [
+//            'user_id' => $user->id,
+//            'phone' => $user->phone,
+//            'nickname' => $user->nickname,
+//            'money' => $money,
+//            'create_time' => time(),
+//            'order_no' => $order_no,
+//            'pltf_order_no' => $pltf_order_no,
+//            'upi_id' => $upi_id,
+//            'account_holder' => $account_holder,
+//            'bank_number' => $bank_number,
+//            'bank_name' => $bank_name,
+//            'ifsc_code' => $ifsc_code,
+//            'pay_status' => 0,
+//            'type' => 0,
+//            'status' => 0,
+//            'email' => $email,
+//            'type' => $type,  // 类型，0:用户提现 1:代理佣金提现
+//
+//            'service_charge'=> 45,
+//
+//        ];
+//        return $this->Cx_Withdrawal_Record->insert($data);
+//    }
 
     /**
      * 根据条件查询充值信息
