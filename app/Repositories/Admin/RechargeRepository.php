@@ -28,7 +28,6 @@ class RechargeRepository extends BaseRepository
 
     public function searchChargeLogs($data, $offset, $limit)
     {
-        dd($this->whereCondition($data, $this->Cx_User_Recharge_Logs)->toSql(), $data);
         return $this->whereCondition($data, $this->Cx_User_Recharge_Logs)->offset($offset)->limit($limit)->orderByDesc("time")->get()->toArray();
     }
 
