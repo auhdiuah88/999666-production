@@ -87,34 +87,6 @@ class WithdrawalController extends Controller
         );
     }
 
-    /**
-     * 代理申请提现接口
-     * @param Request $request
-     */
-    public function agentWithdrawal(Request $request)
-    {
-        $data = $request->post();
-        $rules = [
-            "bank_id" => "required",
-            "money" => "required"
-        ];
-        $validator = Validator::make($data, $rules);
-        if ($validator->fails()) {
-            return $this->AppReturn(414, $validator->errors()->first());
-        }
-        if ($this->WithdrawalService->addAgentRecord($request));
-
-        if (!$result = $this->WithdrawalService->addAgentRecord($request)) {
-            return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
-        }
-        return $this->AppReturn(200, 'ok');
-
-//        return $this->AppReturn(
-//            $this->WithdrawalService->_code,
-//            $this->WithdrawalService->_msg
-//        );
-    }
-
     public function getAgentWithdrawalRecord(Request $request)
     {
         $this->WithdrawalService->getAgentWithdrawalRecord($request->header("token"));
@@ -136,16 +108,35 @@ class WithdrawalController extends Controller
     }
 
     /**
-     * 用户银行卡提现-请求出金订单
+     * 代理申请提现接口
+     * @param Request $request
+     */
+    public function agentWithdrawal(Request $request)
+    {
+        $data = $request->post();
+        $rules = [
+            "bank_id" => "required",
+            "money" => "required"
+        ];
+        $validator = Validator::make($data, $rules);
+        if ($validator->fails()) {
+            return $this->AppReturn(414, $validator->errors()->first());
+        }
+        if ($this->WithdrawalService->addAgentRecord($request));
+
+        if (!$result = $this->WithdrawalService->addAgentRecord($request)) {
+            return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
+        }
+        return $this->AppReturn(200, 'ok');
+    }
+
+    /**
+     * 用户申请提现接口
      */
     public function withdrawalByBank(Request $request) {
         $rules = [
             'money' => "required",
             'bank_id' => "required",
-//            'account_holder' => "required",
-//            'bank_number' => "required",
-//            'bank_name' => "required",
-//            'ifsc_code' => "required",
         ];
         $validator = Validator::make($request->post(), $rules);
         if ($validator->fails()) {
