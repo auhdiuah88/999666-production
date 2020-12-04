@@ -174,13 +174,13 @@ class WithdrawalService extends PayService
                 $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
                 return false;
             }
-            $user->balance = bcsub($user->freeze_money,$money,2);
-            $user->freeze_money = bcsub($user->freeze_money,$money,2);
+            $user->balance = bcsub($user->balance,$money,2);
+            $user->freeze_money = bcadd($user->freeze_money,$money,2);
             $user->save();
         } elseif ($type == 1) {
             //  0:代理提现  佣金提现
-            $user->commission= bcsub($user->commission,$money);
-            $user->freeze_agent_money= bcadd($user->freeze_agent_money,$money);
+            $user->commission= bcsub($user->commission,$money,2);
+            $user->freeze_agent_money= bcadd($user->freeze_agent_money,$money,2);
             $user->save();
         }
         $account_holder = $user_bank->account_holder;
