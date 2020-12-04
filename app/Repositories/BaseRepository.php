@@ -21,6 +21,7 @@ abstract class BaseRepository
     protected function whereCondition($data, $model)
     {
         $this->list = $this->rectifyCondition($data["conditions"]);
+        dd($this->list);
         $ops = $data["ops"];
         foreach ($ops as $index => $op) {
             switch ($op) {
