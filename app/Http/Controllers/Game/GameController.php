@@ -142,7 +142,7 @@ class GameController extends Controller
             $data['balance']=$balance;
             return $this->AppReturn(200, "投注成功",$data);
         } else {
-            return $this->AppReturn(413, '余额不足或不在该期允许投注时间内');
+            return $this->AppReturn(413, 'Insufficient balance or not within the allowed betting time of the period');
         }
 
     }
