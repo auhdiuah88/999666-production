@@ -96,12 +96,11 @@ class WithdrawalRepository
      */
     public function updateWithdrawalLog(object $withdrawlLog, $status = 1,$pay_status=1, $money)
     {
-        $withdrawlLog->status = $status;
+//        $withdrawlLog->status = $status;
         $withdrawlLog->pay_status = $pay_status;
-        $withdrawlLog->payment = $money;
+//        $withdrawlLog->payment = $money;
         $withdrawlLog->loan_time = time();
-        $withdrawlLog->approval_time = time();
-
+//        $withdrawlLog->approval_time = time();
         $withdrawlLog->save();
     }
 }

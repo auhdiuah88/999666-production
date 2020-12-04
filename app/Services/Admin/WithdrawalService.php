@@ -39,13 +39,13 @@ class WithdrawalService extends BaseService
     {
         $data = $request->post();
         if ($data["status"] == 1) {
-            if ($data["type"] == 1) {
-                $this->changeAgencyCommission($data["id"]);
-                unset($data["type"]);
-            } else {
-                $this->addWithdrawalLogs($data["id"]);
-            }
-
+//            if ($data["type"] == 1) {
+//                $this->changeAgencyCommission($data["id"]);
+//                unset($data["type"]);
+//            }
+//            else {
+//                $this->addWithdrawalLogs($data["id"]);
+//            }
             $withdrawalRecord = $this->WithdrawalRepository->findById($data["id"]);
             $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式
             //  $host = "api.999666.in"; 变成 999666.in

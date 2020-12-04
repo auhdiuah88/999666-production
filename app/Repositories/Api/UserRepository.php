@@ -9,6 +9,7 @@ use App\Models\Cx_System;
 use App\Models\Cx_User;
 use App\Models\Cx_User_Balance_Logs;
 use App\Models\Cx_User_Bank;
+use App\Models\Cx_User_Commission_Logs;
 use App\Mongodb;
 use Illuminate\Support\Facades\Cache;
 
@@ -17,6 +18,7 @@ class UserRepository
 {
     protected $Cx_User, $Cx_System, $Cx_Charge_Logs, $Cx_User_Balance_Logs;
     private $cx_User_Bank;
+    private $cx_User_Commission_Logs;
 
     public $_data = [];
 
@@ -24,7 +26,8 @@ class UserRepository
                                 Cx_System $cx_System,
                                 Cx_Charge_Logs $charge_Logs,
                                 Cx_User_Balance_Logs $Cx_User_Balance_Logs,
-                                Cx_User_Bank $cx_User_Bank
+                                Cx_User_Bank $cx_User_Bank,
+                                Cx_User_Commission_Logs $cx_User_Commission_Logs
     )
     {
         $this->Cx_User = $cx_User;
@@ -33,6 +36,7 @@ class UserRepository
         $this->Cx_User_Balance_Logs = $Cx_User_Balance_Logs;
 
         $this->cx_User_Bank = $cx_User_Bank;
+        $this->cx_User_Commission_Logs = $cx_User_Commission_Logs;
     }
 
     public function getcode()
@@ -146,6 +150,42 @@ class UserRepository
             "is_first_recharge" => $user->is_first_recharge == 1 ? 1 : 0,
         ];
         return $this->Cx_User_Balance_Logs->insert($data);
+    }
+
+    /**
+     * 只记录用户余额变动记录
+     */
+    public function addBalanceLog($user_id, $money, $type, $msg,$dq_balance,$wc_balance)
+    {
+        // 余额变动记录
+        $data = [
+            "user_id" => $user_id,
+            "type" => $type,
+            "dq_balance" => $dq_balance,
+            "wc_balance" => $wc_balance,
+            "time" => time(),
+            "msg" => $msg,
+            "money" => abs($money),
+//            "is_first_recharge" => $user->is_first_recharge == 1 ? 1 : 0,
+        ];
+        return $this->Cx_User_Balance_Logs->insert($data);
+    }
+
+    /**
+     *  佣金余额变动记录
+     */
+    public function addCommissionLogs(object $user,$money,$dq_commission,$wc_commission,$order_no) {
+        $data = [
+            "user_id" => $user->id,
+            "dq_commission" => $dq_commission,
+            "wc_commission" => $wc_commission,
+            "time" => time(),
+            "order_no" => $order_no,
+            "phone" => $user->phone,
+            "nickname" => $user->nickname,
+            "message" => $user->nickname . "提现佣金" . $money . "成功！"
+        ];
+        return $this->cx_User_Commission_Logs->insertGetId($data);
     }
 
     /**
