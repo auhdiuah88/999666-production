@@ -43,7 +43,7 @@ abstract class BaseRepository
                     $model->where($this->equalCondition($index));
             }
         }
-        dd($model->wheres);
+        dd($model->query->connection->wheres);
         return $model;
     }
 
