@@ -312,7 +312,8 @@ class GameRepository
 //            }
             $this->UserRepository->updateCacheUser($user->id, $user_obj);
         }
-        return true;
+        $user_new = $this->Cx_User->where('id', $user->id)->first();
+        return $user_new->balance;
 
     }
     //根据id获取期数信息
