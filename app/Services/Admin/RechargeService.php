@@ -27,6 +27,7 @@ class RechargeService extends BaseService
 
     public function searchRechargeLogs($data)
     {
+        $data = $this->getUserIds($data, "user_id");
         $list = $this->RechargeRepository->searchChargeLogs($data, ($data["page"] - 1) * $data["limit"], $data["limit"]);
         $total = $this->RechargeRepository->countSearchChargeLogs($data);
         $this->_data = ["total" => $total, "list" => $list];
