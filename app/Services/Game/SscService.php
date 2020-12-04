@@ -74,8 +74,7 @@ class SscService
         $arr=array();
         $b_money=$this->GameRepository->Get_Betting_Sum($play_id);
 
-        var_dump($b_money);
-        exit;
+
         for($i=0;$i<10;$i++){
             $number_kj=$this->getResult();
             $result=$number_kj['str'];//随机获取一个开奖号码
