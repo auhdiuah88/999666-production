@@ -58,9 +58,8 @@ abstract class PayStrategy
      */
     function withdrawalOrderByDai(object $withdrawalRecord)
     {
-        $account_holder = $withdrawalRecord->account_holder;
 //        $bank_name = $withdrawalRecord->bank_name;
-
+        $account_holder = $withdrawalRecord->account_holder;
         $bank_number = $withdrawalRecord->bank_number;
         $ifsc_code = $withdrawalRecord->ifsc_code;
         $phone = $withdrawalRecord->phone;

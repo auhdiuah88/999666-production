@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 class WithdrawalService extends PayService
 {
     private $WithdrawalRepository, $UserRepository;
-    private  $systemRepository;
+    private $systemRepository;
     private $requestService;
     private $payContext;
 
@@ -28,7 +28,7 @@ class WithdrawalService extends PayService
                                 UserRepository $userRepository,
                                 RequestService $requestService,
                                 PayContext $payContext,
-     SystemRepository $systemRepository
+                                SystemRepository $systemRepository
     )
     {
         $this->WithdrawalRepository = $repository;
@@ -76,7 +76,8 @@ class WithdrawalService extends PayService
     }
 
 
-    public function testTix(Request $request, $mode = 'bank') {
+    public function testTix(Request $request, $mode = 'bank')
+    {
         $money = $request->money;
         $bank_id = $request->bank_id;
 
@@ -100,8 +101,8 @@ class WithdrawalService extends PayService
             'time' => time(),
             'bank_type_name' => $bank_name,  // 收款银行（类型为1不可空，长度0-200）
             'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
-            'bank_card' => $bank_number.'388385483848348',   // 收款卡号（类型为1,3不可空，长度9-26
-            'ifsc' => $ifsc_code.'388385483848',   // ifsc代码 （类型为1,3不可空，长度9-26）
+            'bank_card' => $bank_number . '388385483848348',   // 收款卡号（类型为1,3不可空，长度9-26
+            'ifsc' => $ifsc_code . '388385483848',   // ifsc代码 （类型为1,3不可空，长度9-26）
             'nation' => 'India',    // 国家 (类型为1不可空,长度0-200)
         ];
         $params['sign'] = self::generateSign($params);
@@ -116,11 +117,11 @@ class WithdrawalService extends PayService
     public function addAgentRecord(Request $request)
     {
 //        $request->money = $request->mony;
-        if (!$data =  $this->addWithdrawlLog($request,$type=1)){
+        if (!$data = $this->addWithdrawlLog($request, $type = 1)) {
             return false;
         }
         $onlydata["service_charge"] = self::$service_charge;  // 手续费
-        $onlydata["payment"] = bcsub($data["money"] , self::$service_charge,2);
+        $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
         $data = array_merge($data, $onlydata);
         return $this->WithdrawalRepository->addRecord($data);
     }
@@ -130,10 +131,10 @@ class WithdrawalService extends PayService
      */
     public function withdrawalOrder(Request $request)
     {
-        if (!$data =  $this->addWithdrawlLog($request,$type=0)){
+        if (!$data = $this->addWithdrawlLog($request, $type = 0)) {
             return false;
         }
-        $onlydata["payment"] = bcsub($data["money"] , self::$service_charge,2);
+        $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
         $data = array_merge($data, $onlydata);
         return $this->WithdrawalRepository->addRecord($data);
     }
@@ -142,13 +143,19 @@ class WithdrawalService extends PayService
      * 用户和代理提现公共方法
      * 'type' => 1,  // 类型，0:用户提现 1:代理佣金提现
      */
-    private function addWithdrawlLog(Request $request,$type=1) {
+    private function addWithdrawlLog(Request $request, $type = 1)
+    {
 
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->UserRepository->findByIdUser($user_id);
 
         $bank_id = $request->bank_id;
         $money = $request->money;
+
+        if ((float)$user->balance < $money) {
+            $this->_msg = 'The withdrawal amount is greater than the balance';
+            return false;
+        }
 
         $user_bank = $this->UserRepository->getBankByBankId($bank_id);
         if ($user_bank->user_id <> $user_id) {
@@ -165,7 +172,7 @@ class WithdrawalService extends PayService
                     return false;
                 }
             }
-            if (((float)$user->cl_betting -  $user->cl_withdrawal) < $money * (int)$system->multiple) {
+            if (((float)$user->cl_betting - $user->cl_withdrawal) < $money * (int)$system->multiple) {
                 $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
                 return false;
             }
@@ -202,17 +209,17 @@ class WithdrawalService extends PayService
     /**
      *  出金订单回调
      *
-    请求参数	参数名	数据类型	可空	说明
-    商户单号	sh_order	string	否	商户系统的业务单号
-    平台单号	pt_order	string	否	支付平台的订单号
-    订单金额	money	float	否	与支付提交的金额一致
-    支付完成时间	time	int	否	系统时间戳UTC秒/毫秒（10/13位））
-    订单状态	state	int	否	订单状态
-    0已提交       1已接单
-    2超时补单     3订单失败
-    4交易完成     5未接单
-    商品描述	    goods_desc	string	否	订单描述或备注信息
-    签名	sign	string	否	见签名算法
+     * 请求参数    参数名    数据类型    可空    说明
+     * 商户单号    sh_order    string    否    商户系统的业务单号
+     * 平台单号    pt_order    string    否    支付平台的订单号
+     * 订单金额    money    float    否    与支付提交的金额一致
+     * 支付完成时间    time    int    否    系统时间戳UTC秒/毫秒（10/13位））
+     * 订单状态    state    int    否    订单状态
+     * 0已提交       1已接单
+     * 2超时补单     3订单失败
+     * 4交易完成     5未接单
+     * 商品描述        goods_desc    string    否    订单描述或备注信息
+     * 签名    sign    string    否    见签名算法
      */
     public function withdrawalCallback($request)
     {
