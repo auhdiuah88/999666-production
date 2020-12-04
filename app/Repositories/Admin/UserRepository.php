@@ -39,7 +39,9 @@ class UserRepository extends BaseRepository
 
     public function getUserByConditions($data, $offset, $limit)
     {
-        return $this->whereCondition($data, $this->Cx_User)->offset($offset)->limit($limit)->get()->toArray();
+        DB::connection()->enableQueryLog();
+        $this->whereCondition($data, $this->Cx_User)->offset($offset)->limit($limit)->get()->toArray();
+        dd(DB::getQueryLog());
     }
 
     public function countUserByConditions($data)
