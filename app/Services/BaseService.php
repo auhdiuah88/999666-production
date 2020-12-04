@@ -48,7 +48,7 @@ abstract class BaseService
     public function getConditions($data, $model)
     {
         if (array_key_exists("phone", $data["conditions"])) {
-            if ($data["conditions"]["phone"]) {
+            if (!is_null($data["conditions"]["phone"])) {
                 $model = $model->where(function ($query) use ($data) {
                     $query->where("phone", "like", "%" . $data["conditions"]["phone"] . "%");
                 });
@@ -56,8 +56,7 @@ abstract class BaseService
         }
 
         if (array_key_exists("reg_source_id", $data["conditions"])) {
-            dd($data);
-            if ($data["conditions"]["reg_source_id"]) {
+            if (!is_null($data["conditions"]["reg_source_id"])) {
                 $model = $model->where(function ($query) use ($data) {
                     $query->where("reg_source_id", $data["conditions"]["reg_source_id"]);
                 });
