@@ -156,7 +156,7 @@ class UserRepository
      */
     public function updateUser($user_id, $data)
     {
-        $objUser = $this->cacheUser($user_id);
+        $objUser = $this->findByIdUser($user_id);
         foreach ($objUser->toArray() as $field => $value) {
             $objUser->$field = $data[$field] ?? $value;
         }
