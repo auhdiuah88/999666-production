@@ -28,6 +28,8 @@ class UserController extends Controller
      */
     public function Login(Request $request)
     {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('liveinfo',[$request->getClientIp()]);
+
         $data = $request->post();
         $rules = [
             "phone" => "required",

@@ -118,13 +118,13 @@ class WithdrawalService extends PayService
     }
 
     /**
-     * 请求出金订单 (提款)
+     * 请求出金订单 (提款)  先由后台审核，审核后由后台提交
      *
      * 商户可自助申请出金/代付
      *
      * UPI就是把之前转账时所需要填写的繁琐信息直接整合成一个字符串ID，不用再输入银行卡号等。这个UPI ID可以是一个人的名字，身份证号，手机号，邮箱，任意字符串等。
      */
-    public function withdrawalOrder(Request $request, $mode = 'bank')
+    public function withdrawalOrder(Request $request, $mode = 'dai')
     {
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->UserRepository->findByIdUser($user_id);
