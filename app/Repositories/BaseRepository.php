@@ -54,11 +54,11 @@ abstract class BaseRepository
     public function inCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return $this->renderWhere();
+            return null;
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return $this->renderWhere();
+            return null;
         }
         return function ($query) use ($key, $value) {
             $query->whereIn($key, $value);
@@ -80,11 +80,11 @@ abstract class BaseRepository
     public function lessCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return $this->renderWhere();
+            return null;
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return $this->renderWhere();
+            return null;
         }
         return function ($query) use ($key, $value) {
             $query->where($key, "<", $value);
@@ -99,11 +99,11 @@ abstract class BaseRepository
     public function greaterCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return $this->renderWhere();
+            return null;
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return $this->renderWhere();
+            return null;
         }
         return function ($query) use ($key, $value) {
             $query->where($key, ">", $value);
@@ -118,11 +118,11 @@ abstract class BaseRepository
     private function betweenCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return $this->renderWhere();
+            return null;
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return $this->renderWhere();
+            return null;
         }
         return function ($query) use ($key, $value) {
             $query->whereBetween($key, $value);
@@ -136,11 +136,11 @@ abstract class BaseRepository
     private function equalCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return $this->renderWhere();
+            return null;
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return $this->renderWhere();
+            return null;
         }
         return function ($query) use ($key, $value) {
             $query->where($key, $value);
@@ -154,11 +154,11 @@ abstract class BaseRepository
     private function likeCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return $this->renderWhere();
+            return null;
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return $this->renderWhere();
+            return null;
         }
         return function ($query) use ($key, $value) {
             $query->where($key, "like", "%" . $value . "%");
