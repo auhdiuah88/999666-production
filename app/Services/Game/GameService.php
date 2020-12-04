@@ -110,11 +110,15 @@ class GameService
                 $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
                 $oneCondition = ["id" => $user->one_recommend_id, "one_commission" => $one->one_commission + $oneCharge, "commission" => $one->commission + $oneCharge];
                 $this->UserRepository->updateAgentMoney($oneCondition);
+                $oneChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->one_recommend_id, "type" => 1, "money" => $oneCharge, "create_time" => time()];
+                $this->UserRepository->addChargeLogs($oneChargeLog);
             }
             if(!empty($user->two_recommend_id)){
                 $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
                 $twoCondition = ["id" => $user->two_recommend_id, "two_commission" => $two->two_commission + $twoCharge, "commission" => $two->commission + $twoCharge];
                 $this->UserRepository->updateAgentMoney($twoCondition);
+                $twoChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->two_recommend_id, "type" => 2, "money" => $twoCharge, "create_time" => time()];
+                $this->UserRepository->addChargeLogs($twoChargeLog);
             }
 
 
@@ -123,11 +127,7 @@ class GameService
             $this->UserRepository->updateSystemCharge($system->platform_charge + $platformCharge);
 
             // 将收入记录入库
-            $oneChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->one_recommend_id, "type" => 1, "money" => $oneCharge, "create_time" => time()];
-            $twoChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->two_recommend_id, "type" => 2, "money" => $twoCharge, "create_time" => time()];
             $systemChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => 0, "type" => 0, "money" => $platformCharge, "create_time" => time()];
-            $this->UserRepository->addChargeLogs($oneChargeLog);
-            $this->UserRepository->addChargeLogs($twoChargeLog);
             $this->UserRepository->addChargeLogs($systemChargeLog);
             DB::commit();
         } catch (\Exception $e) {
