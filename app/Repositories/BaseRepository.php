@@ -20,7 +20,7 @@ abstract class BaseRepository
 
     protected function whereCondition($data, $model)
     {
-        $this->list = $data["conditions"];
+        $this->list = $this->rectifyCondition($data["conditions"]);
         $ops = $data["ops"];
         foreach ($ops as $index => $op) {
             switch ($op) {
@@ -44,6 +44,18 @@ abstract class BaseRepository
             }
         }
         return $model;
+    }
+
+    public function rectifyCondition($conditions)
+    {
+        foreach ($conditions as $key => $condition) {
+            if (empty($condition)) {
+                if ($condition != 0) {
+                    unset($conditions[$key]);
+                }
+            }
+        }
+        return $conditions;
     }
 
     /**
