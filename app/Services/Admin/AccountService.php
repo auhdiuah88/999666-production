@@ -88,7 +88,7 @@ class AccountService extends BaseService
     {
         $where = [];
         if (array_key_exists("phone", $data)) {
-            $where["phone"] = $data["phone"];
+            $where["phone"] = ["like", "%" . $data["phone"] . "%"];
         }
         if (array_key_exists("nickname", $data)) {
             $where["nickname"] = $data["nickname"];

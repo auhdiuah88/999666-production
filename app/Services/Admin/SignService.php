@@ -28,6 +28,7 @@ class SignService extends BaseService
         $page = $data["page"];
         $limit = $data["limit"];
         $offset = ($page - 1) * $limit;
+        $data = $this->getUserIds($data, "user_id");
         $list = $this->SignRepository->searchSignLogs($data, $offset, $limit);
         $total = $this->SignRepository->countSearchSignLogs($data);
         $this->_data = ["total" => $total, "list" => $list];

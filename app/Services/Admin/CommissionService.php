@@ -27,6 +27,7 @@ class CommissionService extends BaseService
     {
         $offset = ($data["page"] - 1) * $data["limit"];
         $limit = $data["limit"];
+        $data = $this->getUserIds($data, "user_id");
         $list = $this->CommissionRepository->searchCommissionLogs($data, $offset, $limit);
         $total = $this->CommissionRepository->countSearchCommissionLogs($data);
         $this->_data = ["total" => $total, "list" => $list];

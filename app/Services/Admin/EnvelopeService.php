@@ -28,13 +28,7 @@ class EnvelopeService extends BaseService
         $page = $data["page"];
         $limit = $data["limit"];
         $offset = ($page - 1) * $limit;
-        if (array_key_exists("phone", $data["conditions"])) {
-            $ids = $this->EnvelopeRepository->getUserIds($data["conditions"]["phone"]);
-            unset($data["conditions"]["phone"]);
-            unset($data["ops"]["phone"]);
-            $data["conditions"]["user_id"] = $ids;
-            $data["ops"]["user_id"] = "in";
-        }
+        $data = $this->getUserIds($data, "user_id");
         $list = $this->EnvelopeRepository->searchEnvelope($data, $offset, $limit);
         $total = $this->EnvelopeRepository->countSearchEnvelope($data);
         $this->_data = ["total" => $total, "list" => $list];
