@@ -20,9 +20,14 @@ class SpreadRepository extends BaseRepository
         $this->Cx_Game_Betting = $game_Betting;
     }
 
-    public function findUsers($timeMap)
+    public function getSystemUserIds()
     {
-        return $this->Cx_User_Balance_Logs->whereBetween("time", $timeMap)->select(["id", "user_id", "dq_balance"])->orderBy("time")->groupBy("user_id")->get()->map(function ($item) {
+        return array_column($this->Cx_User->where("reg_source_id", "<>", 1)->get("id")->toArray(), "id");
+    }
+
+    public function findUsers($timeMap, $ids)
+    {
+        return $this->Cx_User_Balance_Logs->whereBetween("time", $timeMap)->whereIn("user_id", $ids)->select(["id", "user_id", "dq_balance"])->orderBy("time")->groupBy("user_id")->get()->map(function ($item) {
             $user = $this->Cx_User->where("id", $item->user_id)->select(["id", "phone", "balance"])->first();
             $user->profit_loss = $user->balance - $item->dq_balance;
             $item->user = $user;

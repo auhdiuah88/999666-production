@@ -19,7 +19,8 @@ class SpreadService extends BaseService
     public function getProfitList($page, $limit, $status)
     {
         $timeMap = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
-        $users = $this->SpreadRepository->findUsers($timeMap);
+        $ids = $this->SpreadRepository->getSystemUserIds();
+        $users = $this->SpreadRepository->findUsers($timeMap, $ids);
         $profitList = [];
         $lossList = [];
         foreach ($users as $user) {
