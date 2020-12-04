@@ -115,7 +115,7 @@ class WithdrawalService extends PayService
      */
     public function addAgentRecord(Request $request)
     {
-        $request->money = $request->mony;
+//        $request->money = $request->mony;
         if (!$data =  $this->addWithdrawlLog($request,$type=1)){
             return false;
         }
@@ -133,6 +133,8 @@ class WithdrawalService extends PayService
         if (!$data =  $this->addWithdrawlLog($request,$type=0)){
             return false;
         }
+        $onlydata["payment"] = bcsub($data["money"] , self::$service_charge,2);
+        $data = array_merge($data, $onlydata);
         return $this->WithdrawalRepository->addRecord($data);
     }
 
@@ -153,39 +155,23 @@ class WithdrawalService extends PayService
      */
     public function withdrawalCallback($request)
     {
-
-//        if ($request->rtn_code <> 'success') {
-//            $this->_msg = '参数错误';
-//            return false;
-//        }
-
-        if ($request->state <> 4) {
-            $this->_msg = '交易未完成';
+        $payProvide = $request->get('type');
+        $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
+        if (!$strategyClass) {
+            $this->_msg = 'can not find pay mode';
+            return false;
+        }
+        if (!$where = $strategyClass->withdrawalCallback($request)) {
+            $this->_msg = $strategyClass->_msg;
             return false;
         }
 
-        // 验证签名
-        $params = $request->post();
-        $sign = $params['sign'];
-        unset($params['sign']);
-        if (PayService::generateSign($params) <> $sign) {
-            $this->_msg = '签名错误';
-            return false;
-        }
-
-//        $money = $request->money;
-        $where = [
-            'order_no' => $request->sh_order,
-//            'pltf_order_no' => $request->pltf_order_id,
-//            'money' => $money
-        ];
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
         if (!$withdrawlLog) {
             $this->_msg = '找不到此出金订单';
             return false;
         }
 
-//        if ($withdrawlLog->status == 1) {
         if ($withdrawlLog->pay_status == 1) {
             $this->_msg = '已成功提现,无需再回调';
             return false;

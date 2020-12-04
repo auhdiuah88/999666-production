@@ -22,9 +22,8 @@ class TestController extends Controller
     WithdrawalService $withdrawalService,
     Request $request
     ){
-        for ($i = 0; $i < 10; $i++) {
-            dump(PayStrategy::onlyosn());
-        }
-
+        dump(env('APP_URL'));
+        dump(asset('APP_URL'));
+        dump(config('app.url'));
     }
 }

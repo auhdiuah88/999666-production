@@ -17,6 +17,9 @@ abstract class PayStrategy
     protected $requestService;
     protected $request;
     protected $userRepository;
+
+    protected static $url_callback  = '';    // 回调地址 (充值或提现)
+
     public function __construct (
         RequestService $requestService,
         Request $request,
@@ -26,6 +29,11 @@ abstract class PayStrategy
         $this->requestService = $requestService;
         $this->request = $request;
         $this->userRepository = $userRepository;
+
+        self::$url_callback = env('APP_URL','');
+        if (empty(self::$url_callback)) {
+            die('请设置APP_URL');
+        }
     }
     /**
      * 生成订单号
@@ -46,6 +54,30 @@ abstract class PayStrategy
     }
 
     /**
+     *  通过代付提款
+     */
+    function withdrawalOrderByDai(object $withdrawalRecord)
+    {
+        $account_holder = $withdrawalRecord->account_holder;
+//        $bank_name = $withdrawalRecord->bank_name;
+
+        $bank_number = $withdrawalRecord->bank_number;
+        $ifsc_code = $withdrawalRecord->ifsc_code;
+        $phone = $withdrawalRecord->phone;
+        $email = $withdrawalRecord->email;
+
+        // 各个支付独有的参数
+        $onlyParams = [
+            'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
+            'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
+            'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
+            'bank_tel' => $phone,   // 收款手机号（类型为3不可空，长度0-20）
+            'bank_email' => $email,   // 收款邮箱（类型为3不可空，长度0-100）
+        ];
+        return $onlyParams;
+    }
+
+    /**
      * 请求充值下单接口
      * return array
         $resData = [
@@ -63,13 +95,18 @@ abstract class PayStrategy
     /**
      * 请求提现订单
      */
-    abstract function withdrawalOrder(Request $request);
+    abstract function withdrawalOrder(object $withdrawalRecord);
 
     /**
      * 充值回调
      * return array where条件
      */
     abstract function rechargeCallback(Request $request);
+
+    /**
+     * 提现回调
+     */
+    abstract function withdrawalCallback(Request $request);
 
 }
 

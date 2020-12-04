@@ -13,7 +13,6 @@ class Ipay extends PayStrategy
 
     protected static $url = 'http://ipay-in.yynn.me';
 
-    protected static $url_callback = 'http://api.unicasino.in';    // 回调地址 (充值或提现)
 
     // 正式环境
     protected static $merchantID = 10175;
@@ -43,6 +42,8 @@ class Ipay extends PayStrategy
      */
     function rechargeOrder($pay_type,$money)
     {
+
+
         $order_no = self::onlyosn();
         $params = [
             'api_name' => 'quickpay.all.native',
@@ -72,9 +73,36 @@ class Ipay extends PayStrategy
         return $resData;
     }
 
-    function withdrawalOrder(Request $request)
+    function withdrawalOrder(object $withdrawalRecord)
     {
-        // TODO: Implement withdrawalOrder() method.
+        $account_holder = $withdrawalRecord->account_holder;
+        $bank_name = $withdrawalRecord->bank_name;
+        $bank_number = $withdrawalRecord->bank_number;
+        $ifsc_code = $withdrawalRecord->ifsc_code;
+        $upi_id = 'xxxx';
+        $money = $withdrawalRecord->payment;    // 打款金额;
+
+        $order_no = $this->onlyosn();
+        $params = [
+            'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'bank_number' => $bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'ifsc_code' => $ifsc_code, // IFSC编号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
+            'money' => $money,
+            'notify_url' => self::$url_callback.'/api/withdrawal_callback'.'?type=ipay', // 回调url，用来接收订单支付结果
+            'out_trade_no' => $order_no,
+            'shop_id' => self::$merchantID,
+            'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
+        ];
+        $params['sign'] = self::generateSign($params);
+        $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
+        if ($res['rtn_code'] <> 1000) {
+            $this->_msg = $res['rtn_msg'];
+            return false;
+        }
+        return [
+            'pltf_order_no' => $res['pltf_order_no'],
+        ];
     }
 
     function rechargeCallback(Request $request)
@@ -103,6 +131,38 @@ class Ipay extends PayStrategy
 //            'money' => $money
         ];
 
+        return $where;
+    }
+
+    function withdrawalCallback(Request $request)
+    {
+        /**
+         * {
+         * "money": "54.36",
+         * "out_trade_no": "202011281743443450333436",
+         * "pltf_order_id": "2559202011281743444014",
+         * "rtn_code": "success",
+         * "sign": "2463f17f8400c0416d0dd86c28208508"
+         * }
+         */
+
+        if ($request->rtn_code <> 'success') {
+            $this->_msg = '参数错误';
+            return false;
+        }
+
+        // 验证签名
+        $params = $request->post();
+        $sign = $params['sign'];
+        unset($params['sign']);
+        if (self::generateSign($params) <> $sign) {
+            $this->_msg = '签名错误';
+            return false;
+        }
+        $where = [
+            'order_no' => $request->out_trade_no,
+//            'pltf_order_no' => $request->pltf_order_id,
+        ];
         return $where;
     }
 }

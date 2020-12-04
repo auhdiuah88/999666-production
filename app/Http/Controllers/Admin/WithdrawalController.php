@@ -30,7 +30,7 @@ class WithdrawalController extends Controller
 
     public function auditRecord(Request $request)
     {
-        $this->WithdrawalService->auditRecord($request->post());
+        $this->WithdrawalService->auditRecord($request);
         return $this->AppReturn(
             $this->WithdrawalService->_code,
             $this->WithdrawalService->_msg,

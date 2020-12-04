@@ -7,15 +7,22 @@ namespace App\Services\Admin;
 use App\Repositories\Admin\UserRepository;
 use App\Repositories\Admin\WithdrawalRepository;
 use App\Services\BaseService;
+use App\Services\Pay\PayContext;
 
 class WithdrawalService extends BaseService
 {
     private $WithdrawalRepository, $UserRepository;
+    private $payContext;
 
-    public function __construct(WithdrawalRepository $withdrawalRepository, UserRepository $userRepository)
+    public function __construct(WithdrawalRepository $withdrawalRepository,
+                                UserRepository $userRepository,
+    PayContext $payContext
+    )
     {
         $this->WithdrawalRepository = $withdrawalRepository;
         $this->UserRepository = $userRepository;
+        $this->payContext = $payContext;
+
     }
 
     public function findAll($page, $limit, $status)
@@ -28,8 +35,9 @@ class WithdrawalService extends BaseService
     /**
      * 审核
      */
-    public function auditRecord($data)
+    public function auditRecord($request)
     {
+        $data = $request->post();
         if ($data["status"] == 1) {
             if ($data["type"] == 1) {
                 $this->changeAgencyCommission($data["id"]);
@@ -37,14 +45,32 @@ class WithdrawalService extends BaseService
             } else {
                 $this->addWithdrawalLogs($data["id"]);
             }
+
+            $withdrawalRecord = $this->WithdrawalRepository->findById($data["id"]);
+
+            $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式
+            //  $host = "api.999666.in"; 变成 999666.in
+            if (count(explode('.', $host)) == 3) {
+                $host = substr(strstr($host, '.'), 1);
+            }
+            $payProvide = PayContext::$pay_provider[$host];
+
+            $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付商户类
+            $result = $strategyClass->withdrawalOrder($withdrawalRecord);
+            if (!$result) {
+                return false;
+            }
+            $data['pltf_order_no'] = $request['pltf_order_no'];
         }
         $data["loan_time"] = time();
         $data["approval_time"] = time();
         if ($this->WithdrawalRepository->editRecord($data)) {
             $this->_msg = "审核通过";
+            return true;
         } else {
             $this->_code = 402;
             $this->_msg = "审核失败";
+            return false;
         }
     }
 

@@ -13,7 +13,7 @@ abstract class BaseService
 {
     public $_code = 200;
 
-    public $_msg = "查询成功";
+    public $_msg = "success";
 
     public $_data = [];
 

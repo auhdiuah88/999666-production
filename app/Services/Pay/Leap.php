@@ -16,7 +16,6 @@ class Leap extends PayStrategy
 
     protected static $url_cashout = 'http://tqqqbank.payto89.com:82'; // 提现网关
 
-    protected static $url_callback = 'http://api.999666.in';    // 回调地址 (充值或提现)
 
     // 正式环境
     protected static $merchantID = 262593573;
@@ -171,48 +170,15 @@ class Leap extends PayStrategy
         ];
         return $resData;
     }
-
     /**
-     *  通过代付提款
+     *  后台审核请求提现订单 (提款)  代付方式
      */
-    function withdrawalOrderByDai($user_id,$bank_id)
+    function withdrawalOrder(object $withdrawalRecord)
     {
-        $user_bank = $this->userRepository->getBankByBankId($bank_id); 
-        if ($user_bank->user_id <> $user_id) {
-            $this->_msg = '银行卡不匹配';
-            return false;
-        }
-
-        $account_holder = $user_bank->account_holder;
-        $bank_name = $user_bank->bank_type_id;
-        $bank_number = $user_bank->bank_num;
-        $ifsc_code = $user_bank->ifsc_code;
-        $phone = $user_bank->phone;
-        $mail = $user_bank->mail;
-        
-        $onlyParams = [];  // 各个支付独有的参数
-        $onlyParams = [
-            'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
-            'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
-            'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
-            'bank_tel' => $phone,   // 收款手机号（类型为3不可空，长度0-20）
-            'bank_email' => $mail,   // 收款邮箱（类型为3不可空，长度0-100）
-        ];
-        return $onlyParams;
-    }
-
-    /**
-     *  后台请求提现订单 (提款)  代付方式
-     */
-    function withdrawalOrder(Request $request)
-    {
-        $user_id = $request->user_id;
-        $bank_id = $request->bank_id;
-        $money = $request->money;
         // 1 银行卡 2 Paytm 3代付
         $pay_type = 3;
-        $onlyParams = $this->withdrawalOrderByDai($user_id, $bank_id);
-
+        $onlyParams = $this->withdrawalOrderByDai($withdrawalRecord);
+        $money = $withdrawalRecord->payment;    // 打款金额
         $order_no = self::onlyosn();
         $ip = $this->request->ip();
         $params = [
@@ -220,7 +186,7 @@ class Leap extends PayStrategy
             'mch_id' => self::$merchantID,
             'order_sn' => $order_no,
             'money' => $money,
-            'goods_desc' => '提现',
+            'goods_desc' => 'cashout',
             'client_ip' => $ip,
             'notify_url' => self::$url_callback.'/api/withdrawal_callback'.'?=type=leap',
             'time' => time(),
@@ -233,9 +199,14 @@ class Leap extends PayStrategy
             $this->_msg = $res['msg'];
             return false;
         }
-        return $res;
+        return  [
+            'pltf_order_no' => '',
+        ];
     }
 
+    /**
+     * 充值回调
+     */
     function rechargeCallback(Request $request)
     {
         if ($request->state <> 4)  {
@@ -253,8 +224,29 @@ class Leap extends PayStrategy
 
         $where = [
             'order_no' => $request->sh_order,
-//            'pltf_order_id' => $request->pltf_order_id,
-//            'money' => $money
+        ];
+        return $where;
+    }
+
+    /**
+     * 提现回调
+     */
+    function withdrawalCallback(Request $request)
+    {
+        if ($request->state <> 4) {
+            $this->_msg = '交易未完成';
+            return false;
+        }
+        // 验证签名
+        $params = $request->post();
+        $sign = $params['sign'];
+        unset($params['sign']);
+        if (self::generateSign($params) <> $sign) {
+            $this->_msg = '签名错误';
+            return false;
+        }
+        $where = [
+            'order_no' => $request->sh_order,
         ];
         return $where;
     }
