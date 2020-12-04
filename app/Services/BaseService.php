@@ -24,23 +24,23 @@ abstract class BaseService
         return $data[0];
     }
 
-    public function getUserIds($data)
+    public function getUserIds($data, $key)
     {
         $conditions = $data["conditions"];
         $ops = $data["ops"];
         $ids = array_column($this->getConditions($data, new Cx_User())->get("id")->toArray(), "id");
         if (array_key_exists("phone", $conditions)) {
             unset($data["conditions"]["phone"]);
-            $data["conditions"]["user_id"] = $ids;
+            $data["conditions"][$key] = $ids;
             unset($data["ops"]["phone"]);
-            $data["conditions"]["user_id"] = "in";
+            $data["conditions"][$key] = "in";
         }
 
         if (array_key_exists("reg_source_id", $conditions)) {
             unset($data["conditions"]["reg_source_id"]);
-            $data["conditions"]["user_id"] = $ids;
+            $data["conditions"][$key] = $ids;
             unset($data["ops"]["reg_source_id"]);
-            $data["ops"]["user_id"] = "in";
+            $data["ops"][$key] = "in";
         }
         return $data;
     }

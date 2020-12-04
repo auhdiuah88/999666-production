@@ -25,7 +25,7 @@ class WagerService extends BaseService
 
     public function searchWager($data)
     {
-        $data = $this->getUserIds($data);
+        $data = $this->getUserIds($data, "id");
         if (array_key_exists("betting_time", $data["conditions"])) {
             $betting = $data["conditions"]["betting_time"];
             unset($data["conditions"]["betting_time"]);
