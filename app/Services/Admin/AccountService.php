@@ -44,7 +44,7 @@ class AccountService extends BaseService
         } elseif (!$data["nickname"]) {
             $data["nickname"] = "用户" . md5($data["phone"]);
         }
-        $data["reg_source_id"] = 2;
+        $data["reg_source_id"] = 1;
         $data["is_login"] = 1;
         $data["is_transaction"] = 1;
         $data["is_recharge"] = 1;

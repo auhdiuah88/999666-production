@@ -199,7 +199,7 @@ class UserService
         $data["password"] = Crypt::encrypt($data["password"]);
         $data["nickname"] = "用户" . md5($data['phone']);
         $data["reg_time"] = time();
-        $data["reg_source_id"] = 1;
+        $data["reg_source_id"] = 0;
         $data["is_login"] = 1;
         $data["is_transaction"] = 1;
         $data["is_recharge"] = 1;
