@@ -11,6 +11,7 @@ use App\Services\Library\Auth;
 use App\Services\Library\Netease\IM;
 use App\Services\Library\Netease\SMS;
 use App\Services\Library\Upload;
+use App\Services\Pay\PayContext;
 use App\Services\PayService;
 use App\Services\RequestService;
 use Illuminate\Http\Request;
@@ -22,11 +23,13 @@ class RechargeService extends PayService
     private $rechargeRepository;
     private $withdrawalRepository;
     private $requestService;
+    private $payContext;
 
     public function __construct(UserRepository $userRepository,
                                 RechargeRepository $rechargeRepository,
                                 WithdrawalRepository $withdrawalRepository,
-                                RequestService $requestService
+                                RequestService $requestService,
+                                PayContext $payContext
     )
     {
         $this->userRepository = $userRepository;
@@ -34,78 +37,7 @@ class RechargeService extends PayService
         $this->withdrawalRepository = $withdrawalRepository;
 
         $this->requestService = $requestService;
-    }
-
-    public function test($ip){
-        $order_no =  $this->onlyosn();
-        $money = 20000;
-        $params = [
-            'mch_id' => self::$merchantID,
-            'ptype' => 100,                   // Paytm支付：1     银行卡：3
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => '充值',
-            'client_ip' => $ip,
-            'format' => 'https://www.baidu.com',
-            'notify_url' => url('api/recharge_callback'),
-            'time' => time(),
-        ];
-        $params['sign'] = self::generateSign($params);
-
-        $res = $this->requestService->postFormData(self::$url . '/order/place', $params,[],'body');
-        // 写入文件
-        $path = public_path('a.html');
-        file_put_contents($path,$res);
-
-        return $res;
-}
-    public function test2($ip){
-        $order_no =  $this->onlyosn();
-        $money = 200;
-        $params = [
-            'mch_id' => self::$merchantID,
-            'ptype' => 100,
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => '充值',
-            'client_ip' => $ip,
-            'format' => 'page',
-            'notify_url' => url('api/recharge_callback'),
-            'time' => time(),
-        ];
-        $params['sign'] = self::generateSign($params);
-        $params = urlencode(json_encode($params));
-        $res = $this->requestService->get(self::$url . '/order/getUrl?json='.$params);
-        return $res;
-    }
-
-    /**
-     * 充值下单接口-通用
-     * POST方式  返回html源码
-     */
-    public function rechargeOrderHtml(Request $request)
-    {
-        $user_id = $this->getUserId($request->header("token"));
-        $user = $this->userRepository->findByIdUser($user_id);
-        $pay_type = $request->pay_type;
-        $money = $request->money;
-        $order_no = $this->onlyosn();
-        $pay_type = 1;
-        $params = [
-            'mch_id' => self::$merchantID,
-            'ptype' => $pay_type,       // Paytm支付：1     银行卡：3
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => '充值',
-            'client_ip' => $request->ip(),
-            'format' => 'https://www.baidu.com',
-            'notify_url' => url('api/recharge_callback'),
-            'time' => time(),
-        ];
-        $params['sign'] = self::generateSign($params);
-        $res = $this->requestService->postJsonData(self::$url . '/order/place', $params,[],'body');
-        $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type);
-        return $res;
+        $this->payContext = $payContext;
     }
 
     /***
@@ -114,152 +46,85 @@ class RechargeService extends PayService
      */
     public function rechargeOrder(Request $request)
     {
-//        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeOrder', $request->all());
-
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->userRepository->findByIdUser($user_id);
 
         $pay_type = $request->pay_type;
         $money = $request->money;
-        $order_no = $this->onlyosn();
-        /**
-            Paytm支付：1     银行卡：3
-            UPI:100           UPI:120
-            UPI:121
-         */
-        $pay_type = 100;
-        $params = [
-            'mch_id' => self::$merchantID,
-            'ptype' => $pay_type,
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => '充值',
-            'client_ip' => $request->ip(),
-            'format' => 'page',
-            'notify_url' => url('api/recharge_callback'),
-            'time' => time(),
-        ];
 
-        $params['sign'] = self::generateSign($params);
-        $params = urlencode(json_encode($params));
-        $res = $this->requestService->get(self::$url . '/order/getUrl?json='.$params);
-
-        if ($res['code'] <> 1) {
-            $this->_msg = $res['msg'];
-            $this->_data =[
-                        'native_url' => '',
-                        'out_trade_no' => $order_no,
-                        'mch_id' => self::$merchantID,
-                    ];
+        $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式
+        //  $host = "api.999666.in"; 变成 999666.in
+        if (count(explode('.', $host)) == 3) {
+            $host = substr(strstr($host, '.'), 1);
+        }
+        $payProvide = PayContext::$pay_provider[$host];
+        $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付商户类
+        if (!$strategyClass) {
+            $this->_msg = 'can not find pay mode';
             return false;
         }
-        $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type);
-        $resData = [
-            'native_url' => $res['data']['url'],
-            'out_trade_no' => $order_no,
-            'mch_id' => self::$merchantID,
-        ];
-        return $resData;
-    }
-
-    /**
-     * 充值下单接口-跳转选择支付类型页面
-     * post 方式
-     */
-    public function rechargeTypeSelect(Request $request){
-        $money = $request->money;
-        $order_no = $this->onlyosn();
-        $params = [
-            'mch_id' => self::$merchantID,
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => '充值',
-            'client_ip' => $request->ip(),
-            'format' => 'https://www.baidu.com',
-            'notify_url' => url('api/recharge_callback'),
-            'time' => time(),
-        ];
-        $params['sign'] = self::generateSign($params);
-        $res = $this->requestService->postFormData(self::$url . '/order/placeForIndex',$params);
-        dd($res);
+        $result = $strategyClass->rechargeOrder($pay_type, $money);
+        if (!$result) {
+            $this->_msg = $strategyClass->_msg;
+            return false;
+        }
+        // 添加充值记录
+        $order_no = $result['out_trade_no'];
+        $pay_type = $result['pay_type'];
+        $pltf_order_id = $result['pltf_order_id'];
+        $native_url = $result['native_url'];
+        $verify_money = $result['verify_money'];
+        $match_code = $result['match_code'];
+        $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $pltf_order_id, $native_url, $verify_money, $match_code);
+        return $result;
     }
 
     /**
      * 充值订单查询
      */
-    public function orderQuery($order_no,$pltf_order_id = '')
-    {
-        $params = [
-            'mch_id' => self::$merchantID,
-            'out_order_sn' => $order_no,
-            'time' => time(),
-        ];
-        $params['sign'] = self::generateSign($params);
-        return $this->requestService->postFormData(self::$url . '/order/query', $params);
-    }
+//    public function orderQuery($order_no, $pltf_order_id = '')
+//    {
+//        $params = [
+//            'mch_id' => self::$merchantID,
+//            'out_order_sn' => $order_no,
+//            'time' => time(),
+//        ];
+//        $params['sign'] = self::generateSign($params);
+//        return $this->requestService->postFormData(self::$url . '/order/query', $params);
+//    }
 
     /**
      *  充值回调
      *
-     * 请求参数	参数名	数据类型	可空	说明
-        商户单号	    sh_order	string	否	商户系统的业务单号
-        平台单号	    pt_order	string	否	支付平台的订单号
-        订单金额	    money	float	否	与支付提交的金额一致
-        支付完成时间	time	int	否	系统时间戳UTC秒（10位）
-        订单状态	    state	int	否	订单状态
-        0 已提交       1 已接单
-        2 超时补单     3 订单失败
-        4 交易完成     5 未接单
-        商品描述	goods_desc	string	否	订单描述或备注信息
-        签名	    sign	string	否	见签名算法
+     * 请求参数    参数名    数据类型    可空    说明
+     * 商户单号        sh_order    string    否    商户系统的业务单号
+     * 平台单号        pt_order    string    否    支付平台的订单号
+     * 订单金额        money    float    否    与支付提交的金额一致
+     * 支付完成时间    time    int    否    系统时间戳UTC秒（10位）
+     * 订单状态        state    int    否    订单状态
+     * 0 已提交       1 已接单
+     * 2 超时补单     3 订单失败
+     * 4 交易完成     5 未接单
+     * 商品描述    goods_desc    string    否    订单描述或备注信息
+     * 签名        sign    string    否    见签名算法
      *
      * 收到回调处理完业务之后请输出固定的 success
      */
-    public function rechargeCallback($request)
+    public function rechargeCallback(Request $request)
     {
-//        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', $request->all());
-
-        // 验证参数
-//        if ($request->shop_id <> self::$merchantID
-//            || $request->api_name <> 'quickpay.all.native.callback'
-//            || $request->pay_result <> 'success'
-//        ) {
-//            $this->_msg = '参数错误';
-//            return false;
-//        }
-
-        /**
-             {
-                "money": "600.000000",
-                "pt_order": "CS202012027806900907909",
-                "sign": "fccb49f152389993cda616d63951ce2f",
-                "sh_order": "202012021721455575793327",
-                "time": "1606901066",
-                "state": "4",
-                "goods_desc": "充值"
-            }
-         */
-
-        if ($request->state <> 4) {
-            $this->_msg = '交易未完成';
+        $payProvide = $request->get('type');
+        $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
+        if (!$strategyClass) {
+            $this->_msg = 'can not find pay mode';
             return false;
         }
-        // 验证签名
-        $params = $request->post();
-        $sign = $params['sign'];
-        unset($params['sign']);
-        if (PayService::generateSign($params) <> $sign){
-            $this->_msg = '签名错误';
+        if (!$where = $strategyClass->rechargeCallback($request)) {
+            $this->_msg = $strategyClass->_msg;
             return false;
         }
 
-        // 充值成功
         $money = $request->money;
-        $where = [
-            'order_no' => $request->sh_order,
-//            'pltf_order_id' => $request->pltf_order_id,
-//            'money' => $money
-        ];
+        // 下面的方法相同
         $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
         if (!$rechargeLog) {
             $this->_msg = '找不到此订单';

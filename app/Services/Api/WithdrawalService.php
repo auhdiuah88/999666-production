@@ -4,9 +4,12 @@
 namespace App\Services\Api;
 
 
+use App\Repositories\Api\SystemRepository;
 use App\Repositories\Api\UserRepository;
 use App\Repositories\Api\WithdrawalRepository;
 use App\Services\BaseService;
+use App\Services\Pay\PayContext;
+use App\Services\Pay\PayStrategy;
 use App\Services\PayService;
 use App\Services\RequestService;
 use Illuminate\Http\Request;
@@ -15,16 +18,23 @@ use Illuminate\Support\Facades\DB;
 class WithdrawalService extends PayService
 {
     private $WithdrawalRepository, $UserRepository;
+    private  $systemRepository;
     private $requestService;
+    private $payContext;
 
     public function __construct(WithdrawalRepository $repository,
                                 UserRepository $userRepository,
-                                RequestService $requestService
+                                RequestService $requestService,
+                                PayContext $payContext,
+     SystemRepository $systemRepository
     )
     {
         $this->WithdrawalRepository = $repository;
         $this->UserRepository = $userRepository;
         $this->requestService = $requestService;
+        $this->systemRepository = $systemRepository;
+
+        $this->payContext = $payContext;
     }
 
     public function getRecords($token)
@@ -118,91 +128,53 @@ class WithdrawalService extends PayService
     }
 
     /**
-     * 请求出金订单 (提款)  先由后台审核，审核后由后台提交
-     *
-     * 商户可自助申请出金/代付
-     *
-     * UPI就是把之前转账时所需要填写的繁琐信息直接整合成一个字符串ID，不用再输入银行卡号等。这个UPI ID可以是一个人的名字，身份证号，手机号，邮箱，任意字符串等。
+     * 请求提现订单 (提款)  先由后台审核，审核后由后台提交
      */
-    public function withdrawalOrder(Request $request, $mode = 'dai')
+    public function withdrawalOrder(Request $request)
     {
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->UserRepository->findByIdUser($user_id);
-
         $money = $request->money;
         $bank_id = $request->bank_id;
 
-        $onlyParams = [];  // 各个支付独有的参数
-        $upi_id = '';
+        $system = $this->systemRepository->getSystem();
+//        $user->cl_withdrawal;   // 累计提现
+//        $user->total_recharge;  // 充值累计总金额
+//        $user->cl_betting;      // 累计下注金额
+
+        if ((int)$system->multiple > 0) {
+            if (((float)$user->total_recharge * (int)$system->multiple) < $money) {
+                $this->_msg = 'Can\'t withdraw cash';
+                return false;
+            }
+        }
+
+        if (((float)$user->cl_betting -  $user->cl_withdrawal) < $money * (int)$system->multiple) {
+            $this->_msg = 'Can\'t withdraw cash';
+            return false;
+        }
 
         $user_bank = $this->UserRepository->getBankByBankId($bank_id);
         if ($user_bank->user_id <> $user_id) {
-            $this->_msg = '银行卡不匹配';
+            $this->_msg = 'The bank card does not match';
             return false;
         }
+
         $account_holder = $user_bank->account_holder;
         $bank_name = $user_bank->bank_type_id;
         $bank_number = $user_bank->bank_num;
         $ifsc_code = $user_bank->ifsc_code;
+
         $phone = $user_bank->phone;
         $mail = $user_bank->mail;
 
-        if ($mode == 'bank') {
-            $type = 1;
-            $onlyParams = [
-                'bank_type_name' => $bank_name,  // 收款银行（类型为1不可空，长度0-200）
-                'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
-                'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
-                'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
-                'nation' => 'India',    // 国家 (类型为1不可空,长度0-200)
-            ];
-        } else if ($mode == 'dai') {
-            $type = 3;
-            $onlyParams = [
-                'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
-                'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
-                'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
-                'bank_tel' => $phone,   // 收款手机号（类型为3不可空，长度0-20）
-                'bank_email' => $mail,   // 收款邮箱（类型为3不可空，长度0-100）
-            ];
-        } else if ($mode == 'upi') {
-            $account_holder = 'xxxx';
-            $bank_name = 'xxxx';
-            $bank_number = 'xxxx';
-            $ifsc_code = 'xxxx';
-            $upi_id = $request->upi_id;
-            $type = 2;
-            $onlyParams = [
-                'paytm_account', $upi_id   // Paytm账号 (类型为2不可空,长度0-200)
-            ];
-        }else {
-            $this->_msg = '不支持的方式';
-            return false;
-        }
-
-        $order_no = $this->onlyosn();
-        $params = [
-            'type' => $type,    // 1 银行卡 2 Paytm 3代付
-            'mch_id' => self::$merchantID,
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => '提现',
-            'client_ip' => $request->ip(),
-            'notify_url' => url('api/withdrawal_callback'),
-            'time' => time(),
-        ];
-        $params = array_merge($params, $onlyParams);
-        $params['sign'] = self::generateSign($params);
-
-        $res = $this->requestService->postFormData(self::$url_cashout . '/order/cashout', $params);
-        if ($res['code'] <> 1) {
-            $this->_msg = $res['msg'];
-            return false;
-        }
         $pltf_order_no = '';
-        $this->WithdrawalRepository->addWithdrawalLog($user, $money, $order_no, $pltf_order_no,$upi_id,
-            $account_holder, $bank_number, $bank_name, $ifsc_code, $params['sign']);
-        return $res;
+        $upi_id = '';
+        $order_no = PayStrategy::onlyosn();
+
+        return  $this->WithdrawalRepository->addWithdrawalLog($user, $money, $order_no, $pltf_order_no,$upi_id,
+            $account_holder, $bank_number, $bank_name, $ifsc_code);
+
     }
 
     /**
@@ -222,8 +194,6 @@ class WithdrawalService extends PayService
      */
     public function withdrawalCallback($request)
     {
-
-//        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback', $request->all());
 
 //        if ($request->rtn_code <> 'success') {
 //            $this->_msg = '参数错误';
