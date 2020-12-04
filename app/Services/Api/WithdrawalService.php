@@ -144,13 +144,13 @@ class WithdrawalService extends PayService
 
         if ((int)$system->multiple > 0) {
             if (((float)$user->total_recharge * (int)$system->multiple) < $money) {
-                $this->_msg = 'Can\'t withdraw cash';
+                $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
                 return false;
             }
         }
 
         if (((float)$user->cl_betting -  $user->cl_withdrawal) < $money * (int)$system->multiple) {
-            $this->_msg = 'Can\'t withdraw cash';
+            $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
             return false;
         }
 
@@ -174,7 +174,6 @@ class WithdrawalService extends PayService
 
         return  $this->WithdrawalRepository->addWithdrawalLog($user, $money, $order_no, $pltf_order_no,$upi_id,
             $account_holder, $bank_number, $bank_name, $ifsc_code);
-
     }
 
     /**
