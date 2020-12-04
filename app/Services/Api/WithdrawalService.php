@@ -150,6 +150,11 @@ class WithdrawalService extends PayService
         $bank_id = $request->bank_id;
         $money = $request->money;
 
+        if ((float)$user->balance < $money){
+            $this->_msg = 'The withdrawal amount is greater than the balance';
+            return false;
+        }
+
         $user_bank = $this->UserRepository->getBankByBankId($bank_id);
         if ($user_bank->user_id <> $user_id) {
             $this->_msg = 'The bank card does not match';
