@@ -28,6 +28,7 @@ class BettingService extends BaseService
         $page = $data["page"];
         $limit = $data["limit"];
         $offset = ($page - 1) * $limit;
+        dd($data);
         $data = $this->assemblyParameters($data);
         $list = $this->BettingRepository->searchBettingLogs($data, $offset, $limit);
         $total = $this->BettingRepository->countSearchBettingLogs($data);
