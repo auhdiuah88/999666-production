@@ -183,14 +183,14 @@ class WithdrawalController extends Controller
      */
     public function withdrawalBydai(Request $request) {
         $rules = [
-            'money' => "required",
+            'money' => "required|min:200|max:4999",
             'bank_id' => "required",
         ];
         $validator = Validator::make($request->post(), $rules);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
-        if (!$result = $this->WithdrawalService->withdrawalOrder($request,'dai')) {
+        if (!$result = $this->WithdrawalService->withdrawalOrder($request)) {
             return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
         }
         return $this->AppReturn(200, '用户提款-请求出金订单', $result);

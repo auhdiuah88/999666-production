@@ -56,7 +56,7 @@ class WithdrawalRepository
     /**
      *  添加提款记录
      */
-    public function addWithdrawalLog(object $user, $money, $order_no, $pltf_order_no, $upi_id, $account_holder, $bank_number, $bank_name, $ifsc_code, $sign)
+    public function addWithdrawalLog(object $user, $money, $order_no, $pltf_order_no, $upi_id, $account_holder, $bank_number, $bank_name, $ifsc_code, $sign='')
     {
         $data = [
             'user_id' => $user->id,
@@ -75,6 +75,7 @@ class WithdrawalRepository
             'pay_status' => 0,
             'type' => 0,
             'status' => 0,
+//            'email' => $user->email,
         ];
         $this->Cx_Withdrawal_Record->insert($data);
     }

@@ -25,4 +25,12 @@ class SystemRepository extends BaseRepository
     {
         return $this->Cx_System->select(["whats_service_url"])->first();
     }
+
+    /**
+     * 获取系统配置
+     */
+    public function getSystem()
+    {
+        return $this->Cx_System->first();
+    }
 }
