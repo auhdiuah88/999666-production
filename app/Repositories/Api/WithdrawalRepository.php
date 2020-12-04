@@ -77,7 +77,7 @@ class WithdrawalRepository
             'status' => 0,
 //            'email' => $user->email,
         ];
-        $this->Cx_Withdrawal_Record->insert($data);
+        return $this->Cx_Withdrawal_Record->insert($data);
     }
 
     /**
