@@ -86,15 +86,8 @@ class AccountService extends BaseService
 
     public function searchAccount($data)
     {
-        $where = [];
-        if (array_key_exists("phone", $data)) {
-            $where["phone"] = ["like", "%" . $data["phone"] . "%"];
-        }
-        if (array_key_exists("nickname", $data)) {
-            $where["nickname"] = $data["nickname"];
-        }
-        $list = $this->AccountRepository->searchAccount($where, ($data["page"] - 1) * $data["limit"], $data["limit"]);
-        $total = $this->AccountRepository->countSearchAccount($where);
+        $list = $this->AccountRepository->searchAccount($data, ($data["page"] - 1) * $data["limit"], $data["limit"]);
+        $total = $this->AccountRepository->countSearchAccount($data);
         $this->_data = ["total" => $total, "list" => $list];
     }
 }

@@ -98,11 +98,25 @@ class AccountRepository extends BaseRepository
 
     public function searchAccount($where, $offset, $limit)
     {
-        return $this->Cx_User->where($where)->where("is_customer_service", 1)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->offset($offset)->limit($limit)->get()->toArray();
+        return $this->Cx_User->where(function ($query) use ($where) {
+            if (array_key_exists("nickname", $where) && $where["nickname"]) {
+                $query->where("nickname", "like", "%" . $where["nickname"] . "%");
+            }
+            if (array_key_exists("phone", $where) && $where["phone"]) {
+                $query->where("phone", "like", "%" . $where["phone"] . "%");
+            }
+        })->where("is_customer_service", 1)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countSearchAccount($where)
     {
-        return $this->Cx_User->where($where)->where("is_customer_service", 1)->count("id");
+        return $this->Cx_User->where(function ($query) use ($where) {
+            if (array_key_exists("nickname", $where) && $where["nickname"]) {
+                $query->where("nickname", "like", "%" . $where["nickname"] . "%");
+            }
+            if (array_key_exists("phone", $where) && $where["phone"]) {
+                $query->where("phone", "like", "%" . $where["phone"] . "%");
+            }
+        })->where("is_customer_service", 1)->count("id");
     }
 }
