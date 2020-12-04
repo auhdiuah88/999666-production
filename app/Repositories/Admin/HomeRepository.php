@@ -54,65 +54,71 @@ class HomeRepository extends BaseRepository
         return $this->Cx_User_Recharge_Logs->where("type", 5)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
     }
 
-    public function countNewMembers($timeMap)
+    public function countNewMembers($timeMap, $ids)
     {
-        return $this->Cx_User->whereBetween("reg_time", $timeMap)->count("id");
+        return $this->Cx_User->whereIn("id", $ids)->whereBetween("reg_time", $timeMap)->count("id");
     }
 
-    public function countMembers()
+    public function countMembers($ids)
     {
-        return $this->Cx_User->count("id");
+        return $this->Cx_User->whereIn("id", $ids)->count("id");
     }
 
-    public function countOrdinaryMembers($timeMap)
+    public function countOrdinaryMembers($timeMap, $ids)
     {
-        return $this->Cx_User->whereBetween("reg_time", $timeMap)->whereNull("two_recommend_id")->count("id");
+        return $this->Cx_User->whereIn("id", $ids)->whereBetween("reg_time", $timeMap)->whereNull("two_recommend_id")->count("id");
     }
 
-    public function countAgentMembers($timeMap)
+    public function countAgentMembers($timeMap, $ids)
     {
         return $this->Cx_User
+            ->whereIn("id", $ids)
             ->whereBetween("reg_time", $timeMap)
             ->whereNotNull("two_recommend_id")
             ->count("id");
     }
 
-    public function countEnvelopeMembers($timeMap)
+    public function countEnvelopeMembers($timeMap, $ids)
     {
         return $this->Cx_User
+            ->whereIn("id", $ids)
             ->whereBetween("reg_time", $timeMap)
             ->whereNotNull("two_recommend_id")
             ->where("is_first_recharge", 1)
             ->count("id");
     }
 
-    public function countActivePeopleNumber($timeMap)
+    public function countActivePeopleNumber($timeMap, $ids)
     {
         return $this->Cx_User
+            ->whereIn("id", $ids)
             ->whereBetween("last_time", $timeMap)
             ->count("id");
     }
 
-    public function countFirstChargeNumber($timeMap)
+    public function countFirstChargeNumber($timeMap, $ids)
     {
         return $this->Cx_User
+            ->whereIn("id", $ids)
             ->whereBetween("reg_time", $timeMap)
             ->where("is_first_recharge", 1)
             ->count("id");
     }
 
-    public function countOrdinaryFirstChargeNumber($timeMap)
+    public function countOrdinaryFirstChargeNumber($timeMap, $ids)
     {
         return $this->Cx_User
+            ->whereIn("id", $ids)
             ->whereBetween("reg_time", $timeMap)
             ->whereNull("two_recommend_id")
             ->where("is_first_recharge", 1)
             ->count("id");
     }
 
-    public function countAgentFirstChargeNumber($timeMap)
+    public function countAgentFirstChargeNumber($timeMap, $ids)
     {
         return $this->Cx_User
+            ->whereIn("id", $ids)
             ->whereBetween("reg_time", $timeMap)
             ->whereNotNull("two_recommend_id")
             ->where("is_first_recharge", 1)
@@ -129,14 +135,14 @@ class HomeRepository extends BaseRepository
         return $this->Cx_Withdrawal_Record->whereIn("user_id", $ids)->whereBetween("approval_time", $timeMap)->where("status", 1)->sum("payment");
     }
 
-    public function sumUserBalance()
+    public function sumUserBalance($ids)
     {
-        return $this->Cx_User->sum("balance");
+        return $this->Cx_User->whereIn("id", $ids)->sum("balance");
     }
 
-    public function sumUserCommission()
+    public function sumUserCommission($ids)
     {
-        return $this->Cx_User->sum("commission");
+        return $this->Cx_User->whereIn("id", $ids)->sum("commission");
     }
 
     public function sumSubCommission($ids, $timeMap)
@@ -147,6 +153,11 @@ class HomeRepository extends BaseRepository
     public function getIds()
     {
         return array_column($this->Cx_User->get("id")->toArray(), "id");
+    }
+
+    public function getRegSourceIds($reg_source_id)
+    {
+        return array_column($this->Cx_User->where("reg_source_id", $reg_source_id)->get("id")->toArray(), "id");
     }
 
     public function countBettingNumber($ids, $timeMap)

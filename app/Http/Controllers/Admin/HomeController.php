@@ -29,7 +29,7 @@ class HomeController extends Controller
 
     public function searchHome(Request $request)
     {
-        $this->HomeService->searchHome($request->post("timeMap"));
+        $this->HomeService->searchHome($request->post());
         return $this->AppReturn(
             $this->HomeService->_code,
             $this->HomeService->_msg,

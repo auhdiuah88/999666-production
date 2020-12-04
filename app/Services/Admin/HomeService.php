@@ -19,57 +19,68 @@ class HomeService extends BaseService
     public function findAll()
     {
         $timeMap = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
-        $this->_data = $this->getContext($timeMap);
+        $this->_data = $this->getContext($timeMap, $this->HomeRepository->getIds());
     }
 
-    public function searchHome($timeMap)
+    public function searchHome($data)
     {
-        $this->_data = $this->getContext($timeMap);
+        if (array_key_exists("timeMap", $data) && $data["timeMap"]) {
+            $timeMap = $data["timeMap"];
+        } else {
+            $timeMap = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
+        }
+
+        if (array_key_exists("reg_source_id", $data) && $data["reg_source_id"]) {
+            $ids = $this->HomeRepository->getRegSourceIds($data["reg_source_id"]);
+        } else {
+            $ids = $this->HomeRepository->getIds();
+        }
+        $this->_data = $this->getContext($timeMap, $ids);
     }
 
-    public function getContext($timeMap)
+    public function getContext($timeMap, $ids)
     {
         $item = new \stdClass();
         // 会员数
-        $item->members = $this->HomeRepository->countMembers();
+        $item->members = $this->HomeRepository->countMembers($ids);
         // 新增会员
-        $item->newMembers = $this->HomeRepository->countNewMembers($timeMap);
+        $item->newMembers = $this->HomeRepository->countNewMembers($timeMap, $ids);
         // 普通新增会员
-        $item->ordinaryMembers = $this->HomeRepository->countOrdinaryMembers($timeMap);
+        $item->ordinaryMembers = $this->HomeRepository->countOrdinaryMembers($timeMap, $ids);
         // 代理裂变会员
-        $item->agentMembers = $this->HomeRepository->countAgentMembers($timeMap);
+        $item->agentMembers = $this->HomeRepository->countAgentMembers($timeMap, $ids);
         // 红包裂变会员
-        $item->envelopeMembers = $this->HomeRepository->countEnvelopeMembers($timeMap);
+        $item->envelopeMembers = $this->HomeRepository->countEnvelopeMembers($timeMap, $ids);
         // 活跃人数
-        $item->activePeopleNumber = $this->HomeRepository->countActivePeopleNumber($timeMap);
+        $item->activePeopleNumber = $this->HomeRepository->countActivePeopleNumber($timeMap, $ids);
         // 首充人数
-        $item->firstChargeNumber = $this->HomeRepository->countFirstChargeNumber($timeMap);
+        $item->firstChargeNumber = $this->HomeRepository->countFirstChargeNumber($timeMap, $ids);
         // 普通首充
-        $item->ordinaryFirstChargeNumber = $this->HomeRepository->countOrdinaryFirstChargeNumber($timeMap);
+        $item->ordinaryFirstChargeNumber = $this->HomeRepository->countOrdinaryFirstChargeNumber($timeMap, $ids);
         // 代理首充
-        $item->agentFirstChargeNumber = $this->HomeRepository->countAgentFirstChargeNumber($timeMap);
+        $item->agentFirstChargeNumber = $this->HomeRepository->countAgentFirstChargeNumber($timeMap, $ids);
         // 充值金额
-        $item->rechargeMoney = $this->HomeRepository->sumRechargeMoney($this->HomeRepository->getIds(), $timeMap);
+        $item->rechargeMoney = $this->HomeRepository->sumRechargeMoney($ids, $timeMap);
         // 提现金额
-        $item->withdrawalMoney = $this->HomeRepository->sumWithdrawalMoney($this->HomeRepository->getIds(), $timeMap);
+        $item->withdrawalMoney = $this->HomeRepository->sumWithdrawalMoney($ids, $timeMap);
         // 待提现金额
-        $item->toBeWithdrawalMoney = $this->HomeRepository->sumUserBalance() + $this->HomeRepository->sumUserCommission();
+        $item->toBeWithdrawalMoney = $this->HomeRepository->sumUserBalance($ids) + $this->HomeRepository->sumUserCommission($ids);
         // 订单分佣
-        $item->subCommission = $this->HomeRepository->sumSubCommission($this->HomeRepository->getIds(), $timeMap);
+        $item->subCommission = $this->HomeRepository->sumSubCommission($ids, $timeMap);
         // 赠金
-        $item->giveMoney = $this->HomeRepository->sumGiveMoney($this->HomeRepository->getIds(), $timeMap);
+        $item->giveMoney = $this->HomeRepository->sumGiveMoney($ids, $timeMap);
         // 购买签到礼包
-        $item->payEnvelope = $this->HomeRepository->countPayEnvelope($this->HomeRepository->getIds(), $timeMap);
+        $item->payEnvelope = $this->HomeRepository->countPayEnvelope($ids, $timeMap);
         // 领取签到礼包
-        $item->receiveEnvelope = $this->HomeRepository->sumReceiveEnvelope($this->HomeRepository->getIds(), $timeMap);
+        $item->receiveEnvelope = $this->HomeRepository->sumReceiveEnvelope($ids, $timeMap);
         // 订单数
-        $item->bettingNumber = $this->HomeRepository->countBettingNumber($this->HomeRepository->getIds(), $timeMap);
+        $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
         // 下单金额
-        $item->bettingMoney = $this->HomeRepository->sumBettingMoney($this->HomeRepository->getIds(), $timeMap);
+        $item->bettingMoney = $this->HomeRepository->sumBettingMoney($ids, $timeMap);
         // 服务费
-        $item->serviceMoney = $this->HomeRepository->sumServiceMoney($this->HomeRepository->getIds(), $timeMap);
+        $item->serviceMoney = $this->HomeRepository->sumServiceMoney($ids, $timeMap);
         // 购买签到礼包金额
-        $item->payEnvelopeAmount = $this->HomeRepository->sumPayEnvelope($this->HomeRepository->getIds(), $timeMap);
+        $item->payEnvelopeAmount = $this->HomeRepository->sumPayEnvelope($ids, $timeMap);
         return $item;
     }
 }
