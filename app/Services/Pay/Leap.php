@@ -181,7 +181,8 @@ class Leap extends PayStrategy
         $money = $withdrawalRecord->payment;    // 打款金额
         $ip = $this->request->ip();
 
-        $order_no = self::onlyosn();
+//        $order_no = self::onlyosn();
+        $order_no = $withdrawalRecord->order_no;
         $params = [
             'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
             'mch_id' => self::$merchantID,

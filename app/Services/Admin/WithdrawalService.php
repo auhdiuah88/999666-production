@@ -65,7 +65,7 @@ class WithdrawalService extends BaseService
                 return false;
             }
             $data['pltf_order_no'] = $request['pltf_order_no'];
-            $data['order_no'] = $request['order_no'];
+//            $data['order_no'] = $request['order_no'];
         }
         $data["loan_time"] = time();
         $data["approval_time"] = time();

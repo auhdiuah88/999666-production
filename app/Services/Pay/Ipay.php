@@ -82,7 +82,8 @@ class Ipay extends PayStrategy
         $upi_id = 'xxxx';
         $money = $withdrawalRecord->payment;    // 打款金额;
 
-        $order_no = $this->onlyosn();
+//        $order_no = $this->onlyosn();
+        $order_no = $withdrawalRecord->order_no;
         $params = [
             'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
