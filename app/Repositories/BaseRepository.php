@@ -57,6 +57,7 @@ abstract class BaseRepository
             return null;
         }
         $value = $this->list[$key];
+        dd($this->list);
         if (is_null($value) || empty($value)) {
             return null;
         }
