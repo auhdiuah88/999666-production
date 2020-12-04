@@ -43,7 +43,7 @@ abstract class BaseRepository
                     $model->where($this->equalCondition($index));
             }
         }
-        dd($model->toSql());
+        dd($model->where(null)->toSql());
         return $model;
     }
 
