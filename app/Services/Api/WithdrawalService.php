@@ -139,6 +139,67 @@ class WithdrawalService extends PayService
     }
 
     /**
+     * 用户和代理提现公共方法
+     * 'type' => 1,  // 类型，0:用户提现 1:代理佣金提现
+     */
+    private function addWithdrawlLog(Request $request,$type=1) {
+
+        $user_id = $this->getUserId($request->header("token"));
+        $user = $this->UserRepository->findByIdUser($user_id);
+
+        $bank_id = $request->bank_id;
+        $money = $request->mony;
+
+        $user_bank = $this->UserRepository->getBankByBankId($bank_id);
+        if ($user_bank->user_id <> $user_id) {
+            $this->_msg = 'The bank card does not match';
+            return false;
+        }
+
+        // 0:用户提现
+        if ($type == 0) {
+            $system = $this->systemRepository->getSystem();
+            if ((int)$system->multiple > 0) {
+                if (((float)$user->total_recharge * (int)$system->multiple) < $money) {
+                    $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
+                    return false;
+                }
+            }
+            if (((float)$user->cl_betting -  $user->cl_withdrawal) < $money * (int)$system->multiple) {
+                $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
+                return false;
+            }
+        }
+        $account_holder = $user_bank->account_holder;
+        $bank_name = $user_bank->bank_type_id;
+        $bank_number = $user_bank->bank_num;
+        $ifsc_code = $user_bank->ifsc_code;
+        $phone = $user_bank->phone;
+        $email = $user_bank->mail;
+        $order_no = PayStrategy::onlyosn();
+        $data = [
+            'user_id' => $user_id,
+            'phone' => $phone,
+            'nickname' => $user->nickname,
+            'money' => $money,
+            'create_time' => time(),
+            'order_no' => $order_no,
+            'pltf_order_no' => '',
+            'upi_id' => '',
+            'account_holder' => $account_holder,
+            'bank_number' => $bank_number,
+            'bank_name' => $bank_name,
+            'ifsc_code' => $ifsc_code,
+            'pay_status' => 0,
+            'type' => 0,
+            'status' => 0,
+            'email' => $email,
+            'type' => $type,
+        ];
+        return $data;
+    }
+
+    /**
      *  出金订单回调
      *
     请求参数	参数名	数据类型	可空	说明
