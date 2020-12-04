@@ -295,7 +295,7 @@ class GameRepository
                 $cl_betting = $user_obj->cl_betting + $money;
                 $cl_betting_total = $user_obj->cl_betting_total + 1;
                 $this->Cx_User->where('id', $user->id)->update(['balance' => $u_money,'cl_betting' => $cl_betting,'cl_betting_total' => $cl_betting_total]);
-            $this->Cx_User_Balance_Logs->insert(array("user_id" => $user->id, "type" => 1, "dq_balance" => $user_obj->balance, "wc_balance" => $u_money, "time" => time(), "msg" => "下注减少金额" . $money, "money" => $money));
+                $this->Cx_User_Balance_Logs->insert(array("user_id" => $user->id, "type" => 1, "dq_balance" => $user_obj->balance, "wc_balance" => $u_money, "time" => time(), "msg" => "下注减少金额" . $money, "money" => $money));
 //                if ($user_obj->agent_id) {
 //                    // 计算代理的收益
 //                    $this->common->getAgentIds($user_obj->agent_id);

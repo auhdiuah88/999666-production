@@ -106,12 +106,17 @@ class GameService
         DB::beginTransaction();
         try {
             // 将一级，二级代理人收益添加到数据库
-            $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
-            $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
-            $oneCondition = ["id" => $user->one_recommend_id, "one_commission" => $one->one_commission + $oneCharge, "commission" => $one->commission + $oneCharge];
-            $twoCondition = ["id" => $user->two_recommend_id, "two_commission" => $two->two_commission + $twoCharge, "commission" => $two->commission + $twoCharge];
-            $this->UserRepository->updateAgentMoney($oneCondition);
-            $this->UserRepository->updateAgentMoney($twoCondition);
+            if(!empty($user->one_recommend_id)){
+                $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
+                $oneCondition = ["id" => $user->one_recommend_id, "one_commission" => $one->one_commission + $oneCharge, "commission" => $one->commission + $oneCharge];
+                $this->UserRepository->updateAgentMoney($oneCondition);
+            }
+            if(!empty($user->two_recommend_id)){
+                $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
+                $twoCondition = ["id" => $user->two_recommend_id, "two_commission" => $two->two_commission + $twoCharge, "commission" => $two->commission + $twoCharge];
+                $this->UserRepository->updateAgentMoney($twoCondition);
+            }
+
 
             // 更改平台收入
             $system = $this->UserRepository->findSystemCharge();
