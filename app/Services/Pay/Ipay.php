@@ -138,6 +138,7 @@ class Ipay extends PayStrategy
 
     function withdrawalCallback(Request $request)
     {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Ipay_withdrawalCallback',$request->post());
         /**
          * {
          * "money": "54.36",
