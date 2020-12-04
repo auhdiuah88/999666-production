@@ -121,7 +121,7 @@ abstract class BaseRepository
             return null;
         }
         $value = $this->list[$key];
-        if (is_null($value)) {
+        if (is_null($value) || empty($value)) {
             return null;
         }
         return function ($query) use ($key, $value) {
