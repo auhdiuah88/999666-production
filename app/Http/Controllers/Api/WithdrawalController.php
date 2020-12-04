@@ -183,7 +183,7 @@ class WithdrawalController extends Controller
      */
     public function withdrawalBydai(Request $request) {
         $rules = [
-            'money' => "required|min:200|max:4999",
+            'money' => "required|integer|min:200|max:4999",
             'bank_id' => "required",
         ];
         $validator = Validator::make($request->post(), $rules);
