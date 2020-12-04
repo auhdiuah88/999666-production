@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get("/test", "TestController@test");
+Route::get("/test", "TestController@test2");
 
 
 
