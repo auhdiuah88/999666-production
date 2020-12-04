@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Models\Cx_User;
+use Illuminate\Support\Facades\DB;
 
 abstract class BaseRepository
 {
@@ -53,14 +54,21 @@ abstract class BaseRepository
     public function inCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return null;
+            return $this->renderWhere();
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return null;
+            return $this->renderWhere();
         }
         return function ($query) use ($key, $value) {
             $query->whereIn($key, $value);
+        };
+    }
+
+    public function renderWhere()
+    {
+        return function ($query) {
+            $query->where(DB::raw("1 = 1"));
         };
     }
 
@@ -72,11 +80,11 @@ abstract class BaseRepository
     public function lessCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return null;
+            return $this->renderWhere();
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return null;
+            return $this->renderWhere();
         }
         return function ($query) use ($key, $value) {
             $query->where($key, "<", $value);
@@ -91,11 +99,11 @@ abstract class BaseRepository
     public function greaterCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return null;
+            return $this->renderWhere();
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return null;
+            return $this->renderWhere();
         }
         return function ($query) use ($key, $value) {
             $query->where($key, ">", $value);
@@ -110,11 +118,11 @@ abstract class BaseRepository
     private function betweenCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return null;
+            return $this->renderWhere();
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return null;
+            return $this->renderWhere();
         }
         return function ($query) use ($key, $value) {
             $query->whereBetween($key, $value);
@@ -128,11 +136,11 @@ abstract class BaseRepository
     private function equalCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return null;
+            return $this->renderWhere();
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return null;
+            return $this->renderWhere();
         }
         return function ($query) use ($key, $value) {
             $query->where($key, $value);
@@ -146,11 +154,11 @@ abstract class BaseRepository
     private function likeCondition($key)
     {
         if (!array_key_exists($key, $this->list)) {
-            return null;
+            return $this->renderWhere();
         }
         $value = $this->list[$key];
         if (is_null($value)) {
-            return null;
+            return $this->renderWhere();
         }
         return function ($query) use ($key, $value) {
             $query->where($key, "like", "%" . $value . "%");
