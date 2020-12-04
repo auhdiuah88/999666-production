@@ -25,22 +25,22 @@ abstract class BaseRepository
         foreach ($ops as $index => $op) {
             switch ($op) {
                 case "between":
-                    $model->where($this->betweenCondition($index));
+                    $model = $model->where($this->betweenCondition($index));
                     break;
                 case "like":
-                    $model->where($this->likeCondition($index));
+                    $model = $model->where($this->likeCondition($index));
                     break;
                 case ">":
-                    $model->where($this->greaterCondition($index));
+                    $model = $model->where($this->greaterCondition($index));
                     break;
                 case "<":
-                    $model->where($this->lessCondition($index));
+                    $model = $model->where($this->lessCondition($index));
                     break;
                 case "in":
-                    $model->where($this->inCondition($index));
+                    $model = $model->where($this->inCondition($index));
                     break;
                 default:
-                    $model->where($this->equalCondition($index));
+                    $model = $model->where($this->equalCondition($index));
             }
         }
         return $model;
