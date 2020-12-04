@@ -102,6 +102,7 @@ class Ipay extends PayStrategy
         }
         return [
             'pltf_order_no' => $res['pltf_order_no'],
+            'order_no' => $order_no,
         ];
     }
 

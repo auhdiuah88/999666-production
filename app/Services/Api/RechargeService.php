@@ -52,6 +52,11 @@ class RechargeService extends PayService
         $pay_type = $request->pay_type;
         $money = $request->money;
 
+        if ((float)$user->balance < $money){
+            $this->_msg = 'The withdrawal amount is greater than the balance';
+            return false;
+        }
+
         $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式
         //  $host = "api.999666.in"; 变成 999666.in
         if (count(explode('.', $host)) == 3) {

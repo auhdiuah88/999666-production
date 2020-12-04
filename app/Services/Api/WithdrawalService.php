@@ -176,14 +176,14 @@ class WithdrawalService extends PayService
         $ifsc_code = $user_bank->ifsc_code;
         $phone = $user_bank->phone;
         $email = $user_bank->mail;
-        $order_no = PayStrategy::onlyosn();
+//        $order_no = PayStrategy::onlyosn();
         $data = [
             'user_id' => $user_id,
             'phone' => $phone,
             'nickname' => $user->nickname,
             'money' => $money,
             'create_time' => time(),
-            'order_no' => $order_no,
+//            'order_no' => $order_no,
             'pltf_order_no' => '',
             'upi_id' => '',
             'account_holder' => $account_holder,

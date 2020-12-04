@@ -179,8 +179,9 @@ class Leap extends PayStrategy
         $pay_type = 3;
         $onlyParams = $this->withdrawalOrderByDai($withdrawalRecord);
         $money = $withdrawalRecord->payment;    // 打款金额
-        $order_no = self::onlyosn();
         $ip = $this->request->ip();
+
+        $order_no = self::onlyosn();
         $params = [
             'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
             'mch_id' => self::$merchantID,
@@ -188,7 +189,7 @@ class Leap extends PayStrategy
             'money' => $money,
             'goods_desc' => 'cashout',
             'client_ip' => $ip,
-            'notify_url' => self::$url_callback.'/api/withdrawal_callback'.'?=type=leap',
+            'notify_url' => self::$url_callback.'/api/withdrawal_callback'.'?type=leap',
             'time' => time(),
         ];
         $params = array_merge($params, $onlyParams);
@@ -201,6 +202,7 @@ class Leap extends PayStrategy
         }
         return  [
             'pltf_order_no' => '',
+            'order_no' => $order_no,
         ];
     }
 

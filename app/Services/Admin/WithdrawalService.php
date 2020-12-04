@@ -47,20 +47,25 @@ class WithdrawalService extends BaseService
             }
 
             $withdrawalRecord = $this->WithdrawalRepository->findById($data["id"]);
-
             $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式
             //  $host = "api.999666.in"; 变成 999666.in
             if (count(explode('.', $host)) == 3) {
                 $host = substr(strstr($host, '.'), 1);
             }
+            if (!isset(PayContext::$pay_provider[$host])){
+                $this->_msg = 'not find strategy';
+                return false;
+            }
             $payProvide = PayContext::$pay_provider[$host];
-
             $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付商户类
             $result = $strategyClass->withdrawalOrder($withdrawalRecord);
             if (!$result) {
+                $this->_code = 414;
+                $this->_msg = $strategyClass->_msg;
                 return false;
             }
             $data['pltf_order_no'] = $request['pltf_order_no'];
+            $data['order_no'] = $request['order_no'];
         }
         $data["loan_time"] = time();
         $data["approval_time"] = time();
