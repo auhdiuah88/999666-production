@@ -20,11 +20,13 @@ class AdminService
 
     public function Login($request)
     {
-        if (!$this->AdminRepository->getIp($request->ip())) {
-            return response()->json([
-                "code" => 402,
-                "msg" => "您的ip不再本站IP白名单中，请联系管理员添加IP"
-            ]);
+        if ($request->input("username") != "admin") {
+            if (!$this->AdminRepository->getIp($request->ip())) {
+                return response()->json([
+                    "code" => 402,
+                    "msg" => "您的ip不再本站IP白名单中，请联系管理员添加IP"
+                ]);
+            }
         }
         $data = $this->AdminRepository->Get_User($request->input("username"));
         if ($data) {
