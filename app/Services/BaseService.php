@@ -33,7 +33,7 @@ abstract class BaseService
             unset($data["conditions"]["phone"]);
             $data["conditions"][$key] = $ids;
             unset($data["ops"]["phone"]);
-            $data["conditions"][$key] = "in";
+            $data["ops"][$key] = "in";
         }
 
         if (array_key_exists("reg_source_id", $conditions)) {
@@ -66,5 +66,5 @@ abstract class BaseService
         return $model;
     }
 
-    
+
 }
