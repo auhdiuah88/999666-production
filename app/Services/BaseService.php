@@ -31,7 +31,7 @@ abstract class BaseService
         DB::connection()->enableQueryLog();
         $this->getConditions($data, new Cx_User())->get("id")->toArray();
         dd(DB::getQueryLog());
-        $ids = array_column(, "id");
+//        $ids = array_column(, "id");
         if (array_key_exists("phone", $conditions)) {
             unset($data["conditions"]["phone"]);
             $data["conditions"]["user_id"] = $ids;
