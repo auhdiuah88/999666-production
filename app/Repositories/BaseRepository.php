@@ -22,6 +22,7 @@ abstract class BaseRepository
     {
         $this->list = $data["conditions"];
         $ops = $data["ops"];
+        dd($ops);
         foreach ($ops as $index => $op) {
             switch ($op) {
                 case "between":
@@ -43,7 +44,6 @@ abstract class BaseRepository
                     $model->where($this->equalCondition($index));
             }
         }
-        dd($model->query->connection->wheres);
         return $model;
     }
 
