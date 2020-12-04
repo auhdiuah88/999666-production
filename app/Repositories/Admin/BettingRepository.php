@@ -45,9 +45,7 @@ class BettingRepository extends BaseRepository
 
     public function searchBettingLogs($data, $offset, $limit)
     {
-        DB::connection()->enableQueryLog();
-        $this->whereCondition($data, $this->getModel())->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->toArray();
-        dd(DB::getQueryLog());
+        return $this->whereCondition($data, $this->getModel())->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countSearchBettingLogs($data)
