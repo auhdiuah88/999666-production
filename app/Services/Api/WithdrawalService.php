@@ -148,7 +148,7 @@ class WithdrawalService extends PayService
         $user = $this->UserRepository->findByIdUser($user_id);
 
         $bank_id = $request->bank_id;
-        $money = $request->mony;
+        $money = $request->money;
 
         $user_bank = $this->UserRepository->getBankByBankId($bank_id);
         if ($user_bank->user_id <> $user_id) {
