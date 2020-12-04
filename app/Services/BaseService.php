@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Cx_User;
 use App\Repositories\Admin\FirstChargeRepository;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 abstract class BaseService
 {
@@ -27,7 +28,10 @@ abstract class BaseService
     {
         $conditions = $data["conditions"];
         $ops = $data["ops"];
-        $ids = array_column($this->getConditions($data, new Cx_User())->get("id")->toArray(), "id");
+        DB::connection()->enableQueryLog();
+        $this->getConditions($data, new Cx_User())->get("id")->toArray();
+        dd(DB::getQueryLog());
+        $ids = array_column(, "id");
         if (array_key_exists("phone", $conditions)) {
             unset($data["conditions"]["phone"]);
             $data["conditions"]["user_id"] = $ids;
