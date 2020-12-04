@@ -26,7 +26,6 @@ class FirstChargeService extends BaseService
     public function searchChargeLogs($data)
     {
         $data = $this->getUserIds($data);
-        dd($data);
         $list = $this->FirstChargeRepository->searchChargeLogs($data, ($data["page"] - 1) * $data["limit"], $data["limit"]);
         $total = $this->FirstChargeRepository->countSearchChargeLogs($data);
         $this->_data = ["total" => $total, "list" => $list];
