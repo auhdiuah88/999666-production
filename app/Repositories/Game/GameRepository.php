@@ -295,7 +295,7 @@ class GameRepository
                 $cl_betting = $user_obj->cl_betting + $money;
                 $cl_betting_total = $user_obj->cl_betting_total + 1;
                 $this->Cx_User->where('id', $user->id)->update(['balance' => $u_money,'cl_betting' => $cl_betting,'cl_betting_total' => $cl_betting_total]);
-
+            $this->Cx_User_Balance_Logs->insert(array("user_id" => $user->id, "type" => 1, "dq_balance" => $user_obj->balance, "wc_balance" => $u_money, "time" => time(), "msg" => "下注减少金额" . $money, "money" => "下注减少金额" . $money));
 //                if ($user_obj->agent_id) {
 //                    // 计算代理的收益
 //                    $this->common->getAgentIds($user_obj->agent_id);
@@ -310,6 +310,7 @@ class GameRepository
 //                DB::rollBack();
 //                return false;
 //            }
+
             $this->UserRepository->updateCacheUser($user->id, $user_obj);
         }
         $user_new = $this->Cx_User->where('id', $user->id)->first();
@@ -413,7 +414,7 @@ class GameRepository
             $zx_money = $user_obj->balance + $arr['win_money'];
             $this->Cx_User->where('id', $betting->user_id)->update(['balance' => $zx_money]);
             //增加资金记录
-            $this->Cx_User_Balance_Logs->insert(array("user_id" => $betting->user_id, "type" => 6, "dq_balance" => $user_obj->balance, "wc_balance" => $zx_money, "time" => $time, "msg" => "中奖增加金额" . $arr['win_money']));
+            $this->Cx_User_Balance_Logs->insert(array("user_id" => $betting->user_id, "type" => 6, "dq_balance" => $user_obj->balance, "wc_balance" => $zx_money, "time" => $time, "msg" => "中奖增加金额" . $arr['win_money'], "money" => $arr['win_money']));
 
 
         } else if ($type == 2) {//输
