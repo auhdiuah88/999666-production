@@ -160,6 +160,7 @@ class Ssc_FourService
                 break;
             }
         }
+        var_dump($ar_new);
 
         $shu_kaijiang=0;
         asort($ar_new,1);
