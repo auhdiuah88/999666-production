@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Admin\WithdrawalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class WithdrawalController extends Controller
 {
@@ -26,6 +27,21 @@ class WithdrawalController extends Controller
             $this->WithdrawalService->_msg,
             $this->WithdrawalService->_data
         );
+    }
+
+    /**
+     * 实时审核通知
+     */
+    public function syncInRealtime() {
+        $retry = 20000;
+        $result = $this->WithdrawalService->getNewests();
+        $response = new StreamedResponse(function() use ($result,$retry) {
+            echo "retry: {$retry}" . PHP_EOL.'data: ' . json_encode($result) . "\n\n";
+        });
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('X-Accel-Buffering', 'no');
+        $response->headers->set('Cach-Control', 'no-cache');
+        return $response;
     }
 
     public function auditRecord(Request $request)
@@ -66,5 +82,20 @@ class WithdrawalController extends Controller
             $this->WithdrawalService->_msg,
             $this->WithdrawalService->_data
         );
+    }
+
+    /**
+     * 实时审核通知
+     */
+    public function syncInRealtimeNotice() {
+        $retry = 20000;
+        $result = $this->WithdrawalService->getNewest();
+        $response = new StreamedResponse(function() use ($result,$retry) {
+            echo "retry: {$retry}" . PHP_EOL.'data: ' . json_encode($result) . "\n\n";
+        });
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('X-Accel-Buffering', 'no');
+        $response->headers->set('Cach-Control', 'no-cache');
+        return $response;
     }
 }
