@@ -33,13 +33,6 @@ class BettingService extends BaseService
 
     public function searchBettingLogs($data)
     {
-
-        if(!array_key_exists("conditions", $data)){
-            $this->_data["betting_count"] = $this->BettingRepository->countAll();
-            $this->_data["betting_money"] = $this->BettingRepository->sumAll("money");
-            $this->_data["service_charge"] = $this->BettingRepository->sumAll("service_charge");
-            $this->_data["win_money"] = $this->BettingRepository->sumAll("win_money");
-        }else{
             $page = $data["page"];
             $limit = $data["limit"];
             $offset = ($page - 1) * $limit;
@@ -47,7 +40,6 @@ class BettingService extends BaseService
             $list = $this->BettingRepository->searchBettingLogs($data, $offset, $limit);
             $total = $this->BettingRepository->countSearchBettingLogs($data);
             $this->_data = ["total" => $total, "list" => $list];
-        }
 
     }
 
@@ -76,6 +68,20 @@ class BettingService extends BaseService
         }
 
         if (array_key_exists("phone", $data["conditions"])) {
+            $data["conditions"]["user_id"] = $this->BettingRepository->findUserId($data["conditions"]["phone"]);
+            $data["ops"]["user_id"] = "=";
+            unset($data["conditions"]["phone"]);
+            unset($data["ops"]["phone"]);
+        }
+        if (array_key_exists("conditions", $data)){
+            $data["conditions"]["game_c_x_id"] = $this->BettingRepository->findPlayIds($data["conditions"]["selection"]);
+            $data["ops"]["game_c_x_id"] = "in";
+            unset($data["conditions"]["selection"]);
+            unset($data["ops"]["selection"]);
+            $data["conditions"]["game_p_id"] = $this->BettingRepository->findNumberId($data["conditions"]["number"]);
+            $data["ops"]["game_p_id"] = "in";
+            unset($data["conditions"]["number"]);
+            unset($data["ops"]["number"]);
             $data["conditions"]["user_id"] = $this->BettingRepository->findUserId($data["conditions"]["phone"]);
             $data["ops"]["user_id"] = "=";
             unset($data["conditions"]["phone"]);
