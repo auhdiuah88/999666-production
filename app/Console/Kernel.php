@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground();
         $schedule->command("Generate_Number")
-            ->hourly()
+            ->daily()
             ->withoutOverlapping()
             ->runInBackground();
     }
