@@ -69,10 +69,10 @@ class WithdrawalService extends PayService
         $this->_data = $this->WithdrawalRepository->getAgentWithdrawalRecord($userId);
     }
 
-    public function getAgentRewardRecord($token)
+    public function getAgentRewardRecord($token, $type)
     {
         $userId = $this->getUserId($token);
-        $this->_data = $this->WithdrawalRepository->getAgentRewardRecord($userId);
+        $this->_data = $this->WithdrawalRepository->getAgentRewardRecord($userId, $type);
     }
 
 

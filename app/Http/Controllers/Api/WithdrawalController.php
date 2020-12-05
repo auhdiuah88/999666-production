@@ -99,7 +99,7 @@ class WithdrawalController extends Controller
 
     public function getAgentRewardRecord(Request $request)
     {
-        $this->WithdrawalService->getAgentRewardRecord($request->header("token"));
+        $this->WithdrawalService->getAgentRewardRecord($request->header("token"), $request->post("type"));
         return $this->AppReturn(
             $this->WithdrawalService->_code,
             $this->WithdrawalService->_msg,
