@@ -259,7 +259,7 @@ class WithdrawalService extends PayService
 
                 // 更新用户金额
                 $user->freeze_money = bcsub($user->freeze_money, $money,2); // 减掉冻结资金
-                $user->cl_withdrawal = bcadd($user->cl_withdrawal + $money,2); // 累计提现
+                $user->cl_withdrawal = bcadd($user->cl_withdrawal , $money,2); // 累计提现
                 $user->save();
 
              // 代理用户
@@ -272,7 +272,7 @@ class WithdrawalService extends PayService
 
                 // 更新用户金额
                 $user->freeze_agent_money = bcsub($user->freeze_agent_money, $money,2); // 减掉代理冻结代理资金
-                $user->cl_commission = bcadd($user->cl_commission + $money,2);
+                $user->cl_commission = bcadd($user->cl_commission , $money,2);
                 $user->save();
             }
 

@@ -25,7 +25,7 @@ class TestController extends Controller
 $json = '{
     "money": "104.000000",
     "pt_order": "CS202012025006904868391", 
-    "sh_order": "202012051857228545788117",
+    "sh_order": "202012051855591670980816",
     "time": "1606904958",
     "state": "4",
     "goods_desc": "recharge"
