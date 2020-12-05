@@ -152,6 +152,7 @@ class Ssc_FourService
             }
         }
         $kaijiang=0;
+
         arsort( $ar_new,1);
         foreach ($ar_new as $key => $value){
             if($sd[$key]>=0){
@@ -159,6 +160,7 @@ class Ssc_FourService
                 break;
             }
         }
+
         $shu_kaijiang=0;
         asort($ar_new,1);
 
@@ -168,9 +170,18 @@ class Ssc_FourService
                 break;
             }
         }
+
+        echo $isWin."--".$kaijiang."--".$shu_kaijiang;
+//        var_dump($ar_new);
+//        dd($sd);
+
 //        echo "最优开奖号码".$kaijiang;
+        echo $shu_kaijiang."--";
+        echo $play_id."--".$kaijiang."--".$isWin."--".$arr[$kaijiang]["winmoney"]."--".$arr[$kaijiang]["lostmoney"]."--".$b_money."--".$result1;
+        exit;
         if($isWin==1){
                     //执行开奖
+
                     $this->Executive_Prize($play_id,$kaijiang,$isWin,$arr[$kaijiang]["winmoney"],$arr[$kaijiang]["lostmoney"],$b_money,$kaijiang);
             return true;
         }else if($isWin==2){
