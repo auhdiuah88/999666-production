@@ -250,6 +250,7 @@ class WithdrawalService extends PayService
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback',$request->all());
 
+        return false;
         $payProvide = $request->get('type','');
         if (!$payProvide) {
             $this->_msg = 'can not find pay Provide';
