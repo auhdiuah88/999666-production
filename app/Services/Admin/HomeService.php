@@ -84,9 +84,9 @@ class HomeService extends BaseService
         // 用户投注盈利
         $item->userProfit = $this->HomeRepository->sumUserProfit($ids, $timeMap);
         // 平台服务费
+        dd($item->bettingMoney - $item->userProfit + $item->platformServiceMoney);
         $item->platformServiceMoney = number_format($item->serviceMoney - $item->subCommission, 2);
         // 总盈亏
-        dd($item->bettingMoney - $item->userProfit + $item->platformServiceMoney);
         $item->totalProfitLoss = number_format($item->bettingMoney - $item->userProfit + $item->platformServiceMoney, 2);
         return $item;
     }
