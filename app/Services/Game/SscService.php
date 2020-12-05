@@ -58,15 +58,20 @@ class SscService
         //整体杀率判定
 
         $date_money=$this->GameRepository->Get_Date_Money();
-        //获得当天实际整体杀率
-        if($date_money->b_money>0){
-            $date_sj_kill=($date_money->pt_money-$date_money->pt_s_money)/$date_money->b_money;
-            if($date_sj_kill>=$system->date_kill){
-                $isWin=2;
-            }else{
-                $isWin=1;
+        //是否开启天杀率控制
+        if($system->is_date_kill==1){
+            //获得当天实际整体杀率
+            if($date_money->b_money>0){
+                $date_sj_kill=($date_money->pt_money-$date_money->pt_s_money)/$date_money->b_money;
+                $p_kill=$date_sj_kill-$system->date_kill;
+                if($p_kill>0.05){
+                    $isWin=2;
+                }else{
+                    $isWin=1;
+                }
             }
         }
+
 
         //echo "单局杀率为".$kill_rate."天杀率为".$system->date_kill."单句输赢为".$rand."天判定为".$isWin."整体真实杀率为".$date_sj_kill;
 
