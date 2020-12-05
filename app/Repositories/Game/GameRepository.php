@@ -73,17 +73,17 @@ class GameRepository
                         $this->end_time = $this->start_time + 60;
                         $this->number = date('YmdH', $this->start_time)."1".$j;
                     } else {
-                        $this->start_time = $this->end_time + 1;
+                        $this->start_time = $this->end_time;
                         $this->end_time = $this->end_time + 60;
                         $this->number = date('YmdH', $this->start_time)."1".$j;
                     }
                 } else {
                     if ($j == 0) {
-                        $this->start_time = time();
+                        $this->start_time = strtotime(date("Y-m-d",time()));
                         $this->end_time = $this->start_time + 60;
                         $this->number = date('YmdH', $this->start_time)."1".$j;
                     } else {
-                        $this->start_time = $this->end_time + 1;
+                        $this->start_time = $this->end_time;
                         $this->end_time = $this->end_time + 60;
                         $this->number = date('YmdH', $this->start_time)."1".$j;
                     }
@@ -121,17 +121,17 @@ class GameRepository
                         $this->end_time = $this->start_time + 120;
                         $this->number = date('YmdH', $this->start_time)."2".$j;
                     } else {
-                        $this->start_time = $this->end_time + 1;
+                        $this->start_time = $this->end_time ;
                         $this->end_time = $this->end_time + 120;
                         $this->number = date('YmdH', $this->start_time)."2".$j;
                     }
                 } else {
                     if ($j == 0) {
-                        $this->start_time = time();
+                        $this->start_time = strtotime(date("Y-m-d",time()));
                         $this->end_time = $this->start_time + 120;
                         $this->number = date('YmdH', $this->start_time)."2".$j;
                     } else {
-                        $this->start_time = $this->end_time + 1;
+                        $this->start_time = $this->end_time ;
                         $this->end_time = $this->end_time + 120;
                         $this->number = date('YmdH', $this->start_time)."2".$j;
                     }
@@ -170,17 +170,17 @@ class GameRepository
                         $this->end_time = $this->start_time + 180;
                         $this->number = date('YmdH', $this->start_time)."3".$j;
                     } else {
-                        $this->start_time = $this->end_time + 1;
+                        $this->start_time = $this->end_time ;
                         $this->end_time = $this->end_time + 180;
                         $this->number = date('YmdH', $this->start_time)."3".$j;
                     }
                 } else {
                     if ($j == 0) {
-                        $this->start_time = time();
+                        $this->start_time = strtotime(date("Y-m-d",time()));
                         $this->end_time = $this->start_time + 180;
                         $this->number = date('YmdH', $this->start_time)."3".$j;
                     } else {
-                        $this->start_time = $this->end_time + 1;
+                        $this->start_time = $this->end_time ;
                         $this->end_time = $this->end_time + 180;
                         $this->number = date('YmdH', $this->start_time)."3".$j;
                     }
@@ -219,17 +219,17 @@ class GameRepository
                         $this->end_time = $this->start_time + 300;
                         $this->number = date('YmdH', $this->start_time)."4".$j;
                     } else {
-                        $this->start_time = $this->end_time + 1;
+                        $this->start_time = $this->end_time ;
                         $this->end_time = $this->end_time + 300;
                         $this->number = date('YmdH', $this->start_time)."4".$j;
                     }
                 } else {
                     if ($j == 0) {
-                        $this->start_time = time();
+                        $this->start_time = strtotime(date("Y-m-d",time()));
                         $this->end_time = $this->start_time + 300;
                         $this->number = date('YmdH', $this->start_time)."4".$j;
                     } else {
-                        $this->start_time = $this->end_time + 1;
+                        $this->start_time = $this->end_time;
                         $this->end_time = $this->end_time + 300;
                         $this->number = date('YmdH', $this->start_time)."4".$j;
                     }
