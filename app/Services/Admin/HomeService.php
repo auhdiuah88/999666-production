@@ -77,10 +77,16 @@ class HomeService extends BaseService
         $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
         // 下单金额
         $item->bettingMoney = $this->HomeRepository->sumBettingMoney($ids, $timeMap);
-        // 服务费
+        // 总服务费
         $item->serviceMoney = $this->HomeRepository->sumServiceMoney($ids, $timeMap);
         // 购买签到礼包金额
         $item->payEnvelopeAmount = $this->HomeRepository->sumPayEnvelope($ids, $timeMap);
+        // 用户投注盈利
+        $item->userProfit = $this->HomeRepository->sumUserProfit($ids, $timeMap);
+        // 平台服务费
+        $item->platformServiceMoney = number_format($item->serviceMoney - $item->subCommission, 2);
+        // 总盈亏
+        $item->totalProfitLoss = number_format($item->bettingMoney - $item->userProfit + $item->platformServiceMoney, 2);
         return $item;
     }
 }
