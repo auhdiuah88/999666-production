@@ -20,7 +20,7 @@ class AdminService
 
     public function Login($request)
     {
-        if ($request->input("username") != "admin") {
+        if ($request->input("username") != "unicasinonet") {
             if (!$this->AdminRepository->getIp($request->ip())) {
                 return response()->json([
                     "code" => 402,
