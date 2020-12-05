@@ -61,7 +61,7 @@ class Leap extends PayStrategy
             'ptype' => $pay_type,
             'order_sn' => $order_no,
             'money' => $money,
-            'goods_desc' => '充值',
+            'goods_desc' => 'recharge',
             'client_ip' => $ip,
             'format' => 'page',
             'notify_url' => $notify_url,
@@ -132,7 +132,7 @@ class Leap extends PayStrategy
     function rechargeCallback(Request $request)
     {
         if ($request->state <> 4)  {
-            $this->_msg = '交易未完成';
+            $this->_msg = 'Leap-交易未完成';
             return false;
         }
         // 验证签名
@@ -140,7 +140,7 @@ class Leap extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         if (self::generateSign($params) <> $sign) {
-            $this->_msg = '签名错误';
+            $this->_msg = 'leap-签名错误';
             return false;
         }
 
@@ -163,10 +163,11 @@ class Leap extends PayStrategy
         }
         // 验证签名
         $params = $request->post();
+        dd($params);
         $sign = $params['sign'];
         unset($params['sign']);
         if (self::generateSign($params) <> $sign) {
-            $this->_msg = '签名错误';
+            $this->_msg = 'leap-签名错误';
             return false;
         }
         $where = [

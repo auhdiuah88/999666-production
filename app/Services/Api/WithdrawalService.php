@@ -76,40 +76,6 @@ class WithdrawalService extends PayService
     }
 
 
-    public function testTix(Request $request, $mode = 'bank')
-    {
-        $money = $request->money;
-        $bank_id = $request->bank_id;
-
-        if ($mode == 'bank') {
-            $user_bank = $this->UserRepository->getBankByBankId($bank_id);
-            $account_holder = $user_bank->account_holder;
-            $bank_name = $user_bank->bank_type_id;
-            $bank_number = $user_bank->bank_num;
-            $ifsc_code = $user_bank->ifsc_code;
-            $type = 1;
-        }
-        $order_no = $this->onlyosn();
-        $params = [
-            'type' => $type,    // 1 银行卡 2 Paytm 3代付
-            'mch_id' => self::$merchantID,
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => '提现',
-            'client_ip' => $request->ip(),
-            'notify_url' => url('api/withdrawal_callback'),
-            'time' => time(),
-            'bank_type_name' => $bank_name,  // 收款银行（类型为1不可空，长度0-200）
-            'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
-            'bank_card' => $bank_number . '388385483848348',   // 收款卡号（类型为1,3不可空，长度9-26
-            'ifsc' => $ifsc_code . '388385483848',   // ifsc代码 （类型为1,3不可空，长度9-26）
-            'nation' => 'India',    // 国家 (类型为1不可空,长度0-200)
-        ];
-        $params['sign'] = self::generateSign($params);
-        $res = $this->requestService->postFormData(self::$url_cashout . '/order/cashout', $params);
-        return $res;
-    }
-
     /**
      * 代理请求提现订单 (提款佣金)  先由后台审核，审核后由后台提交
      */
