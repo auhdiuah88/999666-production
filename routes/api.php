@@ -77,7 +77,7 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/message", "WithdrawalController@getMessage");
         Route::post("/agent/extract", "WithdrawalController@agentWithdrawal");
         Route::post("/agent/record", "WithdrawalController@getAgentWithdrawalRecord");
-        Route::get("/agent/reward", "WithdrawalController@getAgentRewardRecord");
+        Route::post("/agent/reward", "WithdrawalController@getAgentRewardRecord");
     });
 
     // 活动

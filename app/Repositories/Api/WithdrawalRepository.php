@@ -38,7 +38,7 @@ class WithdrawalRepository
     {
         return $this->Cx_Withdrawal_Record->with(["bank" => function ($query) {
             $query->select("id", "bank_num");
-        }])->where("user_id", $userId)->orderByDesc("create_time")->get()->toArray();
+        }])->where("type", 1)->where("user_id", $userId)->orderByDesc("create_time")->get()->toArray();
     }
 
     public function countAgentWithdrawalRecord($userId)
@@ -46,11 +46,11 @@ class WithdrawalRepository
         return $this->Cx_Withdrawal_Record->where("user_id", $userId)->count("id");
     }
 
-    public function getAgentRewardRecord($user_id)
+    public function getAgentRewardRecord($user_id, $type)
     {
         return $this->Cx_Charge_Logs->with(["user" => function ($query) {
             $query->select("id", "nickname");
-        }])->where("charge_user_id", $user_id)->orderByDesc("create_time")->get()->toArray();
+        }])->where("charge_user_id", $user_id)->where("type", $type)->orderByDesc("create_time")->get()->toArray();
     }
 
     /**
