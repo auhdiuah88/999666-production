@@ -266,7 +266,6 @@ class WithdrawalService extends PayService
             $this->_msg = $strategyClass->_msg;
             return false;
         }
-        print_r($where);die;
 
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
         if (!$withdrawlLog) {
