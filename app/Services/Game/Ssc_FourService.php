@@ -152,14 +152,16 @@ class Ssc_FourService
             }
         }
         $kaijiang=0;
-        dd($sd);
+
         arsort( $ar_new,1);
         foreach ($ar_new as $key => $value){
-            if($sd[$key]>=0){
+            if($sd[$key]>=0 && $sd[$key]>$b_money){
                     $kaijiang=$key;
                 break;
             }
         }
+        echo $kaijiang;
+        dd($sd);
         $shu_kaijiang=0;
         asort($ar_new,1);
 
