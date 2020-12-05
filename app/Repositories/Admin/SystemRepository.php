@@ -25,12 +25,8 @@ class SystemRepository extends BaseRepository
     public function editSystem($data)
     {
         $this->Cx_System->where("id", $data["id"])->update($data);
-        if(Redis::exists("SYSTEM_CONFIG")){
-            $data=json_decode(Redis::get("SYSTEM_CONFIG"));
-        }else{
-            $data=$this->Cx_System->first();
-            Redis::set("SYSTEM_CONFIG", json_encode($data,JSON_UNESCAPED_UNICODE));
-        }
+        $row=$this->Cx_System->first();
+        Redis::set("SYSTEM_CONFIG", json_encode($row,JSON_UNESCAPED_UNICODE));
         return  true;
     }
 }
