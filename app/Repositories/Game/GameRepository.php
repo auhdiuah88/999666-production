@@ -256,7 +256,12 @@ class GameRepository
         }
         $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('number', ($bq_game->number - 1))->first();
         $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("number", "<",$bq_game->number)->orderBy('start_time', 'desc')->limit(10)->get();
-        $lx_game = $this->Cx_Game_Betting->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->get();
+        $lx_game = $this->Cx_Game_Betting->with(array(
+                'game_play' => function ($query) {
+                    $query->select('id', 'number');
+                },
+            )
+        )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->get();
         $user_obj =$this->Cx_User->where('id',$user_id)->first();
         unset($sq_game->game_id, $sq_game->prize_time);
 
