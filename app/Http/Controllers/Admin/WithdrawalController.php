@@ -30,10 +30,10 @@ class WithdrawalController extends Controller
     }
 
     /**
-     * 实时审核通知
+     * 实时审核列表
      */
     public function syncInRealtime() {
-        $retry = 20000;
+        $retry = 10000;
         $result = $this->WithdrawalService->getNewests();
         $response = new StreamedResponse(function() use ($result,$retry) {
             echo "retry: {$retry}" . PHP_EOL.'data: ' . json_encode($result) . "\n\n";
@@ -88,7 +88,7 @@ class WithdrawalController extends Controller
      * 实时审核通知
      */
     public function syncInRealtimeNotice() {
-        $retry = 20000;
+        $retry = 10000;
         $result = $this->WithdrawalService->getNewest();
         $response = new StreamedResponse(function() use ($result,$retry) {
             echo "retry: {$retry}" . PHP_EOL.'data: ' . json_encode($result) . "\n\n";
