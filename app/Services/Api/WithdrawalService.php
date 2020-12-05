@@ -255,7 +255,7 @@ class WithdrawalService extends PayService
                 // 记录充值成功余额变动
                 $dq_balance = bcadd($user->balance,$user->freeze_money,2);     // 当前余额 (总余额+冻结金额)
                 $wc_balance = bcsub($dq_balance, $money, 2);                   // 变动后余额
-                $this->UserRepository->addBalanceLog($user, $money, 3, "成功提现{$money}",$dq_balance,$wc_balance);
+                $this->UserRepository->addBalanceLog($user->id, $money, 3, "成功提现{$money};减少冻结金额{$money}",$dq_balance,$wc_balance);
 
                 // 更新用户金额
                 $user->freeze_money = bcsub($user->freeze_money, $money,2); // 减掉冻结资金

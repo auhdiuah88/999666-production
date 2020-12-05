@@ -20,8 +20,8 @@ abstract class PayStrategy
 
     protected static $url_callback  = '';    // 回调地址 (充值或提现)
 
-    protected static $merchantID = '';     // 商户ID
-    protected static $secretkey = '';      // 密钥
+    public static $merchantID = '';     // 商户ID
+    public static $secretkey = '';      // 密钥
 
     public function __construct (
         RequestService $requestService,

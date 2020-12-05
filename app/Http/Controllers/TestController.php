@@ -19,7 +19,8 @@ class TestController extends Controller
     protected static $merchantID = '';     // 商户ID
     protected static $secretkey = '';      // 密钥
 
-    public function test2() {
+    public function test2(Leap $leap) {
+        self::$secretkey = env('PAY_SECRET_KEY');
 //        return $leap->testGetCallbackUrl();
 $json = '{
     "money": "104.000000",
@@ -30,9 +31,9 @@ $json = '{
     "goods_desc": "recharge"
 }';
        $params =  json_decode($json, true);
-       $sign =  Leap::generateSign($params);
+       $sign =  self::generateSign($params);
        $params['sign'] = $sign;
-//        return $params;
+        return $params;
 //        $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
@@ -40,5 +41,17 @@ $json = '{
             return 'leap-签名错误';
         }
         return '通过';
+    }
+
+    public static function generateSign(array $params)
+    {
+        ksort($params);
+        $string = [];
+        foreach ($params as $key => $value) {
+            $string[] = $key . '=' . $value;
+        }
+        $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
+//        dd($sign);
+        return md5($sign);
     }
 }
