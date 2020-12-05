@@ -171,13 +171,15 @@ class Ssc_FourService
             }
         }
 
-        echo $isWin."--".$kaijiang."--".$shu_kaijiang;
-        var_dump($ar_new);
-        dd($sd);
+//        echo $isWin."--".$kaijiang."--".$shu_kaijiang;
+//        var_dump($ar_new);
+//        dd($sd);
 
 //        echo "最优开奖号码".$kaijiang;
         if($isWin==1){
                     //执行开奖
+            echo $play_id."--".$kaijiang."--".$isWin."--".$arr[$kaijiang]["winmoney"]."--".$arr[$kaijiang]["lostmoney"]."--".$b_money."--".$result1;
+            exit;
                     $this->Executive_Prize($play_id,$kaijiang,$isWin,$arr[$kaijiang]["winmoney"],$arr[$kaijiang]["lostmoney"],$b_money,$kaijiang);
             return true;
         }else if($isWin==2){
