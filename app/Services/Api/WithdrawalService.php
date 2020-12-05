@@ -115,7 +115,6 @@ class WithdrawalService extends PayService
      */
     public function addAgentRecord(Request $request)
     {
-//        $request->money = $request->mony;
         if (!$data = $this->addWithdrawlLog($request, $type = 1)) {
             return false;
         }
@@ -130,6 +129,7 @@ class WithdrawalService extends PayService
      */
     public function withdrawalOrder(Request $request)
     {
+
         if (!$data = $this->addWithdrawlLog($request, $type = 0)) {
             return false;
         }
@@ -150,11 +150,6 @@ class WithdrawalService extends PayService
         $bank_id = $request->bank_id;
         $money = $request->money;
 
-        if ((float)$user->balance < $money) {
-            $this->_msg = 'The withdrawal amount is greater than the balance';
-            return false;
-        }
-
         $user_bank = $this->UserRepository->getBankByBankId($bank_id);
         if ($user_bank->user_id <> $user_id) {
             $this->_msg = 'The bank card does not match';
@@ -163,6 +158,12 @@ class WithdrawalService extends PayService
 
         // 0:用户提现 余额提现
         if ($type == 0) {
+
+            if ((float)$user->balance < $money) {
+                $this->_msg = 'The withdrawal amount is greater than the balance';
+                return false;
+            }
+
             $system = $this->systemRepository->getSystem();
             if ((int)$system->multiple > 0) {
                 if (((float)$user->total_recharge * (int)$system->multiple) < $money) {
@@ -178,6 +179,12 @@ class WithdrawalService extends PayService
             $user->freeze_money = bcadd($user->freeze_money,$money,2);
             $user->save();
         } elseif ($type == 1) {
+
+            if ((float)$user->commission < $money) {
+                $this->_msg = 'The withdrawal amount is greater than the balance';
+                return false;
+            }
+
             //  0:代理提现  佣金提现
             $user->commission= bcsub($user->commission,$money,2);
             $user->freeze_agent_money= bcadd($user->freeze_agent_money,$money,2);

@@ -122,8 +122,6 @@ class WithdrawalController extends Controller
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
-        if ($this->WithdrawalService->addAgentRecord($request));
-
         if (!$result = $this->WithdrawalService->addAgentRecord($request)) {
             return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
         }
