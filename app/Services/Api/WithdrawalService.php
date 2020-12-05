@@ -248,7 +248,7 @@ class WithdrawalService extends PayService
      */
     public function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback',$request->all());
+//        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback',$request->all());
 
         return false;
         $payProvide = $request->get('type','');
