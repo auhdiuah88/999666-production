@@ -81,4 +81,26 @@ class WithdrawalRepository extends BaseRepository
     {
         return $this->whereCondition($data, $this->Cx_Withdrawal_Record)->count("id");
     }
+
+    /**
+     * 获取最新一条提现数据
+     */
+    public function getNewest()
+    {
+        return $this->Cx_Withdrawal_Record->where('status', 0)->orderByDesc("id")->first(['create_time', 'id']);
+    }
+
+    /**
+     * 获取最新一条提现数据
+     */
+    public function getNewests()
+    {
+        $limit = 10;
+        $status = 0;
+        return $this->Cx_Withdrawal_Record->with(["user" => function ($query) {
+            $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total"]);
+        }, "bank"])->where("status", $status)->orderByDesc("create_time")->limit($limit)->get();
+
+//        return $this->Cx_Withdrawal_Record->where('status', 0)->orderByDesc("id")->limit(10)->get();
+    }
 }

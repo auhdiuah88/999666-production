@@ -150,4 +150,18 @@ class WithdrawalService extends BaseService
         $total = $this->WithdrawalRepository->countSearchRecord($data);
         $this->_data = ["total" => $total, "list" => $list];
     }
+
+    /**
+     * 获取最新的一条待审核的提现
+     */
+    public function getNewest(){
+       return $this->WithdrawalRepository->getNewest();
+    }
+
+    /**
+     * 获取最新的10条待审核的提现
+     */
+    public function getNewests() {
+        return $this->WithdrawalRepository->getNewests();
+    }
 }

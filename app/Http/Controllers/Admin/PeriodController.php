@@ -33,7 +33,7 @@ class PeriodController extends Controller
      */
     public function syncInRealtime(Request $request)
     {
-        $retry = 5000;
+        $retry = 10000;
         $result = $this->PeriodService->getNewest($request);
         $response = new StreamedResponse(function() use ($result,$retry) {
             echo "retry: {$retry}" . PHP_EOL.'data: ' . json_encode($result) . "\n\n";
