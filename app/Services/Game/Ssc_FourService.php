@@ -176,10 +176,12 @@ class Ssc_FourService
 //        dd($sd);
 
 //        echo "最优开奖号码".$kaijiang;
+        echo $shu_kaijiang."--";
+        echo $play_id."--".$kaijiang."--".$isWin."--".$arr[$kaijiang]["winmoney"]."--".$arr[$kaijiang]["lostmoney"]."--".$b_money."--".$result1;
+        exit;
         if($isWin==1){
                     //执行开奖
-            echo $play_id."--".$kaijiang."--".$isWin."--".$arr[$kaijiang]["winmoney"]."--".$arr[$kaijiang]["lostmoney"]."--".$b_money."--".$result1;
-            exit;
+
                     $this->Executive_Prize($play_id,$kaijiang,$isWin,$arr[$kaijiang]["winmoney"],$arr[$kaijiang]["lostmoney"],$b_money,$kaijiang);
             return true;
         }else if($isWin==2){
