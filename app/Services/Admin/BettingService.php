@@ -33,6 +33,8 @@ class BettingService extends BaseService
 
     public function searchBettingLogs($data)
     {
+        var_dump($data);
+        exit;
         if(empty($data)){
             $this->_data["betting_count"] = $this->BettingRepository->countAll();
             $this->_data["betting_money"] = $this->BettingRepository->sumAll("money");
