@@ -115,27 +115,39 @@ class WithdrawalService extends PayService
      */
     public function addAgentRecord(Request $request)
     {
-//        $request->money = $request->mony;
         if (!$data = $this->addWithdrawlLog($request, $type = 1)) {
             return false;
         }
         $onlydata["service_charge"] = self::$service_charge;  // 手续费
         $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
         $data = array_merge($data, $onlydata);
-        return $this->WithdrawalRepository->addRecord($data);
+        $this->WithdrawalRepository->addRecord($data);
+
+      $user = $this->UserRepository->findByIdUser($data['user_id']);
+      return [
+          'balance' => $user->balance,
+          'commission' => $user->commission,
+      ];
     }
 
     /**
-     * 请求提现订单 (提款余额)  先由后台审核，审核后由后台提交
+     * 用户请求提现订单 (提款余额)  先由后台审核，审核后由后台提交
      */
     public function withdrawalOrder(Request $request)
     {
+
         if (!$data = $this->addWithdrawlLog($request, $type = 0)) {
             return false;
         }
         $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
         $data = array_merge($data, $onlydata);
-        return $this->WithdrawalRepository->addRecord($data);
+          $this->WithdrawalRepository->addRecord($data);
+
+        $user = $this->UserRepository->findByIdUser($data['user_id']);
+        return [
+            'balance' => $user->balance,
+            'commission' => $user->commission,
+        ];
     }
 
     /**
@@ -150,11 +162,6 @@ class WithdrawalService extends PayService
         $bank_id = $request->bank_id;
         $money = $request->money;
 
-        if ((float)$user->balance < $money) {
-            $this->_msg = 'The withdrawal amount is greater than the balance';
-            return false;
-        }
-
         $user_bank = $this->UserRepository->getBankByBankId($bank_id);
         if ($user_bank->user_id <> $user_id) {
             $this->_msg = 'The bank card does not match';
@@ -163,6 +170,12 @@ class WithdrawalService extends PayService
 
         // 0:用户提现 余额提现
         if ($type == 0) {
+
+            if ((float)$user->balance < $money) {
+                $this->_msg = 'The withdrawal amount is greater than the balance';
+                return false;
+            }
+
             $system = $this->systemRepository->getSystem();
             if ((int)$system->multiple > 0) {
                 if (((float)$user->total_recharge * (int)$system->multiple) < $money) {
@@ -178,6 +191,12 @@ class WithdrawalService extends PayService
             $user->freeze_money = bcadd($user->freeze_money,$money,2);
             $user->save();
         } elseif ($type == 1) {
+
+            if ((float)$user->commission < $money) {
+                $this->_msg = 'The withdrawal amount is greater than the balance';
+                return false;
+            }
+
             //  0:代理提现  佣金提现
             $user->commission= bcsub($user->commission,$money,2);
             $user->freeze_agent_money= bcadd($user->freeze_agent_money,$money,2);
@@ -229,6 +248,9 @@ class WithdrawalService extends PayService
      */
     public function withdrawalCallback($request)
     {
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->all());
+
         $payProvide = $request->get('type');
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
         if (!$strategyClass) {

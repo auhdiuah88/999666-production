@@ -3,6 +3,8 @@
 
 namespace App\Services\Pay;
 
+use App\Repositories\Api\UserRepository;
+use App\Services\RequestService;
 use Illuminate\Http\Request;
 
 /**
@@ -13,15 +15,14 @@ class Ipay extends PayStrategy
 
     protected static $url = 'http://ipay-in.yynn.me';
 
-
-    // 正式环境
-    protected static $merchantID = 10175;
-    protected static $secretkey = '1hmoz1dbwo2xbrl3rei78il7mljxdhqi';
-
-
     // 测试环境
 //    protected static $merchantID = 10120;
 //    protected static $secretkey = 'j3phc11lg986dx3tkai120ngpxy7a2sw';
+
+//    public function __construct(RequestService $requestService, Request $request, UserRepository $userRepository)
+//    {
+//        parent::__construct($requestService, $request, $userRepository);
+//    }
 
     /**
      * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
@@ -42,8 +43,6 @@ class Ipay extends PayStrategy
      */
     function rechargeOrder($pay_type,$money)
     {
-
-
         $order_no = self::onlyosn();
         $params = [
             'api_name' => 'quickpay.all.native',
@@ -148,7 +147,6 @@ class Ipay extends PayStrategy
          * "sign": "2463f17f8400c0416d0dd86c28208508"
          * }
          */
-
         if ($request->rtn_code <> 'success') {
             $this->_msg = '参数错误';
             return false;

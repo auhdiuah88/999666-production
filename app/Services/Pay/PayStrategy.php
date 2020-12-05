@@ -20,6 +20,9 @@ abstract class PayStrategy
 
     protected static $url_callback  = '';    // 回调地址 (充值或提现)
 
+    protected static $merchantID = '';     // 商户ID
+    protected static $secretkey = '';      // 密钥
+
     public function __construct (
         RequestService $requestService,
         Request $request,
@@ -33,6 +36,12 @@ abstract class PayStrategy
         self::$url_callback = env('APP_URL','');
         if (empty(self::$url_callback)) {
             die('请设置APP_URL');
+        }
+
+        self::$merchantID = env('PAY_MERCHANT_ID');
+        self::$secretkey = env('PAY_SECRET_KEY');
+        if (empty(self::$merchantID) || empty(self::$secretkey)) {
+            die('请设置支付商户号和密钥');
         }
     }
     /**
