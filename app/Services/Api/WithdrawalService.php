@@ -121,11 +121,17 @@ class WithdrawalService extends PayService
         $onlydata["service_charge"] = self::$service_charge;  // 手续费
         $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
         $data = array_merge($data, $onlydata);
-        return $this->WithdrawalRepository->addRecord($data);
+        $this->WithdrawalRepository->addRecord($data);
+
+      $user = $this->UserRepository->findByIdUser($data['user_id']);
+      return [
+          'balance' => $user->balance,
+          'commission' => $user->commission,
+      ];
     }
 
     /**
-     * 请求提现订单 (提款余额)  先由后台审核，审核后由后台提交
+     * 用户请求提现订单 (提款余额)  先由后台审核，审核后由后台提交
      */
     public function withdrawalOrder(Request $request)
     {
@@ -135,7 +141,13 @@ class WithdrawalService extends PayService
         }
         $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
         $data = array_merge($data, $onlydata);
-        return $this->WithdrawalRepository->addRecord($data);
+          $this->WithdrawalRepository->addRecord($data);
+
+        $user = $this->UserRepository->findByIdUser($data['user_id']);
+        return [
+            'balance' => $user->balance,
+            'commission' => $user->commission,
+        ];
     }
 
     /**
