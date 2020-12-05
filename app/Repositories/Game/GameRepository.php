@@ -65,27 +65,27 @@ class GameRepository
             if ($count > 0) {
                 $row = $this->Cx_Game_Play->where("game_id", $data[$i]->id)->orderBy('end_time', 'desc')->first();
             }
-            for ($j = 0; $j < 60; $j++) {
+            for ($j = 0; $j < (60*24); $j++) {
                 if ($count > 0) {
                     //获取最新一期信息
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
                         $this->end_time = $this->start_time + 60;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."1".$j;
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 60;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."1".$j;
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = time();
                         $this->end_time = $this->start_time + 60;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."1".$j;
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 60;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."1".$j;
                     }
                 }
 
@@ -113,27 +113,27 @@ class GameRepository
             if ($count > 0) {
                 $row = $this->Cx_Game_Play->where("game_id", $data[$i]->id)->orderBy('end_time', 'desc')->first();
             }
-            for ($j = 0; $j < 30; $j++) {
+            for ($j = 0; $j < (30*24); $j++) {
                 if ($count > 0) {
                     //获取最新一期信息
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
                         $this->end_time = $this->start_time + 120;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."2".$j;
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 120;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."2".$j;
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = time();
                         $this->end_time = $this->start_time + 120;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."2".$j;
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 120;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."2".$j;
                     }
                 }
 
@@ -162,27 +162,27 @@ class GameRepository
             if ($count > 0) {
                 $row = $this->Cx_Game_Play->where("game_id", $data[$i]->id)->orderBy('end_time', 'desc')->first();
             }
-            for ($j = 0; $j < 20; $j++) {
+            for ($j = 0; $j < (20*24); $j++) {
                 if ($count > 0) {
                     //获取最新一期信息
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
                         $this->end_time = $this->start_time + 180;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."3".$j;
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 180;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."3".$j;
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = time();
                         $this->end_time = $this->start_time + 180;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."3".$j;
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 180;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."3".$j;
                     }
                 }
 
@@ -211,27 +211,27 @@ class GameRepository
             if ($count > 0) {
                 $row = $this->Cx_Game_Play->where("game_id", $data[$i]->id)->orderBy('end_time', 'desc')->first();
             }
-            for ($j = 0; $j < 12; $j++) {
+            for ($j = 0; $j < (12*24); $j++) {
                 if ($count > 0) {
                     //获取最新一期信息
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
                         $this->end_time = $this->start_time + 300;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."4".$j;
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 300;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."4".$j;
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = time();
                         $this->end_time = $this->start_time + 300;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."4".$j;
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 300;
-                        $this->number = date('YmdHis', $this->start_time);
+                        $this->number = date('YmdH', $this->start_time)."4".$j;
                     }
                 }
 
@@ -254,7 +254,7 @@ class GameRepository
         if (!isset($bq_game->number)) {
             $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<", ($time + 2))->where('end_time', ">", $time)->first();
         }
-        $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('end_time', ($bq_game->start_time - 1))->first();
+        $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('number', ($bq_game->number - 1))->first();
         $pr_lx = $this->Cx_Game_Play->where("game_id", $id)->where("number", "<",$bq_game->number)->orderBy('start_time', 'desc')->limit(10)->get();
         $lx_game = $this->Cx_Game_Betting->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->get();
         unset($sq_game->game_id, $sq_game->prize_time);
