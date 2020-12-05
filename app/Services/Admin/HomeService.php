@@ -86,7 +86,7 @@ class HomeService extends BaseService
         // 平台服务费
         $item->platformServiceMoney = number_format($item->serviceMoney - $item->subCommission, 2);
         // 总盈亏
-        $item->totalProfitLoss = number_format($item->bettingMoney - $item->userProfit + $item->platformServiceMoney, 2);
+        $item->totalProfitLoss = number_format((float)$item->bettingMoney - $item->userProfit + $item->platformServiceMoney, 2);
         return $item;
     }
 }
