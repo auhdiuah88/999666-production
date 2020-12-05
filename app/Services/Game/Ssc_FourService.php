@@ -155,7 +155,7 @@ class Ssc_FourService
 
         arsort( $ar_new,1);
         foreach ($ar_new as $key => $value){
-            if($sd[$key]>=0 && $sd[$key]>$b_money){
+            if($sd[$key]>=0 && $sd[$key]>=$b_money){
                     $kaijiang=$key;
                 break;
             }
