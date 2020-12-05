@@ -498,12 +498,13 @@ class GameRepository
     }
     //获取总杀率设置
     public function Get_System(){
-        if(Redis::exists("SYSTEM_CONFIG")){
-            $data=json_decode(Redis::get("SYSTEM_CONFIG"));
-        }else{
-            $data=$this->Cx_System->first();
-            Redis::set("SYSTEM_CONFIG", json_encode($data,JSON_UNESCAPED_UNICODE));
-        }
+        $data=$this->Cx_System->first();
+//        if(Redis::exists("SYSTEM_CONFIG")){
+//            $data=json_decode(Redis::get("SYSTEM_CONFIG"));
+//        }else{
+//            $data=$this->Cx_System->first();
+//            Redis::set("SYSTEM_CONFIG", json_encode($data,JSON_UNESCAPED_UNICODE));
+//        }
         return $data;
     }
     public function Get_Date_Money(){
