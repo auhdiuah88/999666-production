@@ -161,14 +161,14 @@ class Ssc_FourService
         }
         $shu_kaijiang=0;
         asort($ar_new,1);
-
+        dd($sd);
         foreach ($ar_new as $key => $value){
             if($sd[$key]<0){
                 $shu_kaijiang=$key;
                 break;
             }
         }
-        dd($sd);
+
 //        echo "最优开奖号码".$kaijiang;
         if($isWin==1){
                     //执行开奖
