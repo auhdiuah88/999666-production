@@ -47,13 +47,13 @@ class GameSettlement_Sd implements ShouldQueue
         $this->Ssc_FourService=$Ssc_FourService;
 
         if($this->game_id==1){
-            $this->SscService->ssc($this->id, $this->prize_number);
+            $this->SscService->ssc_sd($this->id, $this->prize_number);
         }else if($this->game_id==2){
-            $this->Ssc_TwoService->ssc($this->id, $this->prize_number);
+            $this->Ssc_TwoService->ssc_sd($this->id, $this->prize_number);
         }else if($this->game_id==3){
-            $this->Ssc_ThreeService->ssc($this->id, $this->prize_number);
+            $this->Ssc_ThreeService->ssc_sd($this->id, $this->prize_number);
         }else if($this->game_id==4){
-            $this->Ssc_FourService->ssc($this->id, $this->prize_number);
+            $this->Ssc_FourService->ssc_sd($this->id, $this->prize_number);
         }
     }
 }

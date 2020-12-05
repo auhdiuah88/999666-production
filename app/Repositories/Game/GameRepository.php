@@ -71,21 +71,21 @@ class GameRepository
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
                         $this->end_time = $this->start_time + 60;
-                        $this->number = $row->number+1;
+                        $this->number = date('YmdHis', $this->start_time);
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 60;
-                        $this->number = $this->number + 1;
+                        $this->number = date('YmdHis', $this->start_time);
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = time();
                         $this->end_time = $this->start_time + 60;
-                        $this->number = date('YmdHi', $this->start_time);
+                        $this->number = date('YmdHis', $this->start_time);
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 60;
-                        $this->number = $this->number + 1;
+                        $this->number = date('YmdHis', $this->start_time);
                     }
                 }
 
@@ -119,21 +119,21 @@ class GameRepository
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
                         $this->end_time = $this->start_time + 120;
-                        $this->number = $row->number+1;
+                        $this->number = date('YmdHis', $this->start_time);
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 120;
-                        $this->number = $this->number + 1;
+                        $this->number = date('YmdHis', $this->start_time);
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = time();
                         $this->end_time = $this->start_time + 120;
-                        $this->number = date('YmdHi', $this->start_time);
+                        $this->number = date('YmdHis', $this->start_time);
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 120;
-                        $this->number = $this->number + 1;
+                        $this->number = date('YmdHis', $this->start_time);
                     }
                 }
 
@@ -168,21 +168,21 @@ class GameRepository
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
                         $this->end_time = $this->start_time + 180;
-                        $this->number = $row->number+1;
+                        $this->number = date('YmdHis', $this->start_time);
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 180;
-                        $this->number = $this->number + 1;
+                        $this->number = date('YmdHis', $this->start_time);
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = time();
                         $this->end_time = $this->start_time + 180;
-                        $this->number = date('YmdHi', $this->start_time);
+                        $this->number = date('YmdHis', $this->start_time);
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 180;
-                        $this->number = $this->number + 1;
+                        $this->number = date('YmdHis', $this->start_time);
                     }
                 }
 
@@ -217,21 +217,21 @@ class GameRepository
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
                         $this->end_time = $this->start_time + 300;
-                        $this->number = $row->number+1;
+                        $this->number = date('YmdHis', $this->start_time);
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 300;
-                        $this->number = $this->number + 1;
+                        $this->number = date('YmdHis', $this->start_time);
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = time();
                         $this->end_time = $this->start_time + 300;
-                        $this->number = date('YmdHi', $this->start_time);
+                        $this->number = date('YmdHis', $this->start_time);
                     } else {
                         $this->start_time = $this->end_time + 1;
                         $this->end_time = $this->end_time + 300;
-                        $this->number = $this->number + 1;
+                        $this->number = date('YmdHis', $this->start_time);
                     }
                 }
 
@@ -254,7 +254,7 @@ class GameRepository
         if (!isset($bq_game->number)) {
             $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<", ($time + 2))->where('end_time', ">", $time)->first();
         }
-        $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('number', ($bq_game->number - 1))->first();
+        $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('end_time', ($bq_game->start_time - 1))->first();
         $pr_lx = $this->Cx_Game_Play->where("game_id", $id)->where("number", "<",$bq_game->number)->orderBy('start_time', 'desc')->limit(10)->get();
         $lx_game = $this->Cx_Game_Betting->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->get();
         unset($sq_game->game_id, $sq_game->prize_time);
@@ -430,8 +430,7 @@ class GameRepository
     //结算场次信息
     public function Play_Result_Entry($play_id, $result, $isWin, $winmoney, $lostmoney, $winmoney1, $result1)
     {
-        echo $play_id."--".$result."--".$isWin."--".$winmoney."--".$lostmoney."--".$winmoney1."--".$result1;
-
+        //echo $play_id."--".$result."--".$isWin."--".$winmoney."--".$lostmoney."--".$winmoney1."--".$result1;
         $date=date('Y-m-d',time());
         $date_count=$this->Cx_Date_Prize->where("date",$date)->count();
         if($date_count>0){
@@ -440,7 +439,7 @@ class GameRepository
             $this->Cx_Date_Prize->insert(array("date" => $date));
             $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
         }
-        $arr['prize_number'] = $result1;
+        $arr['prize_number'] = $result;
         $arr['status'] = 1;
         $arr['prize_time'] = time();
         $date_arr=array();
@@ -452,7 +451,7 @@ class GameRepository
         } elseif ($isWin == 2) {
             $arr['type'] = 2;
             $arr['pt_money'] = $b_money - $winmoney;
-            $date_arr['pt_s_money']=$date_data->pt_s_money+$arr['pt_money'];
+            $date_arr['pt_s_money']=$date_data->pt_s_money+abs($arr['pt_money']);
         } elseif ($isWin == 3) {
             $arr['type'] = 3;
             $arr['pt_money'] = $b_money - $lostmoney;

@@ -159,7 +159,7 @@ class SscService
         $kaijiang=0;
         arsort( $ar_new,1);
         foreach ($ar_new as $key => $value){
-            if($sd[$key]>=0){
+            if($sd[$key]>0){
                     $kaijiang=$key;
                 break;
             }
@@ -305,7 +305,7 @@ class SscService
         $kaijiang=0;
         arsort( $ar_new,1);
         foreach ($ar_new as $key => $value){
-            if($sd[$key]>=0){
+            if($sd[$key]>0){
                 $kaijiang=$key;
                 break;
             }
