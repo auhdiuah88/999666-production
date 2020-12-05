@@ -246,9 +246,8 @@ class WithdrawalService extends PayService
      * 商品描述        goods_desc    string    否    订单描述或备注信息
      * 签名    sign    string    否    见签名算法
      */
-    public function withdrawalCallback($request)
+    public function withdrawalCallback(Request $request)
     {
-
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->all());
 
         $payProvide = $request->get('type');
