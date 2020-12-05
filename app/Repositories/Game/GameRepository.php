@@ -449,7 +449,7 @@ class GameRepository
             $date_arr['pt_money']=$date_data->pt_money+$arr['pt_money'];
         } elseif ($isWin == 2) {
             $arr['type'] = 2;
-            $arr['pt_money'] = abs($b_money - $winmoney);
+            $arr['pt_money'] = $b_money - $winmoney;
             $date_arr['pt_s_money']=$date_data->pt_s_money+$arr['pt_money'];
         } elseif ($isWin == 3) {
             $arr['type'] = 3;
