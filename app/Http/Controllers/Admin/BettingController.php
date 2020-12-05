@@ -27,6 +27,22 @@ class BettingController extends Controller
         );
     }
 
+    /**
+     *  订单信息实时推送  (使用 EventSource)
+     */
+    public function syncInRealtime(Request $request)
+    {
+        $retry = 5000;
+        $result = $this->BettingService->getNewest();
+        $response = new StreamedResponse(function() use ($result,$retry) {
+            echo "retry: {$retry}" . PHP_EOL.'data: ' . json_encode($result) . "\n\n";
+        });
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('X-Accel-Buffering', 'no');
+        $response->headers->set('Cach-Control', 'no-cache');
+        return $response;
+    }
+
     public function searchBettingLogs(Request $request)
     {
         $this->BettingService->searchBettingLogs($request->post());

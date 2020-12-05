@@ -30,6 +30,7 @@ Route::post("/admin_out", 'Admin\AdminController@Out');
 
 // 实时更新最新数据
 Route::get("/period/newests", "Admin\PeriodController@syncInRealtime");
+Route::get("/betting/newests", "Admin\BettingController@syncInRealtime");
 
 Route::group(['middleware' => ['token', "auth"]], function () {
     // 角色管理相关接口

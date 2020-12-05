@@ -33,6 +33,14 @@ class BettingRepository extends BaseRepository
         return $this->getModel()->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->toArray();
     }
 
+    /**
+     * 获取最新数据
+     */
+    public function getNewest()
+    {
+        return $this->getModel()->orderByDesc("betting_time")->limit(10)->get();
+    }
+
     public function countAll()
     {
         return $this->Cx_Game_Betting->count("id");

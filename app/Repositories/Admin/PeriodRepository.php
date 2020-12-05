@@ -26,7 +26,7 @@ class PeriodRepository extends BaseRepository
      */
     public function getNewest($game_id)
     {
-        return $this->Cx_Game_Play->where("game_id", $game_id)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderByDesc("prize_time")->limit(20)->get();
+        return $this->Cx_Game_Play->where("game_id", $game_id)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderByDesc("prize_time")->limit(10)->get();
     }
 
     public function countAll($status)

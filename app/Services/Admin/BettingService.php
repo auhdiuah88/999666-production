@@ -23,6 +23,14 @@ class BettingService extends BaseService
         $this->_data = ["total" => $total, "list" => $list];
     }
 
+    /**
+     * 获取最新的数据
+     */
+    public function getNewest()
+    {
+        return $this->BettingRepository->getNewest();
+    }
+
     public function searchBettingLogs($data)
     {
         $page = $data["page"];

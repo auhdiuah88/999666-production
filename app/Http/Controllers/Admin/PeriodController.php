@@ -29,14 +29,14 @@ class PeriodController extends Controller
     }
 
     /**
-     *  开奖实时推送  (使用 EventSource)
+     *  活动列表  (使用 EventSource)
      */
     public function syncInRealtime(Request $request)
     {
-//        $retry = 3000;
+        $retry = 5000;
         $result = $this->PeriodService->getNewest($request);
-        $response = new StreamedResponse(function() use ($result) {
-            echo 'data: ' . json_encode($result) . "\n\n";
+        $response = new StreamedResponse(function() use ($result,$retry) {
+            echo "retry: {$retry}" . PHP_EOL.'data: ' . json_encode($result) . "\n\n";
         });
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('X-Accel-Buffering', 'no');
