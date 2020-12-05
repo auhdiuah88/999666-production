@@ -26,6 +26,11 @@ Route::post('/sd_pize_opening', "Game\GameController@Sd_Prize_Opening");
 // 登录退出接口
 Route::any('/admin_login', 'Admin\AdminController@Login');
 Route::post("/admin_out", 'Admin\AdminController@Out');
+
+
+// 实时更新最新数据
+Route::get("/period/newests", "PeriodController@syncInRealtime");
+
 Route::group(['middleware' => ['token', "auth"]], function () {
     // 角色管理相关接口
     Route::get("/role/findAll", "Admin\RoleController@FindAll");
@@ -134,6 +139,7 @@ Route::group(['middleware' => ['token', "auth"]], function () {
 
         // 活动列表
         Route::group(["prefix" => "period"], function () {
+//            Route::get("/newests", "PeriodController@syncInRealtime");
             Route::get("/findAll", "PeriodController@findAll");
             Route::get("/findById", "PeriodController@findById");
             Route::post("/search", "PeriodController@searchPeriod");

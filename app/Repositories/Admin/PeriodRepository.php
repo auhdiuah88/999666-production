@@ -21,6 +21,14 @@ class PeriodRepository extends BaseRepository
         return $this->Cx_Game_Play->where("game_id", $status)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderByDesc("prize_time")->offset($offset)->limit($limit)->get()->toArray();
     }
 
+    /**
+     * 获取最新的数据
+     */
+    public function getNewest($game_id)
+    {
+        return $this->Cx_Game_Play->where("game_id", $game_id)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderByDesc("prize_time")->limit(20)->get();
+    }
+
     public function countAll($status)
     {
         return $this->Cx_Game_Play->where("game_id", $status)->count("id");

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\PeriodService;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PeriodController extends Controller
 {
@@ -25,6 +26,22 @@ class PeriodController extends Controller
             $this->PeriodService->_msg,
             $this->PeriodService->_data
         );
+    }
+
+    /**
+     *  开奖实时推送  (使用 EventSource)
+     */
+    public function syncInRealtime(Request $request)
+    {
+//        $retry = 3000;
+        $result = $this->PeriodService->getNewest($request);
+        $response = new StreamedResponse(function() use ($result) {
+            echo 'data: ' . json_encode($result) . "\n\n";
+        });
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('X-Accel-Buffering', 'no');
+        $response->headers->set('Cach-Control', 'no-cache');
+        return $response;
     }
 
     public function searchPeriod(Request $request)

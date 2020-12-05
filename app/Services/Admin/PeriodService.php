@@ -23,6 +23,15 @@ class PeriodService extends BaseService
         $this->_data = ["total" => $total, "list" => $list];
     }
 
+    /**
+     * 获取最新的数据
+     */
+    public function getNewest($request)
+    {
+        $game_id = $request->get("status");
+        return $this->PeriodRepository->getNewest($game_id);
+    }
+
     public function searchPeriod($data)
     {
         $page = $data["page"];

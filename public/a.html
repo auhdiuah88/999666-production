@@ -1,3 +1,52 @@
-<div >
-    {"msg":"该通道已关闭","code":"114"}
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="data">
+    <ul id="data-list">
+
+    </ul>
 </div>
+<div id="result"></div>
+</body>
+<script type="text/javascript">
+    //创建EventSource对象
+    // var es = new EventSource("./dat1a.php");
+    // var es = new EventSource("http://sky-shop2.t/data.php");
+
+    // var es = new EventSource("http://sky-shop2.t/api/test");
+    // //接收到消息的回调函数
+    // es.onmessage = function(e) {
+    //     alert(e)
+    //     var addLi = document.createElement("li");
+    //     addLi.innerHTML = e.data;
+    //     document.getElementById("data-list").appendChild(addLi);
+    // };
+
+    var source;
+    function init() {
+        // source = new EventSource('http://sky-shop2.t/api/test');
+        source = new EventSource('http://sky-shop2.t/admin/period/newests?status=1');
+        source.onopen = function () {
+            console.log("连接已经建立",this.readyState);
+        }
+        source.onmessage = function (event) {
+            var origin = event.origin;
+            console.log(origin)
+            ev = document.getElementById('result');
+            ev.innerHTML += "<br>[in] " + event.data;
+            // ev.innerHTML = "<br>[in] " + event.data;
+            console.log("成功",event.data)
+        }
+        source.onerror = function (event) {
+            console.log("失败",event);
+        }
+    }
+    init();
+
+
+</script>
+</html>
