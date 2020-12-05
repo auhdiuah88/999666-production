@@ -249,6 +249,7 @@ class GameRepository
     //根据彩票游戏id获取本期信息和上期开奖号码
     public function Game_Start($id,$user_id)
     {
+        sleep(2);
         $time = time();
         $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<", $time)->where('end_time', ">", $time)->first();
         if (!isset($bq_game->number)) {
