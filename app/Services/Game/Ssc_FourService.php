@@ -171,7 +171,7 @@ class Ssc_FourService
             }
         }
 
-//        echo $isWin."--".$kaijiang."--".$shu_kaijiang;
+        echo $isWin."--".$kaijiang."--".$shu_kaijiang;
 //        var_dump($ar_new);
 //        dd($sd);
 
