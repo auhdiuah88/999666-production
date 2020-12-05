@@ -183,7 +183,6 @@ class AdminRepository
         $jurisdiction = explode(",", $role->jurisdiction);
         $menu = $this->Cx_Jurisdiction
             ->whereIn('id', $jurisdiction)
-            ->where("parent_id", 0)
             ->get();
         return $menu;
     }
