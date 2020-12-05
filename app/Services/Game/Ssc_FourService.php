@@ -168,6 +168,7 @@ class Ssc_FourService
                 break;
             }
         }
+        dd($sd);
 //        echo "最优开奖号码".$kaijiang;
         if($isWin==1){
                     //执行开奖
