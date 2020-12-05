@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cx_User;
+use App\Services\Pay\Leap;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -17,11 +18,7 @@ class TestController extends Controller
     protected static $merchantID = '';     // 商户ID
     protected static $secretkey = '';      // 密钥
 
-    public function test2(Request $request ) {
-        self::$merchantID = env('PAY_MERCHANT_ID');
-        self::$secretkey = env('PAY_SECRET_KEY');
-
-        dump(self::$merchantID);
-        dump(self::$secretkey);
+    public function test2(Request $request,Leap $leap ) {
+        return $leap->testGetCallbackUrl();
     }
 }

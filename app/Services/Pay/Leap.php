@@ -36,6 +36,15 @@ class Leap extends PayStrategy
         return md5($sign);
     }
 
+
+    public function testGetCallbackUrl()
+    {
+       return [
+            'recharge_callback' => self::$url_callback . '/api/recharge_callback' . '?type=leap',
+            'withdrawal_callback' => self::$url_callback . '/api/withdrawal_callback' . '?type=leap'
+        ];
+    }
+
     /**
      * 充值下单接口
      */
@@ -44,6 +53,9 @@ class Leap extends PayStrategy
         $order_no = self::onlyosn();
         $ip = $this->request->ip();
         $pay_type = 100;
+
+        $notify_url = self::$url_callback . '/api/recharge_callback' . '?type=leap';
+
         $params = [
             'mch_id' => self::$merchantID,
             'ptype' => $pay_type,
@@ -52,7 +64,7 @@ class Leap extends PayStrategy
             'goods_desc' => '充值',
             'client_ip' => $ip,
             'format' => 'page',
-            'notify_url' => self::$url_callback . '/api/recharge_callback'.'?type=leap',
+            'notify_url' => $notify_url,
             'time' => time(),
         ];
         $params['sign'] = self::generateSign($params);
@@ -70,6 +82,7 @@ class Leap extends PayStrategy
             'pltf_order_id' => '',
             'verify_money' => '',
             'match_code' => '',
+            'notify_url' => $notify_url,
         ];
         return $resData;
     }
@@ -86,6 +99,8 @@ class Leap extends PayStrategy
 
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
+
+        $notify_url = self::$url_callback.'/api/withdrawal_callback'.'?type=leap';
         $params = [
             'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
             'mch_id' => self::$merchantID,
@@ -93,7 +108,7 @@ class Leap extends PayStrategy
             'money' => $money,
             'goods_desc' => 'cashout',
             'client_ip' => $ip,
-            'notify_url' => self::$url_callback.'/api/withdrawal_callback'.'?type=leap',
+            'notify_url' => $notify_url,
             'time' => time(),
         ];
         $params = array_merge($params, $onlyParams);
@@ -107,6 +122,7 @@ class Leap extends PayStrategy
         return  [
             'pltf_order_no' => '',
             'order_no' => $order_no,
+            'notify_url' => $notify_url,
         ];
     }
 
@@ -139,10 +155,9 @@ class Leap extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->post());
 
         if ($request->state <> 4) {
-            $this->_msg = '交易未完成';
+            $this->_msg = 'Leap-交易未完成';
             return false;
         }
         // 验证签名

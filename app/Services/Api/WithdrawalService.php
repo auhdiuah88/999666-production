@@ -248,6 +248,9 @@ class WithdrawalService extends PayService
      */
     public function withdrawalCallback($request)
     {
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->all());
+
         $payProvide = $request->get('type');
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
         if (!$strategyClass) {
