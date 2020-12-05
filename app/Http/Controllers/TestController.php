@@ -32,6 +32,13 @@ $json = '{
        $params =  json_decode($json, true);
        $sign =  Leap::generateSign($params);
        $params['sign'] = $sign;
-        return $params;
+//        return $params;
+//        $params = $request->post();
+        $sign = $params['sign'];
+        unset($params['sign']);
+        if (Leap::generateSign($params) <> $sign) {
+            return 'leap-签名错误';
+        }
+        return '通过';
     }
 }

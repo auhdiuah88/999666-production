@@ -163,7 +163,6 @@ class Leap extends PayStrategy
         }
         // 验证签名
         $params = $request->post();
-        dd($params);
         $sign = $params['sign'];
         unset($params['sign']);
         if (self::generateSign($params) <> $sign) {
