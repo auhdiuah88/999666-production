@@ -177,8 +177,7 @@ class Ssc_FourService
                 break;
             }
         }
-$isWin=2;
-        dd($sd);
+
         if($isWin==1){
                     //执行开奖
                     $this->Executive_Prize($play_id,$kaijiang,$isWin,$arr[$kaijiang]["winmoney"],$arr[$kaijiang]["lostmoney"],$b_money,$kaijiang);
