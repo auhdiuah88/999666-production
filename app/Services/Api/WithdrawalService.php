@@ -250,7 +250,11 @@ class WithdrawalService extends PayService
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->all());
 
-        $payProvide = $request->get('type');
+        $payProvide = $request->get('type','');
+        if (!$payProvide) {
+            $this->_msg = 'can not find pay Provide';
+            return false;
+        }
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
         if (!$strategyClass) {
             $this->_msg = 'can not find pay mode';
