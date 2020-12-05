@@ -16,7 +16,7 @@ class WithdrawalService extends BaseService
 
     public function __construct(WithdrawalRepository $withdrawalRepository,
                                 UserRepository $userRepository,
-    PayContext $payContext
+                                PayContext $payContext
     )
     {
         $this->WithdrawalRepository = $withdrawalRepository;
@@ -38,6 +38,7 @@ class WithdrawalService extends BaseService
     public function auditRecord($request)
     {
         $data = $request->post();
+        $withdrawalRecord = $this->WithdrawalRepository->findById($data["id"]);
         if ($data["status"] == 1) {
 //            if ($data["type"] == 1) {
 //                $this->changeAgencyCommission($data["id"]);
@@ -46,13 +47,12 @@ class WithdrawalService extends BaseService
 //            else {
 //                $this->addWithdrawalLogs($data["id"]);
 //            }
-            $withdrawalRecord = $this->WithdrawalRepository->findById($data["id"]);
-            $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式
-            //  $host = "api.999666.in"; 变成 999666.in
+
+            $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式 //  $host = "api.999666.in"; 变成 999666.in
             if (count(explode('.', $host)) == 3) {
                 $host = substr(strstr($host, '.'), 1);
             }
-            if (!isset(PayContext::$pay_provider[$host])){
+            if (!isset(PayContext::$pay_provider[$host])) {
                 $this->_msg = 'not find strategy';
                 return false;
             }
@@ -66,6 +66,17 @@ class WithdrawalService extends BaseService
             }
             $data['pltf_order_no'] = $request['pltf_order_no'];
 //            $data['order_no'] = $request['order_no'];
+        } elseif ($data["status"] == 2) {  // 如果审核不通过，将冻结金额返还
+            $user = $this->UserRepository->findById($withdrawalRecord->user_id);
+            $type = $withdrawalRecord->type;  //  0:用户提现 1:代理佣金提现
+            if ($data["type"] == 1) {
+                $user->freeze_agent_money = bcsub($user->freeze_agent_money, $withdrawalRecord->money,2);
+                $user->commission = bcadd($user->commission, $withdrawalRecord->money,2);
+            } else {
+                $user->freeze_money = bcsub($user->freeze_money, $withdrawalRecord->money,2);
+                $user->balance = bcadd($user->balance, $withdrawalRecord->money,2);
+            }
+            $user->save();
         }
         $data["loan_time"] = time();
         $data["approval_time"] = time();
@@ -154,14 +165,16 @@ class WithdrawalService extends BaseService
     /**
      * 获取最新的一条待审核的提现
      */
-    public function getNewest(){
-       return $this->WithdrawalRepository->getNewest();
+    public function getNewest()
+    {
+        return $this->WithdrawalRepository->getNewest();
     }
 
     /**
      * 获取最新的10条待审核的提现
      */
-    public function getNewests() {
+    public function getNewests()
+    {
         return $this->WithdrawalRepository->getNewests();
     }
 }

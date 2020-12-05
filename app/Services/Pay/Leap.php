@@ -17,9 +17,10 @@ class Leap extends PayStrategy
     protected static $url_cashout = 'http://tqqqbank.payto89.com:82'; // 提现网关
 
 
-    // 正式环境
-    protected static $merchantID = 262593573;
-    protected static $secretkey = '4e70f59ec59149a6b81d26aafed8f6fb';
+//    public function __construct(RequestService $requestService, Request $request, UserRepository $userRepository)
+//    {
+//        parent::__construct($requestService, $request, $userRepository);
+//    }
 
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
