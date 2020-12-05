@@ -33,6 +33,7 @@ class Leap extends PayStrategy
             $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
+        dd($sign);
         return md5($sign);
     }
 
