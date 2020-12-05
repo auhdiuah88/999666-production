@@ -64,7 +64,7 @@ class HomeService extends BaseService
         // 提现金额
         $item->withdrawalMoney = $this->HomeRepository->sumWithdrawalMoney($ids, $timeMap);
         // 待提现金额
-        $item->toBeWithdrawalMoney = $this->HomeRepository->sumUserBalance($ids) + $this->HomeRepository->sumUserCommission($ids);
+        $item->toBeWithdrawalMoney = bcadd($this->HomeRepository->sumUserBalance($ids), $this->HomeRepository->sumUserCommission($ids), 2);
         // 订单分佣
         $item->subCommission = $this->HomeRepository->sumSubCommission($ids, $timeMap);
         // 赠金
@@ -84,9 +84,9 @@ class HomeService extends BaseService
         // 用户投注盈利
         $item->userProfit = $this->HomeRepository->sumUserProfit($ids, $timeMap);
         // 平台服务费
-        $item->platformServiceMoney = $item->serviceMoney - $item->subCommission;
+        $item->platformServiceMoney = bcsub($item->serviceMoney, $item->subCommission, 2);
         // 总盈亏
-        $item->totalProfitLoss = $item->bettingMoney - $item->userProfit + $item->platformServiceMoney;
+        $item->totalProfitLoss = bcadd(bcsub($item->bettingMoney, $item->userProfit, 2), $item->platformServiceMoney, 2);
         return $item;
     }
 }
