@@ -160,8 +160,7 @@ class Ssc_FourService
                 break;
             }
         }
-        echo $isWin."--".$kaijiang;
-        dd($sd);
+
         $shu_kaijiang=0;
         asort($ar_new,1);
 
@@ -171,6 +170,9 @@ class Ssc_FourService
                 break;
             }
         }
+        echo $isWin."--".$kaijiang;
+        var_dump($ar_new);
+        dd($sd);
 
 //        echo "最优开奖号码".$kaijiang;
         if($isWin==1){
