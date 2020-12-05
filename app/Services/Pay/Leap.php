@@ -155,6 +155,7 @@ class Leap extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->post());
 
         if ($request->state <> 4) {
             $this->_msg = 'Leap-交易未完成';

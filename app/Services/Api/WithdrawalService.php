@@ -246,12 +246,17 @@ class WithdrawalService extends PayService
      * 商品描述        goods_desc    string    否    订单描述或备注信息
      * 签名    sign    string    否    见签名算法
      */
-    public function withdrawalCallback($request)
+    public function withdrawalCallback(Request $request)
     {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback',$request->all());
+//        dd($request->post());
+//        return false;
+        $payProvide = $request->get('type','');
+        if (!$payProvide) {
+            $this->_msg = 'can not find pay Provide';
+            return false;
+        }
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->all());
-
-        $payProvide = $request->get('type');
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
         if (!$strategyClass) {
             $this->_msg = 'can not find pay mode';
