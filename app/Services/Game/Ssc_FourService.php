@@ -170,7 +170,8 @@ class Ssc_FourService
                 break;
             }
         }
-        echo $isWin."--".$kaijiang;
+
+        echo $isWin."--".$kaijiang."--".$shu_kaijiang;
         var_dump($ar_new);
         dd($sd);
 
