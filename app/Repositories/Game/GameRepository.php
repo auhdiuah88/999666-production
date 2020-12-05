@@ -430,6 +430,8 @@ class GameRepository
     //结算场次信息
     public function Play_Result_Entry($play_id, $result, $isWin, $winmoney, $lostmoney, $winmoney1, $result1)
     {
+        echo $play_id."--".$result."--".$isWin."--".$winmoney."--".$lostmoney."--".$winmoney1."--".$result1;
+        exit;
         $date=date('Y-m-d',time());
         $date_count=$this->Cx_Date_Prize->where("date",$date)->count();
         if($date_count>0){
