@@ -64,6 +64,11 @@ class UserService extends BaseService
         if (array_key_exists("password", $data)) {
             $data["password"] = Crypt::encrypt($data["password"]);
         }
+        if (array_key_exists("balance", $data)) {
+            $this->_msg = "余额不能修改";
+            $this->_code = 402;
+            return;
+        }
         $data = $this->assembleData($data);
         if ($this->UserRepository->editUser($data)) {
             $this->_msg = "修改成功";
