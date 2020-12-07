@@ -412,6 +412,14 @@ class GameRepository
     {
         $time = time();
         $arr = array();
+        $date=date('Y-m-d',time());
+        $date_count=$this->Cx_Date_Prize->where("date",$date)->count();
+        if($date_count>0){
+            $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
+        }else{
+            $this->Cx_Date_Prize->insert(array("date" => $date));
+            $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
+        }
         if ($type == 1) {//赢
             $arr['settlement_time'] = $time;
             $arr['status'] = 1;
@@ -424,7 +432,15 @@ class GameRepository
             $this->Cx_User->where('id', $betting->user_id)->update(['balance' => $zx_money]);
             //增加资金记录
             $this->Cx_User_Balance_Logs->insert(array("user_id" => $betting->user_id, "type" => 6, "dq_balance" => $user_obj->balance, "wc_balance" => $zx_money, "time" => $time, "msg" => "中奖增加金额" . $arr['win_money'], "money" => $arr['win_money']));
-
+            if($user_obj->reg_source_id==0){
+                $date_arr =array();
+                $date_arr['pt_s_money']=$date_data->pt_s_money+ $arr['win_money'];
+                $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+            }else if($user_obj->reg_source_id==1){
+                $date_arr =array();
+                $date_arr['c_pt_s_money']=$date_data->pt_s_money+ $arr['win_money'];
+                $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+            }
 
         } else if ($type == 2) {//输
             $arr['settlement_time'] = $time;
@@ -433,6 +449,18 @@ class GameRepository
             $arr['odds'] = $odds;
             $arr['win_money'] = 0;
             $this->Cx_Game_Betting->where("id", $betting->id)->update($arr);
+            $user_obj = $this->Cx_User->where('id', $betting->user_id)->first();
+            if($user_obj->reg_source_id==0){
+                $date_arr =array();
+                $date_arr['pt_money']=$date_data->pt_money+$betting->money;
+                $date_arr['b_money']=$date_data->b_money+$betting->money;
+                $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+            }else if($user_obj->reg_source_id==1){
+                $date_arr =array();
+                $date_arr['c_pt_money']=$date_data->pt_money+$betting->money;
+                $date_arr['c_b_money']=$date_data->b_money+$betting->money;
+                $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+            }
         }
         return true;
     }
@@ -440,14 +468,14 @@ class GameRepository
     public function Play_Result_Entry($play_id, $result, $isWin, $winmoney, $lostmoney, $winmoney1, $result1)
     {
         //echo $play_id."--".$result."--".$isWin."--".$winmoney."--".$lostmoney."--".$winmoney1."--".$result1;
-        $date=date('Y-m-d',time());
-        $date_count=$this->Cx_Date_Prize->where("date",$date)->count();
-        if($date_count>0){
-            $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
-        }else{
-            $this->Cx_Date_Prize->insert(array("date" => $date));
-            $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
-        }
+//        $date=date('Y-m-d',time());
+//        $date_count=$this->Cx_Date_Prize->where("date",$date)->count();
+//        if($date_count>0){
+//            $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
+//        }else{
+//            $this->Cx_Date_Prize->insert(array("date" => $date));
+//            $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
+//        }
         $arr['prize_number'] = $result;
         $arr['status'] = 1;
         $arr['prize_time'] = time();
@@ -456,20 +484,20 @@ class GameRepository
         if ($isWin == 1) {
             $arr['type'] = 1;
             $arr['pt_money'] = $b_money - $winmoney;
-            $date_arr['pt_money']=$date_data->pt_money+$arr['pt_money'];
+//            $date_arr['pt_money']=$date_data->pt_money+$arr['pt_money'];
         } elseif ($isWin == 2) {
             $arr['type'] = 2;
             $arr['pt_money'] = $b_money - $winmoney;
-            $date_arr['pt_s_money']=$date_data->pt_s_money+abs($arr['pt_money']);
+//            $date_arr['pt_s_money']=$date_data->pt_s_money+abs($arr['pt_money']);
         } elseif ($isWin == 3) {
             $arr['type'] = 3;
             $arr['pt_money'] = $b_money - $lostmoney;
         }
-        $date_arr['b_money']=$date_data->b_money+$b_money;
+//        $date_arr['b_money']=$date_data->b_money+$b_money;
         $arr['winmoney'] = $winmoney;
         $arr['b_money'] = $b_money;
         $arr['lostmoney'] = $lostmoney;
-        $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+//        $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
         $this->Cx_Game_Play->where("id", $play_id)->update($arr);
         return true;
     }

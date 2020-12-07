@@ -23,12 +23,13 @@ class TestController extends Controller
         self::$secretkey = env('PAY_SECRET_KEY');
 //        return $leap->testGetCallbackUrl();
 $json = '{
-    "money": "104.000000",
-    "pt_order": "CS202012025006904868391", 
-    "sh_order": "202012051855591670980816",
-    "time": "1606904958",
-    "state": "4",
-    "goods_desc": "recharge"
+  "money": "600.000000",
+  "pt_order": "CS202012027806900907909",
+
+  "sh_order": "202012021721455575793327",
+  "time": "1606901066",
+  "state": "4",
+  "goods_desc": "recharge"
 }';
        $params =  json_decode($json, true);
        $sign =  self::generateSign($params);

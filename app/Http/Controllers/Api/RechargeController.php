@@ -66,6 +66,6 @@ class RechargeController extends Controller
         if ($this->rechargeService->rechargeCallback($request)) {
             return 'success';
         }
-        return 'fail';
+        return $this->rechargeService->_msg;
     }
 }

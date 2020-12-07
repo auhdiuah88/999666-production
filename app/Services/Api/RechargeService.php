@@ -160,12 +160,14 @@ class RechargeService extends PayService
             $this->userRepository->updateRechargeBalance($user, $money);
 
             // 更新充值成功记录的状态
-            $this->rechargeRepository->updateRechargeLog($rechargeLog, 2, $money);
+            $rechargeLog->arrive_time = time();
+            $rechargeLog->arrive_money = $money;
+            $rechargeLog->status = 2;
+            $rechargeLog->save();
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-//            $this->rechargeRepository->updateRechargeLog($rechargeLog, 3, $money);
             $this->_msg = $e->getMessage();
             return false;
         }

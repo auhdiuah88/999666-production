@@ -90,17 +90,4 @@ class WithdrawalRepository
     {
         return $this->Cx_Withdrawal_Record->where($where)->first();
     }
-
-    /**
-     * 更新提现记录状态
-     */
-    public function updateWithdrawalLog(object $withdrawlLog, $status = 1,$pay_status=1, $money)
-    {
-//        $withdrawlLog->status = $status;
-        $withdrawlLog->pay_status = $pay_status;
-//        $withdrawlLog->payment = $money;
-        $withdrawlLog->loan_time = time();
-//        $withdrawlLog->approval_time = time();
-        $withdrawlLog->save();
-    }
 }
