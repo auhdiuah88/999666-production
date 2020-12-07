@@ -63,9 +63,6 @@ class SscService
         if($system->is_date_kill==1){
             //获得当天实际整体杀率
             $date_sj_kill=($new_money_sum['s_money']-$new_money_sum['y_money'])/$new_money_sum['c_money'];
-            echo "实际天杀率".$date_sj_kill."系统天杀率".$system->date_kill;
-            echo "差值：".$date_sj_kill-$system->date_kill;
-            exit;
             if($date_sj_kill<=0){
                 $isWin=1;
             }else{
@@ -182,10 +179,11 @@ class SscService
             }
         }
 //        echo "最优开奖号码".$kaijiang;
-echo $isWin;
-        dd($kaijiang);
+
 
         if($isWin==1){
+            echo $isWin;
+            dd($kaijiang);
             //执行开奖
             $this->Executive_Prize($play_id,$kaijiang,$isWin,$arr[$kaijiang]["winmoney"],$arr[$kaijiang]["lostmoney"],$b_money,$kaijiang);
             return true;
