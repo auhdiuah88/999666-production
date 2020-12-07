@@ -62,7 +62,7 @@ class Ssc_ThreeService
         if($system->is_date_kill==1){
             //获得当天实际整体杀率
             if($date_money->b_money>0){
-                $date_sj_kill=($date_money->pt_money-$date_money->pt_s_money)/$new_money_sum;
+                $date_sj_kill=($date_money->pt_money-$date_money->pt_s_money)/$new_money_sum['c_money'];
                 $p_kill=$date_sj_kill-$system->date_kill;
                 if($p_kill>0.05){
                     $isWin=2;
