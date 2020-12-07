@@ -126,4 +126,14 @@ class UserController extends Controller
             $this->UserService->_data
         );
     }
+
+    public function giftMoney(Request $request)
+    {
+        $this->UserService->giftMoney($request->post("id"), $request->post("money"));
+        return $this->AppReturn(
+            $this->UserService->_code,
+            $this->UserService->_msg,
+            $this->UserService->_data
+        );
+    }
 }

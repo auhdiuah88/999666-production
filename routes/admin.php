@@ -95,6 +95,7 @@ Route::group(['middleware' => ['token', "auth"]], function () {
             Route::post("/customer/modify", "UserController@modifyCustomerService");
             Route::post("/status", "UserController@modifyUserStatus");
             Route::get("/recommend", "UserController@getRecommenders");
+            Route::post("/gift", "UserController@giftMoney");
         });
 
         // 用户下注信息

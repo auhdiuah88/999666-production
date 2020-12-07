@@ -160,4 +160,34 @@ class UserService extends BaseService
             $this->_msg = $e->getMessage();
         }
     }
+
+    public function giftMoney($id, $money)
+    {
+        DB::beginTransaction();
+        try {
+            $user = $this->UserRepository->findById($id);
+            $data = [
+                "user_id" => $id,
+                "type" => 8,
+                "dq_balance" => $user->balance,
+                "wc_balance" => bcadd($user->balance, $money, 2),
+                "time" => time(),
+                "msg" => "后台赠送" . $user->nickname . $money . "元礼金!",
+                "money" => $money
+            ];
+            $this->UserRepository->addLogs($data);
+            $update = ["id" => $id, "balance" => bcadd($user->balance, $money, 2)];
+            if ($this->UserRepository->editUser($update)) {
+                $this->_msg = "赠送成功";
+            } else {
+                $this->_code = 200;
+                $this->_msg = "赠送失败";
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->_code = $e->getCode();
+            $this->_msg = $e->getMessage();
+        }
+    }
 }
