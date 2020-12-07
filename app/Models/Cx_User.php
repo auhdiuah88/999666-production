@@ -18,7 +18,7 @@ class Cx_User extends Model
 
     protected $hidden = ['password'];
 
-    protected $appends = ["numLose"];
+//    protected $appends = ["numLose"];
 
     const CACHE_USER_PROFILE = 'USER:';             // 个人信息保存在缓存中的键名
 
@@ -34,17 +34,17 @@ class Cx_User extends Model
         return $phone->phone;
     }
 
-    public function getNumLoseAttribute()
-    {
-        $total_recharge = $this->attributes["total_recharge"];
-        $cl_withdrawal = $this->attributes["cl_withdrawal"];
-        $balance = $this->attributes["balance"];
-        if ($total_recharge > bcadd($cl_withdrawal, $balance, 2)) {
-            return bcsub($total_recharge, bcadd($cl_withdrawal, $balance, 2), 2);
-        } else {
-            return bcsub(bcadd($cl_withdrawal, $balance, 2), $total_recharge, 2);
-        }
-    }
+//    public function getNumLoseAttribute()
+//    {
+//        $total_recharge = $this->attributes["total_recharge"];
+//        $cl_withdrawal = $this->attributes["cl_withdrawal"];
+//        $balance = $this->attributes["balance"];
+//        if ($total_recharge > bcadd($cl_withdrawal, $balance, 2)) {
+//            return bcsub($total_recharge, bcadd($cl_withdrawal, $balance, 2), 2);
+//        } else {
+//            return bcsub(bcadd($cl_withdrawal, $balance, 2), $total_recharge, 2);
+//        }
+//    }
 
     public function bank()
     {
