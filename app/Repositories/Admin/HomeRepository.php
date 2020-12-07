@@ -197,6 +197,6 @@ class HomeRepository extends BaseRepository
 
     public function sumBackstageGiftMoney($ids, $timeMap)
     {
-        return $this->Cx_User_Balance_Logs->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+        return $this->Cx_User_Balance_Logs->where("type", 8)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
     }
 }
