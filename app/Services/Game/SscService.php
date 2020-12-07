@@ -182,8 +182,7 @@ class SscService
 
 
         if($isWin==1){
-            echo $isWin;
-            dd($kaijiang);
+
             //执行开奖
             $this->Executive_Prize($play_id,$kaijiang,$isWin,$arr[$kaijiang]["winmoney"],$arr[$kaijiang]["lostmoney"],$b_money,$kaijiang);
             return true;
