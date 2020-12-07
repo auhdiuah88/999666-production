@@ -166,8 +166,9 @@ class UserService extends BaseService
         }
     }
 
-    public function giftMoney($id, $money)
+    public function giftMoney($id, $money, $token)
     {
+        $adminId = $this->getUserId($token);
         DB::beginTransaction();
         try {
             $user = $this->UserRepository->findById($id);
@@ -178,7 +179,8 @@ class UserService extends BaseService
                 "wc_balance" => bcadd($user->balance, $money, 2),
                 "time" => time(),
                 "msg" => "后台赠送" . $user->nickname . $money . "元礼金!",
-                "money" => $money
+                "money" => $money,
+                "admin_id" => $adminId
             ];
             $this->UserRepository->addLogs($data);
             $update = ["id" => $id, "balance" => bcadd($user->balance, $money, 2)];
