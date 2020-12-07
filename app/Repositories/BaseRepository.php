@@ -20,6 +20,9 @@ abstract class BaseRepository
 
     protected function whereCondition($data, $model)
     {
+        if (array_key_exists("conditions", $data)) {
+            return $model;
+        }
         $this->list = $data["conditions"];
         $ops = $data["ops"];
         foreach ($ops as $index => $op) {
