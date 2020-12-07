@@ -110,13 +110,13 @@ class UserService
         $code = Redis::get(self::REDIS_REGIST_CODE . $phone);
         if (!$code) {
             $this->error_code = 414;
-            $this->error = '短信验证码不存在或已过期';
+            $this->error = 'The SMS verification code does not exist or has expired';
             return false;
         }
 
         if ($code !== $messageCode) {
             $this->error_code = 402;
-            $this->error = '短信验证码错误';
+            $this->error = 'The SMS verification code is incorrect';
             return false;
         }
         return true;
@@ -131,7 +131,7 @@ class UserService
         if ($code) {
             if ($code !== $data['code']) {
                 return $data = array("code" => 402,
-                    "msg" => "短信验证码错误",
+                    "msg" => "The SMS verification code is incorrect",
                     "data" => null);
             } else {
                 $pasword = Crypt::encrypt($data['password']);
@@ -141,7 +141,7 @@ class UserService
         } else {
             return $data = array(
                 "code" => 414,
-                "msg" => "短信验证码已过期",
+                "msg" => "The SMS verification code has expired",
                 "data" => null);
         }
     }
@@ -156,12 +156,12 @@ class UserService
         $Count = $this->UserRepository->Count($data['phone']);
         if ($Count > 0) {
             $this->error_code = 401;
-            $this->error = '此帐号已存在';
+            $this->error = 'This account already exists';
             return false;
         }
         if ($data["sms_code"] != Redis::get(self::REDIS_REGIST_CODE . $data["phone"])) {
             $this->error_code = 401;
-            $this->error = "手机验证码错误";
+            $this->error = "The phone verification code is incorrect";
             return false;
         }
         unset($data["sms_code"]);
@@ -197,7 +197,7 @@ class UserService
             }
         }
         $data["password"] = Crypt::encrypt($data["password"]);
-        $data["nickname"] = "用户" . md5($data['phone']);
+        $data["nickname"] = "account" . md5($data['phone']);
         $data["reg_time"] = time();
         $data["reg_source_id"] = 0;
         $data["is_login"] = 1;
@@ -223,7 +223,7 @@ class UserService
         if ($type == self::MESSAGE_REGISTER) {
             if ($this->UserRepository->getUser($phone)) {
                 $this->error_code = 414;
-                $this->error = '该用户已存在';
+                $this->error = 'The user already exists';
                 return false;
             }
             $key = self::REDIS_REGIST_CODE;
@@ -233,7 +233,7 @@ class UserService
 
         if (Redis::exists($key . $phone)) {
             $this->error_code = 414;
-            $this->error = '请稍后再试';
+            $this->error = 'Please try again later';
             return false;
         }
         $result = $this->sendcode($phone);
@@ -247,7 +247,8 @@ class UserService
 
 //        Log::channel('mytest')->info('发送短信验证码', $result);
 
-        $this->error = '发送成功，' . (self::REDIS_CODE_TTL / 60) . '分钟内有效';
+        $m = self::REDIS_CODE_TTL / 60;
+        $this->error = 'The send was successful，' . "Effective within {$m} minutes";
         $this->data = $result;
         return true;
     }
@@ -284,7 +285,7 @@ class UserService
     public function update(Request $request)
     {
         if (empty($request->all())) {
-            $this->error = '请选择一个需要修改的';
+            $this->error = 'Please select one that needs to be modified';
             return false;
         }
 
@@ -309,7 +310,7 @@ class UserService
 
             DB::rollBack();
 
-            $this->error = '更新失败';
+            $this->error = 'The update failed';
             return false;
         }
 

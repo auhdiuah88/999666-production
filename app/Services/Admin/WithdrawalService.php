@@ -171,6 +171,7 @@ class WithdrawalService extends BaseService
         if (!$result){
             return ['create_time'=>0, 'id'=>0];
         }
+        return $result;
     }
 
     /**

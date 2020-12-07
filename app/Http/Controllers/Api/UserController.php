@@ -119,13 +119,10 @@ class UserController extends Controller
     {
         $rules = [
             "phone" => "required",
-            "type" => "required|in:0,1",
+            "type" => "required",
         ];
-        $massages = [
-            "phone.required" => "手机号码不能为空",
-            "type.required" => "访问不正确清联系客服",
-        ];
-        $validator = Validator::make($request->post(), $rules, $massages);
+
+        $validator = Validator::make($request->post(), $rules);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
@@ -147,12 +144,12 @@ class UserController extends Controller
             "code" => "required",
             "password" => "required",
         ];
-        $massages = [
-            "phone.required" => "手机号码不能为空",
-            "code.required" => "验证码不能为空",
-            "password.required" => "密码不能为空",
-        ];
-        $validator = Validator::make($data, $rules, $massages);
+//        $massages = [
+//            "phone.required" => "手机号码不能为空",
+//            "code.required" => "验证码不能为空",
+//            "password.required" => "密码不能为空",
+//        ];
+        $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
             $result = [
                 "code" => 414,
@@ -200,7 +197,7 @@ class UserController extends Controller
         }
 
         if ($userInfo = $this->UserService->update($request)) {
-            return $this->AppReturn(200, '更新成功', $userInfo);
+            return $this->AppReturn(200, 'update success', $userInfo);
         } else {
             return $this->AppReturn(400, $this->UserService->error, new \StdClass());
         }
@@ -288,21 +285,21 @@ class UserController extends Controller
             "money" => "required|integer|min:100",
             "bank_id" => "required|integer",
         ];
-        $massages = [
-            "money.required" => "金额不能为空",
-            "money.integer" => "金额必须为整数",
-            "money.min" => "金额不得小于100",
-            "bank_id.required" => "银行卡不能为空",
-            "bank_id.integer" => "银行卡必须为整数",
-        ];
-        $validator = Validator::make($request->all(), $rules, $massages);
+//        $massages = [
+//            "money.required" => "金额不能为空",
+//            "money.integer" => "金额必须为整数",
+//            "money.min" => "金额不得小于100",
+//            "bank_id.required" => "银行卡不能为空",
+//            "bank_id.integer" => "银行卡必须为整数",
+//        ];
+        $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
         if ($this->UserService->Withdrawal($request->all())) {
-            return $this->AppReturn(200, '提现申请成功');
+            return $this->AppReturn(200, 'Successful withdrawal application');
         } else {
-            return $this->AppReturn(413, '提现失败');
+            return $this->AppReturn(413, 'The withdrawal failed');
         }
     }
 
@@ -312,15 +309,15 @@ class UserController extends Controller
             "limit" => "required",
             "page" => "required",
         ];
-        $massages = [
-            "limit.required" => "条数不能为空",
-            "page.required" => "页数不能为空",
-        ];
-        $validator = Validator::make($request->all(), $rules, $massages);
+//        $massages = [
+//            "limit.required" => "条数不能为空",
+//            "page.required" => "页数不能为空",
+//        ];
+        $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
         $data = $this->UserService->Withdrawal_List($request->input("limit"), $request->input("page"));
-        return $this->AppReturn(200, '成功', $data);
+        return $this->AppReturn(200, 'ok', $data);
     }
 }
