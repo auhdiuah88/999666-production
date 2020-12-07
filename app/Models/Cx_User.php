@@ -26,6 +26,9 @@ class Cx_User extends Model
             return $value;
         }
         $phone = self::where("id", $value)->select(["phone"])->first();
+        if (!$phone) {
+            return null;
+        }
         return $phone->phone;
     }
 
