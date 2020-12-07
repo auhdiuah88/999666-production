@@ -53,6 +53,9 @@ class BettingService extends BaseService
 
     public function assemblyParameters($data)
     {
+        if (!array_key_exists("conditions", $data)) {
+            return $data;
+        }
         if (array_key_exists("selection", $data["conditions"])) {
             $data["conditions"]["game_c_x_id"] = $this->BettingRepository->findPlayIds($data["conditions"]["selection"]);
             $data["ops"]["game_c_x_id"] = "in";
