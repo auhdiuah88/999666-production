@@ -420,6 +420,8 @@ class GameRepository
             $this->Cx_Date_Prize->insert(array("date" => $date));
             $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
         }
+        $user_array=$this->Cx_User->where('id', $betting->user_id)->first()->toArray();
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('user_array',$user_array);
         if ($type == 1) {//赢
             $arr['settlement_time'] = $time;
             $arr['status'] = 1;
@@ -428,8 +430,7 @@ class GameRepository
             $arr['odds'] = $odds;
             $this->Cx_Game_Betting->where("id", $betting->id)->update($arr);
             $user_obj = $this->Cx_User->where('id', $betting->user_id)->first();
-//            $user_array=$user_obj->toArray();
-//            \Illuminate\Support\Facades\Log::channel('mytest')->info('user_array',$user_array);
+
             $zx_money = $user_obj->balance + $arr['win_money'];
             $this->Cx_User->where('id', $betting->user_id)->update(['balance' => $zx_money]);
             //增加资金记录
