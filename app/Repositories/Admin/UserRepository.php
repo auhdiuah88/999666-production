@@ -5,16 +5,18 @@ namespace App\Repositories\Admin;
 
 
 use App\Models\Cx_User;
+use App\Models\Cx_User_Balance_Logs;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\DB;
 
 class UserRepository extends BaseRepository
 {
-    private $Cx_User;
+    private $Cx_User, $Cx_User_Balance_Logs;
 
-    public function __construct(Cx_User $cx_User)
+    public function __construct(Cx_User $cx_User, Cx_User_Balance_Logs $balance_Logs)
     {
         $this->Cx_User = $cx_User;
+        $this->Cx_User_Balance_Logs = $balance_Logs;
     }
 
     public function findAll($offset, $limit)
@@ -85,5 +87,10 @@ class UserRepository extends BaseRepository
     public function modifyEmptyAgent($ids, $data)
     {
         return $this->Cx_User->whereIn("id", $ids)->update($data);
+    }
+
+    public function addLogs($data)
+    {
+        return $this->Cx_User_Balance_Logs->insertGetId($data);
     }
 }
