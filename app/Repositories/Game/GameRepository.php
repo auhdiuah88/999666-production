@@ -420,8 +420,6 @@ class GameRepository
             $this->Cx_Date_Prize->insert(array("date" => $date));
             $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
         }
-        $user_array=$this->Cx_User->where('id', $betting->user_id)->first()->toArray();
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('user_array',$user_array);
         if ($type == 1) {//赢
             $arr['settlement_time'] = $time;
             $arr['status'] = 1;
