@@ -16,7 +16,7 @@ class HomeRepository extends BaseRepository
 {
     private
         $Cx_User,
-        $Cx_User_Recharge_Logs,
+        $Cx_User_Balance_Logs,
         $Cx_Withdrawal_Record,
         $Cx_Charge_Logs,
         $Cx_Game_Betting,
@@ -32,7 +32,7 @@ class HomeRepository extends BaseRepository
     )
     {
         $this->Cx_User = $cx_User;
-        $this->Cx_User_Recharge_Logs = $balance_Logs;
+        $this->Cx_User_Balance_Logs = $balance_Logs;
         $this->Cx_Withdrawal_Record = $cx_Withdrawal_Record;
         $this->Cx_Charge_Logs = $charge_Logs;
         $this->Cx_Game_Betting = $game_Betting;
@@ -51,7 +51,7 @@ class HomeRepository extends BaseRepository
 
     public function sumGiveMoney($ids, $timeMap)
     {
-        return $this->Cx_User_Recharge_Logs->where("type", 5)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+        return $this->Cx_User_Balance_Logs->where("type", 5)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
     }
 
     public function countNewMembers($timeMap, $ids)
@@ -127,7 +127,7 @@ class HomeRepository extends BaseRepository
 
     public function sumRechargeMoney($ids, $timeMap)
     {
-        return $this->Cx_User_Recharge_Logs->whereIn("user_id", $ids)->where("type", 2)->whereBetween("time", $timeMap)->sum("money");
+        return $this->Cx_User_Balance_Logs->whereIn("user_id", $ids)->where("type", 2)->whereBetween("time", $timeMap)->sum("money");
     }
 
     public function sumWithdrawalMoney($ids, $timeMap)
@@ -193,5 +193,10 @@ class HomeRepository extends BaseRepository
     public function sumReceiveEnvelope($ids, $timeMap)
     {
         return $this->Cx_Sign_Orders->whereIn("user_id", $ids)->whereBetween("start_time", $timeMap)->sum("yet_receive_count");
+    }
+
+    public function sumBackstageGiftMoney($ids, $timeMap)
+    {
+        return $this->Cx_User_Balance_Logs->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
     }
 }
