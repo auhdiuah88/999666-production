@@ -208,7 +208,7 @@ class GameService
     {
 
         //$this->Ssc_FourService->ssc(1453);
-        dd($this->GameRepository->Get_New_Sum_Money());
+        dd($this->GameRepository->Get_New_Sum_Money1());
         exit;
 
     }
