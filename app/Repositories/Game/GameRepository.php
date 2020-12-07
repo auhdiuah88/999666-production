@@ -14,6 +14,7 @@ use App\Models\Cx_User;
 use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Date_Prize;
 use App\Models\Cx_User_Balance_Logs;
+use App\Models\Cx_User_Recharge_Logs;
 use App\Repositories\Api\UserRepository;
 use App\Mongodb;
 use Illuminate\Support\Facades\DB;
@@ -36,10 +37,11 @@ class GameRepository
     protected $Cx_Game_Config;
     protected $Cx_Date_Prize;
     protected $Cx_System;
+    protected $Cx_User_Recharge_Logs;
 
 
 
-    public function __construct(Cx_System $Cx_System,Cx_Date_Prize $Cx_Date_Prize,Cx_Game_Config $Cx_Game_Config,Cx_User_Balance_Logs $Cx_User_Balance_Logs,Cx_Game_Play $Cx_Game_Play,  UserRepository $UserRepository,Cx_Game_Betting $Cx_Game_Betting,Cx_User $Cx_User,Cx_Game $Cx_Game)
+    public function __construct(Cx_User_Recharge_Logs $Cx_User_Recharge_Logs,Cx_System $Cx_System,Cx_Date_Prize $Cx_Date_Prize,Cx_Game_Config $Cx_Game_Config,Cx_User_Balance_Logs $Cx_User_Balance_Logs,Cx_Game_Play $Cx_Game_Play,  UserRepository $UserRepository,Cx_Game_Betting $Cx_Game_Betting,Cx_User $Cx_User,Cx_Game $Cx_Game)
     {
         $this->Cx_Game_Config = $Cx_Game_Config;
         $this->Cx_Game_Play = $Cx_Game_Play;
@@ -50,6 +52,7 @@ class GameRepository
         $this->Cx_User_Balance_Logs = $Cx_User_Balance_Logs;
         $this->Cx_Date_Prize=$Cx_Date_Prize;
         $this->Cx_System=$Cx_System;
+        $this->Cx_User_Recharge_Logs=$Cx_User_Recharge_Logs;
     }
 
     //每小时生成Gold期数
@@ -437,13 +440,13 @@ class GameRepository
                 $date_arr =array();
                 $date_arr['pt_s_money']=$date_data->pt_s_money+ $arr['win_money'];
                 $date_arr['b_money']=$date_data->b_money+$betting->money;
-                $date_arr['pt_money']=$date_arr['b_money']-$date_arr['pt_s_money'];
+                //$date_arr['pt_money']=$date_arr['b_money']-$date_arr['pt_s_money'];
                 $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
             }else if($user_obj->reg_source_id==1){
                 $date_arr =array();
                 $date_arr['c_pt_s_money']=$date_data->c_pt_s_money+ $arr['win_money'];
                 $date_arr['c_b_money']=$date_data->c_b_money+$betting->money;
-                $date_arr['c_pt_money']=$date_arr['c_b_money']-$date_arr['c_pt_s_money'];
+                //$date_arr['c_pt_money']=$date_arr['c_b_money']-$date_arr['c_pt_s_money'];
                 $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
             }
 
@@ -458,12 +461,12 @@ class GameRepository
             if($user_obj->reg_source_id==0){
                 $date_arr =array();
                 $date_arr['b_money']=$date_data->b_money+$betting->money;
-                $date_arr['pt_money']=$date_arr['b_money']-$date_data->pt_s_money;
+                $date_arr['pt_money']=$date_data->pt_money+$betting->money;
                 $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
             }else if($user_obj->reg_source_id==1){
                 $date_arr =array();
                 $date_arr['c_b_money']=$date_data->c_b_money+$betting->money;
-                $date_arr['c_pt_money']=$date_arr['c_b_money']-$date_data->c_pt_s_money;
+                $date_arr['c_pt_money']=$date_data->c_pt_money+$betting->money;
                 $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
             }
         }
@@ -551,6 +554,12 @@ class GameRepository
             $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
         }
         return $date_data;
+    }
+    public function Get_New_Sum_Money(){
+        $s = strtotime(date('Y-m-d').'00:00:00');
+        $l = strtotime(date('Y-m-d').'23:59:59');
+        $data=$this->Cx_User_Recharge_Logs->whereBetween('time', [$s, $l])->where("status",2)->sum("money");
+        return $data;
     }
     //投注列表
     public function Betting_List($user, $limit, $offset)
