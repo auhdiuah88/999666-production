@@ -8,34 +8,14 @@ use App\Services\RequestService;
 use Illuminate\Http\Request;
 
 /**
- * 999666.in 的充值和提现类
+ * Winpay支付商
  */
-class Leap extends PayStrategy
+class Winpay extends PayStrategy
 {
-    protected static $url = 'http://payqqqbank.payto89.com';    // 支付网关
+    protected static $url = 'https://www.winpays.in';    // 支付网关
 
-    protected static $url_cashout = 'http://tqqqbank.payto89.com:82'; // 提现网关
-
-
-//    public function __construct(RequestService $requestService, Request $request, UserRepository $userRepository)
-//    {
-//        parent::__construct($requestService, $request, $userRepository);
-//    }
-
-    /**
-     * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
-     */
-    public static function testGenerateSign(array $params)
-    {
-        ksort($params);
-        $string = [];
-        foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
-        }
-        $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
-        dd(self::$secretkey);
-        return md5($sign);
-    }
+    public static $snek = __FILE__;
+//    protected static $url_cashout = 'http://tqqqbank.payto89.com:82'; // 提现网关
 
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
@@ -48,14 +28,14 @@ class Leap extends PayStrategy
             $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
-//        dd($sign);
+        $sign = strtolower($sign);
         return md5($sign);
     }
 
 
     public function testGetCallbackUrl()
     {
-       return [
+        return [
             'recharge_callback' => self::$url_callback . '/api/recharge_callback' . '?type=leap',
             'withdrawal_callback' => self::$url_callback . '/api/withdrawal_callback' . '?type=leap'
         ];
@@ -67,42 +47,41 @@ class Leap extends PayStrategy
     public function rechargeOrder($pay_type, $money)
     {
         $order_no = self::onlyosn();
-        $ip = $this->request->ip();
-        $pay_type = 100;
-
-        $notify_url = self::$url_callback . '/api/recharge_callback' . '?type=leap';
-
+//        $ip = $this->request->ip();
+        $pay_type = 'QUICK_PAY';
+        $notify_url = self::$url_callback . '/openApi/pay/createOrder' . '?type=winpay';
         $params = [
-            'mch_id' => self::$merchantID,
-            'ptype' => $pay_type,
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => 'recharge',
-            'client_ip' => $ip,
-            'format' => 'page',
-            'notify_url' => $notify_url,
-            'time' => time(),
+            'merchant' => self::$merchantID,
+            'orderId' => $order_no,
+            'amount' => $money,
+            'customName' => 'xxxx',
+            'customMobile' => '666666',
+            'customEmail' => '123@qq.com',
+//            'channelType' => $pay_type,
+            'notifyUrl' => $notify_url,
+            'callbackUrl' => 'https://www.baidu.com',
         ];
         $params['sign'] = self::generateSign($params);
-        $params = urlencode(json_encode($params));
-        $res = $this->requestService->get(self::$url . '/order/getUrl?json=' . $params);
-        if ($res['code'] <> 1) {
-            $this->_msg = $res['msg'];
+        $res = $this->requestService->postFormData(self::$url . '/openApi/pay/createOrder', $params);
+        dd($res);
+        if ($res['success'] === false) {
+            $this->_msg = $res['errorMessages'];
             return false;
         }
         $resData = [
             'out_trade_no' => $order_no,
             'shop_id' => self::$merchantID,
-            'pay_company' => 'leap',
+            'pay_company' => 'winpay',
             'pay_type' => $pay_type,
             'native_url' => $res['data']['url'],
-            'pltf_order_id' => '',
+            'pltf_order_id' => $res['data']['platOrderId'],
             'verify_money' => '',
             'match_code' => '',
             'notify_url' => $notify_url,
         ];
         return $resData;
     }
+
     /**
      *  后台审核请求提现订单 (提款)  代付方式
      */
@@ -117,7 +96,7 @@ class Leap extends PayStrategy
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
 
-        $notify_url = self::$url_callback.'/api/withdrawal_callback'.'?type=leap';
+        $notify_url = self::$url_callback . '/api/withdrawal_callback' . '?type=leap';
         $params = [
             'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
             'mch_id' => self::$merchantID,
@@ -136,7 +115,7 @@ class Leap extends PayStrategy
             $this->_msg = $res['msg'];
             return false;
         }
-        return  [
+        return [
             'pltf_order_no' => '',
             'order_no' => $order_no,
             'notify_url' => $notify_url,
@@ -148,9 +127,9 @@ class Leap extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_rechargeCallback', $request->post());
 
-        if ($request->state <> 4)  {
+        if ($request->state <> 4) {
             $this->_msg = 'Leap-recharge-交易未完成';
             return false;
         }
@@ -174,7 +153,7 @@ class Leap extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback', $request->post());
 
         if ($request->state <> 4) {
             $this->_msg = 'Leap-withdrawal-交易未完成';

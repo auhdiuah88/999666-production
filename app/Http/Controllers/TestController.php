@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cx_User;
 use App\Services\Pay\Leap;
 use App\Services\Pay\PayStrategy;
+use App\Services\Pay\Winpay;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -15,44 +16,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class TestController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
-    protected static $merchantID = '';     // 商户ID
-    protected static $secretkey = '';      // 密钥
-
-    public function test2(Leap $leap) {
-        self::$secretkey = env('PAY_SECRET_KEY');
-//        return $leap->testGetCallbackUrl();
-$json = '{
-  "money": "600.000000",
-  "pt_order": "CS202012027806900907909",
-
-  "sh_order": "202012021721455575793327",
-  "time": "1606901066",
-  "state": "4",
-  "goods_desc": "recharge"
-}';
-       $params =  json_decode($json, true);
-       $sign =  self::generateSign($params);
-       $params['sign'] = $sign;
-        return $params;
-//        $params = $request->post();
-        $sign = $params['sign'];
-        unset($params['sign']);
-        if (Leap::generateSign($params) <> $sign) {
-            return 'leap-签名错误';
-        }
-        return '通过';
-    }
-
-    public static function generateSign(array $params)
-    {
-        ksort($params);
-        $string = [];
-        foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
-        }
-        $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
-//        dd($sign);
-        return md5($sign);
+    public function test2( ) {
+//        $pay_type = '';
+//        $money = 500;
+//        $winpay->rechargeOrder($pay_type, $money);
+       return Winpay::$snek;
+        return Winpay::$secretkey;
     }
 }

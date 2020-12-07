@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<!--<iframe id="gameframe" src=“gameurl&if=1" webkitallowfullscreen mozallowfullscreen oallowfullscreen-->
+        <!--msallowfullscreen allowfullscreen></iframe>-->
+<iframe width="500" height="500" id="gameframe" src="http://www.baidu.com" webkitallowfullscreen mozallowfullscreen oallowfullscreen
+        msallowfullscreen allowfullscreen></iframe>
+<script>
+    window.onmessage = function(e) {
+        if (e.data == 'close_iframe') {
+            var gameframe = document.getElementById('gameframe');
+            gameframe.src = 'about:blank';
+        }
+    };
+    function updateiFrameSize() {
+        var iFrameID = document.getElementById('gameframe');
+        if(iFrameID) {
+            // iFrameID.style.width = window.innerWidth + "px";
+            // iFrameID.style.height = window.innerHeight + "px";
+            // iFrameID.contentWindow.postMessage(window.innerWidth + "." + window.innerHeight, '*');
+
+            iFrameID.style.width =  "500px";
+            iFrameID.style.height = "500px";
+            // iFrameID.contentWindow.postMessage('500px' + "." + '500px', '*');
+        }
+    }
+    updateiFrameSize();
+    window.onresize = function() {
+        updateiFrameSize();
+        clearTimeout(timeUpdate);
+        timeUpdate = setTimeout(function() {
+            updateiFrameSize();
+        }, 200); // for iPhone 5 will have a slower update of width / height
+    };
+</script>
+</body>
+</html>
