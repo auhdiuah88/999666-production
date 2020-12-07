@@ -580,10 +580,12 @@ class GameRepository
         $data['c_money']=$this->Cx_User_Recharge_Logs->whereBetween('time', [$s, $l])->where("status",2)->sum("money");
         return $data;
     }
+
     public function Get_New_Sum_Money1(){
         $s = strtotime(date('Y-m-d').'00:00:00');
         $l = strtotime(date('Y-m-d').'23:59:59');
-        $data['y_money']=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->where("status",1)->toSql();
+        $ids=array_column($this->Cx_User->where("reg_source_id", 0)->get("id")->toArray(), "id");
+        $data['y_money']=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->where("user_id",$ids)->where("status",1)->sum("win_money");
         $s1_money=$this->Cx_Game_Betting->with(array(
                 'users' => function ($query) {
                     $query->where('reg_source_id', 0);
