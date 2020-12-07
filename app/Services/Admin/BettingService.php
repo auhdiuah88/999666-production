@@ -33,20 +33,13 @@ class BettingService extends BaseService
 
     public function searchBettingLogs($data)
     {
-
-        if(!array_key_exists("conditions", $data)){
-            $list = $this->BettingRepository->findAll((1 - 1) * 10, 10);
-            $total = $this->BettingRepository->countAll();
-            $this->_data = ["total" => $total, "list" => $list];
-        }else{
-            $page = $data["page"];
-            $limit = $data["limit"];
-            $offset = ($page - 1) * $limit;
-            $data = $this->assemblyParameters($data);
-            $list = $this->BettingRepository->searchBettingLogs($data, $offset, $limit);
-            $total = $this->BettingRepository->countSearchBettingLogs($data);
-            $this->_data = ["total" => $total, "list" => $list];
-        }
+        $page = $data["page"];
+        $limit = $data["limit"];
+        $offset = ($page - 1) * $limit;
+        $data = $this->assemblyParameters($data);
+        $list = $this->BettingRepository->searchBettingLogs($data, $offset, $limit);
+        $total = $this->BettingRepository->countSearchBettingLogs($data);
+        $this->_data = ["total" => $total, "list" => $list];
 
     }
 
