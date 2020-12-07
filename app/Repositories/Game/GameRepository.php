@@ -561,7 +561,7 @@ class GameRepository
         $data['y_money']=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->where("status",1)->sum("win_money");
         $s1_money=$this->Cx_Game_Betting->with(array(
                 'user' => function ($query) {
-                    $query->where('	reg_source_id', 0);
+                    $query->where('reg_source_id', 0);
                 }
             )
         )->whereBetween('betting_time', [$s, $l])->where("status",1)->sum("money");
