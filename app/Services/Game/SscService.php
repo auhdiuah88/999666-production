@@ -65,8 +65,10 @@ class SscService
             if($date_sj_kill<=0){
                 $isWin=1;
             }else{
+                echo "实际天杀率".$date_sj_kill."系统天杀率".$system->date_kill;
                 $p_kill=$date_sj_kill-$system->date_kill;
                 if($p_kill>0.05){
+                    echo "差值：".$p_kill;
                     $isWin=2;
                 }else{
                     $isWin=1;
