@@ -109,7 +109,7 @@ class UserController extends Controller
 
     public function modifyCustomerService(Request $request)
     {
-        $this->UserService->batchModifyRemarks($request->post("ids"), $request->post("customer_id"));
+        $this->UserService->modifyCustomerService($request->post("ids"), $request->post("customer_id"));
         return $this->AppReturn(
             $this->UserService->_code,
             $this->UserService->_msg,

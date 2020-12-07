@@ -74,11 +74,16 @@ class UserRepository extends BaseRepository
 
     public function getCustomerService()
     {
-        return $this->Cx_User->where("is_customer_service", 1)->select(["id", "nickname"])->get()->toArray();
+        return $this->Cx_User->where("is_customer_service", 1)->select(["id", "phone"])->get()->toArray();
     }
 
     public function modifyCustomerService($ids, $customer_id)
     {
         return $this->Cx_User->whereIn("id", $ids)->update(["customer_service_id" => $customer_id]);
+    }
+
+    public function modifyEmptyAgent($ids, $data)
+    {
+        return $this->Cx_User->whereIn("id", $ids)->update($data);
     }
 }
