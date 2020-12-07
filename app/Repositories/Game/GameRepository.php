@@ -410,8 +410,6 @@ class GameRepository
     //结算用户投注
     public function Result_Entry($betting, $type,$odds)
     {
-        $a["msg"]="111";
-        DB::table("php_logs")->insert($a);
         $time = time();
         $arr = array();
         $date=date('Y-m-d',time());
@@ -431,7 +429,6 @@ class GameRepository
             $arr['odds'] = $odds;
             $this->Cx_Game_Betting->where("id", $betting->id)->update($arr);
             $user_obj = $this->Cx_User->where('id', $betting->user_id)->first();
-
             $zx_money = $user_obj->balance + $arr['win_money'];
             $this->Cx_User->where('id', $betting->user_id)->update(['balance' => $zx_money]);
             //增加资金记录
