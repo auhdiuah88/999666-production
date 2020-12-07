@@ -443,7 +443,7 @@ class GameRepository
                 $date_arr =array();
                 $date_arr['c_pt_s_money']=$date_data->c_pt_s_money+ $arr['win_money'];
                 $date_arr['c_b_money']=$date_data->c_b_money+$betting->money;
-                $date_arr['pt_money']=$date_data->c_pt_money+($date_arr['c_b_money']-$date_arr['c_pt_s_money']);
+                $date_arr['c_pt_money']=$date_data->c_pt_money+($date_arr['c_b_money']-$date_arr['c_pt_s_money']);
                 $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
             }
 
