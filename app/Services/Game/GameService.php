@@ -207,7 +207,8 @@ class GameService
     public function Settlement_Queue_Test()
     {
 
-        $this->Ssc_FourService->ssc(1453);
+        //$this->Ssc_FourService->ssc(1453);
+        dd($this->GameRepository->Get_New_Sum_Money());
         exit;
 
     }

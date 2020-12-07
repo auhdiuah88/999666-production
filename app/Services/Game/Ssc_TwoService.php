@@ -57,11 +57,12 @@ class Ssc_TwoService
         ($kill_rate*100)<=$rand?$isWin=1:$isWin=2;//判断本局输还是赢
         //整体杀率判定
         $date_money=$this->GameRepository->Get_Date_Money();
+        $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
         //是否开启天杀率控制
         if($system->is_date_kill==1){
             //获得当天实际整体杀率
             if($date_money->b_money>0){
-                $date_sj_kill=($date_money->pt_money-$date_money->pt_s_money)/$date_money->b_money;
+                $date_sj_kill=($date_money->pt_money-$date_money->pt_s_money)/$new_money_sum;
                 $p_kill=$date_sj_kill-$system->date_kill;
                 if($p_kill>0.05){
                     $isWin=2;
