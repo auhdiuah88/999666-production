@@ -98,9 +98,9 @@ class HomeRepository extends BaseRepository
 
     public function countFirstChargeNumber($timeMap, $ids)
     {
-        return $this->Cx_User
-            ->whereIn("id", $ids)
-            ->whereBetween("reg_time", $timeMap)
+        return $this->Cx_User_Balance_Logs
+            ->whereIn("user_id", $ids)
+            ->whereBetween("time", $timeMap)
             ->where("is_first_recharge", 1)
             ->count("id");
     }
