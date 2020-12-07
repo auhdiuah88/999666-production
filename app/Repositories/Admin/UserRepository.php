@@ -31,7 +31,7 @@ class UserRepository extends BaseRepository
 
     public function countAll()
     {
-        return $this->Cx_User->count("id");
+        return $this->Cx_User->where("is_customer_service", 0)->count("id");
     }
 
     public function findById($id)

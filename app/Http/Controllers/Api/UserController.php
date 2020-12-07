@@ -81,7 +81,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
-        if (!$this->UserService->Register($data)) {
+        if (!$this->UserService->Register($data, $request->ip())) {
             return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
         }
         return $this->AppReturn(200, '成功');

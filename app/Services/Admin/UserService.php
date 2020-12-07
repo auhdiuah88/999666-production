@@ -64,6 +64,11 @@ class UserService extends BaseService
         if (array_key_exists("password", $data)) {
             $data["password"] = Crypt::encrypt($data["password"]);
         }
+        if (array_key_exists("balance", $data)) {
+            $this->_msg = "余额不能修改";
+            $this->_code = 402;
+            return;
+        }
         $data = $this->assembleData($data);
         if ($this->UserRepository->editUser($data)) {
             $this->_msg = "修改成功";
@@ -161,8 +166,9 @@ class UserService extends BaseService
         }
     }
 
-    public function giftMoney($id, $money)
+    public function giftMoney($id, $money, $token)
     {
+        $adminId = $this->getUserId($token);
         DB::beginTransaction();
         try {
             $user = $this->UserRepository->findById($id);
@@ -173,7 +179,8 @@ class UserService extends BaseService
                 "wc_balance" => bcadd($user->balance, $money, 2),
                 "time" => time(),
                 "msg" => "后台赠送" . $user->nickname . $money . "元礼金!",
-                "money" => $money
+                "money" => $money,
+                "admin_id" => $adminId
             ];
             $this->UserRepository->addLogs($data);
             $update = ["id" => $id, "balance" => bcadd($user->balance, $money, 2)];

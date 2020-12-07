@@ -25,6 +25,21 @@ class Leap extends PayStrategy
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
+    public static function testGenerateSign(array $params)
+    {
+        ksort($params);
+        $string = [];
+        foreach ($params as $key => $value) {
+            $string[] = $key . '=' . $value;
+        }
+        $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
+        dd(self::$secretkey);
+        return md5($sign);
+    }
+
+    /**
+     * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
+     */
     public static function generateSign(array $params)
     {
         ksort($params);
@@ -78,6 +93,7 @@ class Leap extends PayStrategy
         $resData = [
             'out_trade_no' => $order_no,
             'shop_id' => self::$merchantID,
+            'pay_company' => 'leap',
             'pay_type' => $pay_type,
             'native_url' => $res['data']['url'],
             'pltf_order_id' => '',
