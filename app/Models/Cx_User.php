@@ -22,8 +22,10 @@ class Cx_User extends Model
 
     public function getCustomerServiceIdAttribute($value)
     {
+        if (!$value) {
+            return $value;
+        }
         $phone = self::where("id", $value)->select(["phone"])->first();
-        dd($value, $phone);
         return $phone->phone;
     }
 
