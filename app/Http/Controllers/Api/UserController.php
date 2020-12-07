@@ -18,7 +18,6 @@ class UserController extends Controller
     public function __construct(UserService $userService)
     {
         $this->UserService = $userService;
-
     }
 
     /**
@@ -33,17 +32,17 @@ class UserController extends Controller
             "phone" => "required",
             "password" => "required",
         ];
-        $massages = [
-            "phone.required" => "手机不能为空",
-            "password.required" => "密码不能为空",
-        ];
-        $validator = Validator::make($data, $rules, $massages);
+//        $massages = [
+//            "phone.required" => "手机不能为空",
+//            "password.required" => "密码不能为空",
+//        ];
+        $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
 
         if ($this->UserService->Login($data)) {
-            return $this->AppReturn(200, '登录成功', $this->UserService->data);
+            return $this->AppReturn(200, 'login success', $this->UserService->data);
         }
         return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
     }
@@ -56,7 +55,7 @@ class UserController extends Controller
     public function Out(Request $request)
     {
         $this->UserService->Out();
-        return $this->AppReturn(200, '退出成功');
+        return $this->AppReturn(200, 'logout success');
     }
 
     /**
@@ -73,12 +72,12 @@ class UserController extends Controller
             "password" => "required",
             "sms_code" => "required"
         ];
-        $massages = [
-            "phone.required" => "用户名不能为空",
-            "password.required" => "密码不能为空",
-            "sms_code.required" => "手机验证码不能为空"
-        ];
-        $validator = Validator::make($data, $rules, $massages);
+//        $massages = [
+//            "phone.required" => "用户名不能为空",
+//            "password.required" => "密码不能为空",
+//            "sms_code.required" => "手机验证码不能为空"
+//        ];
+        $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
@@ -98,11 +97,11 @@ class UserController extends Controller
             "phone" => "required",
             "code" => "required",
         ];
-        $massages = [
-            "phone.required" => "验证码不能为空",
-            "code.required" => "手机号码不能为空",
-        ];
-        $validator = Validator::make($request->post(), $rules, $massages);
+//        $massages = [
+//            "phone.required" => "验证码不能为空",
+//            "code.required" => "手机号码不能为空",
+//        ];
+        $validator = Validator::make($request->post(), $rules);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }

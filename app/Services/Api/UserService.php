@@ -63,20 +63,20 @@ class UserService
         $userObj = $this->UserRepository->getUser($params['phone']);
         if (empty($userObj)) {
             $this->error_code = 402;
-            $this->error = '用户不存在，请先注册用户';
+            $this->error = 'User does not exist, please register user first';
             return false;
         }
 
         if ($userObj->is_login == 0) {
             $this->error_code = 403;
-            $this->error = '帐户已被封禁，不允许登录';
+            $this->error = 'Account has been banned, login is not allowed';
             return false;
         }
 
         if (Crypt::decrypt($userObj->password) != $params['password']) {
 
             $this->error_code = 402;
-            $this->error = '密码错误，清重试';
+            $this->error = 'Incorrect password, please try again';
             return false;
         }
         $userModifyData = [
