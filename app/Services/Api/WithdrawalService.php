@@ -234,7 +234,7 @@ class WithdrawalService extends PayService
 
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
         if (!$withdrawlLog) {
-            $this->_msg = '找不到此出金订单';
+            $this->_msg = '找不到此提现订单';
             return false;
         }
 
@@ -276,7 +276,6 @@ class WithdrawalService extends PayService
             }
 
             // 更新充值成功记录
-//            $this->WithdrawalRepository->updateWithdrawalLog($withdrawlLog, 1, 1, $money);
             $withdrawlLog->pay_status = 1;
             $withdrawlLog->loan_time = time();
             $withdrawlLog->save();
@@ -284,7 +283,6 @@ class WithdrawalService extends PayService
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-//            $this->rechargeRepository->updateRechargeLog($rechargeLog, 3, $money);
             $this->_msg = $e->getMessage();
             return false;
         }
