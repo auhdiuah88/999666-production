@@ -66,7 +66,6 @@ class SscService
             if($date_sj_kill<=0){
                 $isWin=1;
             }else{
-
                 $p_kill=$date_sj_kill-$system->date_kill;
                 if($p_kill>0.05){
 
@@ -182,7 +181,6 @@ class SscService
 
 
         if($isWin==1){
-
             //执行开奖
             $this->Executive_Prize($play_id,$kaijiang,$isWin,$arr[$kaijiang]["winmoney"],$arr[$kaijiang]["lostmoney"],$b_money,$kaijiang);
             return true;
