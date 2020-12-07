@@ -576,6 +576,18 @@ class GameRepository
         $s2_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->whereIn("user_id",$ids)->where("status",2)->sum("money");
         $data['s_money']=$s1_money+$s2_money;
         $data['c_money']=$this->Cx_User_Recharge_Logs->whereBetween('time', [$s, $l])->where("status",2)->sum("money");
+        $date_sj_kill=($data['s_money']-$data['y_money'])/$data['c_money'];
+        if($date_sj_kill<=0){
+            $data['isWin']=1;
+        }else{
+            $p_kill=$date_sj_kill-0.51;
+            if($p_kill>0.05){
+                $data['isWin']=2;
+            }else{
+                $data['isWin']=1;
+            }
+        }
+        $data['msg']="今日用户输总金额".$data['s_money']."今日用户赢总金额".$data['y_money']."今日用户充值总金额".$data['c_money']."实际杀率".$date_sj_kill;
         return $data;
     }
     //投注列表
