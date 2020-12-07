@@ -428,8 +428,8 @@ class GameRepository
             $arr['odds'] = $odds;
             $this->Cx_Game_Betting->where("id", $betting->id)->update($arr);
             $user_obj = $this->Cx_User->where('id', $betting->user_id)->first();
-            $user_array=$user_obj->toArray();
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('user_array',$user_array);
+//            $user_array=$user_obj->toArray();
+//            \Illuminate\Support\Facades\Log::channel('mytest')->info('user_array',$user_array);
             $zx_money = $user_obj->balance + $arr['win_money'];
             $this->Cx_User->where('id', $betting->user_id)->update(['balance' => $zx_money]);
             //增加资金记录
