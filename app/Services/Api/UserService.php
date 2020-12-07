@@ -151,7 +151,7 @@ class UserService
      * @param $data
      * @return bool
      */
-    public function Register($data)
+    public function Register($data, $ip)
     {
         $Count = $this->UserRepository->Count($data['phone']);
         if ($Count > 0) {
@@ -205,6 +205,7 @@ class UserService
         $data["is_recharge"] = 1;
         $data["is_withdrawal"] = 1;
         $data["is_withdrawal"] = 1;
+        $data["ip"] = $ip;
         $data["code"] = $this->UserRepository->getcode();
 
 
