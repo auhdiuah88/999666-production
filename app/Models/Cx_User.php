@@ -20,6 +20,18 @@ class Cx_User extends Model
 
     const CACHE_USER_PROFILE = 'USER:';             // 个人信息保存在缓存中的键名
 
+    public function getCustomerServiceIdAttribute($value)
+    {
+        if (!$value) {
+            return $value;
+        }
+        $phone = self::where("id", $value)->select(["phone"])->first();
+        if (!$phone) {
+            return null;
+        }
+        return $phone->phone;
+    }
+
     public function bank()
     {
         return $this->hasMany(Cx_User_Bank::class, "user_id", "id");

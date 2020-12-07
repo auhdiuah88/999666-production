@@ -8,6 +8,7 @@ use App\Repositories\Admin\UserRepository as Repository;
 use App\Repositories\Api\UserRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class UserService extends BaseService
 {
@@ -137,11 +138,26 @@ class UserService extends BaseService
 
     public function modifyCustomerService($ids, $customer_id)
     {
-        if ($this->UserRepository->modifyCustomerService($ids, $customer_id)) {
-            $this->_msg = "修改客服成功";
-        } else {
-            $this->_code = 402;
-            $this->_msg = "修改客服失败";
+        $data = [
+            "one_recommend_id" => null,
+            "two_recommend_id" => null,
+            "one_recommend_phone" => null,
+            "two_recommend_phone" => null
+        ];
+        DB::beginTransaction();
+        try {
+            $this->UserRepository->modifyEmptyAgent($ids, $data);
+            if ($this->UserRepository->modifyCustomerService($ids, $customer_id)) {
+                $this->_msg = "修改客服成功";
+            } else {
+                $this->_code = 402;
+                $this->_msg = "修改客服失败";
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->_code = $e->getCode();
+            $this->_msg = $e->getMessage();
         }
     }
 }
