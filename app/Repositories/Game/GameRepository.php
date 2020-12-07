@@ -435,10 +435,12 @@ class GameRepository
             if($user_obj->reg_source_id==0){
                 $date_arr =array();
                 $date_arr['pt_s_money']=$date_data->pt_s_money+ $arr['win_money'];
+                $date_arr['b_money']=$date_data->b_money+$betting->money;
                 $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
             }else if($user_obj->reg_source_id==1){
                 $date_arr =array();
                 $date_arr['c_pt_s_money']=$date_data->c_pt_s_money+ $arr['win_money'];
+                $date_arr['c_b_money']=$date_data->c_b_money+$betting->money;
                 $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
             }
 
