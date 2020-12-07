@@ -167,7 +167,10 @@ class WithdrawalService extends BaseService
      */
     public function getNewest()
     {
-        return $this->WithdrawalRepository->getNewest();
+        $result =  $this->WithdrawalRepository->getNewest();
+        if (!$result){
+            return ['create_time'=>0, 'id'=>0];
+        }
     }
 
     /**
