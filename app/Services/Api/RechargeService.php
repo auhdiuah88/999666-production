@@ -112,7 +112,13 @@ class RechargeService extends PayService
      */
     public function rechargeCallback(Request $request)
     {
-        $payProvide = $request->get('type');
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback',$request->all());
+
+        $payProvide = $request->get('type','');
+        if (!$payProvide) {
+            $this->_msg = 'can not find pay Provide';
+            return false;
+        }
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
         if (!$strategyClass) {
             $this->_msg = 'can not find pay mode';
@@ -154,12 +160,14 @@ class RechargeService extends PayService
             $this->userRepository->updateRechargeBalance($user, $money);
 
             // 更新充值成功记录的状态
-            $this->rechargeRepository->updateRechargeLog($rechargeLog, 2, $money);
+            $rechargeLog->arrive_time = time();
+            $rechargeLog->arrive_money = $money;
+            $rechargeLog->status = 2;
+            $rechargeLog->save();
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-//            $this->rechargeRepository->updateRechargeLog($rechargeLog, 3, $money);
             $this->_msg = $e->getMessage();
             return false;
         }

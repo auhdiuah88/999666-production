@@ -107,7 +107,7 @@ class Leap extends PayStrategy
             'mch_id' => self::$merchantID,
             'order_sn' => $order_no,
             'money' => $money,
-            'goods_desc' => 'cashout',
+            'goods_desc' => 'withdrawal',
             'client_ip' => $ip,
             'notify_url' => $notify_url,
             'time' => time(),
@@ -132,8 +132,10 @@ class Leap extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_rechargeCallback',$request->post());
+
         if ($request->state <> 4)  {
-            $this->_msg = 'Leap-交易未完成';
+            $this->_msg = 'Leap-recharge-交易未完成';
             return false;
         }
         // 验证签名
@@ -159,7 +161,7 @@ class Leap extends PayStrategy
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->post());
 
         if ($request->state <> 4) {
-            $this->_msg = 'Leap-交易未完成';
+            $this->_msg = 'Leap-withdrawal-交易未完成';
             return false;
         }
         // 验证签名

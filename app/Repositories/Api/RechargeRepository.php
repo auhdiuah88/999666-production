@@ -80,15 +80,4 @@ class RechargeRepository
     {
         return $this->cx_User_Recharge_Log->where($where)->first();
     }
-
-    /**
-     * 更新充值记录状态
-     */
-    public function updateRechargeLog(object $rechargeLog, $status = 2, $money)
-    {
-        $rechargeLog->arrive_time = time();
-        $rechargeLog->arrive_money = $money;
-        $rechargeLog->status = $status;
-        $rechargeLog->save();
-    }
 }
