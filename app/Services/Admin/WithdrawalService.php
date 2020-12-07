@@ -57,7 +57,7 @@ class WithdrawalService extends BaseService
                 return false;
             }
             $payProvide = PayContext::$pay_provider[$host];
-            $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付商户类
+            $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付公司类
             $result = $strategyClass->withdrawalOrder($withdrawalRecord);
             if (!$result) {
                 $this->_code = 414;
@@ -78,7 +78,7 @@ class WithdrawalService extends BaseService
             }
             $user->save();
         }
-        $data["loan_time"] = time();
+//        $data["loan_time"] = time();
         $data["approval_time"] = time();
         if ($this->WithdrawalRepository->editRecord($data)) {
             $this->_msg = "审核通过";

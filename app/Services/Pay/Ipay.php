@@ -44,10 +44,14 @@ class Ipay extends PayStrategy
     function rechargeOrder($pay_type,$money)
     {
         $order_no = self::onlyosn();
+
+        $notify_url = self::$url_callback . '/api/recharge_callback' . '?type=ipay';
+
+        $pay_type = 'qrcode';
         $params = [
             'api_name' => 'quickpay.all.native',
             'money' => $money,
-            'notify_url' => self::$url_callback.'/api/recharge_callback'.'?type=ipay',
+            'notify_url' => $notify_url,
             'order_des' => '支付充值',
             'out_trade_no' => $order_no,
             'shop_id' => self::$merchantID,
@@ -63,11 +67,13 @@ class Ipay extends PayStrategy
         $resData = [
             'out_trade_no' => $order_no,
             'shop_id' => self::$merchantID,
+            'pay_company' => 'ipay',
             'pay_type' => $pay_type,
             'native_url' => $res['native_url'],
             'pltf_order_id' => $res['pltf_order_id'],
             'verify_money' => $res['verify_money'],
             'match_code' => $res['match_code'],
+            'notify_url' => $notify_url,
         ];
         return $resData;
     }
@@ -83,13 +89,14 @@ class Ipay extends PayStrategy
 
 //        $order_no = $this->onlyosn();
         $order_no = $withdrawalRecord->order_no;
+        $notify_url = self::$url_callback . '/api/withdrawal_callback' . '?type=ipay';
         $params = [
             'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'bank_number' => $bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'ifsc_code' => $ifsc_code, // IFSC编号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
             'money' => $money,
-            'notify_url' => self::$url_callback.'/api/withdrawal_callback'.'?type=ipay', // 回调url，用来接收订单支付结果
+            'notify_url' => $notify_url, // 回调url，用来接收订单支付结果
             'out_trade_no' => $order_no,
             'shop_id' => self::$merchantID,
             'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
@@ -103,6 +110,7 @@ class Ipay extends PayStrategy
         return [
             'pltf_order_no' => $res['pltf_order_no'],
             'order_no' => $order_no,
+            'notify_url' => $notify_url,
         ];
     }
 
