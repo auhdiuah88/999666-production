@@ -59,18 +59,20 @@ class SscService
         $date_money=$this->GameRepository->Get_Date_Money();
         $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
         //是否开启天杀率控制
-        echo $system->is_date_kill;
-        exit;
+
         if($system->is_date_kill==1){
             //获得当天实际整体杀率
             $date_sj_kill=($new_money_sum['s_money']-$new_money_sum['y_money'])/$new_money_sum['c_money'];
+            echo "实际天杀率".$date_sj_kill."系统天杀率".$system->date_kill;
+            echo "差值：".$date_sj_kill-$system->date_kill;
+            exit;
             if($date_sj_kill<=0){
                 $isWin=1;
             }else{
-                echo "实际天杀率".$date_sj_kill."系统天杀率".$system->date_kill;
+
                 $p_kill=$date_sj_kill-$system->date_kill;
                 if($p_kill>0.05){
-                    echo "差值：".$p_kill;
+
                     $isWin=2;
                 }else{
                     $isWin=1;
