@@ -26,6 +26,9 @@ class ReportService extends BaseService
 
     public function searchReport($data)
     {
+        if (!array_key_exists("timeMap", $data)) {
+            $data["timeMap"] = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
+        }
         $list = $this->getContext($data["page"], $data["limit"], $data["timeMap"]);
         $total = $this->ReportRepository->countAll();
         $this->_data = ["total" => $total, "list" => $list];
