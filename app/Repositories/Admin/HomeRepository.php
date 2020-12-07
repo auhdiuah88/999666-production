@@ -198,7 +198,7 @@ class HomeRepository extends BaseRepository
 
     public function sumUserProfit($ids, $timeMap)
     {
-        return $this->Cx_Game_Betting->whereIn("user_id", $ids)->whereBetween("betting_time", $timeMap)->sum("win_money");
+        return $this->Cx_Game_Betting->whereIn("user_id", $ids)->where("status", 1)->whereBetween("betting_time", $timeMap)->sum("win_money");
     }
 
     public function sumReceiveEnvelope($ids, $timeMap)
