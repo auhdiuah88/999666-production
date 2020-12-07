@@ -26,15 +26,7 @@ class WagerService extends BaseService
     public function searchWager($data)
     {
         $data = $this->getUserIds($data, "id");
-        if (array_key_exists("betting_time", $data["conditions"])) {
-            $betting = $data["conditions"]["betting_time"];
-            unset($data["conditions"]["betting_time"]);
-            unset($data["ops"]["betting_time"]);
-            $str = "-" . $betting . " days";
-            $betting_time = strtotime($str);
-        } else {
-            $betting_time = time();
-        }
+        $betting_time = time();
         $list = $this->WagerRepository->searchWager($data, $betting_time, ($data["page"] - 1) * $data["limit"], $data["limit"]);
         $total = $this->WagerRepository->countWager($data);
         $this->_data = ["total" => $total, "list" => $list];
