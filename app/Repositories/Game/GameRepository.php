@@ -410,6 +410,8 @@ class GameRepository
     //结算用户投注
     public function Result_Entry($betting, $type,$odds)
     {
+        $a["msg"]="111";
+        DB::table("php_logs")->insert($a);
         $time = time();
         $arr = array();
         $date=date('Y-m-d',time());
@@ -420,9 +422,7 @@ class GameRepository
             $this->Cx_Date_Prize->insert(array("date" => $date));
             $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
         }
-        if(!Redis::exists("SYSTEM_CONFIG_Logs")) {
-            Redis::set("SYSTEM_CONFIG_Logs", json_encode($date_data, JSON_UNESCAPED_UNICODE));
-        }
+
         if ($type == 1) {//赢
             $arr['settlement_time'] = $time;
             $arr['status'] = 1;
