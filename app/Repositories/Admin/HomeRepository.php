@@ -107,20 +107,31 @@ class HomeRepository extends BaseRepository
 
     public function countOrdinaryFirstChargeNumber($timeMap, $ids)
     {
-        return $this->Cx_User
-            ->whereIn("id", $ids)
-            ->whereBetween("reg_time", $timeMap)
-            ->whereNull("two_recommend_id")
+        $ids = $this->screenIds($ids, 0);
+        return $this->Cx_User_Balance_Logs
+            ->whereIn("user_id", $ids)
+            ->whereBetween("time", $timeMap)
+            ->where("type", 2)
             ->where("is_first_recharge", 1)
             ->count("id");
     }
 
+    public function screenIds($ids, $status)
+    {
+        if ($status == 0) {
+            return array_column($this->Cx_User->whereIn("id", $ids)->whereNull("two_recommend_id")->get("id")->toArray(), "id");
+        } else {
+            return array_column($this->Cx_User->whereIn("id", $ids)->whereNotNull("two_recommend_id")->get("id")->toArray(), "id");
+        }
+    }
+
     public function countAgentFirstChargeNumber($timeMap, $ids)
     {
-        return $this->Cx_User
-            ->whereIn("id", $ids)
-            ->whereBetween("reg_time", $timeMap)
-            ->whereNotNull("two_recommend_id")
+        $ids = $this->screenIds($ids, 1);
+        return $this->Cx_User_Balance_Logs
+            ->whereIn("user_id", $ids)
+            ->whereBetween("time", $timeMap)
+            ->where("type", 2)
             ->where("is_first_recharge", 1)
             ->count("id");
     }
