@@ -26,6 +26,9 @@ abstract class BaseService
 
     public function getUserIds($data, $key)
     {
+        if (!array_key_exists("conditions", $data)) {
+            return $data;
+        }
         $conditions = $data["conditions"];
         $ops = $data["ops"];
         $ids = array_column($this->getConditions($data, new Cx_User())->get("id")->toArray(), "id");
