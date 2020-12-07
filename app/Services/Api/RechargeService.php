@@ -112,7 +112,13 @@ class RechargeService extends PayService
      */
     public function rechargeCallback(Request $request)
     {
-        $payProvide = $request->get('type');
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback',$request->all());
+
+        $payProvide = $request->get('type','');
+        if (!$payProvide) {
+            $this->_msg = 'can not find pay Provide';
+            return false;
+        }
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
         if (!$strategyClass) {
             $this->_msg = 'can not find pay mode';
