@@ -20,7 +20,7 @@ abstract class BaseRepository
 
     protected function whereCondition($data, $model)
     {
-        if (array_key_exists("conditions", $data)) {
+        if (!array_key_exists("conditions", $data)) {
             return $model;
         }
         $this->list = $data["conditions"];
