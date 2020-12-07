@@ -583,12 +583,7 @@ class GameRepository
     public function Get_New_Sum_Money1(){
         $s = strtotime(date('Y-m-d').'00:00:00');
         $l = strtotime(date('Y-m-d').'23:59:59');
-        $data['y_money']=$this->Cx_Game_Betting->with(array(
-                'users' => function ($query) {
-                    $query->where('reg_source_id', 0);
-                }
-            )
-        )->whereBetween('betting_time', [$s, $l])->where("status",1)->toSql();
+        $data['y_money']=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->where("status",1)->toSql();
         $s1_money=$this->Cx_Game_Betting->with(array(
                 'users' => function ($query) {
                     $query->where('reg_source_id', 0);
