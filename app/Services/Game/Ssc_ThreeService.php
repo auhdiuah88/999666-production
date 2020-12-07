@@ -61,7 +61,6 @@ class Ssc_ThreeService
         //是否开启天杀率控制
         if($system->is_date_kill==1){
             //获得当天实际整体杀率
-            if($date_money->b_money>0){
                 $date_sj_kill=($new_money_sum['s_money']-$new_money_sum['y_money'])/$new_money_sum['c_money'];
                 if($date_sj_kill<=0){
                     $isWin=1;
@@ -73,8 +72,6 @@ class Ssc_ThreeService
                         $isWin=1;
                     }
                 }
-
-            }
         }
         //echo "单局杀率为".$kill_rate."天杀率为".$system->date_kill."单句输赢为".$rand."天判定为".$isWin."整体真实杀率为".$date_sj_kill;
 
