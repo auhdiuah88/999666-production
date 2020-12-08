@@ -21,6 +21,6 @@ class Cx_Admin extends Model
 
     public function balance()
     {
-        return $this->belongsTo(Cx_User_Balance_Logs::class, "admin_id", "id");
+        return $this->belongsTo(Cx_User_Balance_Logs::class, "admin_id");
     }
 }
