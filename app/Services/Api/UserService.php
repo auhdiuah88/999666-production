@@ -50,7 +50,6 @@ class UserService
     public function __construct(UserRepository $userRepository)
     {
         $this->UserRepository = $userRepository;
-
     }
 
     /**

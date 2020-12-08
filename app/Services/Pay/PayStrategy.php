@@ -6,10 +6,10 @@ namespace App\Services\Pay;
 use App\Repositories\Api\UserRepository;
 use App\Services\RequestService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 abstract class PayStrategy
 {
-
     public $_code = 200;
     public $_msg = "success";
     public $_data = [];
@@ -29,22 +29,47 @@ abstract class PayStrategy
         UserRepository $userRepository
     )
     {
-//        dd(999);
         $this->requestService = $requestService;
         $this->request = $request;
         $this->userRepository = $userRepository;
 
+        // 充值和提现回调host
         self::$url_callback = env('APP_URL','');
-        if (empty(self::$url_callback)) {
-            die('请设置APP_URL');
+        if (empty(self::$url_callback) || Str::contains(self::$url_callback,'localhost')) {
+            die('请设置.env的APP_URL');
         }
 
-        self::$merchantID = env('PAY_MERCHANT_ID');
-        self::$secretkey = env('PAY_SECRET_KEY');
-        if (empty(self::$merchantID) || empty(self::$secretkey)) {
-            die('请设置支付商户号和密钥');
-        }
+        // 用于子类初始化操作
+        $this->_initialize();
     }
+
+    /**
+     * 用于子类初始化操作
+     * @access protected
+     */
+    protected function _initialize()  {}
+
+    /**
+     * 根据token获取当前用户
+     */
+    public function getUserId()
+    {
+        $token = $this->request->header('token');
+        $token = urldecode($token);
+        list($user_id,$time) = explode("+", Crypt::decrypt($token));
+        return $user_id;
+    }
+    /**
+     * 根据token获取当前用户
+     */
+    public function getUser()
+    {
+        $token = $this->request->header('token');
+        $token = urldecode($token);
+        list($user_id,$time) = explode("+", Crypt::decrypt($token));
+        return $this->userRepository->findByIdUser($user_id);
+    }
+
     /**
      * 生成订单号
      */
@@ -64,40 +89,8 @@ abstract class PayStrategy
     }
 
     /**
-     *  通过代付提款
-     */
-    function withdrawalOrderByDai(object $withdrawalRecord)
-    {
-//        $bank_name = $withdrawalRecord->bank_name;
-        $account_holder = $withdrawalRecord->account_holder;
-        $bank_number = $withdrawalRecord->bank_number;
-        $ifsc_code = $withdrawalRecord->ifsc_code;
-        $phone = $withdrawalRecord->phone;
-        $email = $withdrawalRecord->email;
-
-        // 各个支付独有的参数
-        $onlyParams = [
-            'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
-            'bank_card' => $bank_number,   // 收款卡号（类型为1,3不可空，长度9-26
-            'ifsc' => $ifsc_code,   // ifsc代码 （类型为1,3不可空，长度9-26）
-            'bank_tel' => $phone,   // 收款手机号（类型为3不可空，长度0-20）
-            'bank_email' => $email,   // 收款邮箱（类型为3不可空，长度0-100）
-        ];
-        return $onlyParams;
-    }
-
-    /**
      * 请求充值下单接口
      * return array
-        $resData = [
-            'out_trade_no' => $order_no,
-            'shop_id' => self::$merchantID,
-            'pay_type' => $pay_type,
-            'pltf_order_id' => $pltf_order_id,
-            'native_url' => $res['data']['url'],
-            'verify_money' => $verify_money,
-            'match_code' => $match_code,
-        ];
      */
     abstract function rechargeOrder($pay_type,$money);
 

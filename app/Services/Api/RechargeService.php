@@ -35,7 +35,6 @@ class RechargeService extends PayService
         $this->userRepository = $userRepository;
         $this->rechargeRepository = $rechargeRepository;
         $this->withdrawalRepository = $withdrawalRepository;
-
         $this->requestService = $requestService;
         $this->payContext = $payContext;
     }
@@ -52,8 +51,7 @@ class RechargeService extends PayService
         $pay_type = $request->pay_type;
         $money = $request->money;
 
-        $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式
-        //  $host = "api.999666.in"; 变成 999666.in
+        $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式  //  $host = "api.999666.in"; 变成 999666.in
         if (count(explode('.', $host)) == 3) {
             $host = substr(strstr($host, '.'), 1);
         }

@@ -48,6 +48,8 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/nickname", "InfoController@updateNickname"); // 修改用户昵称 参数: nickname
         Route::post("/password", "InfoController@updatePassword"); // 修改用户密码 参数: o_password f_password l_password
 
+        Route::post("/rechargemethods", "RechargeController@rechargeMethods");  //  用户充值方式
+
         Route::post("/recharge", "RechargeController@recharge");        //  用户充值-得到充值链接
         Route::post("/rechargelog", "RechargeController@rechargeLog");  //  充值记录
         Route::post("/recommend", "AgentController@getAgentInformation"); // 查询代理

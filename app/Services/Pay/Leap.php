@@ -8,7 +8,7 @@ use App\Services\RequestService;
 use Illuminate\Http\Request;
 
 /**
- * 999666.in 的充值和提现类
+    Leap支付 充值和提现类
  */
 class Leap extends PayStrategy
 {
@@ -16,11 +16,22 @@ class Leap extends PayStrategy
 
     protected static $url_cashout = 'http://tqqqbank.payto89.com:82'; // 提现网关
 
+    private  $recharge_callback_url = '';     // 充值回调地址
+    private  $withdrawal_callback_url = '';  //  提现回调地址
 
-//    public function __construct(RequestService $requestService, Request $request, UserRepository $userRepository)
-//    {
-//        parent::__construct($requestService, $request, $userRepository);
-//    }
+    public static $company = 'leap';   // 支付公司名
+
+    public function _initialize()
+    {
+        self::$merchantID = config('pay.company.'.self::$company.'.merchant_id');
+        self::$secretkey = config('pay.company.'.self::$company.'.secret_key');
+        if (empty(self::$merchantID) || empty(self::$secretkey)) {
+            die('请设置 ipay 支付商户号和密钥');
+        }
+
+        $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.self::$company;
+        $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.self::$company;
+    }
 
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
@@ -48,17 +59,7 @@ class Leap extends PayStrategy
             $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
-//        dd($sign);
         return md5($sign);
-    }
-
-
-    public function testGetCallbackUrl()
-    {
-       return [
-            'recharge_callback' => self::$url_callback . '/api/recharge_callback' . '?type=leap',
-            'withdrawal_callback' => self::$url_callback . '/api/withdrawal_callback' . '?type=leap'
-        ];
     }
 
     /**
@@ -69,9 +70,6 @@ class Leap extends PayStrategy
         $order_no = self::onlyosn();
         $ip = $this->request->ip();
         $pay_type = 100;
-
-        $notify_url = self::$url_callback . '/api/recharge_callback' . '?type=leap';
-
         $params = [
             'mch_id' => self::$merchantID,
             'ptype' => $pay_type,
@@ -80,7 +78,7 @@ class Leap extends PayStrategy
             'goods_desc' => 'recharge',
             'client_ip' => $ip,
             'format' => 'page',
-            'notify_url' => $notify_url,
+            'notify_url' => $this->recharge_callback_url,
             'time' => time(),
         ];
         $params['sign'] = self::generateSign($params);
@@ -93,31 +91,52 @@ class Leap extends PayStrategy
         $resData = [
             'out_trade_no' => $order_no,
             'shop_id' => self::$merchantID,
-            'pay_company' => 'leap',
+            'pay_company' => self::$company,
             'pay_type' => $pay_type,
             'native_url' => $res['data']['url'],
             'pltf_order_id' => '',
             'verify_money' => '',
             'match_code' => '',
-            'notify_url' => $notify_url,
+            'notify_url' => $this->recharge_callback_url,
         ];
         return $resData;
     }
+
+    /**
+     *  通过代付提款
+     */
+    private function withdrawalOrderByDai(object $withdrawalRecord)
+    {
+//        $bank_name = $withdrawalRecord->bank_name;
+        $account_holder = $withdrawalRecord->account_holder;
+        $bank_number = $withdrawalRecord->bank_number;
+        $ifsc_code = $withdrawalRecord->ifsc_code;
+        $phone = $withdrawalRecord->phone;
+        $email = $withdrawalRecord->email;
+
+        // 各个支付独有的参数
+        $onlyParams = [
+            'bank_name' => $account_holder, // 收款姓名（类型为1,3不可空，长度0-200)
+            'bank_card' => $bank_number,    // 收款卡号（类型为1,3不可空，长度9-26
+            'ifsc' => $ifsc_code,           // ifsc代码 （类型为1,3不可空，长度9-26）
+            'bank_tel' => $phone,           // 收款手机号（类型为3不可空，长度0-20）
+            'bank_email' => $email,         // 收款邮箱（类型为3不可空，长度0-100）
+        ];
+        return $onlyParams;
+    }
+
     /**
      *  后台审核请求提现订单 (提款)  代付方式
      */
-    function withdrawalOrder(object $withdrawalRecord)
+    public function withdrawalOrder(object $withdrawalRecord)
     {
         // 1 银行卡 2 Paytm 3代付
         $pay_type = 3;
         $onlyParams = $this->withdrawalOrderByDai($withdrawalRecord);
         $money = $withdrawalRecord->payment;    // 打款金额
         $ip = $this->request->ip();
-
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
-
-        $notify_url = self::$url_callback.'/api/withdrawal_callback'.'?type=leap';
         $params = [
             'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
             'mch_id' => self::$merchantID,
@@ -125,7 +144,7 @@ class Leap extends PayStrategy
             'money' => $money,
             'goods_desc' => 'withdrawal',
             'client_ip' => $ip,
-            'notify_url' => $notify_url,
+            'notify_url' => $this->withdrawal_callback_url,
             'time' => time(),
         ];
         $params = array_merge($params, $onlyParams);
@@ -139,7 +158,7 @@ class Leap extends PayStrategy
         return  [
             'pltf_order_no' => '',
             'order_no' => $order_no,
-            'notify_url' => $notify_url,
+            'notify_url' => $this->withdrawal_callback_url,
         ];
     }
 
