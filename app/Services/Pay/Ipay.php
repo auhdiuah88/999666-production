@@ -26,6 +26,7 @@ class Ipay extends PayStrategy
 
     public function _initialize()
     {
+        print_r('pay.company.'.self::$company.'.merchant_id');die;
         self::$merchantID = config('pay.company.'.self::$company.'.merchant_id');
         self::$secretkey = config('pay.company.'.self::$company.'.secret_key');
         if (empty(self::$merchantID) || empty(self::$secretkey)) {
@@ -66,7 +67,7 @@ class Ipay extends PayStrategy
             'shop_id' => self::$merchantID,
         ];
         $params['sign'] = self::generateSign($params);
-        print_r($params);die;
+//        print_r($params);die;
         $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
