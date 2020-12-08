@@ -18,17 +18,17 @@ class UpDownRepository extends BaseRepository
 
     public function findAll($offset, $limit)
     {
-        return $this->getModel()->orderByDesc("time")->offset($offset)->limit($limit)->get()->toArray();
+        return $this->getModel()->where("type", 9)->orWhere("type", 10)->orderByDesc("time")->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countAll()
     {
-        return $this->getModel()->count("id");
+        return $this->getModel()->where("type", 9)->orWhere("type", 10)->count("id");
     }
 
     public function searchUpAndDownLogs($data, $offset, $limit)
     {
-        return $this->whereCondition($data, $this->getModel())->orderByDesc("time")->offset($offset)->limit($limit)->toSql();
+        return $this->whereCondition($data, $this->getModel())->orderByDesc("time")->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countSearchUpAndDownLogs($data)
@@ -45,6 +45,6 @@ class UpDownRepository extends BaseRepository
             "admin" => function ($query) {
                 $query->select(["id", "nickname"]);
             }
-        ])->where("type", 9)->orWhere("type", 10);
+        ]);
     }
 }
