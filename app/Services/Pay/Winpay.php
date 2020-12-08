@@ -144,6 +144,7 @@ class Winpay extends PayStrategy
         ];
         $params['sign'] = $this->generateSign($params);
 
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_withdrawalOrder',$params);
         $res = $this->requestService->postFormData(self::$url . '/openApi/payout/createOrder', $params);
         if ($res['code'] <> 1) {
             $this->_msg = $res['msg'];

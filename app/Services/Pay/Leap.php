@@ -137,6 +137,7 @@ class Leap extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
+
         // 1 银行卡 2 Paytm 3代付
         $pay_type = 3;
         $onlyParams = $this->withdrawalOrderByDai($withdrawalRecord);
@@ -156,6 +157,8 @@ class Leap extends PayStrategy
         ];
         $params = array_merge($params, $onlyParams);
         $params['sign'] = $this->generateSign($params);
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('leap_withdrawalOrder',$params);
 
         $res = $this->requestService->postFormData(self::$url_cashout . '/order/cashout', $params);
         if ($res['code'] <> 1) {
