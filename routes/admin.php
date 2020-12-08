@@ -201,6 +201,12 @@ Route::group(['middleware' => ['token', "auth"]], function () {
             Route::get("/findAll", "SystemController@findAll");
             Route::post("/edit", "SystemController@editSystem");
         });
+
+        // 后台赠金记录列表
+        Route::group(["prefix" => "gift"], function () {
+            Route::get("/findAll", "GiftController@findAll");
+            Route::post("/search", "GiftController@searchGiftLogs");
+        });
     });
 });
 
