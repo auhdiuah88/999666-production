@@ -188,28 +188,33 @@ class WithdrawalService extends BaseService
     {
 //        DB::beginTransaction();
 //        try {
-            $withdrawal = $this->WithdrawalRepository->findById($id);
-            if ($withdrawal->status != 1 && $withdrawal->pay_status != 0) {
+        $withdrawal = $this->WithdrawalRepository->findById($id);
+        if ($withdrawal->status != 1) {
+            if ($withdrawal->pay_status != 0) {
                 $this->_msg = "记录状态必须是通过且第三方为支付";
                 $this->_code = 402;
                 return;
-            }
-            $updateWithdrawal = ["id" => $id, "status" => 2];
-            $withdrawalResult = $this->WithdrawalRepository->editRecord($updateWithdrawal);
-            $user = $this->UserRepository->findById($withdrawal->user_id);
-            if ($user->freeze_money < $withdrawal->money) {
-                $this->_msg = "提现冻结金额小于提现金额";
-                $this->_code = 402;
-                return;
-            }
-            $updateUser = ["id" => $user->id, "freeze_money" => bcsub($user->freeze_money, $withdrawal->money, 2), "balance" => bcadd($user->balance, $withdrawal->money, 2)];
-            $userResult = $this->UserRepository->editUser($updateUser);
-            if ($withdrawalResult && $userResult) {
-                $this->_msg = "退款成功";
             } else {
+                $this->_msg = "记录状态必须是通过";
                 $this->_code = 402;
-                $this->_msg = "退款失败";
             }
+        }
+        $updateWithdrawal = ["id" => $id, "status" => 2];
+        $withdrawalResult = $this->WithdrawalRepository->editRecord($updateWithdrawal);
+        $user = $this->UserRepository->findById($withdrawal->user_id);
+        if ($user->freeze_money < $withdrawal->money) {
+            $this->_msg = "提现冻结金额小于提现金额";
+            $this->_code = 402;
+            return;
+        }
+        $updateUser = ["id" => $user->id, "freeze_money" => bcsub($user->freeze_money, $withdrawal->money, 2), "balance" => bcadd($user->balance, $withdrawal->money, 2)];
+        $userResult = $this->UserRepository->editUser($updateUser);
+        if ($withdrawalResult && $userResult) {
+            $this->_msg = "退款成功";
+        } else {
+            $this->_code = 402;
+            $this->_msg = "退款失败";
+        }
 //        } catch (\Exception $e) {
 //            DB::rollBack();
 //            $this->_msg = $e->getMessage();
