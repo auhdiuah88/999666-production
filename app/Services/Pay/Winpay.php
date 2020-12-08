@@ -18,9 +18,9 @@ class Winpay extends PayStrategy
     private $compalateUrl = 'page';  // 支付完成返回地址
 
     //public static $company = 'winpay';   // 支付公司名
-    private $merchantID;
-    private $secretkey;
-    private $company = 'winpay';   // 支付公司名
+    public $merchantID;
+    public $secretkey;
+    public  $company = 'winpay';   // 支付公司名
 
     public function _initialize()
     {
