@@ -189,6 +189,7 @@ class WithdrawalService extends BaseService
 //        DB::beginTransaction();
 //        try {
         $withdrawal = $this->WithdrawalRepository->findById($id);
+        dd($withdrawal);
         if ($withdrawal->status != 1) {
             if ($withdrawal->pay_status != 0) {
                 $this->_msg = "记录状态必须是通过且第三方为支付";
