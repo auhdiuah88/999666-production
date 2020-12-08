@@ -23,6 +23,6 @@ class Cx_User_Balance_Logs extends Model
 
     public function admin()
     {
-        return $this->hasOne(Cx_Admin::class, "admin_id", "id");
+        return $this->hasOne(Cx_Admin::class, "id", "admin_id");
     }
 }
