@@ -89,6 +89,10 @@ class HomeService extends BaseService
         $item->totalProfitLoss = bcadd(bcsub($item->bettingMoney, $item->userProfit, 2), $item->platformServiceMoney, 2);
         // 后台赠送礼金
         $item->backstageGiftMoney = $this->HomeRepository->sumBackstageGiftMoney($ids, $timeMap);
+        // 当日上方
+        $item->upperSeparation = $this->HomeRepository->sumUpperSeparation($ids, $timeMap);
+        // 当日下分
+        $item->downSeparation = $this->HomeRepository->sumDownSeparation($ids, $timeMap);
         return $item;
     }
 }
