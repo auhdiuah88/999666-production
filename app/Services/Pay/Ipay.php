@@ -66,7 +66,7 @@ class Ipay extends PayStrategy
             'shop_id' => self::$merchantID,
         ];
         $params['sign'] = self::generateSign($params);
-
+        print_r($params);die;
         $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
