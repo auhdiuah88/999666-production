@@ -70,6 +70,7 @@ Route::group(['middleware' => ['token', "auth"]], function () {
             Route::post("/search", "WithdrawalController@searchRecord");
             Route::post("/failure", "WithdrawalController@batchFailureRecord");
             Route::post("/pass", "WithdrawalController@batchPassRecord");
+            Route::post("/cancel", "WithdrawalController@cancellationRefund");
         });
 
         // 银行卡管理
