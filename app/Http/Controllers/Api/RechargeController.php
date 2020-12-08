@@ -35,7 +35,7 @@ class RechargeController extends Controller
 //        }
         $host = $request->getHost();
         $provider = explode('.', $host);
-        $result = config('pay.pay_provider.'.$provider[0]);
+        $result = config('pay.pay_provider.'.$provider[1]);
         if (empty($result)){
             $this->AppReturn(400, 'please set recharge method',$result);
         }
