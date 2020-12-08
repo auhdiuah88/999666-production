@@ -52,15 +52,17 @@ class Winpay extends PayStrategy
      */
     public function rechargeOrder($pay_type, $money)
     {
+        $user = $this->getUser();
+
         $order_no = self::onlyosn();
         $pay_type = 'QUICK_PAY';
         $params = [
             'merchant' => self::$merchantID,
             'orderId' => $order_no,
             'amount' => $money,
-            'customName' => 'xxxx',
-            'customMobile' => '888888888',  // 666666666666
-            'customEmail' => '123@qq.com',
+            'customName' => $user->nickname,
+            'customMobile' => $user->phone,  // 666666666666
+            'customEmail' => '123@gmail.com',
 //            'channelType' => $pay_type,   // UPI   QUICK_PAY
             'notifyUrl' => $this->recharge_callback_url,
             'callbackUrl' => $this->compalateUrl,
