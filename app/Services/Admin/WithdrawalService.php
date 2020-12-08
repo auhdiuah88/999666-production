@@ -186,18 +186,16 @@ class WithdrawalService extends BaseService
 
     public function cancellationRefund($id)
     {
-//        DB::beginTransaction();
-//        try {
         $withdrawal = $this->WithdrawalRepository->findById($id);
-        dd($withdrawal->status, $withdrawal->pay_status);
-        if ($withdrawal->status != 1) {
-            if ($withdrawal->pay_status != 0) {
+        if ($withdrawal->status !== 1) {
+            if ($withdrawal->pay_status !== 0) {
                 $this->_msg = "记录状态必须是通过且第三方为支付";
                 $this->_code = 402;
                 return;
             } else {
                 $this->_msg = "记录状态必须是通过";
                 $this->_code = 402;
+                return;
             }
         }
         $updateWithdrawal = ["id" => $id, "status" => 2];
@@ -216,11 +214,6 @@ class WithdrawalService extends BaseService
             $this->_code = 402;
             $this->_msg = "退款失败";
         }
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            $this->_msg = $e->getMessage();
-//            $this->_code = $e->getCode();
-//        }
 
     }
 }
