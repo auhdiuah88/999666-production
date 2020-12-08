@@ -29,11 +29,11 @@ class Ipay extends PayStrategy
 
     public function _initialize()
     {
-        self::$merchantID = config('pay.company.'.self::$company.'.merchant_id');
-        self::$secretkey = config('pay.company.'.self::$company.'.secret_key');
-        if (empty(self::$merchantID) || empty(self::$secretkey)) {
-            die('请设置 ipay 支付商户号和密钥');
-        }
+//        self::$merchantID = config('pay.company.'.self::$company.'.merchant_id');
+//        self::$secretkey = config('pay.company.'.self::$company.'.secret_key');
+//        if (empty(self::$merchantID) || empty(self::$secretkey)) {
+//            die('请设置 ipay 支付商户号和密钥');
+//        }
         $this->merchantID = config('pay.company.'.self::$company.'.merchant_id');
         $this->secretkey = config('pay.company.'.self::$company.'.secret_key');
 
