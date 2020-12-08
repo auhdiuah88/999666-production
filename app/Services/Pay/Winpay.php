@@ -17,22 +17,23 @@ class Winpay extends PayStrategy
 
     private $compalateUrl = 'page';  // 支付完成返回地址
 
-    public static $company = 'winpay';   // 支付公司名
+    //public static $company = 'winpay';   // 支付公司名
     private $merchantID;
     private $secretkey;
+    private $company = 'winpay';   // 支付公司名
 
     public function _initialize()
     {
-//        self::$merchantID = config("pay.company.".self::$company.".merchant_id");
-//        self::$secretkey = config("pay.company.".self::$company.".secret_key");
+//        self::$merchantID = config("pay.company.".$this->company.".merchant_id");
+//        self::$secretkey = config("pay.company.".$this->company.".secret_key");
 //        if (empty(self::$merchantID) || empty(self::$secretkey)) {
 //            die('请设置支付商户号和密钥');
 //        }
-        $this->merchantID = config('pay.company.'.self::$company.'.merchant_id');
-        $this->secretkey = config('pay.company.'.self::$company.'.secret_key');
+        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
+        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
 
-        $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.self::$company;
-        $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.self::$company;
+        $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
+        $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
     }
 
     /**
@@ -81,7 +82,7 @@ class Winpay extends PayStrategy
         $resData = [
             'out_trade_no' => $order_no,
             'shop_id' => $this->merchantID,
-            'pay_company' => self::$company,
+            'pay_company' => $this->company,
             'pay_type' => $pay_type,
             'native_url' => $res['data']['url'],
             'pltf_order_id' => $res['data']['platOrderId'],
