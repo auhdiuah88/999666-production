@@ -21,13 +21,19 @@ class Leap extends PayStrategy
 
     public static $company = 'leap';   // 支付公司名
 
+    private $merchantID;
+    private $secretkey;
+
     public function _initialize()
     {
-        self::$merchantID = config('pay.company.'.self::$company.'.merchant_id');
-        self::$secretkey = config('pay.company.'.self::$company.'.secret_key');
-        if (empty(self::$merchantID) || empty(self::$secretkey)) {
-            die('请设置 ipay 支付商户号和密钥');
-        }
+//        self::$merchantID = config('pay.company.'.self::$company.'.merchant_id');
+//        self::$secretkey = config('pay.company.'.self::$company.'.secret_key');
+//        if (empty(self::$merchantID) || empty(self::$secretkey)) {
+//            die('请设置 ipay 支付商户号和密钥');
+//        }
+
+        $this->merchantID = config('pay.company.'.self::$company.'.merchant_id');
+        $this->secretkey = config('pay.company.'.self::$company.'.secret_key');
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.self::$company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.self::$company;
@@ -51,14 +57,14 @@ class Leap extends PayStrategy
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
-    public static function generateSign(array $params)
+    public  function generateSign(array $params)
     {
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
+        $sign = (implode('&', $string)) . '&key=' .  $this->secretkey;
         return md5($sign);
     }
 
@@ -71,7 +77,7 @@ class Leap extends PayStrategy
         $ip = $this->request->ip();
         $pay_type = 100;
         $params = [
-            'mch_id' => self::$merchantID,
+            'mch_id' => $this->merchantID,
             'ptype' => $pay_type,
             'order_sn' => $order_no,
             'money' => $money,
@@ -81,7 +87,7 @@ class Leap extends PayStrategy
             'notify_url' => $this->recharge_callback_url,
             'time' => time(),
         ];
-        $params['sign'] = self::generateSign($params);
+        $params['sign'] = $this->generateSign($params);
         $params = urlencode(json_encode($params));
         $res = $this->requestService->get(self::$url . '/order/getUrl?json=' . $params);
         if ($res['code'] <> 1) {
@@ -90,7 +96,7 @@ class Leap extends PayStrategy
         }
         $resData = [
             'out_trade_no' => $order_no,
-            'shop_id' => self::$merchantID,
+            'shop_id' => $this->merchantID,
             'pay_company' => self::$company,
             'pay_type' => $pay_type,
             'native_url' => $res['data']['url'],
@@ -139,7 +145,7 @@ class Leap extends PayStrategy
         $order_no = $withdrawalRecord->order_no;
         $params = [
             'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
-            'mch_id' => self::$merchantID,
+            'mch_id' => $this->merchantID,
             'order_sn' => $order_no,
             'money' => $money,
             'goods_desc' => 'withdrawal',
@@ -148,7 +154,7 @@ class Leap extends PayStrategy
             'time' => time(),
         ];
         $params = array_merge($params, $onlyParams);
-        $params['sign'] = self::generateSign($params);
+        $params['sign'] = $this->generateSign($params);
 
         $res = $this->requestService->postFormData(self::$url_cashout . '/order/cashout', $params);
         if ($res['code'] <> 1) {
@@ -177,7 +183,7 @@ class Leap extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if (self::generateSign($params) <> $sign) {
+        if ($this->generateSign($params) <> $sign) {
             $this->_msg = 'leap-签名错误';
             return false;
         }
@@ -203,7 +209,7 @@ class Leap extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if (self::generateSign($params) <> $sign) {
+        if ($this->generateSign($params) <> $sign) {
             $this->_msg = 'leap-签名错误';
             return false;
         }
