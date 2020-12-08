@@ -24,9 +24,9 @@ class Ipay extends PayStrategy
 
     //public static $company = 'ipay';   // 支付公司名
 
-    private $merchantID;
-    private $secretkey;
-    private $company = 'ipay';   // 支付公司名
+    public $merchantID;
+    public $secretkey;
+    public $company = 'ipay';   // 支付公司名
 
     public function _initialize()
     {
