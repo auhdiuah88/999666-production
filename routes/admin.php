@@ -70,6 +70,7 @@ Route::group(['middleware' => ['token', "auth"]], function () {
             Route::post("/search", "WithdrawalController@searchRecord");
             Route::post("/failure", "WithdrawalController@batchFailureRecord");
             Route::post("/pass", "WithdrawalController@batchPassRecord");
+            Route::post("/cancel", "WithdrawalController@cancellationRefund");
         });
 
         // 银行卡管理
@@ -96,6 +97,9 @@ Route::group(['middleware' => ['token', "auth"]], function () {
             Route::post("/status", "UserController@modifyUserStatus");
             Route::get("/recommend", "UserController@getRecommenders");
             Route::post("/gift", "UserController@giftMoney");
+            Route::post("/up", "UserController@upperSeparation");
+            Route::post("/down", "UserController@downSeparation");
+            Route::post("/logs", "UserController@getBalanceLogs");
         });
 
         // 用户下注信息
@@ -197,6 +201,18 @@ Route::group(['middleware' => ['token', "auth"]], function () {
         Route::group(["prefix" => "system"], function () {
             Route::get("/findAll", "SystemController@findAll");
             Route::post("/edit", "SystemController@editSystem");
+        });
+
+        // 后台赠金记录列表
+        Route::group(["prefix" => "gift"], function () {
+            Route::get("/findAll", "GiftController@findAll");
+            Route::post("/search", "GiftController@searchGiftLogs");
+        });
+
+        // 上下分记录列表
+        Route::group(["prefix" => "portion"], function () {
+            Route::get("/findAll", "UpDownController@findAll");
+            Route::post("/search", "UpDownController@searchUpAndDownLogs");
         });
     });
 });

@@ -24,6 +24,18 @@ class UserRepository extends BaseRepository
         return $this->Cx_User->where("is_customer_service", 0)->orderByDesc("last_time")->offset($offset)->limit($limit)->get()->toArray();
     }
 
+    public function getBalanceLogs($userId, $offset, $limit)
+    {
+        return $this->Cx_User_Balance_Logs->with(["admin" => function ($query) {
+            $query->select(["id", "nickname"]);
+        }])->where("user_id", $userId)->offset($offset)->limit($limit)->orderByDesc("time")->get()->toArray();
+    }
+
+    public function countBalanceLogs($userId)
+    {
+        return $this->Cx_User_Balance_Logs->where("user_id", $userId)->count("id");
+    }
+
     public function getRecommenders()
     {
         return $this->Cx_User->orderByDesc("last_time")->select(["id", "nickname"])->get()->toArray();

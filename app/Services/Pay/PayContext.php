@@ -11,23 +11,25 @@ class PayContext
     // API接口所对应的支付提供商; 需要加入时添加
     public static $pay_provider = [
         '999666.in' => 'leap',
-
         'unicasino.in' => 'ipay',
         'bb188.in' => 'ipay',
     ];
 
     public function __construct(
         Ipay $ipay,
-        Leap $leap
+        Leap $leap,
+        Winpay $winpay
     )
     {
-        // 每种api地址对应的支付厂商
-        $this->strategList = [      // 策略工厂
+        // 每种api地址对应的支付公司
+        $this->strategList = [  // 策略工厂
 //            '999666.in' => $leap,
 //            'unicasino.in' => $ipay,
 //            'bb188.in' => $ipay,
+
             'ipay' => $ipay,
-            'leap' => $leap
+            'leap' => $leap,
+            'winpay' => $winpay,
         ];
     }
     /**

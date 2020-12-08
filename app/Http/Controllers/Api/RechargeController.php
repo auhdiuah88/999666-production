@@ -16,13 +16,33 @@ class RechargeController extends Controller
     protected $UserService, $rechargeService;
 
 
-    public function __construct(UserService $userService, RechargeService $rechargeService)
+    public function __construct(UserService $userService,
+                                RechargeService $rechargeService
+    )
     {
         $this->UserService = $userService;
         $this->rechargeService = $rechargeService;
     }
 
     /**
+     * 用户充值方式列表
+     */
+    public function rechargeMethods(Request $request) {
+//        $rules = [ '' ];
+//        $validator = Validator::make($request->post(), $rules);
+//        if ($validator->fails()) {
+//            return $this->AppReturn(414, $validator->errors()->first());
+//        }
+        $host = $request->getHost();
+        $provider = explode('.', $host);
+        $result = config('pay.pay_provider.'.$provider[1]);
+        if (empty($result)){
+            $this->AppReturn(400, 'please set recharge method',$result);
+        }
+        return $this->AppReturn(200, 'recharge method',$result);
+    }
+
+  /**
      * 用户充值-请求充值订单-二维码 （充值界面提交）
      */
     public function recharge(Request $request)

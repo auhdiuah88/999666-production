@@ -178,7 +178,7 @@ class UserService extends BaseService
                 "dq_balance" => $user->balance,
                 "wc_balance" => bcadd($user->balance, $money, 2),
                 "time" => time(),
-                "msg" => "后台赠送" . $user->nickname . $money . "元礼金!",
+                "msg" => "后台赠送" . $user->nickname . " " . $money . "元礼金!",
                 "money" => $money,
                 "admin_id" => $adminId
             ];
@@ -196,5 +196,77 @@ class UserService extends BaseService
             $this->_code = $e->getCode();
             $this->_msg = $e->getMessage();
         }
+    }
+
+    public function upperSeparation($id, $money, $token)
+    {
+        $adminId = $this->getUserId($token);
+        DB::beginTransaction();
+        try {
+            $user = $this->UserRepository->findById($id);
+            $data = [
+                "user_id" => $id,
+                "type" => 9,
+                "dq_balance" => $user->balance,
+                "wc_balance" => bcadd($user->balance, $money, 2),
+                "time" => time(),
+                "msg" => "后台手动为" . $user->nickname . "上分" . $money . "元!",
+                "money" => $money,
+                "admin_id" => $adminId
+            ];
+            $this->UserRepository->addLogs($data);
+            $update = ["id" => $id, "balance" => bcadd($user->balance, $money, 2)];
+            if ($this->UserRepository->editUser($update)) {
+                $this->_msg = "上分成功";
+            } else {
+                $this->_code = 200;
+                $this->_msg = "上分失败";
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->_msg = $e->getMessage();
+            $this->_code = $e->getCode();
+        }
+    }
+
+
+    public function downSeparation($id, $money, $token)
+    {
+        $adminId = $this->getUserId($token);
+        DB::beginTransaction();
+        try {
+            $user = $this->UserRepository->findById($id);
+            $data = [
+                "user_id" => $id,
+                "type" => 10,
+                "dq_balance" => $user->balance,
+                "wc_balance" => bcsub($user->balance, $money, 2),
+                "time" => time(),
+                "msg" => "后台手动为" . $user->nickname . "下分" . $money . "元!",
+                "money" => $money,
+                "admin_id" => $adminId
+            ];
+            $this->UserRepository->addLogs($data);
+            $update = ["id" => $id, "balance" => bcsub($user->balance, $money, 2)];
+            if ($this->UserRepository->editUser($update)) {
+                $this->_msg = "下分成功";
+            } else {
+                $this->_code = 200;
+                $this->_msg = "下分失败";
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->_msg = $e->getMessage();
+            $this->_code = $e->getCode();
+        }
+    }
+
+    public function getBalanceLogs($id, $page, $limit)
+    {
+        $list = $this->UserRepository->getBalanceLogs($id, ($page - 1) * $limit, $limit);
+        $total = $this->UserRepository->countBalanceLogs($id);
+        $this->_data = ["total" => $total, "list" => $list];
     }
 }

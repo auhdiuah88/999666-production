@@ -8,6 +8,8 @@ use App\Repositories\Admin\UserRepository;
 use App\Repositories\Admin\WithdrawalRepository;
 use App\Services\BaseService;
 use App\Services\Pay\PayContext;
+use Illuminate\Support\Facades\DB;
+use function Symfony\Component\VarDumper\Dumper\esc;
 
 class WithdrawalService extends BaseService
 {
@@ -70,11 +72,11 @@ class WithdrawalService extends BaseService
             $user = $this->UserRepository->findById($withdrawalRecord->user_id);
             $type = $withdrawalRecord->type;  //  0:用户提现 1:代理佣金提现
             if ($data["type"] == 1) {
-                $user->freeze_agent_money = bcsub($user->freeze_agent_money, $withdrawalRecord->money,2);
-                $user->commission = bcadd($user->commission, $withdrawalRecord->money,2);
+                $user->freeze_agent_money = bcsub($user->freeze_agent_money, $withdrawalRecord->money, 2);
+                $user->commission = bcadd($user->commission, $withdrawalRecord->money, 2);
             } else {
-                $user->freeze_money = bcsub($user->freeze_money, $withdrawalRecord->money,2);
-                $user->balance = bcadd($user->balance, $withdrawalRecord->money,2);
+                $user->freeze_money = bcsub($user->freeze_money, $withdrawalRecord->money, 2);
+                $user->balance = bcadd($user->balance, $withdrawalRecord->money, 2);
             }
             $user->save();
         }
@@ -167,9 +169,9 @@ class WithdrawalService extends BaseService
      */
     public function getNewest()
     {
-        $result =  $this->WithdrawalRepository->getNewest();
-        if (!$result){
-            return ['create_time'=>0, 'id'=>0];
+        $result = $this->WithdrawalRepository->getNewest();
+        if (!$result) {
+            return ['create_time' => 0, 'id' => 0];
         }
         return $result;
     }
@@ -180,5 +182,38 @@ class WithdrawalService extends BaseService
     public function getNewests()
     {
         return $this->WithdrawalRepository->getNewests();
+    }
+
+    public function cancellationRefund($id)
+    {
+        $withdrawal = $this->WithdrawalRepository->findById($id);
+        if ($withdrawal->status !== 1) {
+            if ($withdrawal->pay_status !== 0) {
+                $this->_msg = "记录状态必须是通过且第三方为支付";
+                $this->_code = 402;
+                return;
+            } else {
+                $this->_msg = "记录状态必须是通过";
+                $this->_code = 402;
+                return;
+            }
+        }
+        $updateWithdrawal = ["id" => $id, "status" => 2];
+        $withdrawalResult = $this->WithdrawalRepository->editRecord($updateWithdrawal);
+        $user = $this->UserRepository->findById($withdrawal->user_id);
+        if ($user->freeze_money < $withdrawal->money) {
+            $this->_msg = "提现冻结金额小于提现金额";
+            $this->_code = 402;
+            return;
+        }
+        $updateUser = ["id" => $user->id, "freeze_money" => bcsub($user->freeze_money, $withdrawal->money, 2), "balance" => bcadd($user->balance, $withdrawal->money, 2)];
+        $userResult = $this->UserRepository->editUser($updateUser);
+        if ($withdrawalResult && $userResult) {
+            $this->_msg = "退款成功";
+        } else {
+            $this->_code = 402;
+            $this->_msg = "退款失败";
+        }
+
     }
 }

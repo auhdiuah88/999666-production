@@ -210,4 +210,14 @@ class HomeRepository extends BaseRepository
     {
         return $this->Cx_User_Balance_Logs->where("type", 8)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
     }
+
+    public function sumDownSeparation($ids, $timeMap)
+    {
+        return $this->Cx_User_Balance_Logs->where("type", 9)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+    }
+
+    public function sumUpperSeparation($ids, $timeMap)
+    {
+        return $this->Cx_User_Balance_Logs->where("type", 10)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+    }
 }

@@ -48,7 +48,7 @@ abstract class BaseService
         return $data;
     }
 
-    public function getConditions($data, $model)
+    private function getConditions($data, $model)
     {
         if (array_key_exists("phone", $data["conditions"])) {
             if (!is_null($data["conditions"]["phone"])) {
