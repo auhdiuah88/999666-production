@@ -25,9 +25,11 @@ class UpDownService extends BaseService
 
     public function searchUpAndDownLogs($data)
     {
+        dump($data);
         $data = $this->getUserIds($data, "user_id");
         $offset = ($data["page"] - 1) * $data["limit"];
         $limit = $data["limit"];
+        dd($data);
         $list = $this->UpDownRepository->searchUpAndDownLogs($data, $offset, $limit);
         $total = $this->UpDownRepository->countSearchUpAndDownLogs($data);
         $this->_data = ["total" => $total, "list" => $list];
