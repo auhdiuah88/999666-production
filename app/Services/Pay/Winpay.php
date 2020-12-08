@@ -61,7 +61,8 @@ class Winpay extends PayStrategy
             'orderId' => $order_no,
             'amount' => $money,
             'customName' => $user->nickname,
-            'customMobile' => $user->phone,  // 666666666666
+//            'customMobile' => $user->phone,  // 666666666666
+            'customMobile' => '666666666',  // 666666666666
             'customEmail' => '123@gmail.com',
 //            'channelType' => $pay_type,   // UPI   QUICK_PAY
             'notifyUrl' => $this->recharge_callback_url,
