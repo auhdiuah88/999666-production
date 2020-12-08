@@ -6,6 +6,7 @@ namespace App\Services\Pay;
 use App\Repositories\Api\UserRepository;
 use App\Services\RequestService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 
 abstract class PayStrategy

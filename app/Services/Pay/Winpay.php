@@ -52,15 +52,18 @@ class Winpay extends PayStrategy
      */
     public function rechargeOrder($pay_type, $money)
     {
+        $user = $this->getUser();
+
         $order_no = self::onlyosn();
         $pay_type = 'QUICK_PAY';
         $params = [
             'merchant' => self::$merchantID,
             'orderId' => $order_no,
             'amount' => $money,
-            'customName' => 'xxxx',
-            'customMobile' => '888888888',  // 666666666666
-            'customEmail' => '123@qq.com',
+            'customName' => $user->nickname,
+//            'customMobile' => $user->phone,  // 666666666666
+            'customMobile' => '666666666',  // 666666666666
+            'customEmail' => '123@gmail.com',
 //            'channelType' => $pay_type,   // UPI   QUICK_PAY
             'notifyUrl' => $this->recharge_callback_url,
             'callbackUrl' => $this->compalateUrl,
@@ -100,17 +103,17 @@ class Winpay extends PayStrategy
         $order_no = $withdrawalRecord->order_no;
 
         /**
-        merchant	是	string	商户号，平台分配账号
-        orderId	是	string	商户订单号（唯一），字符长度40以内
-        amount	是	number	金额，单位卢币(最多保留两位小数)
-        customName	是	string	收款人姓名
-        customMobile	是	string	收款人电话
-        customEmail	是	string	收款人email地址
-        bankCode	否	string	收款人银行代码，见数据字典
-        bankAccount	是	string	收款人银行账号
-        ifscCode	是	string	收款人IFSC CODE
-        notifyUrl	是	string	通知回调地址
-        sign	是	string	签名
+            merchant	是	string	商户号，平台分配账号
+            orderId	是	string	商户订单号（唯一），字符长度40以内
+            amount	是	number	金额，单位卢币(最多保留两位小数)
+            customName	是	string	收款人姓名
+            customMobile	是	string	收款人电话
+            customEmail	是	string	收款人email地址
+            bankCode	否	string	收款人银行代码，见数据字典
+            bankAccount	是	string	收款人银行账号
+            ifscCode	是	string	收款人IFSC CODE
+            notifyUrl	是	string	通知回调地址
+            sign	是	string	签名
          */
 
         $bank_name = $withdrawalRecord->bank_name;
