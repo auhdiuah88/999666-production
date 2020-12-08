@@ -28,7 +28,7 @@ class UpDownRepository extends BaseRepository
 
     public function searchUpAndDownLogs($data, $offset, $limit)
     {
-        return $this->whereCondition($data, $this->getModel())->orderByDesc("time")->offset($offset)->limit($limit)->get()->toSql();
+        return $this->whereCondition($data, $this->getModel())->orderByDesc("time")->offset($offset)->limit($limit)->toSql();
     }
 
     public function countSearchUpAndDownLogs($data)
