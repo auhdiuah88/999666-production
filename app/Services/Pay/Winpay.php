@@ -18,14 +18,18 @@ class Winpay extends PayStrategy
     private $compalateUrl = 'page';  // 支付完成返回地址
 
     public static $company = 'winpay';   // 支付公司名
+    private $merchantID;
+    private $secretkey;
 
     public function _initialize()
     {
-        self::$merchantID = config("pay.company.".self::$company.".merchant_id");
-        self::$secretkey = config("pay.company.".self::$company.".secret_key");
-        if (empty(self::$merchantID) || empty(self::$secretkey)) {
-            die('请设置支付商户号和密钥');
-        }
+//        self::$merchantID = config("pay.company.".self::$company.".merchant_id");
+//        self::$secretkey = config("pay.company.".self::$company.".secret_key");
+//        if (empty(self::$merchantID) || empty(self::$secretkey)) {
+//            die('请设置支付商户号和密钥');
+//        }
+        $this->merchantID = config('pay.company.'.self::$company.'.merchant_id');
+        $this->secretkey = config('pay.company.'.self::$company.'.secret_key');
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.self::$company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.self::$company;
@@ -34,14 +38,14 @@ class Winpay extends PayStrategy
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
-    public static function generateSign(array $params)
+    public function generateSign(array $params)
     {
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . '&key=' . self::$secretkey;
+        $sign = (implode('&', $string)) . '&key=' . $this->secretkey;
 //        dump(self::$merchantID);
 //        dd(self::$secretkey);
         return strtolower(md5($sign));
@@ -57,7 +61,7 @@ class Winpay extends PayStrategy
         $order_no = self::onlyosn();
         $pay_type = 'QUICK_PAY';
         $params = [
-            'merchant' => self::$merchantID,
+            'merchant' => $this->merchantID,
             'orderId' => $order_no,
             'amount' => $money,
             'customName' => $user->nickname,
@@ -68,7 +72,7 @@ class Winpay extends PayStrategy
             'notifyUrl' => $this->recharge_callback_url,
             'callbackUrl' => $this->compalateUrl,
         ];
-        $params['sign'] = self::generateSign($params);
+        $params['sign'] = $this->generateSign($params);
         $res = $this->requestService->postFormData(self::$url . '/openApi/pay/createOrder', $params);
         if ($res['success'] === false) {
             $this->_msg = $res['errorMessages'];
@@ -76,7 +80,7 @@ class Winpay extends PayStrategy
         }
         $resData = [
             'out_trade_no' => $order_no,
-            'shop_id' => self::$merchantID,
+            'shop_id' => $this->merchantID,
             'pay_company' => self::$company,
             'pay_type' => $pay_type,
             'native_url' => $res['data']['url'],
@@ -125,7 +129,7 @@ class Winpay extends PayStrategy
 
         $params = [
 //            'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
-            'merchant' => self::$merchantID,
+            'merchant' => $this->merchantID,
             'orderId' => $order_no,
             'amount' => $money,
             'customName' => $account_holder,
@@ -136,7 +140,7 @@ class Winpay extends PayStrategy
             'ifscCode' => $ifsc_code,
             'notifyUrl' => $this->withdrawal_callback_url,
         ];
-        $params['sign'] = self::generateSign($params);
+        $params['sign'] = $this->generateSign($params);
 
         $res = $this->requestService->postFormData(self::$url . '/openApi/payout/createOrder', $params);
         if ($res['code'] <> 1) {
@@ -165,7 +169,7 @@ class Winpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if (self::generateSign($params) <> $sign) {
+        if ($this->generateSign($params) <> $sign) {
             $this->_msg = 'leap-签名错误';
             return false;
         }
@@ -191,7 +195,7 @@ class Winpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if (self::generateSign($params) <> $sign) {
+        if ($this->generateSign($params) <> $sign) {
             $this->_msg = 'leap-签名错误';
             return false;
         }
