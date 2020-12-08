@@ -207,6 +207,12 @@ Route::group(['middleware' => ['token', "auth"]], function () {
             Route::get("/findAll", "GiftController@findAll");
             Route::post("/search", "GiftController@searchGiftLogs");
         });
+
+        // 上下分记录列表
+        Route::group(["prefix" => "portion"], function () {
+            Route::get("/findAll", "UpDownController@findAll");
+            Route::post("/search", "UpDownController@searchUpAndDownLogs");
+        });
     });
 });
 
