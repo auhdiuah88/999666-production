@@ -24,14 +24,19 @@ class Ipay extends PayStrategy
 
     public static $company = 'ipay';   // 支付公司名
 
+    private $merchantID;
+    private $secretkey;
+
     public function _initialize()
     {
-        print_r('pay.company.'.self::$company.'.merchant_id');die;
         self::$merchantID = config('pay.company.'.self::$company.'.merchant_id');
         self::$secretkey = config('pay.company.'.self::$company.'.secret_key');
         if (empty(self::$merchantID) || empty(self::$secretkey)) {
             die('请设置 ipay 支付商户号和密钥');
         }
+        $this->merchantID = config('pay.company.'.self::$company.'.merchant_id');
+        $this->secretkey = config('pay.company.'.self::$company.'.secret_key');
+
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.self::$company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.self::$company;
@@ -40,14 +45,14 @@ class Ipay extends PayStrategy
     /**
      * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
      */
-    public static function generateSign(array $params)
+    public function generateSign(array $params)
     {
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . self::$secretkey;
+        $sign = (implode('&', $string)) . $this->secretkey;
         return md5($sign);
     }
 
@@ -64,9 +69,9 @@ class Ipay extends PayStrategy
             'notify_url' => $this->recharge_callback_url ,
             'order_des' => '支付充值',
             'out_trade_no' => $order_no,
-            'shop_id' => self::$merchantID,
+            'shop_id' =>$this->merchantID,
         ];
-        $params['sign'] = self::generateSign($params);
+        $params['sign'] = $this->generateSign($params);
 //        print_r($params);die;
         $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
         if ($res['rtn_code'] <> 1000) {
@@ -76,7 +81,7 @@ class Ipay extends PayStrategy
         }
         $resData = [
             'out_trade_no' => $order_no,
-            'shop_id' => self::$merchantID,
+            'shop_id' => $this->merchantID,
             'pay_company' => self::$company,
             'pay_type' => $pay_type,
             'native_url' => $res['native_url'],
@@ -107,10 +112,10 @@ class Ipay extends PayStrategy
             'money' => $money,
             'notify_url' => $this->withdrawal_callback_url , // 回调url，用来接收订单支付结果
             'out_trade_no' => $order_no,
-            'shop_id' => self::$merchantID,
+            'shop_id' => $this->merchantID,
             'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
         ];
-        $params['sign'] = self::generateSign($params);
+        $params['sign'] = $this->generateSign($params);
         $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
@@ -126,7 +131,7 @@ class Ipay extends PayStrategy
     function rechargeCallback(Request $request)
     {
         // 验证参数
-        if ($request->shop_id <> self::$merchantID
+        if ($request->shop_id <> $this->merchantID
             || $request->api_name <> 'quickpay.all.native.callback'
             || $request->pay_result <> 'success'
         ) {
@@ -138,7 +143,7 @@ class Ipay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if (self::generateSign($params) <> $sign){
+        if ($this->generateSign($params) <> $sign){
             $this->_msg = '签名错误';
             return false;
         }
@@ -173,7 +178,7 @@ class Ipay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if (self::generateSign($params) <> $sign) {
+        if ($this->generateSign($params) <> $sign) {
             $this->_msg = '签名错误';
             return false;
         }
