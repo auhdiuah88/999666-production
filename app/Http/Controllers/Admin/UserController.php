@@ -136,4 +136,34 @@ class UserController extends Controller
             $this->UserService->_data
         );
     }
+
+    public function upperSeparation(Request $request)
+    {
+        $this->UserService->upperSeparation($request->post("id"), $request->post("money"), $request->header("token"));
+        return $this->AppReturn(
+            $this->UserService->_code,
+            $this->UserService->_msg,
+            $this->UserService->_data
+        );
+    }
+
+    public function downSeparation(Request $request)
+    {
+        $this->UserService->downSeparation($request->post("id"), $request->post("money"), $request->header("token"));
+        return $this->AppReturn(
+            $this->UserService->_code,
+            $this->UserService->_msg,
+            $this->UserService->_data
+        );
+    }
+
+    public function getBalanceLogs(Request $request)
+    {
+        $this->UserService->getBalanceLogs($request->post("id"), $request->post("page"), $request->post("limit"));
+        return $this->AppReturn(
+            $this->UserService->_code,
+            $this->UserService->_msg,
+            $this->UserService->_data
+        );
+    }
 }

@@ -20,4 +20,9 @@ class Cx_User_Balance_Logs extends Model
     {
         return $this->belongsTo(Cx_User::class, "user_id", "id");
     }
+
+    public function admin()
+    {
+        return $this->hasOne(Cx_Admin::class, "admin_id", "id");
+    }
 }
