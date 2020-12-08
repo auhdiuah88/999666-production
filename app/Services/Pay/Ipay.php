@@ -74,6 +74,9 @@ class Ipay extends PayStrategy
         ];
         $params['sign'] = $this->generateSign($params);
 //        print_r($params);die;
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_rechargeOrder', $params);
+
         $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];

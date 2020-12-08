@@ -75,6 +75,9 @@ class Winpay extends PayStrategy
             'callbackUrl' => $this->compalateUrl,
         ];
         $params['sign'] = $this->generateSign($params);
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_rechargeOrder', $params);
+
         $res = $this->requestService->postFormData(self::$url . '/openApi/pay/createOrder', $params);
         if ($res['success'] === false) {
             $this->_msg = $res['errorMessages'];
@@ -136,7 +139,7 @@ class Winpay extends PayStrategy
             'amount' => $money,
             'customName' => $account_holder,
             'customMobile' => $phone,
-            'customEmail' => $this->withdrawal_callback_url,
+            'customEmail' => $email,
 //            'bankCode' => time(),
             'bankAccount' =>$bank_number,
             'ifscCode' => $ifsc_code,

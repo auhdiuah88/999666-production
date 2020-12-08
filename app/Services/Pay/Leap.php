@@ -90,6 +90,9 @@ class Leap extends PayStrategy
         ];
         $params['sign'] = $this->generateSign($params);
         $params = urlencode(json_encode($params));
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('leap_rechargeOrder', $params);
+
         $res = $this->requestService->get(self::$url . '/order/getUrl?json=' . $params);
         if ($res['code'] <> 1) {
             $this->_msg = $res['msg'];
