@@ -21,9 +21,6 @@ abstract class PayStrategy
 
     protected static $url_callback  = '';    // 回调地址 (充值或提现)
 
-//    public  $merchantID = '';     // 商户ID
-//    public  $secretkey = '';      // 密钥
-
     public function __construct (
         RequestService $requestService,
         Request $request,
@@ -39,7 +36,6 @@ abstract class PayStrategy
         if (empty(self::$url_callback) || Str::contains(self::$url_callback,'localhost')) {
             die('请设置.env的APP_URL');
         }
-
         // 用于子类初始化操作
         $this->_initialize();
     }

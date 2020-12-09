@@ -74,6 +74,9 @@ class Ipay extends PayStrategy
         ];
         $params['sign'] = $this->generateSign($params);
 //        print_r($params);die;
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_rechargeOrder', $params);
+
         $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
@@ -117,6 +120,9 @@ class Ipay extends PayStrategy
             'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
         ];
         $params['sign'] = $this->generateSign($params);
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_withdrawalOrder',$params);
+
         $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
