@@ -5,6 +5,7 @@ namespace App\Services\Game;
 
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Game\SscRepository;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class Ssc_TwoService
