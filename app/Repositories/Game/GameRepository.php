@@ -265,7 +265,7 @@ class GameRepository
                     $query->select('id', 'number');
                 },
                 'game_c_x' => function($query){
-                    $query->select('id', 'name');
+                    $query->select('id', 'name', 'name as name_india');
                 }
             )
         )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->get();
