@@ -593,12 +593,12 @@ class GameRepository
         $data['msg']="今日用户输总金额".$data['s_money']."今日用户赢总金额".$data['y_money']."今日用户充值总金额".$data['c_money']."实际杀率".$date_sj_kill;
         return $data;
     }
-    //投注列表
+    //投注列表.
     public function Betting_List($user, $limit, $offset)
     {
         return $this->Cx_Game_Betting->with(array(
                 'game_c_x' => function ($query) {
-                    $query->select('id', 'name');
+                    $query->select('id', 'name', 'name as name_india');
                 },
                 'game_name' => function ($query) {
                     $query->select('id', 'name');
