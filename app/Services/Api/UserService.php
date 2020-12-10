@@ -164,8 +164,8 @@ class UserService
             return false;
         }
         unset($data["sms_code"]);
-        if(isset($data["code"])){
-            if($data["code"]=="" || empty($data["code"])){
+        if (isset($data["code"])) {
+            if ($data["code"] == "" || empty($data["code"])) {
                 unset($data["code"]);
             }
         }
@@ -183,14 +183,26 @@ class UserService
                     $data["one_recommend_id"] = $agent["two_id"]; // null
                     $data["two_recommend_id"] = $agent["one_id"];
 
-                    $one = $this->UserRepository->findByIdUser($agent["one_id"]);
-                    $data["two_recommend_phone"] = $one->phone;
+                    DB::beginTransaction();
+                    try {
+                        $one = $this->UserRepository->findByIdUser($agent["one_id"]);
+                        $data["two_recommend_phone"] = $one->phone;
+                        $one->one_number = $one->one_number + 1;
+                        $this->UserRepository->updateAgentMoney((array)$one);
 
-                    if (isset($agent["two_id"])) {
-                        $two = $this->UserRepository->findByIdUser($agent["two_id"]);
-                        $data["one_recommend_phone"] = $two->phone;
+                        if (isset($agent["two_id"])) {
+                            $two = $this->UserRepository->findByIdUser($agent["two_id"]);
+                            $data["one_recommend_phone"] = $two->phone;
+                            $two->two_number = $two->two_number + 1;
+                            $this->UserRepository->updateAgentMoney((array)$two);
+                        }
+                        DB::commit();
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        $this->error_code = $e->getCode();
+                        $this->error = $e->getMessage();
+                        return false;
                     }
-
                 }
 
             }
