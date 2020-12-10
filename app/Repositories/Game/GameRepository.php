@@ -264,8 +264,6 @@ class GameRepository
                 'game_play' => function ($query) {
                     $query->select('id', 'number');
                 },
-            ),
-            array(
                 'game_c_x' => function($query){
                     $query->select('id', 'name');
                 }
