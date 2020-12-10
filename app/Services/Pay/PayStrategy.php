@@ -6,6 +6,7 @@ namespace App\Services\Pay;
 use App\Repositories\Api\UserRepository;
 use App\Services\RequestService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 
 abstract class PayStrategy
@@ -19,9 +20,6 @@ abstract class PayStrategy
     protected $userRepository;
 
     protected static $url_callback  = '';    // 回调地址 (充值或提现)
-
-    public static $merchantID = '';     // 商户ID
-    public static $secretkey = '';      // 密钥
 
     public function __construct (
         RequestService $requestService,
@@ -38,7 +36,6 @@ abstract class PayStrategy
         if (empty(self::$url_callback) || Str::contains(self::$url_callback,'localhost')) {
             die('请设置.env的APP_URL');
         }
-
         // 用于子类初始化操作
         $this->_initialize();
     }

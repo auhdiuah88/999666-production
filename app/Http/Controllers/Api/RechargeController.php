@@ -48,7 +48,7 @@ class RechargeController extends Controller
     public function recharge(Request $request)
     {
         $rules = [
-            "money" => "required|integer|min:200|max:4999",
+            "money" => "required|integer",
             "pay_type" => "required",    // 充值方式 如 bank,upi
         ];
         $validator = Validator::make($request->post(), $rules);

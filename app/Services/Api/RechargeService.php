@@ -55,7 +55,8 @@ class RechargeService extends PayService
         if (count(explode('.', $host)) == 3) {
             $host = substr(strstr($host, '.'), 1);
         }
-        $payProvide = PayContext::$pay_provider[$host];
+//        $payProvide = PayContext::$pay_provider[$host];
+        $payProvide = $pay_type;   // 根据传入的类型（支付公司类型选折策略）
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付商户类
         if (!$strategyClass) {
             $this->_msg = 'can not find pay mode';
