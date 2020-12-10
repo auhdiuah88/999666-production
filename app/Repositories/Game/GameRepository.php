@@ -276,6 +276,7 @@ class GameRepository
         $row['bq'] = $bq_game;
         $row['lx'] = $lx_game;
         $row['pr'] = $pr_lx;
+        $row['time'] = $time;
         $row['balance'] = $user_obj->balance;
         $row['count_down'] = ($bq_game->end_time - time());
         return $row;
