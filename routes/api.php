@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get("/test", "TestController@test2");
 
 
-
 Route::post("/login", "Api\UserController@Login");
 Route::post("/register", "Api\UserController@Register");
 Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");

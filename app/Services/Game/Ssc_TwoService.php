@@ -5,6 +5,7 @@ namespace App\Services\Game;
 
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Game\SscRepository;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class Ssc_TwoService
@@ -52,6 +53,7 @@ class Ssc_TwoService
         }
         //单局杀率判定
         $system=$this->GameRepository->Get_System();
+        Log::debug(json_encode($system));
         $kill_rate=$system->one_kill;//获得杀率
         $rand=rand(0,100);//随机数
         ($kill_rate*100)<=$rand?$isWin=1:$isWin=2;//判断本局输还是赢
