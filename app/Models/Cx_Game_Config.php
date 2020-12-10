@@ -25,7 +25,7 @@ class Cx_Game_Config extends Model
     }
 
     public function getNameIndiaAttribute($value){
-        return !intval($value)? $this->nameIndia[$value]: $value;
+        return $value >= 0? $this->nameIndia[$value]: $value;
     }
 
 }
