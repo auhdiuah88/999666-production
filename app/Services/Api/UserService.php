@@ -196,7 +196,7 @@ class UserService
                         $one = $this->UserRepository->findByIdUser($agent["one_id"]);
                         $data["two_recommend_phone"] = $one->phone;
                         $one->one_number = $one->one_number + 1;
-                        $this->UserRepository->updateAgentMoney((array)$one);
+                        $this->UserRepository->updateAgentMoney($one);
 
                         if (isset($agent["two_id"])) {
                             $two = $this->UserRepository->findByIdUser($agent["two_id"]);
