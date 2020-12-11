@@ -192,7 +192,7 @@ class UserService
                     $data["two_recommend_id"] = $agent["one_id"];
 
                     DB::beginTransaction();
-                    try {
+//                    try {
                         $one = $this->UserRepository->findByIdUser($agent["one_id"]);
                         $one = $one->toArray();
                         $data["two_recommend_phone"] = $one->phone;
@@ -206,12 +206,12 @@ class UserService
                             $this->UserRepository->updateAgentMoney((array)$two);
                         }
                         DB::commit();
-                    } catch (\Exception $e) {
-                        DB::rollBack();
-                        $this->error_code = $e->getCode();
-                        $this->error = $e->getMessage();
-                        return false;
-                    }
+//                    } catch (\Exception $e) {
+//                        DB::rollBack();
+//                        $this->error_code = $e->getCode();
+//                        $this->error = $e->getMessage();
+//                        return false;
+//                    }
                 }
 
             }
