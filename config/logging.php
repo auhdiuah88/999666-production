@@ -105,6 +105,12 @@ return [
             'path' => storage_path('logs/test.log'),		//  tail  -f storage/logs/test.log
             'level' => 'debug',
         ],
+
+        'kidebug' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/debug.log'),		//  tail  -f storage/logs/test.log
+            'level' => 'debug',
+        ],
     ],
 
 ];
