@@ -82,7 +82,7 @@ class WithdrawalService extends BaseService
             DB::connection()->enableQueryLog();
             $user->save();
             $sql = DB::getQueryLog();
-            Log::channel('kidebug')->info('withdraw',json_encode($sql));
+            Log::channel('kidebug')->info('withdraw', $sql);
 //            Log::useFiles(storage_path('logs/withdraw_test.log'), 'debug');
 //            Log::debug(print_r($sql,true));
         }
