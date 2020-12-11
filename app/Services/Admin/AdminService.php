@@ -21,7 +21,8 @@ class AdminService
     public function Login($request)
     {
         if ($request->input("username") != "unicasinonet") {
-            if (!$this->AdminRepository->getIp($request->ip())) {
+            $isLimitHost = config('site.is_limit_host');
+            if ($isLimitHost && !$this->AdminRepository->getIp($request->ip())) {
                 return response()->json([
                     "code" => 402,
                     "msg" => "您的ip不再本站IP白名单中，请联系管理员添加IP"
