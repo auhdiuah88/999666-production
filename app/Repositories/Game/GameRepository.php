@@ -259,9 +259,8 @@ class GameRepository
             $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<", ($time + 2))->where('end_time', ">", $time)->first();
         }
         $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('number', ($bq_game->number - 1))->first();
-        DB::connection()->enableQueryLog();
-        $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("number", "<",$bq_game->number)->orderBy('start_time', 'desc')->limit(10)->get();
-        $sql = DB::getQueryLog();
+//        $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("number", "<",$bq_game->number)->orderBy('start_time', 'desc')->limit(10)->get();
+        $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("id", "<",$bq_game->id)->orderBy('start_time', 'desc')->limit(10)->get();
         $lx_game = $this->Cx_Game_Betting->with(array(
                 'game_play' => function ($query) {
                     $query->select('id', 'number');
@@ -278,7 +277,6 @@ class GameRepository
         $row['bq'] = $bq_game;
         $row['lx'] = $lx_game;
         $row['pr'] = $pr_lx;
-        $row['sql'] = $sql;
         $row['balance'] = $user_obj->balance;
         $row['count_down'] = ($bq_game->end_time - time());
         return $row;
