@@ -178,7 +178,7 @@ class UserService
                 $this->error = '邀请用户不存在';
                 return false;
             }
-            Log::channel('kidebug')->debug('register',$list->toArray());
+            Log::channel('kidebug')->debug('register',$list);
             unset($data["code"]);
             if ($list["user"]->is_customer_service == 1) {
                 Log::channel('kidebug')->debug('register',['code'=>2]);
