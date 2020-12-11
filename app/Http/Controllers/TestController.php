@@ -21,7 +21,8 @@ class TestController extends Controller
     }
 
     public function test(){
-        $res = Redis::set("REGIST_CODE:" . '9188888888', 666666);
+        $phone = request()->input('phone');
+        $res = Redis::set("REGIST_CODE:" . $phone, 666666);
         dd($res);
     }
 }
