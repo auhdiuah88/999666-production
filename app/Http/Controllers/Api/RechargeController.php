@@ -39,7 +39,14 @@ class RechargeController extends Controller
         if (empty($result)){
             $this->AppReturn(400, 'please set recharge method',$result);
         }
-        return $this->AppReturn(200, 'recharge method',$result);
+        ##获取用户余额
+
+        $balance = $request->get('userInfo')['balance'];
+
+        $res = compact('balance');
+        $res['recharge_method'] = $result;
+
+        return $this->AppReturn(200, 'recharge method', $res);
     }
 
   /**

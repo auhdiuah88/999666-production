@@ -51,7 +51,7 @@ class CheckUserTokenMiddleware
         }
 
 
-
+        $request->attributes->add(['userInfo'=>$user->toArray()]);
 
         return $next($request);
     }
