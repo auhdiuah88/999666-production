@@ -284,17 +284,6 @@ class UserRepository
     }
 
     /**
-     * 修改代理收益
-     * @param $data
-     * @return mixed
-     */
-    public function updateAgentMoneyRegister($data)
-    {
-        Log::channel('kidebug')->debug('register',$data);
-        return $this->Cx_User->where("id", $data->id)->update($data);
-    }
-
-    /**
      * 查询系统原本收入
      * @return mixed
      */

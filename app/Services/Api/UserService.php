@@ -194,9 +194,10 @@ class UserService
                     DB::beginTransaction();
                     try {
                         $one = $this->UserRepository->findByIdUser($agent["one_id"]);
+                        $one = $one->toArray();
                         $data["two_recommend_phone"] = $one->phone;
                         $one->one_number = $one->one_number + 1;
-                        $this->UserRepository->updateAgentMoney($one);
+                        $this->UserRepository->updateAgentMoney((array)$one);
 
                         if (isset($agent["two_id"])) {
                             $two = $this->UserRepository->findByIdUser($agent["two_id"]);
