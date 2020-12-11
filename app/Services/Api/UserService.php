@@ -173,6 +173,7 @@ class UserService
         // 判断是否有代理
         if (array_key_exists("code", $data)) {
             $list = $this->UserRepository->findAgentByCode($data["code"]);
+            var_dump($list);die;
             Log::channel('kidebug')->debug('register',$list->toArray());
             unset($data["code"]);
             if ($list["user"]->is_customer_service == 1) {
