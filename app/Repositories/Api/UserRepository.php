@@ -12,6 +12,7 @@ use App\Models\Cx_User_Bank;
 use App\Models\Cx_User_Commission_Logs;
 use App\Mongodb;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 
 class UserRepository
@@ -279,6 +280,7 @@ class UserRepository
      */
     public function updateAgentMoney($data)
     {
+        Log::channel('kidebug')->debug('register',$data);
         return $this->Cx_User->where("id", $data["id"])->update($data);
     }
 
