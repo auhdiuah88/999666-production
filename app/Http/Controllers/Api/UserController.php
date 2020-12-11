@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Api\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 
@@ -65,26 +66,31 @@ class UserController extends Controller
      */
     public function Register(Request $request)
     {
-        // 参数验证
-        $data = $request->post();
-        $rules = [
-            "phone" => "required",
-            "password" => "required",
-            "sms_code" => "required"
-        ];
+        try{
+            // 参数验证
+            $data = $request->post();
+            $rules = [
+                "phone" => "required",
+                "password" => "required",
+                "sms_code" => "required"
+            ];
 //        $massages = [
 //            "phone.required" => "用户名不能为空",
 //            "password.required" => "密码不能为空",
 //            "sms_code.required" => "手机验证码不能为空"
 //        ];
-        $validator = Validator::make($data, $rules);
-        if ($validator->fails()) {
-            return $this->AppReturn(414, $validator->errors()->first());
+            $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                return $this->AppReturn(414, $validator->errors()->first());
+            }
+            if (!$this->UserService->Register($data, $request->ip())) {
+                return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
+            }
+            return $this->AppReturn(200, '成功');
+        }catch(\Exception $e){
+            Log::channel('kidebug')->debug('register',json_decode(json_encode($e),true));
+            return $this->AppReturn(414, "注册失败");
         }
-        if (!$this->UserService->Register($data, $request->ip())) {
-            return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
-        }
-        return $this->AppReturn(200, '成功');
     }
 
     /**
