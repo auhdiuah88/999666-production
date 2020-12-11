@@ -53,7 +53,7 @@ class SscService
         $system=$this->GameRepository->Get_System();
         $kill_rate=$system->one_kill;//获得杀率
         $rand=rand(0,100);//随机数
-        ($kill_rate*100)<=$rand?$isWin=1:$isWin=2;//判断本局输还是赢
+        ($kill_rate*100)<=$rand?$isWin=2:$isWin=1;//判断本局输还是赢
         //整体杀率判定
 
         $date_money=$this->GameRepository->Get_Date_Money();
@@ -205,7 +205,7 @@ class SscService
         $system=$this->GameRepository->Get_System();
         $kill_rate=$system->one_kill;//获得杀率
         $rand=rand(0,100);//随机数
-        ($kill_rate*100)<=$rand?$isWin=1:$isWin=2;//判断本局输还是赢
+        ($kill_rate*100)<=$rand?$isWin=2:$isWin=1;//判断本局输还是赢
         //整体杀率判定
 
         $date_money=$this->GameRepository->Get_Date_Money();
