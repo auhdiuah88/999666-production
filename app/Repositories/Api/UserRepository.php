@@ -283,6 +283,11 @@ class UserRepository
         return $this->Cx_User->where("id", $data["id"])->update($data);
     }
 
+    public function updateAgentMoneyRegister($data)
+    {
+        return $this->Cx_User->where("id", $data['id'])->update($data);
+    }
+
     /**
      * 查询系统原本收入
      * @return mixed
