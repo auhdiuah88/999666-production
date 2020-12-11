@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("/test", "TestController@test2");
+Route::get("/test2", "TestController@test");
 
 
 Route::post("/login", "Api\UserController@Login");
