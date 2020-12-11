@@ -12,3 +12,4 @@ npm-debug.log
 yarn-error.log
 app/Console/Commands/myTest.php
 config/pay.php
+config/site.php
