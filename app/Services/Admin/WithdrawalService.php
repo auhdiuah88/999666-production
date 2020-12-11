@@ -9,6 +9,7 @@ use App\Repositories\Admin\WithdrawalRepository;
 use App\Services\BaseService;
 use App\Services\Pay\PayContext;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use function Symfony\Component\VarDumper\Dumper\esc;
 
 class WithdrawalService extends BaseService
@@ -78,7 +79,11 @@ class WithdrawalService extends BaseService
                 $user->freeze_money = bcsub($user->freeze_money, $withdrawalRecord->money, 2);
                 $user->balance = bcadd($user->balance, $withdrawalRecord->money, 2);
             }
+            DB::connection()->enableQueryLog();
             $user->save();
+            $sql = DB::getQueryLog();
+            Log::useFiles(storage_path('logs/withdraw_test.log'), 'debug');
+            Log::debug(print_r($sql,true));
         }
 //        $data["loan_time"] = time();
         $data["approval_time"] = time();
