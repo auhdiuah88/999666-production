@@ -39,7 +39,7 @@ class CheckUserTokenMiddleware
             ]);
         }
 
-        $token = urldecode($token);
+        $token1 = $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
         if(count($data) < 1){
             return response()->json([
@@ -50,8 +50,8 @@ class CheckUserTokenMiddleware
         }
 
         $user_id = $data[0];
-        $cache_token = cache()->get(md5('usertoken'.$user_id), $token);
-        if(!$cache_token || $cache_token != $token){
+        $cache_token = cache()->get(md5('usertoken'.$user_id));
+        if(!$cache_token || $cache_token != $token1){
             return response()->json([
                 "code" => 401,
 //                "msg" => "token验证失败"
