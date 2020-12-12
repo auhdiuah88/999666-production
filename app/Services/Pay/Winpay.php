@@ -206,7 +206,7 @@ class Winpay extends PayStrategy
 //            return false;
 //        }
         $where = [
-            'order_no' => $request->orderId,
+            'order_no' => $params['orderId'],
         ];
         return $where;
     }
