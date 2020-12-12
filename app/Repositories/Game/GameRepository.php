@@ -263,7 +263,7 @@ class GameRepository
         $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("id", "<",$bq_game->id)->orderBy('start_time', 'desc')->limit(10)->get();
         $lx_game = $this->Cx_Game_Betting->with(array(
                 'game_play' => function ($query) {
-                    $query->select('id', 'number');
+                    $query->select('id', 'number', 'prize_number');
                 },
                 'game_c_x' => function($query){
                     $query->select('id', 'name', 'name as name_india');
@@ -275,7 +275,7 @@ class GameRepository
 
         $row['sq'] = $sq_game;
         $row['bq'] = $bq_game;
-        $row['lx'] = $lx_game;
+        $row['lx'] = $lx_game;  //历史订单
         $row['pr'] = $pr_lx;
         $row['balance'] = $user_obj->balance;
         $row['count_down'] = ($bq_game->end_time - time());
