@@ -231,7 +231,7 @@ class WithdrawalService extends PayService
             $this->_msg = $strategyClass->_msg;
             return false;
         }
-
+        $pltf_order_no = isset($where['plat_order_id'])?$where['plat_order_id']:'';
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
         if (!$withdrawlLog) {
             $this->_msg = '找不到此提现订单';
@@ -276,6 +276,7 @@ class WithdrawalService extends PayService
             }
 
             // 更新充值成功记录
+            $withdrawlLog->pltf_order_no = $pltf_order_no;
             $withdrawlLog->pay_status = 1;
             $withdrawlLog->loan_time = time();
             $withdrawlLog->save();

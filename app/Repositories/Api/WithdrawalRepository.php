@@ -88,6 +88,7 @@ class WithdrawalRepository
      */
     public function getWithdrawalInfoByCondition(array $where)
     {
+        if(isset($where['plat_order_id']))unset($where['plat_order_id']);
         return $this->Cx_Withdrawal_Record->where($where)->first();
     }
 }
