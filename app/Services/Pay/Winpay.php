@@ -175,10 +175,10 @@ class Winpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params) <> $sign) {
-            $this->_msg = 'leap-签名错误';
-            return false;
-        }
+//        if ($this->generateSign($params) <> $sign) {
+//            $this->_msg = 'leap-签名错误';
+//            return false;
+//        }
 
         $where = [
             'order_no' => $params['orderId'],
