@@ -201,6 +201,8 @@ class SscService
         if($Is_Executive_Prize<=0){
             return false;
         }
+        ##获取本期的情况
+        $game_play_info = $this->GameRepository->Get_Game_play($play_id);
         //单局杀率判定
         $system=$this->GameRepository->Get_System();
         $kill_rate=$system->one_kill;//获得局杀率
@@ -214,9 +216,14 @@ class SscService
         }
     }
 
-    public function calculateNumMoney($play_id){
+    public function calculateNumMoney($game_play_info){
         ##获取投注获奖倍数
-        $game_config = $this->Get_Config();
+        $game_config = $this->GameRepository->Get_Config($game_play_info['game_id']);
+        $count_betting = [];
+        forEach($game_config as $conf){
+            ##计算每个投注的投注金额和如果中奖的中奖金额
+            $this->GameRepository->Calculate_Betting($conf);
+        }
         ##投注 Odd
     }
 

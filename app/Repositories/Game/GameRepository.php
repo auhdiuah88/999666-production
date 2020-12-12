@@ -518,6 +518,19 @@ class GameRepository
     {
         return $this->Cx_Game_Play->where("id", $id)->where("status", 0)->count();
     }
+
+    public function Get_Game_play($id){
+        return $this->Cx_Game_Play->where("id", $id)->first()->toArray();
+    }
+
+    public function Get_Config($game_id){
+        return $this->Cx_Game_Config->where("game_id", $game_id)->select(['id', 'name', 'odds'])->select()->get()->toArray();
+    }
+
+    public function Calculate_Betting($conf){
+
+    }
+
     //根据ID获取当期下注总金额
     public function Get_Betting_Sum($play_id)
     {

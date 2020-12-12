@@ -116,7 +116,7 @@ class GameController extends Controller
 
     public function Betting(Request $request)
     {
-
+        return $this->AppReturn(413, 'System upgrading');
         $rules = [
             "game_id" => "required|max:5|integer",
             "game_p_id" => "required|integer",
