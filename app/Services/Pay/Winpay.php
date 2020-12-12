@@ -205,6 +205,7 @@ class Winpay extends PayStrategy
 //            $this->_msg = 'leap-签名错误';
 //            return false;
 //        }
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback', $params);
         $where = [
             'order_no' => $params['orderId'],
         ];
