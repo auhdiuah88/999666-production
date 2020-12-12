@@ -149,10 +149,10 @@ class Winpay extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_withdrawalOrder',$params);
         $res = $this->requestService->postFormData(self::$url . '/openApi/payout/createOrder', $params);
-//        if ($res['success'] != true) {
-//            $this->_msg = $res['errorMessages'];
-//            return false;
-//        }
+        if ($res['success'] != true) {
+            $this->_msg = $res['data']['errorMessages'];
+            return false;
+        }
         return [
             'pltf_order_no' => '',
             'order_no' => $order_no,
@@ -201,10 +201,10 @@ class Winpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-//        if ($this->generateSign($params) <> $sign) {
-//            $this->_msg = 'leap-签名错误';
-//            return false;
-//        }
+        if ($this->generateSign($params) <> $sign) {
+            $this->_msg = 'leap-签名错误';
+            return false;
+        }
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback', $params);
         $where = [
             'order_no' => $params['orderId'],
