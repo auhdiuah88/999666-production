@@ -269,7 +269,7 @@ class GameRepository
                     $query->select('id', 'name', 'name as name_india');
                 }
             )
-        )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->get();
+        )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->select(['*', 'id as betting_money'])->get();
         $user_obj =$this->Cx_User->where('id',$user_id)->first();
         unset($sq_game->game_id, $sq_game->prize_time);
 
