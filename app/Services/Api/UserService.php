@@ -78,10 +78,12 @@ class UserService
             $this->error = 'Incorrect password, please try again';
             return false;
         }
+        $token = Crypt::encrypt($userObj->id . "+" . time());
         $userModifyData = [
-            'token' => Crypt::encrypt($userObj->id . "+" . time() . "+". request()->ip()),
+            'token' => $token,
             'last_time' => time()
         ];
+        cache()->set(md5('usertoken'.$userObj->id), $token,7*24*60*60);
         $userObj = $this->UserRepository->updateUser($userObj->id, $userModifyData);
         $this->data = $userObj;
         return true;
