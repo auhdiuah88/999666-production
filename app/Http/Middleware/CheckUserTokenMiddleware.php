@@ -41,6 +41,20 @@ class CheckUserTokenMiddleware
 
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
+        if(count($data) < 3){
+            return response()->json([
+                "code" => 401,
+//                "msg" => "token验证失败"
+                "msg" => "请登录"
+            ]);
+        }
+        if($request->ip() != $data[2]){
+            return response()->json([
+                "code" => 401,
+//                "msg" => "token验证失败"
+                "msg" => "请登录"
+            ]);
+        }
         $user_id = $data[0];
         if (!$user = $this->UserRepository->cacheUser($user_id)) {
             return response()->json([

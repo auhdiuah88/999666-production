@@ -79,7 +79,7 @@ class UserService
             return false;
         }
         $userModifyData = [
-            'token' => Crypt::encrypt($userObj->id . "+" . time()),
+            'token' => Crypt::encrypt($userObj->id . "+" . time() . "+". request()->ip()),
             'last_time' => time()
         ];
         $userObj = $this->UserRepository->updateUser($userObj->id, $userModifyData);
