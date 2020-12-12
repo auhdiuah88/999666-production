@@ -149,11 +149,10 @@ class Winpay extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_withdrawalOrder',$params);
         $res = $this->requestService->postFormData(self::$url . '/openApi/payout/createOrder', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_withdrawalOrder',$params);
-        if ($res['success'] != true) {
-            $this->_msg = $res['errorMessages'];
-            return false;
-        }
+//        if ($res['success'] != true) {
+//            $this->_msg = $res['errorMessages'];
+//            return false;
+//        }
         return [
             'pltf_order_no' => '',
             'order_no' => $order_no,
