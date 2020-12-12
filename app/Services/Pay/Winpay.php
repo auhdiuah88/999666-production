@@ -193,7 +193,7 @@ class Winpay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback', $request->post());
 
-        if ($request->state <> 4) {
+        if ($request->status == 'PAY_FAIL') {
             $this->_msg = 'Leap-withdrawal-交易未完成';
             return false;
         }
