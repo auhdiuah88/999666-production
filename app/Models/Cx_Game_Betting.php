@@ -14,8 +14,8 @@ class Cx_Game_Betting extends Model
 
     public $timestamps = false;
 
-    public function getBettingMoneyAttribute($value, $data){
-        return bcadd($data['money'], $data['service_charge']);
+    public function getBettingMoneyAttribute(){
+        return bcadd($this->money, $this->service_charge);
     }
 
 //    public function game_c_w()
