@@ -129,7 +129,7 @@ class RechargeService extends PayService
             return false;
         }
 
-        $money = $request->money;
+        $money = isset($request->money)?$request->money : $request->amount;
         // 下面的方法相同
         $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
         if (!$rechargeLog) {
