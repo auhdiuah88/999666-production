@@ -11,8 +11,9 @@ class PayContext
     // API接口所对应的支付提供商; 需要加入时添加
     public static $pay_provider = [
         '999666.in' => 'leap',
-        'unicasino.in' => 'ipay',
+        'unicasino.in' => 'winpay',
         'bb188.in' => 'ipay',
+        'my-sky-shop.com' => 'winpay'
     ];
 
     public function __construct(
