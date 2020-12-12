@@ -559,6 +559,12 @@ class GameRepository
         }
         return $date_data;
     }
+
+
+    public function Get_Cur_Betting_Money($game_id){
+        return $this->Cx_Game_Betting->where('game_p_id',$game_id)->sum('money');
+    }
+
     public function Get_New_Sum_Money(){
         $s = strtotime(date('Y-m-d').'00:00:00');
         $l = strtotime(date('Y-m-d').'23:59:59');

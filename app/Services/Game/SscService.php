@@ -195,6 +195,31 @@ class SscService
 //        dd($arr);
 
     }
+
+    public function ssc_ki($play_id){
+        $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);
+        if($Is_Executive_Prize<=0){
+            return false;
+        }
+        //单局杀率判定
+        $system=$this->GameRepository->Get_System();
+        $kill_rate=$system->one_kill;//获得局杀率
+        if($system->is_date_kill==1){ ##开启局杀优先局杀
+            $date_kill = $system->date_kill;
+            ##今天内的投注金额 s_money，中奖金额 y_money
+            $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
+            ##这期的下注金额
+            $cur_betting_money = $this->GameRepository->Get_Cur_Betting_Money($play_id);
+            $can_donate_money = $new_money_sum['s_money'] + $cur_betting_money - $new_money_sum['y_money'];
+        }
+    }
+
+    public function calculateNumMoney($play_id){
+        ##获取投注获奖倍数
+        $game_config = $this->Get_Config();
+        ##投注 Odd
+    }
+
     public function ssc($play_id)
     {
         $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);
