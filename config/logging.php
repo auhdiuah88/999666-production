@@ -102,7 +102,7 @@ return [
 
         'mytest' => [
             'driver' => 'single',
-            'path' => storage_path('logs/test.log'),		//  tail  -f storage/logs/test.log
+            'path' => storage_path('logs/test'. date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
             'level' => 'debug',
         ],
 

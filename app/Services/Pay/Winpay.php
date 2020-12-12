@@ -167,7 +167,7 @@ class Winpay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_rechargeCallback', $request->post());
 
-        if ($request->state <> 4) {
+        if ($request->status != 'PAY_SUCCESS') {
             $this->_msg = 'Leap-recharge-交易未完成';
             return false;
         }
@@ -175,13 +175,13 @@ class Winpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params) <> $sign) {
-            $this->_msg = 'leap-签名错误';
-            return false;
-        }
+//        if ($this->generateSign($params) <> $sign) {
+//            $this->_msg = 'leap-签名错误';
+//            return false;
+//        }
 
         $where = [
-            'order_no' => $request->sh_order,
+            'order_no' => $params['orderId'],
         ];
         return $where;
     }
@@ -193,7 +193,7 @@ class Winpay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback', $request->post());
 
-        if ($request->status == 'PAY_FAIL') {
+        if ($request->status != 'PAY_SUCCESS') {
             $this->_msg = 'Leap-withdrawal-交易未完成';
             return false;
         }

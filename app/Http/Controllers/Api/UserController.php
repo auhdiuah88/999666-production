@@ -88,8 +88,8 @@ class UserController extends Controller
             }
             return $this->AppReturn(200, '成功');
         }catch(\Exception $e){
-            Log::channel('kidebug')->debug('register',json_decode(json_encode($e),true));
-            return $this->AppReturn(414, "注册失败");
+            Log::channel('kidebug')->debug('register_err',json_decode(json_encode($e),true));
+            return $this->AppReturn(414, "register failed");
         }
     }
 
