@@ -210,67 +210,67 @@ class Ssc_TwoService
         $data=$this->GameRepository->Get_Betting($play_id);
         if($data){
             foreach ($data as $val){
-                if($val->game_c_x_id==49){
+                if($val->game_c_x_id==50){
                     if($result==0){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==1){
+                }else if($val->game_c_x_id==13){
                     if($result==1){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==2){
+                }else if($val->game_c_x_id==14){
                     if($result==2){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==3){
+                }else if($val->game_c_x_id==15){
                     if($result==3){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==4){
+                }else if($val->game_c_x_id==16){
                     if($result==4){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==5){
+                }else if($val->game_c_x_id==17){
                     if($result==5){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==6){
+                }else if($val->game_c_x_id==18){
                     if($result==6){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==7){
+                }else if($val->game_c_x_id==19){
                     if($result==7){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==8){
+                }else if($val->game_c_x_id==20){
                     if($result==8){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==9){
+                }else if($val->game_c_x_id==21){
                     if($result==9){
                         $this->GameRepository->Result_Entry($val,1,9);
                     }else{
                         $this->GameRepository->Result_Entry($val,2,9);
                     }
-                }else if($val->game_c_x_id==10){
+                }else if($val->game_c_x_id==22){
                     if($result==1 || $result==3 || $result==5 || $result==7 || $result==9){
                         if($result==5){
                             $this->GameRepository->Result_Entry($val,1,1.5);
@@ -286,7 +286,7 @@ class Ssc_TwoService
                         }
 
                     }
-                }else if($val->game_c_x_id==11){
+                }else if($val->game_c_x_id==23){
                     if($result==0 || $result==2 || $result==4 || $result==6 || $result==8){
                         if($result==0){
                             $this->GameRepository->Result_Entry($val,1,1.5);
@@ -300,7 +300,7 @@ class Ssc_TwoService
                             $this->GameRepository->Result_Entry($val,2,2);
                         }
                     }
-                }else if($val->game_c_x_id==12){
+                }else if($val->game_c_x_id==24){
                     if($result==0 || $result==5 ){
                         $this->GameRepository->Result_Entry($val,1,4.5);
                     }else{
@@ -310,8 +310,8 @@ class Ssc_TwoService
 
 
             }
-
         }
+
         return $this->GameRepository->Ki_Play_Result_Entry($play_id, $result, $type, $winmoney,$lostmoney, $pt_money, $cur_betting_money);
     }
 

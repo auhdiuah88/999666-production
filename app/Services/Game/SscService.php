@@ -235,16 +235,13 @@ class SscService
     public function calculateResult($temp_win_money, $win_money, $can_donate_money, $result_array, $n){
 //        echo "++" . $n .'<===>'.$win_money . "++";
         if($temp_win_money == $win_money){
-            echo "=";
             $result_array[] = $n;
         }
         if($temp_win_money > $win_money && $temp_win_money > $can_donate_money){
-            echo ">";
             $temp_win_money = $win_money;
             $result_array = [$n];
         }
         if($temp_win_money < $win_money && $win_money <= $can_donate_money){
-            echo "<";
             $temp_win_money = $win_money;
             $result_array = [$n];
         }

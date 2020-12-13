@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Game\Ssc_TwoService;
 use App\Services\Game\SscService;
 use App\Services\Pay\Winpay;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -28,7 +29,7 @@ class TestController extends Controller
         dd($res);
     }
 
-    public function openGame(SscService $sscService){
-        $sscService->ssc_ki(1);
+    public function openGame(SscService $sscService, Ssc_TwoService $ssc_TwoService){
+        $ssc_TwoService->ssc_ki(1);
     }
 }
