@@ -476,6 +476,20 @@ class GameRepository
         }
         return true;
     }
+
+    public function Ki_Play_Result_Entry($play_id, $result, $type, $winmoney, $lostmoney, $pt_money, $cur_betting_money){
+        $arr['prize_number'] = $result;
+        $arr['status'] = 1;
+        $arr['prize_time'] = time();
+        $arr['type'] = $type;
+        $arr['pt_money'] = $pt_money;
+        $arr['winmoney'] = $winmoney;
+        $arr['b_money'] = $cur_betting_money;
+        $arr['lostmoney'] = $lostmoney;
+        $this->Cx_Game_Play->where("id", $play_id)->update($arr);
+        return true;
+    }
+
     //结算场次信息
     public function Play_Result_Entry($play_id, $result, $isWin, $winmoney, $lostmoney, $winmoney1, $result1)
     {
@@ -527,8 +541,381 @@ class GameRepository
         return $this->Cx_Game_Config->where("game_id", $game_id)->select(['id', 'name', 'odds'])->select()->get()->toArray();
     }
 
-    public function Calculate_Betting($conf){
+    public function Calculate_Betting($conf, $game_p_id){
+        ##计算总投注金额
+        $money = $this->Cx_Game_Betting->where('game_p_id',$game_p_id)->sum('money');
+        ##计算中奖总金额
+        $win_money = bcmul($money * $conf['odds'],0);
+        $game_conf_id = $conf['id'];
+        return compact('money','win_money','game_conf_id');
+    }
 
+    public function Calc_0($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 49,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 50,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 51,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 52,
+                'odds' => 9
+            ]
+        ];
+
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_1($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 1,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 13,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 25,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 37,
+                'odds' => 9
+            ]
+        ];
+
+        ##计算选择1
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_2($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 2,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 14,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 26,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 38,
+                'odds' => 9
+            ]
+        ];
+
+        ##计算选择2
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_3($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 3,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 15,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 27,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 39,
+                'odds' => 9
+            ]
+        ];
+        ##计算选择3
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_4($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 4,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 16,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 28,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 40,
+                'odds' => 9
+            ]
+        ];
+        ##计算选择4
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_5($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 5,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 17,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 29,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 41,
+                'odds' => 9
+            ]
+        ];
+        ##计算选择5
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_6($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 6,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 18,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 30,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 42,
+                'odds' => 9
+            ]
+        ];
+        ##计算选择6
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_7($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 7,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 19,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 31,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 43,
+                'odds' => 9
+            ]
+        ];
+        ##计算选择7
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_8($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 8,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 20,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 32,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 44,
+                'odds' => 9
+            ]
+        ];
+        ##计算选择8
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+    public function Calc_9($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 9,
+                'odds' => 9
+            ],
+            2 => [
+                'id' => 21,
+                'odds' => 9
+            ],
+            3 => [
+                'id' => 33,
+                'odds' => 9
+            ],
+            4 => [
+                'id' => 45,
+                'odds' => 9
+            ]
+        ];
+        ##计算选择8
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return ['win_money'=>$win_money, 'result'=>$conf[$game_id]['id']];
+    }
+
+     public function calc_odd($game_p_id, $game_id){
+         $conf = [
+             1 => [
+                 'id' => 10,
+                 'odds' => 2
+             ],
+             2 => [
+                 'id' => 22,
+                 'odds' => 2
+             ],
+             3 => [
+                 'id' => 34,
+                 'odds' => 2
+             ],
+             4 => [
+                 'id' => 46,
+                 'odds' => 2
+             ]
+         ];
+         ##计算选择奇数
+         $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+         $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+         return (int)$win_money;
+     }
+
+    public function calc_odd_5($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 10,
+                'odds' => 1.5
+            ],
+            2 => [
+                'id' => 22,
+                'odds' => 1.5
+            ],
+            3 => [
+                'id' => 34,
+                'odds' => 1.5
+            ],
+            4 => [
+                'id' => 46,
+                'odds' => 1.5
+            ]
+        ];
+        ##计算选择奇数_5
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return (int)$win_money;
+    }
+
+    public function calc_even($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 11,
+                'odds' => 2
+            ],
+            2 => [
+                'id' => 23,
+                'odds' => 2
+            ],
+            3 => [
+                'id' => 35,
+                'odds' => 2
+            ],
+            4 => [
+                'id' => 47,
+                'odds' => 2
+            ]
+        ];
+        ##计算选择奇数_5
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return (int)$win_money;
+    }
+
+    public function calc_even_0($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 11,
+                'odds' => 1.5
+            ],
+            2 => [
+                'id' => 23,
+                'odds' => 1.5
+            ],
+            3 => [
+                'id' => 35,
+                'odds' => 1.5
+            ],
+            4 => [
+                'id' => 47,
+                'odds' => 1.5
+            ]
+        ];
+        ##计算选择奇数_5
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return (int)$win_money;
+    }
+
+    public function calc_even_luck($game_p_id, $game_id){
+        $conf = [
+            1 => [
+                'id' => 12,
+                'odds' => 4.5
+            ],
+            2 => [
+                'id' => 24,
+                'odds' => 4.5
+            ],
+            3 => [
+                'id' => 36,
+                'odds' => 4.5
+            ],
+            4 => [
+                'id' => 48,
+                'odds' => 4.5
+            ]
+        ];
+        ##计算选择奇数_5
+        $money = $this->Cx_Game_Betting->where("game_p_id", $game_p_id)->where("game_c_x_id", $conf[$game_id]['id'])->sum('money');
+        $win_money = bcmul($money, $conf[$game_id]['odds'],0);
+        return (int)$win_money;
     }
 
     //根据ID获取当期下注总金额

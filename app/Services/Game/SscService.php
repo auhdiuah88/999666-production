@@ -206,25 +206,155 @@ class SscService
         //单局杀率判定
         $system=$this->GameRepository->Get_System();
         $kill_rate=$system->one_kill;//获得局杀率
-        if($system->is_date_kill==1){ ##开启局杀优先局杀
+
+        ##本局的下注金额
+        $cur_betting_money = $this->GameRepository->Get_Cur_Betting_Money($play_id);
+        if($system->is_date_kill==1){ ##开启天杀优先天杀
             $date_kill = $system->date_kill;
             ##今天内的投注金额 s_money，中奖金额 y_money
             $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
-            ##这期的下注金额
-            $cur_betting_money = $this->GameRepository->Get_Cur_Betting_Money($play_id);
-            $can_donate_money = $new_money_sum['s_money'] + $cur_betting_money - $new_money_sum['y_money'];
+            ##可赔金额
+            $can_donate_money = (1-$date_kill) * ($new_money_sum['s_money'] + $cur_betting_money - $new_money_sum['y_money']);
+        }else{
+            ##按照局杀操作
+            $can_donate_money = (1-$kill_rate) * $cur_betting_money;
         }
+        $calc = $this->calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money);
+
+        ##输赢 1赢 2输 3平
+        $type = $calc['win_money'] > $cur_betting_money ? 2 : ($calc['win_money'] < $cur_betting_money ? 1 : 3) ;
+        ##用户输的钱
+        $lostmoney = $cur_betting_money - $calc['win_money'];
+        ##平台赢的钱
+        $pt_money = $lostmoney;
+        ##结算
+        $this->Ki_Executive_Prize($calc['result'],$play_id, $calc['win_money'], $lostmoney, $type, $pt_money, $cur_betting_money);
+        return true;
     }
 
-    public function calculateNumMoney($game_play_info){
-        ##获取投注获奖倍数
-        $game_config = $this->GameRepository->Get_Config($game_play_info['game_id']);
-        $count_betting = [];
-        forEach($game_config as $conf){
-            ##计算每个投注的投注金额和如果中奖的中奖金额
-            $this->GameRepository->Calculate_Betting($conf);
+    public function calculateResult($temp_win_money, $win_money, $can_donate_money, $result_array, $n){
+//        echo "++" . $n .'<===>'.$win_money . "++";
+        if($temp_win_money == $win_money){
+            echo "=";
+            $result_array[] = $n;
         }
-        ##投注 Odd
+        if($temp_win_money > $win_money && $temp_win_money > $can_donate_money){
+            echo ">";
+            $temp_win_money = $win_money;
+            $result_array = [$n];
+        }
+        if($temp_win_money < $win_money && $win_money <= $can_donate_money){
+            echo "<";
+            $temp_win_money = $win_money;
+            $result_array = [$n];
+        }
+        return compact('result_array','temp_win_money');
+    }
+
+    public function calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money){
+        ##没有人投注[随机出结果]
+        if($cur_betting_money <= 0){
+            $result_array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            $idx = mt_rand(0, 9);
+            $result = $result_array[$idx];
+            $win_money = 0;
+            return compact('result','win_money');
+        }
+        ##奇数
+        $win_money_odd = $this->GameRepository->calc_odd($game_play_info['id'], $game_play_info['game_id']);
+        ##奇数5
+        $win_money_odd_5 = $this->GameRepository->calc_odd_5($game_play_info['id'], $game_play_info['game_id']);
+        ##偶数
+        $win_money_even = $this->GameRepository->calc_even($game_play_info['id'], $game_play_info['game_id']);
+        ##偶数0
+        $win_money_even_0 = $this->GameRepository->calc_even_0($game_play_info['id'], $game_play_info['game_id']);
+        ##幸运
+        $win_money_lucky = $this->GameRepository->calc_even_luck($game_play_info['id'], $game_play_info['game_id']);
+
+        $result_array = [];
+        $result_win_array = [];
+
+        ##依次计算0-9每个结果的中奖金额
+        ## 0 => 偶数 幸运 0
+        $calc_0 = $this->GameRepository->Calc_0($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_0 = $win_money_even_0 + $win_money_lucky + (int)$calc_0['win_money'];
+        $result_array[] = 0;
+        $temp_win_money = $win_money_0;
+//        echo "++ 0<====>" . $win_money_0 . "++";
+        ## 1 => 奇数 1
+        $calc_1 = $this->GameRepository->Calc_1($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_1 = $win_money_odd + (int)$calc_1['win_money'];
+        $res = $this->calculateResult($temp_win_money, $win_money_1, $can_donate_money, $result_array, 1);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+        ## 2 => 偶数 2
+        $calc_2 = $this->GameRepository->Calc_2($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_2 = $win_money_even + (int)$calc_2['win_money'];
+        $res = $this->calculateResult($temp_win_money, $win_money_2, $can_donate_money, $result_array, 2);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+
+        ## 3 => 奇数 3
+        $calc_3 = $this->GameRepository->Calc_3($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_3 = $win_money_odd + (int)$calc_3['win_money'];
+        $res = $this->calculateResult($temp_win_money, $win_money_3, $can_donate_money, $result_array, 3);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+
+        ## 4 => 偶数 4
+        $calc_4 = $this->GameRepository->Calc_4($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_4 = $win_money_even + (int)$calc_4['win_money'];
+        $res = $this->calculateResult($temp_win_money, $win_money_4, $can_donate_money, $result_array, 4);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+
+        ## 5 => 奇数_5 5 luck
+        $calc_5 = $this->GameRepository->Calc_5($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_5 = $win_money_odd_5 + (int)$calc_5['win_money'] + $win_money_lucky;
+        $res = $this->calculateResult($temp_win_money, $win_money_5, $can_donate_money, $result_array, 5);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+
+        ## 6 => 偶数 6
+        $calc_6 = $this->GameRepository->Calc_6($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_6 = $win_money_even + (int)$calc_6['win_money'];
+        $res = $this->calculateResult($temp_win_money, $win_money_6, $can_donate_money, $result_array, 6);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+
+        ## 7 => 奇数 7
+        $calc_7 = $this->GameRepository->Calc_7($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_7 = $win_money_odd + (int)$calc_7['win_money'];
+        $res = $this->calculateResult($temp_win_money, $win_money_7, $can_donate_money, $result_array, 7);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+
+        ## 8 => 偶数 8
+        $calc_8 = $this->GameRepository->Calc_8($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_8 = $win_money_even + (int)$calc_8['win_money'];
+        $res = $this->calculateResult($temp_win_money, $win_money_8, $can_donate_money, $result_array, 8);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+
+        ## 9 => 奇数 9
+        $calc_9 = $this->GameRepository->Calc_9($game_play_info['id'], $game_play_info['game_id']);
+        $win_money_9 = $win_money_odd + (int)$calc_9['win_money'];
+        $res = $this->calculateResult($temp_win_money, $win_money_9, $can_donate_money, $result_array, 9);
+        $result_array = $res['result_array'];
+        $temp_win_money = $res['temp_win_money'];
+
+        ##计算结果
+        $n = count($result_array);
+//        print_r($result_array);
+        if($n == 1){
+            $result = $result_array[0];
+        }else{
+            $idx = mt_rand(0, $n-1);
+            $result = $result_array[$idx];
+        }
+        $win_money = $temp_win_money;
+
+        return compact('result','win_money');
     }
 
     public function ssc($play_id)
@@ -707,6 +837,115 @@ class SscService
             }
 
         }
+    }
+
+    public function Ki_Executive_Prize($result, $play_id, $winmoney, $lostmoney, $type, $pt_money, $cur_betting_money){
+        $data=$this->GameRepository->Get_Betting($play_id);
+        if($data){
+            foreach ($data as $val){
+                if($val->game_c_x_id==49){
+                    if($result==0){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==1){
+                    if($result==1){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==2){
+                    if($result==2){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==3){
+                    if($result==3){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==4){
+                    if($result==4){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==5){
+                    if($result==5){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==6){
+                    if($result==6){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==7){
+                    if($result==7){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==8){
+                    if($result==8){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==9){
+                    if($result==9){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==10){
+                    if($result==1 || $result==3 || $result==5 || $result==7 || $result==9){
+                        if($result==5){
+                            $this->GameRepository->Result_Entry($val,1,1.5);
+                        }else{
+                            $this->GameRepository->Result_Entry($val,1,2);
+                        }
+
+                    }else{
+                        if($result==5){
+                            $this->GameRepository->Result_Entry($val,2,1.5);
+                        }else{
+                            $this->GameRepository->Result_Entry($val,2,2);
+                        }
+
+                    }
+                }else if($val->game_c_x_id==11){
+                    if($result==0 || $result==2 || $result==4 || $result==6 || $result==8){
+                        if($result==0){
+                            $this->GameRepository->Result_Entry($val,1,1.5);
+                        }else{
+                            $this->GameRepository->Result_Entry($val,1,2);
+                        }
+                    }else{
+                        if($result==0){
+                            $this->GameRepository->Result_Entry($val,2,1.5);
+                        }else{
+                            $this->GameRepository->Result_Entry($val,2,2);
+                        }
+                    }
+                }else if($val->game_c_x_id==12){
+                    if($result==0 || $result==5 ){
+                        $this->GameRepository->Result_Entry($val,1,4.5);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,4.5);
+                    }
+                }
+
+
+            }
+
+        }
+        return $this->GameRepository->Ki_Play_Result_Entry($play_id, $result, $type, $winmoney,$lostmoney, $pt_money, $cur_betting_money);
     }
 
     public function Executive_Prize($play_id,$result,$isWin,$winmoney,$lostmoney,$winmoney1,$result1){

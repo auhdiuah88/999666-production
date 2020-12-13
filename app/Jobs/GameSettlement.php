@@ -45,13 +45,13 @@ class GameSettlement implements ShouldQueue
         $this->Ssc_FourService=$Ssc_FourService;
 
         if($this->game_id==1){
-            $this->SscService->ssc($this->id);
+            $this->SscService->ssc_ki($this->id);
         }else if($this->game_id==2){
-            $this->Ssc_TwoService->ssc($this->id);
+            $this->Ssc_TwoService->ssc_ki($this->id);
         }else if($this->game_id==3){
-            $this->Ssc_ThreeService->ssc($this->id);
+            $this->Ssc_ThreeService->ssc_ki($this->id);
         }else if($this->game_id==4){
-            $this->Ssc_FourService->ssc($this->id);
+            $this->Ssc_FourService->ssc_ki($this->id);
         }
     }
 }

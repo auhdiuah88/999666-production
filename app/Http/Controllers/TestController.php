@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Game\SscService;
 use App\Services\Pay\Winpay;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -15,6 +16,7 @@ class TestController extends Controller
 
     public function test2(Winpay $winpay)
     {
+        echo 123;die;
         $pay_type = '222';
         $money = 500;
         return ($winpay->rechargeOrder($pay_type, $money));
@@ -24,5 +26,9 @@ class TestController extends Controller
         $phone = request()->input('phone');
         $res = Redis::set("REGIST_CODE:" . $phone, 666666);
         dd($res);
+    }
+
+    public function openGame(SscService $sscService){
+        $sscService->ssc_ki(1);
     }
 }
