@@ -206,6 +206,115 @@ class Ssc_TwoService
         return compact('result','win_money');
     }
 
+    public function Ki_Executive_Prize($result, $play_id, $winmoney, $lostmoney, $type, $pt_money, $cur_betting_money){
+        $data=$this->GameRepository->Get_Betting($play_id);
+        if($data){
+            foreach ($data as $val){
+                if($val->game_c_x_id==49){
+                    if($result==0){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==1){
+                    if($result==1){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==2){
+                    if($result==2){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==3){
+                    if($result==3){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==4){
+                    if($result==4){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==5){
+                    if($result==5){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==6){
+                    if($result==6){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==7){
+                    if($result==7){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==8){
+                    if($result==8){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==9){
+                    if($result==9){
+                        $this->GameRepository->Result_Entry($val,1,9);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,9);
+                    }
+                }else if($val->game_c_x_id==10){
+                    if($result==1 || $result==3 || $result==5 || $result==7 || $result==9){
+                        if($result==5){
+                            $this->GameRepository->Result_Entry($val,1,1.5);
+                        }else{
+                            $this->GameRepository->Result_Entry($val,1,2);
+                        }
+
+                    }else{
+                        if($result==5){
+                            $this->GameRepository->Result_Entry($val,2,1.5);
+                        }else{
+                            $this->GameRepository->Result_Entry($val,2,2);
+                        }
+
+                    }
+                }else if($val->game_c_x_id==11){
+                    if($result==0 || $result==2 || $result==4 || $result==6 || $result==8){
+                        if($result==0){
+                            $this->GameRepository->Result_Entry($val,1,1.5);
+                        }else{
+                            $this->GameRepository->Result_Entry($val,1,2);
+                        }
+                    }else{
+                        if($result==0){
+                            $this->GameRepository->Result_Entry($val,2,1.5);
+                        }else{
+                            $this->GameRepository->Result_Entry($val,2,2);
+                        }
+                    }
+                }else if($val->game_c_x_id==12){
+                    if($result==0 || $result==5 ){
+                        $this->GameRepository->Result_Entry($val,1,4.5);
+                    }else{
+                        $this->GameRepository->Result_Entry($val,2,4.5);
+                    }
+                }
+
+
+            }
+
+        }
+        return $this->GameRepository->Ki_Play_Result_Entry($play_id, $result, $type, $winmoney,$lostmoney, $pt_money, $cur_betting_money);
+    }
+
     public function ssc($play_id)
     {
         $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);
