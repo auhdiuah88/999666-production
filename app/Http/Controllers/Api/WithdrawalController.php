@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Api\WithdrawalService;
+use App\Services\Pay\PayContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -173,8 +174,16 @@ class WithdrawalController extends Controller
      * 用户银行卡提现-请求出金订单
      */
     public function withdrawalBydai(Request $request) {
+        $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式 //  $host = "api.999666.in"; 变成 999666.in
+        if (count(explode('.', $host)) == 3) {
+            $host = substr(strstr($host, '.'), 1);
+        }
+        $payProvide = PayContext::$pay_provider[$host];
+        $limit = config('pay.withdraw')[$payProvide];
+        $max = $limit['max'];
+        $min = $limit['min'];
         $rules = [
-            'money' => "required|integer|min:300|max:25000",
+            'money' => "required|integer|min:{$min}|max:{$max}",
             'bank_id' => "required",
         ];
         $validator = Validator::make($request->post(), $rules);
