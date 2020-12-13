@@ -180,8 +180,7 @@ class WithdrawalController extends Controller
         }
         $payProvide = PayContext::$pay_provider[$host];
         $withdraw_info = config('pay.withdraw');
-        Log::channel('kidebug')->debug('withdraw_debug', $withdraw_info);
-        $limit = $withdraw_info[$payProvide]['limit'];
+        $limit = $withdraw_info[0][$payProvide]['limit'];
         $max = $limit['max'];
         $min = $limit['min'];
         $rules = [
