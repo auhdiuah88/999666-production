@@ -1014,7 +1014,7 @@ class GameRepository
                     $query->select('id', 'number', 'prize_number');
                 }
             )
-        )->where("user_id", $user)->offset($offset)->limit($limit)->orderBy('betting_time', 'desc')->get();
+        )->where("user_id", $user)->offset($offset)->limit($limit)->select(['*', 'id as betting_money'])->orderBy('betting_time', 'desc')->get();
 
     }
     //开奖列表

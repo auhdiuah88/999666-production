@@ -13,4 +13,8 @@ class Cx_User_Recharge_Logs extends Model
     protected $primaryKey = "id";
 
     public $timestamps = false;
+
+    public function user(){
+        return $this->belongsTo('App\Models\Cx_User','user_id','id');
+    }
 }

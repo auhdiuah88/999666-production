@@ -34,6 +34,18 @@ class Cx_User extends Model
         return $phone->phone;
     }
 
+    public function getPhoneHideAttribute($value){
+        return hide($value, 3, 4);
+    }
+
+    public function getOneRecommendPhoneHideAttribute($value){
+        return hide($value, 3, 4);
+    }
+
+    public function getTwoRecommendPhoneHideAttribute($value){
+        return hide($value, 3, 4);
+    }
+
 //    public function getNumLoseAttribute()
 //    {
 //        $total_recharge = $this->attributes["total_recharge"];

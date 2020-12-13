@@ -214,6 +214,14 @@ Route::group(['middleware' => ['token', "auth"]], function () {
             Route::get("/findAll", "UpDownController@findAll");
             Route::post("/search", "UpDownController@searchUpAndDownLogs");
         });
+
+        //代理=staff
+        Route::group(["prefix" => "agent"], function(){
+            Route::group(["prefix" => "user"], function(){
+                Route::post("/search","agent\AgentUserController@index");
+                Route::post("/firstRecharge","agent\AgentUserController@firstRechargeList");
+            });
+        });
     });
 });
 

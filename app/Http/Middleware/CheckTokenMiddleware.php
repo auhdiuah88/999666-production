@@ -39,7 +39,7 @@ class CheckTokenMiddleware
                 "msg" => "token验证失败"
             ]);
         }
-        $request->attributes->add(['user_id'=>$data[0]]);
+        $request->attributes->add(['admin_id'=>$data[0]]);
         return $next($request);
     }
 }

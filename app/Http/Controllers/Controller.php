@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Log;
 
 class Controller extends BaseController
 {
@@ -19,5 +20,14 @@ class Controller extends BaseController
                 "data" => $data ?: new \StdClass()
             ]
         )->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+    }
+
+    public function logError($channel, \Exception $e){
+        $data = [
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'msg' => $e->getMessage()
+        ];
+        Log::channel($channel)->error(request()->method(), $data);
     }
 }
