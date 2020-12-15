@@ -61,7 +61,7 @@ class Winpay extends PayStrategy
         $user = $this->getUser();
 
         $order_no = self::onlyosn();
-        $pay_type = 'QUICK_PAY';
+//        $pay_type = 'QUICK_PAY';
         $params = [
             'merchant' => $this->merchantID,
             'orderId' => $order_no,

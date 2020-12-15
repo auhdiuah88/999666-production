@@ -76,7 +76,7 @@ class Leap extends PayStrategy
     {
         $order_no = self::onlyosn();
         $ip = $this->request->ip();
-        $pay_type = 100;
+//        $pay_type = 100;
         $params = [
             'mch_id' => $this->merchantID,
             'ptype' => $pay_type,

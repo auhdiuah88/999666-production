@@ -63,7 +63,7 @@ class Ipay extends PayStrategy
     function rechargeOrder($pay_type,$money)
     {
         $order_no = self::onlyosn();
-        $pay_type = 'qrcode';
+//        $pay_type = 'qrcode';
         $params = [
             'api_name' => 'quickpay.all.native',
             'money' => $money,
