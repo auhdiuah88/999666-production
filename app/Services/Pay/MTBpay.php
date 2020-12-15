@@ -96,10 +96,10 @@ class MTBpay extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeCallback',$request->post());
 
-        if ($request->state <> 4)  {
-            $this->_msg = 'Leap-recharge-交易未完成';
+        if ($request->status != 'SUCCESS')  {
+            $this->_msg = 'MTB-recharge-交易未完成';
             return false;
         }
         // 验证签名
@@ -107,12 +107,12 @@ class MTBpay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         if ($this->generateSign($params) <> $sign) {
-            $this->_msg = 'leap-签名错误';
+            $this->_msg = 'MTB-签名错误';
             return false;
         }
 
         $where = [
-            'order_no' => $request->sh_order,
+            'order_no' => $request->mer_order_no,
         ];
         return $where;
     }
