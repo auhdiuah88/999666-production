@@ -75,6 +75,7 @@ class RechargeService extends PayService
         $native_url = $result['native_url'];
         $verify_money = $result['verify_money'];
         $match_code = $result['match_code'];
+        $result['is_post'] = isset($result['is_post'])?$result['is_post']:0;
         $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $pltf_order_id, $native_url, $verify_money, $match_code);
         return $result;
     }

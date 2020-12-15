@@ -78,9 +78,14 @@ class MTBpay extends PayStrategy
             $is_post = 1;
         }
         $resData = [
+            'out_trade_no' => $order_no,
+            'pay_type' => $pay_type,
             'order_no' => $order_no,
-            'native_url' => $res['order_data'],
+            'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
+            'pltf_order_id' => '',
+            'verify_money' => '',
+            'match_code' => '',
             'is_post' => isset($is_post)?$is_post:0
         ];
         return $resData;
