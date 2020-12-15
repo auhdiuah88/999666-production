@@ -68,6 +68,13 @@ class GameService
         $user = explode("+", Crypt::decrypt($token));
         $user_id = $user[0];
 
+        $game_c_x_id = $data['game_c_x_id'];
+        $game_id = $data['game_id'];
+        $right_game_id = $this->GameRepository->getGameIdByGameCXId($game_c_x_id);
+        if($game_id != $right_game_id){
+            return false;
+        }
+
         //判断下注时间是否在允许投注时间内
         $game_play = $this->GameRepository->Get_Game_Play_ById($data['game_p_id']);
         $time = time();
