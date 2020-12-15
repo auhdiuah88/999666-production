@@ -66,7 +66,7 @@ class MTBpay extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder', [$params]);
 
-        $res = $this->requestService->postJsonData(self::$url . '/}/ty/orderPay' , $params);
+        $res = $this->requestService->postJsonData(self::$url . '/ty/orderPay' , $params);
         if ($res['status'] != 'SUCCESS') {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
