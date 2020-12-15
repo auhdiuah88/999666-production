@@ -20,7 +20,8 @@ class PayContext
     public function __construct(
         Ipay $ipay,
         Leap $leap,
-        Winpay $winpay
+        Winpay $winpay,
+        MTBpay $mtbpay
     )
     {
         // 每种api地址对应的支付公司
@@ -32,6 +33,7 @@ class PayContext
             'ipay' => $ipay,
             'leap' => $leap,
             'winpay' => $winpay,
+            'MTBpay' => $mtbpay
         ];
     }
     /**
