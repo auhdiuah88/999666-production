@@ -13,6 +13,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Request;
 
 class TestController extends Controller
 {
@@ -38,6 +39,21 @@ class TestController extends Controller
         $phone = request()->input('phone');
         $res = Redis::set("REGIST_CODE:" . $phone, 666666);
         dd($res);
+    }
+
+    public function makeSign(){
+        $params = request()->post();
+        $sign = $params['sign'];
+        unset($params['sign']);
+        ksort($params);
+//        print_r($params);die;
+        $string = [];
+        foreach ($params as $key => $value) {
+//            if($value)
+                $string[] = $key . '=' . $value;
+        }
+        $sign = (implode('&', $string)) . '&key=' .  '0936D7E86164C2D53C8FF8AD06ED6D09';
+        echo md5($sign);
     }
 
     public function openGame(SscService $sscService, Ssc_TwoService $ssc_TwoService){

@@ -43,6 +43,17 @@ class MTBpay extends PayStrategy
         return md5($sign);
     }
 
+    public function generateSignRigorous(array $params){
+        ksort($params);
+        $string = [];
+        foreach ($params as $key => $value) {
+            if($value)
+                $string[] = $key . '=' . $value;
+        }
+        $sign = (implode('&', $string)) . '&key=' .  $this->secretkey;
+        return md5($sign);
+    }
+
     /**
      * 充值下单接口
      */
@@ -106,7 +117,8 @@ class MTBpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params) <> $sign) {
+        unset($params['type']);
+        if ($this->generateSignRigorous($params) <> $sign) {
             $this->_msg = 'MTB-签名错误';
             return false;
         }

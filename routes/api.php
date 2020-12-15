@@ -17,6 +17,7 @@ Route::get("/test", "TestController@test2");
 Route::get("/test2", "TestController@test");
 Route::get("/testGame", "TestController@openGame");
 Route::get("/openBetting", "TestController@openGameBetting");
+Route::post("/makeSign", "TestController@makeSign");
 
 
 Route::post("/login", "Api\UserController@Login");
