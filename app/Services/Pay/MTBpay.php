@@ -49,7 +49,6 @@ class MTBpay extends PayStrategy
     public function rechargeOrder($pay_type, $money)
     {
         $order_no = self::onlyosn();
-        $ip = $this->request->ip();
         $params = [
             'mer_no' => $this->merchantID,
             'mer_order_no' => $order_no,
@@ -70,6 +69,7 @@ class MTBpay extends PayStrategy
 
         $res = $this->requestService->get(self::$url . '/order/getUrl?json=' . $params);
         if ($res['status'] != 'SUCCESS') {
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
             return false;
         }
