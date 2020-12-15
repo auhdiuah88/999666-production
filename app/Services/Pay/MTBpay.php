@@ -63,11 +63,10 @@ class MTBpay extends PayStrategy
             'notifyUrl' => $this->recharge_callback_url,
         ];
         $params['sign'] = $this->generateSign($params);
-        $params = urlencode(json_encode($params));
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder', [$params]);
 
-        $res = $this->requestService->get(self::$url . '/order/getUrl?json=' . $params);
+        $res = $this->requestService->postJsonData(self::$url . '/}/ty/orderPay' , $params);
         if ($res['status'] != 'SUCCESS') {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
