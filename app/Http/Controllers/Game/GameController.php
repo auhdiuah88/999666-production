@@ -121,7 +121,7 @@ class GameController extends Controller
             "game_id" => "required|max:5|integer",
             "game_p_id" => "required|integer",
             "game_c_x_id" => "required",
-            "money" => "required",
+            "money" => "required|min:30",
 
         ];
         $massages = [

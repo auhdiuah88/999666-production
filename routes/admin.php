@@ -217,6 +217,7 @@ Route::group(['middleware' => ['token', "auth"]], function () {
 
         //代理=staff
         Route::group(["prefix" => "agent"], function(){
+            Route::get("/home","agent\AgentDataController@index");
             Route::group(["prefix" => "user"], function(){
                 Route::post("/search","agent\AgentUserController@index");
                 Route::post("/firstRecharge","agent\AgentUserController@firstRechargeList");
