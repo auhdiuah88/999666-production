@@ -53,7 +53,7 @@ class MTBpay extends PayStrategy
             'mer_no' => $this->merchantID,
             'mer_order_no' => $order_no,
             'pname' => 'ZhangSan',
-            'pemail' => 'silence_wjwl666@163.com',
+            'pemail' => '279890363@qq.com',
             'phone' => '15983587793',
             'order_amount' => $money,
             'countryCode' => 'IND',
