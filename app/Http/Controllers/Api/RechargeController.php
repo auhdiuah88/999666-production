@@ -94,6 +94,7 @@ class RechargeController extends Controller
             if ($this->rechargeService->rechargeCallback($request)) {
                 return 'success';
             }
+            Log::channel('kidebug')->error('recharge_callback', ['message'=>$this->rechargeService->_msg]);
             return $this->rechargeService->_msg;
         }catch(\Exception $e){
             Log::channel('kidebug')->error('recharge_callback', ['file'=>$e->getFile(),'line'=>$e->getLine(), 'message'=>$e->getMessage(), 'data'=>$request->all()]);
