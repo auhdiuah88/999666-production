@@ -202,10 +202,15 @@ class WithdrawalController extends Controller
      */
     public function withdrawalCallback(Request $request)
     {
-        if ($this->WithdrawalService->withdrawalCallback($request)) {
-            return 'success';
+        try{
+            if ($this->WithdrawalService->withdrawalCallback($request)) {
+                return 'success';
+            }
+            return $this->WithdrawalService->_msg;
+        }catch(\Exception $e){
+            Log::channel('kidebug')->error('recharge_callback', ['file'=>$e->getFile(),'line'=>$e->getLine(), 'message'=>$e->getMessage(), 'data'=>$request->all()]);
+            return false;
         }
-        return $this->WithdrawalService->_msg;
     }
 }
 

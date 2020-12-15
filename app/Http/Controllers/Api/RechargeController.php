@@ -90,9 +90,15 @@ class RechargeController extends Controller
      */
     public function rechargeCallback(Request $request)
     {
-        if ($this->rechargeService->rechargeCallback($request)) {
-            return 'success';
+        try{
+            if ($this->rechargeService->rechargeCallback($request)) {
+                return 'success';
+            }
+            return $this->rechargeService->_msg;
+        }catch(\Exception $e){
+            Log::channel('kidebug')->error('recharge_callback', ['file'=>$e->getFile(),'line'=>$e->getLine(), 'message'=>$e->getMessage(), 'data'=>$request->all()]);
+            return false;
         }
-        return $this->rechargeService->_msg;
+
     }
 }
