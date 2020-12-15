@@ -18,7 +18,7 @@ class MTBpay extends PayStrategy
 
     public $merchantID;
     public $secretkey;
-    public $company = 'leap';   // 支付公司名
+    public $company = 'MTBpay';   // 支付公司名
 
     public function _initialize()
     {
