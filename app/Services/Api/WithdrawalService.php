@@ -174,6 +174,7 @@ class WithdrawalService extends PayService
         $ifsc_code = $user_bank->ifsc_code;
         $phone = $user_bank->phone;
         $email = $user_bank->mail;
+        $mtb_code = $user->mtbpy_code;
         $order_no = PayStrategy::onlyosn();
         $data = [
             'user_id' => $user_id,
@@ -189,10 +190,10 @@ class WithdrawalService extends PayService
             'bank_name' => $bank_name,
             'ifsc_code' => $ifsc_code,
             'pay_status' => 0,
-            'type' => 0,
             'status' => 0,
             'email' => $email,
             'type' => $type,
+            'mtb_code' => $mtb_code
         ];
         return $data;
     }

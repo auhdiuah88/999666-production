@@ -148,7 +148,7 @@ class MTBpay extends PayStrategy
             'acc_name' => $withdrawalRecord->account_holder,
             'ccy_no' => 'IND',
             'order_amount' => $money,
-            'bank_code' => 'IDPT0001',  //暂时写死
+            'bank_code' => $withdrawalRecord->mtb_code,
             'summary' => '余额充值',
         ];
         $params['sign'] = $this->generateSign($params);
