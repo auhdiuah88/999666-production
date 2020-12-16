@@ -155,7 +155,7 @@ class Winpay extends PayStrategy
             return false;
         }
         return [
-            'pltf_order_no' => '',
+            'pltf_order_no' => $res['platOrderId'],
             'order_no' => $order_no,
             'notify_url' => $this->withdrawal_callback_url,
         ];

@@ -14,7 +14,7 @@ class PayContext
 //        '999666.in' => 'winpay',
         'unicasino.in' => 'MTBpay',
         'bb188.in' => 'ipay',
-        'my-sky-shop.com' => 'winpay'
+        'my-sky-shop.com' => 'MTBpay'
     ];
 
     public function __construct(

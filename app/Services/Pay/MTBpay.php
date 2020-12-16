@@ -136,36 +136,33 @@ class MTBpay extends PayStrategy
     {
 
         // 1 银行卡 2 Paytm 3代付
-        $pay_type = 3;
-        $onlyParams = $this->withdrawalOrderByDai($withdrawalRecord);
+//        $pay_type = 3;
         $money = $withdrawalRecord->payment;    // 打款金额
-        $ip = $this->request->ip();
+//        $ip = $this->request->ip();
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
-            'mch_id' => $this->merchantID,
-            'order_sn' => $order_no,
-            'money' => $money,
-            'goods_desc' => 'withdrawal',
-            'client_ip' => $ip,
-            'notify_url' => $this->withdrawal_callback_url,
-            'time' => time(),
+            'mer_no' => $this->merchantID,
+            'mer_order_no' => $order_no,
+            'acc_no' => $withdrawalRecord->bank_number,
+            'acc_name' => $withdrawalRecord->account_holder,
+            'ccy_no' => 'IND',
+            'order_amount' => $money,
+            'bank_code' => 'IDPT0001',  //暂时写死
+            'summary' => '余额充值',
         ];
-        $params = array_merge($params, $onlyParams);
         $params['sign'] = $this->generateSign($params);
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('leap_withdrawalOrder',$params);
-
-        $res = $this->requestService->postFormData(self::$url_cashout . '/order/cashout', $params);
-        if ($res['code'] <> 1) {
-            $this->_msg = $res['msg'];
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$params);
+        $res = $this->requestService->postFormData(self::$url_cashout . '/withdraw/singleOrder', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$res);
+        if ($res['status'] != 'SUCCESS') {
+            $this->_msg = $res['err_msg'];
             return false;
         }
         return  [
-            'pltf_order_no' => '',
-            'order_no' => $order_no,
-            'notify_url' => $this->withdrawal_callback_url,
+            'pltf_order_no' => $res['order_no'],
+            'order_no' => $order_no
         ];
     }
 
