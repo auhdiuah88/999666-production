@@ -263,7 +263,9 @@ class GameRepository
         $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("id", "<",$bq_game->id)->orderBy('start_time', 'desc')->limit(10)->get();
         $lx_game = $this->Cx_Game_Betting->with(array(
                 'game_play' => function ($query) {
-                    $query->select('id', 'number', 'prize_number');
+                    $query->select('id', 'number', 'prize_number', 'game_id')->with(['game_name_p'=>function($query){
+                        $query->select('id', 'name');
+                    }]);
                 },
                 'game_c_x' => function($query){
                     $query->select('id', 'name', 'name as name_india');

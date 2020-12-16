@@ -12,7 +12,7 @@ class PayContext
     public static $pay_provider = [
         '999666.in' => 'leap',
 //        '999666.in' => 'winpay',
-        'unicasino.in' => 'winpay',
+        'unicasino.in' => 'MTBpay',
         'bb188.in' => 'ipay',
         'my-sky-shop.com' => 'winpay'
     ];
