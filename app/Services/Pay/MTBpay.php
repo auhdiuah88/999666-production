@@ -5,7 +5,6 @@ namespace App\Services\Pay;
 
 
 use Illuminate\Http\Request;
-
 class MTBpay extends PayStrategy
 {
 
@@ -190,8 +189,28 @@ class MTBpay extends PayStrategy
         return $where;
     }
 
-    public function callWithdrawBack(){
+    protected function makeRequestNo($withdraw_id){
+        return date('YmdDis') . $withdraw_id;
+    }
 
+    public function callWithdrawBack($withdrawalRecord){
+        $request_no = $this->makeRequestNo($withdrawalRecord->id);
+        $request_time = date("YmdHis");
+        $mer_no = $this->merchantID;
+        $mer_order_no = $withdrawalRecord->order_no;
+
+        $params = compact('request_no','request_time','mer_no','mer_order_no');
+        $params['sign'] = $this->generateSign($params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Param',$params);
+        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
+        if(!$res){
+            return false;
+        }
+        if($res['query_status'] != 'SUCCESS'){
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Err',$res);
+            return false;
+        }
+        return $res;
     }
 
 }

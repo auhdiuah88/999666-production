@@ -34,7 +34,6 @@ Route::group(["namespace" => "Api"], function () {
     Route::post("/sendCode", "UserController@sendMessage");
     Route::post("/groupUrl", "SystemController@getWhatsAppGroupUrl"); // 获取群组URL，首页的客服按钮
     Route::post("/serviceUrl", "SystemController@getWhatsServiceUrl"); // 获取专属客服URL，个人中心客服按钮
-    Route::post("/systemTime", "SystemController@getSystemTime"); // 获取专属客服URL，个人中心客服按钮
 });
 
 Route::group(['middleware' => ['user_token']], function () {

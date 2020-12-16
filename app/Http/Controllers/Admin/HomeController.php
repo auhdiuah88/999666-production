@@ -36,4 +36,12 @@ class HomeController extends Controller
             $this->HomeService->_data
         );
     }
+
+    public function getSystemTime(){
+        return $this->AppReturn(
+            200,
+            '',
+            time()
+        );
+    }
 }

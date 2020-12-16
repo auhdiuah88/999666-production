@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 
 use App\Repositories\Admin\WithdrawalRepository;
+use App\Services\Pay\MTBpay;
 use Illuminate\Console\Command;
 
 class Mtb_Call extends Command
@@ -15,7 +16,7 @@ class Mtb_Call extends Command
      *
      * @var string
      */
-    protected $WithdrawalRepository;
+    protected $WithdrawalRepository, $MTBpay;
 
     /**
      * The console command description.
@@ -29,10 +30,11 @@ class Mtb_Call extends Command
      *
      * @return void
      */
-    public function __construct(WithdrawalRepository $withdrawalRepository)
+    public function __construct(WithdrawalRepository $withdrawalRepository, MTBpay $mTBpay)
     {
         parent::__construct();
         $this->WithdrawalRepository = $withdrawalRepository;
+        $this->MTBpay = $mTBpay;
     }
 
     /**
@@ -45,7 +47,16 @@ class Mtb_Call extends Command
         $list = $this->WithdrawalRepository->getMTBPayWaitCallList();
         if($list->isEmpty())return true;
         foreach($list as $item){
+            $res = $this->MTBpay->callWithdrawBack($item);
+            if(!$res){
+                $this->WithdrawalRepository->callMTBFail($item->call_count);
+            }else{
+                if($res['status'] != 'SUCCESS'){
 
+                }else{
+
+                }
+            }
         }
     }
 
