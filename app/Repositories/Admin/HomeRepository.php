@@ -142,7 +142,7 @@ class HomeRepository extends BaseRepository
 
     public function sumRechargeMoney($ids, $timeMap)
     {
-        return $this->Cx_User_Recharge_Logs->whereIn("user_id", $ids)->where("status", 2)->sum("money");
+        return $this->Cx_User_Recharge_Logs->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->where("status", 2)->sum("money");
     }
 
     public function sumWithdrawalMoney($ids, $timeMap)
