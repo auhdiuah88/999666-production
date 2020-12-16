@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -33,10 +34,13 @@ class Kernel extends ConsoleKernel
             ->daily()
             ->withoutOverlapping()
             ->runInBackground();
-        $schedule->command("Mtb_Call")
-            ->everyMinute()
-            ->withoutOverlapping()
-            ->runInBackground();
+//        $schedule->command("Mtb_Call")
+//            ->everyMinute()
+//            ->withoutOverlapping()
+//            ->runInBackground();
+        $schedule->call(function(){
+            Log::channel('kidebug')->debug("task_test",['time=>'=>time()]);
+        })->everyMinute();
     }
 
     /**
