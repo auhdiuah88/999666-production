@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use App\Repositories\Admin\WithdrawalRepository;
 use App\Services\Pay\MTBpay;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class Mtb_Call extends Command
 {
@@ -44,20 +45,21 @@ class Mtb_Call extends Command
      */
     public function handle()
     {
-        $list = $this->WithdrawalRepository->getMTBPayWaitCallList();
-        if($list->isEmpty())return true;
-        foreach($list as $item){
-            $res = $this->MTBpay->callWithdrawBack($item);
-            if(!$res){
-                $this->WithdrawalRepository->callMTBFail($item->call_count);
-            }else{
-                if($res['status'] != 'SUCCESS'){
-
-                }else{
-
-                }
-            }
-        }
+        Log::channel('kidebug')->debug("task_test",["time"=>date("Y-m-d H:i:s")]);
+//        $list = $this->WithdrawalRepository->getMTBPayWaitCallList();
+//        if($list->isEmpty())return true;
+//        foreach($list as $item){
+//            $res = $this->MTBpay->callWithdrawBack($item);
+//            if(!$res || $res['status'] != 'UNKNOW'){
+//                $this->WithdrawalRepository->callMTBFail($item);
+//            }else{
+//                if($res['status'] != 'SUCCESS'){
+//                    $this->WithdrawalRepository->callMTBSuccess($item);
+//                }else{
+//                    $this->WithdrawalRepository->callMTBDefeat($item);
+//                }
+//            }
+//        }
     }
 
 }

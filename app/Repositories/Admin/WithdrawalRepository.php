@@ -112,4 +112,16 @@ class WithdrawalRepository extends BaseRepository
         $time = time() - 15 * 60;
         return $this->Cx_Withdrawal_Record->where([["withdraw_type", "=", "MTBpay"], ["status", "=", 1], ["pay_status", "=", 0], ["call_count", "<", 4], ["call_time", "<", $time]])->orderByDesc('approval_time')->limit(5)->get();
     }
+
+    public function callMTBFail($item){
+        return $this->Cx_Withdrawal_Record->where("id", "=", $item->id)->update(["call_count"=>$item->call_count+1, "call_time"=>$item->time()]);
+    }
+
+    public function callMTBSuccess($item){
+        return $this->Cx_Withdrawal_Record->where("id", "=", $item->id)->update(["call_count"=>$item->call_count+1, "call_time"=>$item->time(), "pay_status"=>1]);
+    }
+
+    public function callMTBDefeat($item){
+        return $this->Cx_Withdrawal_Record->where("id", "=", $item->id)->update(["call_count"=>$item->call_count+1, "call_time"=>$item->time(), "pay_status"=>3]);
+    }
 }
