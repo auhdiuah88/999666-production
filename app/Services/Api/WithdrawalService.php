@@ -134,6 +134,15 @@ class WithdrawalService extends PayService
             return false;
         }
 
+        $withdraw_type = $request->withdraw_type;
+        if($withdraw_type == 'MTBpay'){
+            ##验证是否支持
+            if(!$user_bank->mtbpy_code){
+                $this->_msg = 'The withdrawal amount is greater than the balance';
+                return false;
+            }
+        }
+
         // 0:用户提现 余额提现
         if ($type == 0) {
 
@@ -174,7 +183,7 @@ class WithdrawalService extends PayService
         $ifsc_code = $user_bank->ifsc_code;
         $phone = $user_bank->phone;
         $email = $user_bank->mail;
-        $mtb_code = $user->mtbpy_code ? : "";
+        $mtb_code = $user_bank->mtbpy_code ? : "";
         $order_no = PayStrategy::onlyosn();
         $data = [
             'user_id' => $user_id,
