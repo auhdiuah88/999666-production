@@ -35,4 +35,12 @@ class SystemController extends Controller
             $this->SystemService->_data
         );
     }
+
+    public function getSystemTime(){
+        return $this->AppReturn(
+            200,
+            '',
+            time()
+        );
+    }
 }
