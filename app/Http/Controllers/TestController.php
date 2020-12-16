@@ -70,6 +70,7 @@ class TestController extends Controller
         $game = $this->Cx_Game_Play->where('id', $betting->game_p_id)->first();
         if($game->status == 0)
             return "未开奖";
+        echo $game->game_id;die;
         switch ($game->game_id){
             case 1:
                 $this->result_1($game->prize_number, $betting);
@@ -388,6 +389,8 @@ class TestController extends Controller
     }
 
     public function result_4($result, $val){
+        echo $result;
+        print_r($val);die;
         if($val->game_c_x_id==52){
             if($result==0){
                 $this->GameRepository->Result_Entry($val,1,9);

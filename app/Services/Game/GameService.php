@@ -85,6 +85,9 @@ class GameService
 
             return false;
         }
+        if($right_game_id != $game_play->game_id){
+            return false;
+        }
         //判断用户余额是否大于投注金额
         $user_info = $this->UserRepository->findByIdUser($user_id);
 
