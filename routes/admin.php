@@ -195,7 +195,7 @@ Route::group(['middleware' => ['token', "auth"]], function () {
         Route::group(["prefix" => "home"], function () {
             Route::get("/findAll", "HomeController@findAll");
             Route::post("/search", "HomeController@searchHome");
-            Route::post("/systemTime", "HomeController@systemTime");
+            Route::post("/systemTime", "HomeController@getSystemTime");
         });
 
         // 系统配置
