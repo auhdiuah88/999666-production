@@ -153,7 +153,7 @@ class MTBpay extends PayStrategy
         ];
         $params['sign'] = $this->generateSign($params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$params);
-        $res = $this->requestService->postFormData(self::$url_cashout . 'withdraw/singleOrder', $params);
+        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleOrder', $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$res);
         if ($res['status'] != 'SUCCESS') {
             $this->_msg = $res['err_msg'];
