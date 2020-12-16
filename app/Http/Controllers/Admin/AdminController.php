@@ -17,13 +17,20 @@ class AdminController extends Controller
 
     public function Login(Request $request)
     {
-        if (empty($request->input("username")) || empty($request->input("password"))) {
+        try{
+            if (empty($request->input("username")) || empty($request->input("password"))) {
+                return json_encode([
+                    'code' => '401',
+                    'msg' => '用户名或密码不能为空',
+                ], JSON_UNESCAPED_UNICODE);
+            } else {
+                return $this->AdminService->Login($request);
+            }
+        }catch(\Exception $e){
             return json_encode([
                 'code' => '401',
-                'msg' => '用户名或密码不能为空',
-            ], JSON_UNESCAPED_UNICODE);
-        } else {
-            return $this->AdminService->Login($request);
+                'msg' => '登陆失败-请联系管理员',
+            ]);
         }
     }
 
