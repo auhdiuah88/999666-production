@@ -9,7 +9,6 @@ use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Sign_Order;
 use App\Models\Cx_User;
 use App\Models\Cx_User_Balance_Logs;
-use App\Models\Cx_User_Recharge_Logs;
 use App\Models\Cx_Withdrawal_Record;
 use App\Repositories\BaseRepository;
 
@@ -21,8 +20,7 @@ class HomeRepository extends BaseRepository
         $Cx_Withdrawal_Record,
         $Cx_Charge_Logs,
         $Cx_Game_Betting,
-        $Cx_Sign_Orders,
-        $Cx_User_Recharge_Logs;
+        $Cx_Sign_Orders;
 
     public function __construct(
         Cx_User $cx_User,
@@ -30,8 +28,7 @@ class HomeRepository extends BaseRepository
         Cx_Withdrawal_Record $cx_Withdrawal_Record,
         Cx_Charge_Logs $charge_Logs,
         Cx_Game_Betting $game_Betting,
-        Cx_Sign_Order $cx_Sign_Order,
-        Cx_User_Recharge_Logs $cx_User_Recharge_Logs
+        Cx_Sign_Order $cx_Sign_Order
     )
     {
         $this->Cx_User = $cx_User;
@@ -40,7 +37,6 @@ class HomeRepository extends BaseRepository
         $this->Cx_Charge_Logs = $charge_Logs;
         $this->Cx_Game_Betting = $game_Betting;
         $this->Cx_Sign_Orders = $cx_Sign_Order;
-        $this->Cx_User_Recharge_Logs = $cx_Sign_Order;
     }
 
     public function findAll($offset, $limit)
@@ -142,7 +138,7 @@ class HomeRepository extends BaseRepository
 
     public function sumRechargeMoney($ids, $timeMap)
     {
-        return $this->Cx_User_Recharge_Logs->whereIn("user_id", $ids)->where("status", 2)->sum("money");
+        return $this->Cx_User_Balance_Logs->whereIn("user_id", $ids)->where("type", 2)->whereBetween("time", $timeMap)->sum("money");
     }
 
     public function sumWithdrawalMoney($ids, $timeMap)
