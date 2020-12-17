@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 class Mtb_Call extends Command
 {
 
+    protected $signature = 'Mtb_Call';
+
     /**
      * The name and signature of the console command.
      *
