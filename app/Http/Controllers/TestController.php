@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Game_Play;
+use App\Models\Cx_User;
 use App\Repositories\Game\GameRepository;
 use App\Services\Game\Ssc_FourService;
 use App\Services\Game\Ssc_TwoService;
@@ -20,13 +21,14 @@ class TestController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $Cx_Game_Play, $Cx_Game_Betting, $GameRepository, $Ssc_FourService;
+    protected $Cx_Game_Play, $Cx_Game_Betting, $GameRepository, $Ssc_FourService, $Cx_User;
 
-    public function __construct(Cx_Game_Betting $game_Betting, Cx_Game_Play $game_Play, GameRepository $gameRepository, Ssc_FourService $ssc_FourService){
+    public function __construct(Cx_Game_Betting $game_Betting, Cx_Game_Play $game_Play, GameRepository $gameRepository, Ssc_FourService $ssc_FourService, Cx_User $cx_User){
         $this->Cx_Game_Play = $game_Play;
         $this->Cx_Game_Betting = $game_Betting;
         $this->GameRepository = $gameRepository;
         $this->Ssc_FourService = $ssc_FourService;
+        $this->Cx_User = $cx_User;
     }
 
     public function getGameResult(){
