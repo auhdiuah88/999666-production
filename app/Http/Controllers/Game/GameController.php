@@ -84,7 +84,7 @@ class GameController extends Controller
     }
     public function Sd_Prize_Opening(Request $request)
     {
-
+        return false;
         $rules = [
             "number" => "required|max:9|integer",
             "game_play_id" => "required|integer",

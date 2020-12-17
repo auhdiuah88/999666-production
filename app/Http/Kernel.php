@@ -59,6 +59,9 @@ class Kernel extends HttpKernel
         "cors" => [
             CorsMiddleware::class
         ],
+        "admin_handle" => [
+            \App\Http\Middleware\AdminHandleLogMiddleware::class
+        ],
     ];
 
     /**

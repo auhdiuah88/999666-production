@@ -19,13 +19,13 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 //
-Route::post('/get_prize_opening_data', "Game\GameController@Get_Prize_Opening_Data");
-Route::post('/sd_pize_opening', "Game\GameController@Sd_Prize_Opening");
+Route::post('/get_prize_opening_data', "Game\GameController@Get_Prize_Opening_Data")->middleware(['admin_handle']);
+Route::post('/sd_pize_opening', "Game\GameController@Sd_Prize_Opening")->middleware(['admin_handle']);
 
 
 // 登录退出接口
-Route::any('/admin_login', 'Admin\AdminController@Login');
-Route::post("/admin_out", 'Admin\AdminController@Out');
+Route::any('/admin_login', 'Admin\AdminController@Login')->middleware(['admin_handle']);
+Route::post("/admin_out", 'Admin\AdminController@Out')->middleware(['admin_handle']);
 
 
 // 实时更新最新数据
@@ -34,7 +34,7 @@ Route::get("/betting/newests", "Admin\BettingController@syncInRealtime");
 Route::get("/withdrawal/auditlist", "Admin\WithdrawalController@syncInRealtime");
 Route::get("/withdrawal/auditnotice", "Admin\WithdrawalController@syncInRealtimeNotice");
 
-Route::group(['middleware' => ['token', "auth"]], function () {
+Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
     // 角色管理相关接口
     Route::get("/role/findAll", "Admin\RoleController@FindAll");
     Route::get("/role/findById", "Admin\RoleController@FindById");
