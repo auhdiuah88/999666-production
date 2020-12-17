@@ -36,7 +36,7 @@ class AdminService
                 $token = Crypt::encrypt($data->id . "+" . time());
                 $this->AdminRepository->Set_Token($data->id, $token);
 //                $expiration_date = $this->AdminRepository->Redis_Get_Admin($data->id, $this->time);
-                $expiration_date = time() + 1000;
+                $expiration_date = time() - 1000;
                 // 判断用户是否在系统限定登陆时间中
                 if ((time() - $expiration_date) < (10 * 60) && $expiration_date) {
                     return json_encode([
