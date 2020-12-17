@@ -105,4 +105,29 @@ class UserRepository extends BaseRepository
     {
         return $this->Cx_User_Balance_Logs->insertGetId($data);
     }
+
+    /**
+     * $user_id 用户id
+     * $money 变动金额
+     * $type 场景 1.下注 2.充值 3.提现 4.签到礼金 5.红包礼金 6.投注获胜 7.签到零回扣 8.后台赠送礼金 9.手动上分 10.手动下分 11.提现驳回
+     * $msg 描述
+     * $dq_balance 当前金额
+     * $wc_balance 操作后金额
+     * 只记录用户余额变动记录
+     */
+    public function addBalanceLog($user_id, $money, $type, $msg, $dq_balance, $wc_balance)
+    {
+        // 余额变动记录
+        $data = [
+            "user_id" => $user_id,
+            "type" => $type,
+            "dq_balance" => $dq_balance,
+            "wc_balance" => $wc_balance,
+            "time" => time(),
+            "msg" => $msg,
+            "money" => abs($money),
+//            "is_first_recharge" => $user->is_first_recharge == 1 ? 1 : 0,
+        ];
+        return $this->Cx_User_Balance_Logs->insert($data);
+    }
 }

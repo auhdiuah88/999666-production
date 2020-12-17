@@ -28,7 +28,7 @@ class WithdrawalService extends PayService
                                 UserRepository $userRepository,
                                 RequestService $requestService,
                                 PayContext $payContext,
-                                SystemRepository $systemRepository
+                                SystemRepository $systemRepository,
     )
     {
         $this->WithdrawalRepository = $repository;
@@ -162,9 +162,15 @@ class WithdrawalService extends PayService
                 $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
                 return false;
             }
-            $user->balance = bcsub($user->balance,$money,2);
+
+            $cur_balance = bcsub($user->balance,$money,2);
+            ##增加用户余额变化记录
+            $this->UserRepository->addBalanceLog($user_id, $money,3,'用户申请提现', $user->balance, $cur_balance);
+
+            $user->balance = $cur_balance;
             $user->freeze_money = bcadd($user->freeze_money,$money,2);
             $user->save();
+
         } elseif ($type == 1) {
 
             if ((float)$user->commission < $money) {

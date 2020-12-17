@@ -76,6 +76,10 @@ class WithdrawalService extends BaseService
                 $user->freeze_agent_money = bcsub($user->freeze_agent_money, $withdrawalRecord->money, 2);
                 $user->commission = bcadd($user->commission, $withdrawalRecord->money, 2);
             } else {
+                $cur_balance = bcadd($user->balance,$withdrawalRecord->money,2);
+                ##增加用户余额变化记录
+                $this->UserRepository->addBalanceLog($withdrawalRecord->user_id, $withdrawalRecord->money,11,'用户提现驳回', $user->balance, $cur_balance);
+
                 $user->freeze_money = bcsub($user->freeze_money, $withdrawalRecord->money, 2);
                 $user->balance = bcadd($user->balance, $withdrawalRecord->money, 2);
             }
