@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Game_Play;
 use App\Repositories\Game\GameRepository;
+use App\Services\Game\Ssc_FourService;
 use App\Services\Game\Ssc_TwoService;
 use App\Services\Game\SscService;
 use App\Services\Pay\Winpay;
@@ -19,12 +20,29 @@ class TestController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $Cx_Game_Play, $Cx_Game_Betting, $GameRepository;
+    protected $Cx_Game_Play, $Cx_Game_Betting, $GameRepository, $Ssc_FourService;
 
-    public function __construct(Cx_Game_Betting $game_Betting, Cx_Game_Play $game_Play, GameRepository $gameRepository){
+    public function __construct(Cx_Game_Betting $game_Betting, Cx_Game_Play $game_Play, GameRepository $gameRepository, Ssc_FourService $ssc_FourService){
         $this->Cx_Game_Play = $game_Play;
         $this->Cx_Game_Betting = $game_Betting;
         $this->GameRepository = $gameRepository;
+        $this->Ssc_FourService = $ssc_FourService;
+    }
+
+    public function getGameResult(){
+        $game_play_info = $this->Cx_Game_Play->where("id", "=", 31797)->first();
+        $s = 1608048000;
+        $l = 1608110100;
+        $ids=array_column($this->Cx_User->where("reg_source_id", 0)->get("id")->toArray(), "id");
+        $data['y_money']=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->whereIn("user_id",$ids)->where("status",1)->sum("win_money");
+        $s1_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l]) ->whereIn("user_id",$ids)->where("status",1)->sum("money");
+        $s2_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->whereIn("user_id",$ids)->where("status",2)->sum("money");
+        $data['s_money']=$s1_money+$s2_money;
+        $cur_betting_money = $this->Cx_Game_Betting->where('game_p_id',31797)->sum('money');
+
+        $can_donate_money = (1-0.3) * ($data['s_money'] + $cur_betting_money - $data['y_money']);
+        $res = $this->Ssc_FourService->calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money);
+        print_r($res);die;
     }
 
     public function test2(Winpay $winpay)
