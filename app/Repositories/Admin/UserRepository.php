@@ -28,7 +28,7 @@ class UserRepository extends BaseRepository
     {
         return $this->Cx_User_Balance_Logs->with(["admin" => function ($query) {
             $query->select(["id", "nickname"]);
-        }])->where("user_id", $userId)->offset($offset)->limit($limit)->orderByDesc("time")->get()->toArray();
+        }])->where("user_id", $userId)->offset($offset)->limit($limit)->orderByDesc("time")->select(["*", "type as type_map"])->get()->toArray();
     }
 
     public function countBalanceLogs($userId)
@@ -117,6 +117,7 @@ class UserRepository extends BaseRepository
      */
     public function addBalanceLog($user_id, $money, $type, $msg, $dq_balance, $wc_balance)
     {
+        $admin_id = request()->get('admin_id');
         // 余额变动记录
         $data = [
             "user_id" => $user_id,
@@ -127,6 +128,7 @@ class UserRepository extends BaseRepository
             "msg" => $msg,
             "money" => abs($money),
 //            "is_first_recharge" => $user->is_first_recharge == 1 ? 1 : 0,
+            'admin_id' => $admin_id
         ];
         return $this->Cx_User_Balance_Logs->insert($data);
     }

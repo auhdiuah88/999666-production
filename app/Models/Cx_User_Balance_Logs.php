@@ -4,6 +4,7 @@
 namespace App\Models;
 
 
+use App\Dictionary\BalanceTypeDic;
 use Illuminate\Database\Eloquent\Model;
 
 class Cx_User_Balance_Logs extends Model
@@ -15,6 +16,10 @@ class Cx_User_Balance_Logs extends Model
     protected $primaryKey = "id";
 
     public $timestamps = false;
+
+    public function getTypeMapAttribute(){
+        return BalanceTypeDic::data($this->type);
+    }
 
     public function user()
     {
