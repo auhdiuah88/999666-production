@@ -34,13 +34,10 @@ class Kernel extends ConsoleKernel
             ->daily()
             ->withoutOverlapping()
             ->runInBackground();
-//        $schedule->command("Mtb_Call")
-//            ->everyMinute()
-//            ->withoutOverlapping()
-//            ->runInBackground();
-        $schedule->call(function(){
-            Log::channel('kidebug')->debug("task_test",['time=>'=>time()]);
-        })->everyMinute();
+        $schedule->command("Mtb_Call")
+            ->everyMinute()
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**
