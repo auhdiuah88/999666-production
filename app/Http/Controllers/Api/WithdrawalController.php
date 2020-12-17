@@ -212,5 +212,20 @@ class WithdrawalController extends Controller
             return false;
         }
     }
+
+    /**
+     * 提现方式
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function withdrawType(Request $request){
+        try{
+            $list = config('pay.withdraw');
+            return $this->AppReturn(200,'', $list);
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(400, 'Withdrawal method request failed');
+        }
+    }
 }
 
