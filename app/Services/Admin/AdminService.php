@@ -35,8 +35,8 @@ class AdminService
                 //token 用户id+当前时间戳
                 $token = Crypt::encrypt($data->id . "+" . time());
                 $this->AdminRepository->Set_Token($data->id, $token);
-//                $expiration_date = $this->AdminRepository->Redis_Get_Admin($data->id, $this->time);
-                $expiration_date = time() - 1000;
+                $expiration_date = $this->AdminRepository->Redis_Get_Admin($data->id, $this->time);
+//                $expiration_date = time() - 1000;
                 // 判断用户是否在系统限定登陆时间中
                 if ((time() - $expiration_date) < (10 * 60) && $expiration_date) {
                     return json_encode([
@@ -44,7 +44,7 @@ class AdminService
                         'msg' => '密码错误次数太多，系统限制时间中',
                     ], JSON_UNESCAPED_UNICODE);
                 } else {
-//                    $this->AdminRepository->Redis_Del_Admin($data->id);
+                    $this->AdminRepository->Redis_Del_Admin($data->id);
 
                     unset($data->password);
                     unset($data->token);
@@ -58,16 +58,16 @@ class AdminService
                     ], JSON_UNESCAPED_UNICODE);
 
                     // 将登陆用户信息存入Redis中
-//                    $this->AdminRepository->Redis_Set_Admin_User(json_encode($data, JSON_UNESCAPED_UNICODE), $data->id);
+                    $this->AdminRepository->Redis_Set_Admin_User(json_encode($data, JSON_UNESCAPED_UNICODE), $data->id);
                     $this->AdminRepository->Update_Status($data->id, 1);
 
                     return $admin_user;
                 }
             } else {
-                return json_encode([
-                    'code' => '402',
-                    'msg' => '密码错误',
-                ], JSON_UNESCAPED_UNICODE);
+//                return json_encode([
+//                    'code' => '402',
+//                    'msg' => '密码错误',
+//                ], JSON_UNESCAPED_UNICODE);
                 // 判断用户是否是第一次登陆
                 if ($this->AdminRepository->Redis_Get_Admin($data->id, $this->frequency)) {
                     // 判断用户是否在10分钟之内登陆错误次数超过5次
