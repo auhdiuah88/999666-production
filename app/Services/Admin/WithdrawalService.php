@@ -55,12 +55,22 @@ class WithdrawalService extends BaseService
             if (count(explode('.', $host)) == 3) {
                 $host = substr(strstr($host, '.'), 1);
             }
-            if (!isset(PayContext::$pay_provider[$host])) {
-                $this->_msg = 'not find strategy';
+            if($withdrawalRecord->with_type){
+                $payProvide = $withdrawalRecord->with_type;
+            }else{
+                if (!isset(PayContext::$pay_provider[$host])) {
+                    $this->_msg = 'not find strategy';
+                    return false;
+                }
+                $payProvide = PayContext::$pay_provider[$host];
+            }
+
+            $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付公司类
+            if(!$strategyClass){
+                $this->_code = 414;
+                $this->_msg = "Payment method not configured";
                 return false;
             }
-            $payProvide = PayContext::$pay_provider[$host];
-            $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付公司类
             $result = $strategyClass->withdrawalOrder($withdrawalRecord);
             if (!$result) {
                 $this->_code = 414;

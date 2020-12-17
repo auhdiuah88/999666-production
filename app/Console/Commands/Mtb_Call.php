@@ -47,7 +47,7 @@ class Mtb_Call extends Command
      */
     public function handle()
     {
-//        Log::channel('kidebug')->debug("task_test_2",["time"=>date("Y-m-d H:i:s")]);
+        Log::channel('kidebug')->debug("task_test_2",["time"=>date("Y-m-d H:i:s")]);
         $list = $this->WithdrawalRepository->getMTBPayWaitCallList();
         if($list->isEmpty())return true;
         foreach($list as $item){
