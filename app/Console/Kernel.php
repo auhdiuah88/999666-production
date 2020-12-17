@@ -35,7 +35,7 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground();
         $schedule->command("Mtb_Call")
-            ->everyMinute()
+            ->everyTenMinutes()
             ->withoutOverlapping()
             ->runInBackground();
     }

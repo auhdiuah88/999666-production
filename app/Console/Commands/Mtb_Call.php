@@ -47,21 +47,22 @@ class Mtb_Call extends Command
      */
     public function handle()
     {
-        Log::channel('kidebug')->debug("task_test_2",["time"=>date("Y-m-d H:i:s")]);
-//        $list = $this->WithdrawalRepository->getMTBPayWaitCallList();
-//        if($list->isEmpty())return true;
-//        foreach($list as $item){
-//            $res = $this->MTBpay->callWithdrawBack($item);
-//            if(!$res || $res['status'] != 'UNKNOW'){
-//                $this->WithdrawalRepository->callMTBFail($item);
-//            }else{
-//                if($res['status'] != 'SUCCESS'){
-//                    $this->WithdrawalRepository->callMTBSuccess($item);
-//                }else{
-//                    $this->WithdrawalRepository->callMTBDefeat($item);
-//                }
-//            }
-//        }
+//        Log::channel('kidebug')->debug("task_test_2",["time"=>date("Y-m-d H:i:s")]);
+        $list = $this->WithdrawalRepository->getMTBPayWaitCallList();
+        if($list->isEmpty())return true;
+        foreach($list as $item){
+            $res = $this->MTBpay->callWithdrawBack($item);
+            if(!$res || $res['status'] != 'UNKNOW'){
+                $this->WithdrawalRepository->callMTBFail($item);
+            }else{
+                if($res['status'] != 'SUCCESS'){
+                    $this->WithdrawalRepository->callMTBSuccess($item);
+                }else{
+                    $this->WithdrawalRepository->callMTBDefeat($item);
+                }
+            }
+        }
+        Log::channel('kidebug')->debug("task_mtb_call",["list"=>$list->toArray()]);
     }
 
 }
