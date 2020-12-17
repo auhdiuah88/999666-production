@@ -28,7 +28,7 @@ class WithdrawalService extends PayService
                                 UserRepository $userRepository,
                                 RequestService $requestService,
                                 PayContext $payContext,
-                                SystemRepository $systemRepository,
+                                SystemRepository $systemRepository
     )
     {
         $this->WithdrawalRepository = $repository;
