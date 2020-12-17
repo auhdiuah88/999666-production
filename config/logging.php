@@ -117,6 +117,12 @@ return [
             'path' => storage_path('logs/admin-err-'. date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
             'level' => 'debug',
         ],
+
+        'admin_handle' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/admin/' . date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
+            'level' => 'debug',
+        ]
     ],
 
 ];
