@@ -19,8 +19,6 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 //
-Route::post('/get_prize_opening_data', "Game\GameController@Get_Prize_Opening_Data")->middleware(['admin_handle']);
-Route::post('/sd_pize_opening', "Game\GameController@Sd_Prize_Opening")->middleware(['admin_handle']);
 
 
 // 登录退出接口
@@ -35,6 +33,10 @@ Route::get("/withdrawal/auditlist", "Admin\WithdrawalController@syncInRealtime")
 Route::get("/withdrawal/auditnotice", "Admin\WithdrawalController@syncInRealtimeNotice");
 
 Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
+
+    Route::post('/get_prize_opening_data', "Game\GameController@Get_Prize_Opening_Data");
+    Route::post('/sd_pize_opening', "Game\GameController@Sd_Prize_Opening");
+
     // 角色管理相关接口
     Route::get("/role/findAll", "Admin\RoleController@FindAll");
     Route::get("/role/findById", "Admin\RoleController@FindById");
