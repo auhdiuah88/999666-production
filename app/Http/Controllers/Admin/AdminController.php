@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\AdminService;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -27,6 +28,7 @@ class AdminController extends Controller
                 return $this->AdminService->Login($request);
             }
         }catch(\Exception $e){
+            $this->logError("adminerr",$e);
             return json_encode([
                 'code' => '401',
                 'msg' => '登陆失败-请联系管理员',

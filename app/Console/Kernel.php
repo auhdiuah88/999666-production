@@ -38,9 +38,9 @@ class Kernel extends ConsoleKernel
 //            ->everyMinute()
 //            ->withoutOverlapping()
 //            ->runInBackground();
-        $schedule->call(function(){
-            Log::channel('kidebug')->debug("task_test",['time=>'=>time()]);
-        })->everyMinute();
+//        $schedule->call(function(){
+//            Log::channel('kidebug')->debug("task_test",['time=>'=>time()]);
+//        })->everyMinute();
     }
 
     /**
