@@ -134,7 +134,7 @@ class WithdrawalService extends PayService
             return false;
         }
 
-        $withdraw_type = $request->withdraw_type ? : "";
+        $withdraw_type = $request->with_type ? : "";
         if($withdraw_type == 'MTBpay'){
             ##验证是否支持
             if(!$user_bank->mtbpy_code){
