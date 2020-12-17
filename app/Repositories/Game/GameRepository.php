@@ -1017,7 +1017,9 @@ class GameRepository
                     $query->select('id', 'name');
                 },
                 'game_play' => function ($query) {
-                    $query->select('id', 'number', 'prize_number');
+                    $query->select('id', 'number', 'prize_number', 'game_id')->with(['game_name_p'=>function($query){
+                        $query->select('id', 'name');
+                    }]);
                 }
             )
         )->where("user_id", $user)->offset($offset)->limit($limit)->select(['*', 'id as betting_money'])->orderBy('betting_time', 'desc')->get();
