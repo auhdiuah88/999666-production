@@ -14,11 +14,11 @@ class Cx_User_Recharge_Logs extends Model
 
     public $timestamps = false;
 
-    public function getMoneyAttribute(){
+    public function getMoneyAttribute($value){
         if(isset($this->status) && $this->status == 2){
-            return isset($this->arrive_money) ? $this->arrive_money : $this->money;
+            return isset($this->arrive_money) ? $this->arrive_money : $value;
         }else{
-            return $this->money;
+            return $value;
         }
     }
 
