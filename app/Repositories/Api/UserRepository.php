@@ -97,7 +97,7 @@ class UserRepository
         $arr["two_id"] = null;
         $data = $this->Cx_User->where("code", $code)->first();
         if (isset($data->id)) {
-            Log::channel('kidebug')->debug('register',[$data]);
+            Log::channel('kidebug')->debug('register',[$data->toArray()]);
             if (!empty($data->two_recommend_id) && empty($data->one_recommend_id)) {
 //                $arr["one_id"] = $data->two_recommend_id;  //
 //                $arr["two_id"] = $data->id;
