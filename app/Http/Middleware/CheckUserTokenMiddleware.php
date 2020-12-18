@@ -35,7 +35,7 @@ class CheckUserTokenMiddleware
             return response()->json([
                 "code" => 401,
 //                "msg" => "缺少token令牌"
-                "msg" => "请登录"
+                "msg" => "Please log in again"
             ]);
         }
 
@@ -45,7 +45,7 @@ class CheckUserTokenMiddleware
             return response()->json([
                 "code" => 401,
 //                "msg" => "token验证失败"
-                "msg" => "请登录"
+                "msg" => "Please log in again"
             ]);
         }
 
@@ -62,7 +62,7 @@ class CheckUserTokenMiddleware
             return response()->json([
                 "code" => 401,
 //                "msg" => "token验证失败"
-                "msg" => "请登录"
+                "msg" => "Please log in again"
             ]);
         }
 
