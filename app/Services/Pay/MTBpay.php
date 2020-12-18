@@ -149,6 +149,7 @@ class MTBpay extends PayStrategy
             'order_amount' => $money,
             'bank_code' => $withdrawalRecord->mtb_code,
             'summary' => '余额充值',
+            'province' => $withdrawalRecord->ifsc_code
         ];
         $params['sign'] = $this->generateSign($params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$params);
@@ -193,6 +194,11 @@ class MTBpay extends PayStrategy
         return date('YmdDis') . $withdraw_id;
     }
 
+    /**
+     * 请求待付状态
+     * @param $withdrawalRecord
+     * @return array|false|mixed|string
+     */
     public function callWithdrawBack($withdrawalRecord){
         $request_no = $this->makeRequestNo($withdrawalRecord->id);
         $request_time = date("YmdHis");
