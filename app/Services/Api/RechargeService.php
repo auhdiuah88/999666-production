@@ -130,6 +130,7 @@ class RechargeService extends PayService
             return false;
         }
 
+        ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money
         $money = isset($request->money)?$request->money : (isset($request->pay_amount)?$request->pay_amount:$request->amount);
         // 下面的方法相同
         $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
