@@ -79,7 +79,7 @@ class Leap extends PayStrategy
 //        $pay_type = 100;
         $params = [
             'mch_id' => $this->merchantID,
-            'ptype' => $pay_type,
+            'ptype' => 100,
             'order_sn' => $order_no,
             'money' => $money,
             'goods_desc' => 'recharge',
@@ -94,6 +94,7 @@ class Leap extends PayStrategy
         \Illuminate\Support\Facades\Log::channel('mytest')->info('leap_rechargeOrder', [$params]);
 
         $res = $this->requestService->get(self::$url . '/order/getUrl?json=' . $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('leap_rechargeOrder', [$res]);
         if ($res['code'] <> 1) {
             $this->_msg = $res['msg'];
             return false;
