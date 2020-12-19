@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Admin\agent;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\agent\AgentBankCardService;
 
-class AgentBackCardController extends Controller
+class AgentBankCardController extends Controller
 {
 
     protected $AgentBackCardService;

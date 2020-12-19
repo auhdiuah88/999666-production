@@ -37,6 +37,15 @@ class AgentUserService extends BaseAgentService
         return true;
     }
 
+    public function orderInfoList(){
+        $this->getAdmin();
+        $size = $this->sizeInput();
+        $this->setOrderInfoListWhere();
+        $data = $this->AgentUserRepository->orderInfoList($this->where, $size);
+        $this->_data = $data;
+        return true;
+    }
+
     public function setSearchUserWhere(){
         $where = [];
         $phone = $this->searchInput("mobile");
@@ -70,6 +79,18 @@ class AgentUserService extends BaseAgentService
         $register_time_end = $this->strInput('end_time');
         if($register_time_start && $register_time_end)
             $where[] = ['r.time', 'BETWEEN', [strtotime($register_time_start), strtotime($register_time_end)]];
+        $where[] = ['u.invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
+        $this->where = $where;
+    }
+
+    public function setOrderInfoListWhere(){
+        $where = [];
+        $phone = $this->searchInput("mobile");
+        if($phone)
+            $where[] = ['phone', '=', $phone];
+        $min_recharge = $this->intInput("min_recharge");
+        if($min_recharge > 0)
+            $where[] = ['total_recharge', '>', $min_recharge];
         $where[] = ['u.invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
         $this->where = $where;
     }

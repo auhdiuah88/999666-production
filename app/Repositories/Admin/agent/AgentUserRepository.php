@@ -52,4 +52,22 @@ class AgentUserRepository
         return $list;
     }
 
+    public function orderInfoList($where, $size){
+        return $this->Cx_User
+            ->where($where)
+            ->select(['id', 'nickname', 'phone as phone_hide', 'total_recharge', 'cl_withdrawal', 'balance', 'commission', 'status', 'cl_betting', 'cl_betting_total'])
+            ->with(
+                [
+                    'charge' => function($query){
+                        $query->where([['status', '=', 2], ['is_first_recharge', '=', 1]])->select(['user_id', 'arrive_time']);
+                    }
+                ]
+            )
+            ->painate($size);
+    }
+
+    public function getUserIds($where){
+        return $user_ids = $this->Cx_User->where($where)->pluck('id')->toArray();
+    }
+
 }

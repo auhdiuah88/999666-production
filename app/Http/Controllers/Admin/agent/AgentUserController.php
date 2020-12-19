@@ -46,4 +46,18 @@ class AgentUserController extends Controller
         }
     }
 
+    public function orderInfo(){
+        try{
+            $this->AgentUserService->orderInfoList();
+            return $this->AppReturn(
+                $this->AgentUserService->_code,
+                $this->AgentUserService->_msg,
+                $this->AgentUserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
+    }
+
 }
