@@ -21,15 +21,15 @@ Route::post("/makeSign", "TestController@makeSign");
 //Route::post("/makeGameResult", "TestController@getGameResult");
 
 
-Route::post("/login", "Api\UserController@Login");
-Route::post("/register", "Api\UserController@Register");
-Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
-Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
+Route::post("/login", "Api\UserController@Login")->middleware('api_handle');
+Route::post("/register", "Api\UserController@Register")->middleware('api_handle');
+Route::get('/settlement_queue', "Game\GameController@Settlement_Queue")->middleware('api_handle');
+Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test")->middleware('api_handle');
 
 // 充值回调
-Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback");
+Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback")->middleware('api_handle');
 // 提款回调
-Route::any('/withdrawal_callback', "Api\WithdrawalController@withdrawalCallback");
+Route::any('/withdrawal_callback', "Api\WithdrawalController@withdrawalCallback")->middleware('api_handle');
 
 Route::group(["namespace" => "Api"], function () {
     Route::post("/sendCode", "UserController@sendMessage");
@@ -37,7 +37,7 @@ Route::group(["namespace" => "Api"], function () {
     Route::post("/serviceUrl", "SystemController@getWhatsServiceUrl"); // 获取专属客服URL，个人中心客服按钮
 });
 
-Route::group(['middleware' => ['user_token']], function () {
+Route::group(['middleware' => ['user_token', 'api_handle']], function () {
     Route::post('/game_start', "Game\GameController@Game_Start");
     Route::post('/betting', "Game\GameController@Betting");
     Route::post('/betting_list', "Game\GameController@Betting_List");
@@ -45,7 +45,7 @@ Route::group(['middleware' => ['user_token']], function () {
 
 });
 
-Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function () {
+Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'api_handle']], function () {
 
     Route::group(["prefix" => "user"], function () {
         Route::get("/info", "InfoController@getInfo"); // 查询用户基本信息

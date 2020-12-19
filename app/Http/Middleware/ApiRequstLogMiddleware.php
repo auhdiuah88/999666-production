@@ -20,7 +20,7 @@ class ApiRequstLogMiddleware
         $start_time = microtime(true);
         $params = $request->all();
         $logData = [
-            'request_params' => json_encode($params),
+            'request_params' => serialize($params),
             'ip' => $request->getClientIp() ?? "",
             'c_time' => time(),
             'path' => $request->path()
