@@ -63,7 +63,7 @@ class AgentUserRepository
                     }
                 ]
             )
-            ->painate($size);
+            ->paginate($size);
     }
 
     public function getUserIds($where){

@@ -91,7 +91,7 @@ class AgentUserService extends BaseAgentService
         $min_recharge = $this->intInput("min_recharge");
         if($min_recharge > 0)
             $where[] = ['total_recharge', '>', $min_recharge];
-        $where[] = ['u.invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
+        $where[] = ['invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
         $this->where = $where;
     }
 
