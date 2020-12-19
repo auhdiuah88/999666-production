@@ -42,7 +42,6 @@ class SettingService extends BaseService
             $this->_msg = "角色不存在";
             return false;
         }
-
         $res = $this->SettingRepository->editStaff($role_id);
         if(!$res)
             $res = $this->SettingRepository->addStaff($role_id);
