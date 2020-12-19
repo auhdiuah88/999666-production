@@ -21,6 +21,10 @@ class SettingController extends Controller
         $this->SettingService = $settingService;
     }
 
+    /**
+     * 获取员工角色ID
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function staffId(){
         try{
             $this->SettingService->getStaffId();
@@ -35,6 +39,10 @@ class SettingController extends Controller
         }
     }
 
+    /**
+     * 设置员工角色ID
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function setStaffId(){
         try{
             $validator = Validator::make(request()->input(),

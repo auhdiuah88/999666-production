@@ -204,6 +204,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
         Route::group(["prefix" => "system"], function () {
             Route::get("/findAll", "SystemController@findAll");
             Route::post("/edit", "SystemController@editSystem");
+            Route::get("/staffRole","SettingController@staffId");
+            Route::post("/staffRole","SettingController@setStaffId");
         });
 
         // 后台赠金记录列表

@@ -13,6 +13,19 @@ class Cx_Settings extends Model
 
     protected $primaryKey = "";
 
-    public $timestamps = false;
+    protected $dateFormat  = "U";
+
+    const UPDATED_AT = null;
+    const CREATED_AT = "create_time";
+
+    protected $guarded = [];
+
+    public function getSettingValueAttribute($value){
+        return empty($value)?[]:json_decode($value,true);
+    }
+
+    public function setSettingValueAttribute($value){
+        $this->attributes['setting_value'] = json_encode(empty($value)?[]:$value);
+    }
 
 }
