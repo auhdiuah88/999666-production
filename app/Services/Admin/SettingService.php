@@ -42,9 +42,12 @@ class SettingService extends BaseService
             $this->_msg = "角色不存在";
             return false;
         }
-        $res = $this->SettingRepository->editStaff($role_id);
-        if(!$res)
+        $role = $this->SettingRepository->getStaff();
+        if($role){
+            $res = $this->SettingRepository->editStaff($role_id);
+        }else{
             $res = $this->SettingRepository->addStaff($role_id);
+        }
         if($res === false){
             $this->_code = 401;
             $this->_msg = "操作失败";

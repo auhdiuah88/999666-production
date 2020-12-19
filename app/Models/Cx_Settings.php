@@ -8,10 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cx_Settings extends Model
 {
-
     protected $table = 'settings';
 
-    protected $primaryKey = "";
+//    public $incrementing = false;  //关掉自增
 
     protected $dateFormat  = "U";
 
@@ -25,7 +24,7 @@ class Cx_Settings extends Model
     }
 
     public function setSettingValueAttribute($value){
-        $this->attributes['setting_value'] = json_encode(empty($value)?[]:$value);
+        $this->attributes['setting_value'] = json_encode($value);
     }
 
 }

@@ -58,7 +58,7 @@ class SettingRepository extends BaseRepository
      * @return mixed
      */
     public function addStaff($role_id){
-        return $this->Cx_Settings->save(
+        return $this->Cx_Settings->create(
             [
                 'setting_key' => 'staff_id',
                 'setting_value' => [
@@ -66,5 +66,6 @@ class SettingRepository extends BaseRepository
                 ]
             ]
         );
+        return 1;
     }
 }
