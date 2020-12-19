@@ -58,7 +58,7 @@ class AgentUserRepository
             ->select(['id', 'nickname', 'phone as phone_hide', 'total_recharge', 'cl_withdrawal', 'balance', 'commission', 'status', 'cl_betting', 'cl_betting_total'])
             ->with(
                 [
-                    'charge' => function($query){
+                    'recharge' => function($query){
                         $query->where([['status', '=', 2], ['is_first_recharge', '=', 1]])->select(['user_id', 'arrive_time']);
                     }
                 ]

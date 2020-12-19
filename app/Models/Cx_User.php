@@ -92,4 +92,9 @@ class Cx_User extends Model
     {
         return $this->hasMany(Cx_User_Balance_Logs::class, "user_id");
     }
+
+    public function recharge()
+    {
+        return $this->hasMany(Cx_User_Recharge_Logs::class,"user_id","id");
+    }
 }
