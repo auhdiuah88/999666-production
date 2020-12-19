@@ -43,6 +43,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\ApiRequstLogMiddleware::class, //记录api请求日志到 api_log 表
         ],
 
         // 后端
