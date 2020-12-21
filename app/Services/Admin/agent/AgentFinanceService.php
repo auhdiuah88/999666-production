@@ -65,6 +65,24 @@ class AgentFinanceService extends BaseAgentService
         return true;
     }
 
+    public function bonusList(){
+        $this->getAdmin();
+        $size = $this->sizeInput();
+        $this->setBonusListWhere();
+        $data = $this->AgentFinanceRepository->bonusList($this->where, $this->user_ids, $size);
+        $this->_data = $data;
+        return true;
+    }
+
+    public function upAndDownList(){
+        $this->getAdmin();
+        $size = $this->sizeInput();
+        $this->setUpAndDownListWhere();
+        $data = $this->AgentFinanceRepository->upAndDownList($this->where, $this->user_ids, $size);
+        $this->_data = $data;
+        return true;
+    }
+
     protected function setRechargeListWhere(){
         $where = [];
         $status = $this->intInput('status');
@@ -150,6 +168,45 @@ class AgentFinanceService extends BaseAgentService
         $end_time = $this->strInput('end_time');
         if($start_time && $end_time)
             $where[] = ['start_time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+        $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
+        $this->where = $where;
+    }
+
+    protected function setBonusListWhere(){
+        $where = [];
+        $where[] = ['type', '=', 8];
+        $phone = $this->strInput('phone');
+        if($phone)
+            $where[] = ['phone', '=', $phone];
+        $start_time = $this->strInput('start_time');
+        $end_time = $this->strInput('end_time');
+        if($start_time && $end_time)
+            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+        $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
+        $this->where = $where;
+    }
+
+    protected function setUpAndDownListWhere(){
+        $where = [];
+        $type = $this->intInput('type',0);
+        switch ($type){
+            case 0:
+                $where[] = [DB::Raw("type in (9, 10)"), 1];
+                break;
+            case 1:
+                $where[] = ['type', '=', 9];
+                break;
+            case 2:
+                $where[] = ['type', '=', 10];
+                break;
+        }
+        $phone = $this->strInput('phone');
+        if($phone)
+            $where[] = ['phone', '=', $phone];
+        $start_time = $this->strInput('start_time');
+        $end_time = $this->strInput('end_time');
+        if($start_time && $end_time)
+            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
         $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }

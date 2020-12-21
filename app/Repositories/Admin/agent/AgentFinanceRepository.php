@@ -136,6 +136,58 @@ class AgentFinanceRepository
             ->whereIntegerInRaw('user_id',$user_ids)
             ->where($where)
             ->select(['id', 'phone as phone_hide', 'nickname', 'user_id', 'amount', 'daily_rebate', 'start_time', 'end_time', 'yet_receive_count', 'yet_receive_amount'])
+            ->orderByDesc('start_time')
+            ->paginate($size);
+    }
+
+    /**
+     * 彩金
+     * @param $where
+     * @param $user_ids
+     * @param $size
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function bonusList($where, $user_ids, $size){
+        return $this->Cx_User_Balance_Logs
+            ->with(
+                [
+                    'user' => function($query){
+                        $query->select(['id', 'nickname', 'phone as phone_hide']);
+                    },
+                    'admin' => function($query){
+                        $query->select(['id', 'username', 'nickname']);
+                    }
+                ]
+            )
+            ->whereIntegerInRaw('user_id',$user_ids)
+            ->where($where)
+            ->select(['id', 'user_id', 'money', 'msg', 'admin_id', 'dq_balance', 'wc_balance'])
+            ->orderByDesc('time')
+            ->paginate($size);
+    }
+
+    /**
+     * 上线分列表
+     * @param $where
+     * @param $user_ids
+     * @param $size
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function upAndDownList($where, $user_ids, $size){
+        return $this->Cx_User_Balance_Logs
+            ->with(
+                [
+                    'user' => function($query){
+                        $query->select(['id', 'nickname', 'phone as phone_hide']);
+                    },
+                    'admin' => function($query){
+                        $query->select(['id', 'username', 'nickname']);
+                    }
+                ]
+            )
+            ->whereIntegerInRaw('user_id',$user_ids)
+            ->where($where)
+            ->select(['id', 'user_id', 'money', 'msg', 'admin_id', 'type', 'type as type_map', 'dq_balance', 'wc_balance'])
             ->paginate($size);
     }
 

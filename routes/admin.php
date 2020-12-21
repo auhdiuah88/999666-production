@@ -236,6 +236,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post("/commission","agent\AgentFinanceController@commissionList");
                 Route::post("/signIn","agent\AgentFinanceController@signInList");
                 Route::post("/envelope","agent\AgentFinanceController@envelopeList");
+                Route::post("/bonus","agent\AgentFinanceController@bonusList");
+                Route::post("/upAndDown","agent\AgentFinanceController@upAndDownList");
             });
         });
     });
