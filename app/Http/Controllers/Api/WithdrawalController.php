@@ -130,6 +130,28 @@ class WithdrawalController extends Controller
     }
 
     /**
+     * 佣金提现到余额
+     * @param Request $request
+     * @return WithdrawalController
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function agentApplyBalance(Request $request)
+    {
+        $data = $request->post();
+        $rules = [
+            "money" => "required|integer|min:500|max:25000"
+        ];
+        $validator = Validator::make($data, $rules);
+        if ($validator->fails()) {
+            return $this->AppReturn(414, $validator->errors()->first());
+        }
+        if (!$result = $this->WithdrawalService->applyToBalance($request)) {
+            return $this->AppReturn(400, $this->WithdrawalService->_msg, new \StdClass());
+        }
+        return $this->AppReturn(200, 'ok',$result);
+    }
+
+    /**
      * 用户申请提现接口
      */
     public function withdrawalByBank(Request $request) {

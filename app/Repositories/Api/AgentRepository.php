@@ -16,6 +16,11 @@ class AgentRepository extends BaseRepository
         $this->Cx_User = $cx_User;
     }
 
+    public function findCommission($id)
+    {
+        return $this->Cx_User->where("id", $id)->select(["commission"])->first();
+    }
+
     public function findOne($id)
     {
         return $this->Cx_User->where("id", $id)->select(["one_commission"])->first();

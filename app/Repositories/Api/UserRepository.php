@@ -190,6 +190,7 @@ class UserRepository
             "order_no" => $order_no,
             "phone" => $user->phone,
             "nickname" => $user->nickname,
+            "money" => $money,
             "message" => $user->nickname . "提现佣金" . $money . "成功！"
         ];
         return $this->cx_User_Commission_Logs->insertGetId($data);

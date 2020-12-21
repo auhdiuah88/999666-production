@@ -85,6 +85,7 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/agent/record", "WithdrawalController@getAgentWithdrawalRecord");
         Route::post("/agent/reward", "WithdrawalController@getAgentRewardRecord");
         Route::get("/type", "WithdrawalController@withdrawType");
+        Route::post("apply", "WithdrawalController@agentApplyBalance");//佣金直接提现到余额
     });
 
     // 活动
