@@ -3,6 +3,7 @@
 
 namespace App\Services\Api;
 
+use App\Dictionary\WithdrawalAmount;
 use App\Repositories\Api\AgentRepository;
 use App\Services\BaseService;
 
@@ -18,6 +19,8 @@ class AgentService extends BaseService
     public function getAgentInformation($token, $status)
     {
         $id = $this->getUserId($token);
+        $this->_data['min'] = WithdrawalAmount::MIN;
+        $this->_data['max'] = WithdrawalAmount::MAX;
         $this->_data['total_commission'] = $this->AgentRepository->findCommission($id)->commission;//佣金总数
         if ($status == 1) {
             $this->_data["commission"] = $this->AgentRepository->findOne($id)->one_commission;
