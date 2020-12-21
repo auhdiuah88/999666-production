@@ -4,18 +4,20 @@ namespace App\Services\Admin;
 
 
 use App\Repositories\Admin\AdminRepository;
+use App\Repositories\Admin\SettingRepository;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Crypt;
 
 class AdminService
 {
-    protected $AdminRepository;
+    protected $AdminRepository, $SettingRepository;
     protected $frequency = "frequency";
     protected $time = "time";
 
-    public function __construct(AdminRepository $AdminRepository)
+    public function __construct(AdminRepository $AdminRepository, SettingRepository $settingRepository)
     {
         $this->AdminRepository = $AdminRepository;
+        $this->SettingRepository = $settingRepository;
     }
 
     public function Login($request)
@@ -173,7 +175,11 @@ class AdminService
     {
         $token = urldecode($token);
         $id = explode("+", Crypt::decrypt($token))[0];
-        return $this->AdminRepository->getMenu($id);
+        $menu = $this->AdminRepository->getMenu($id);
+        $admin = $this->AdminRepository->Find_By_Id_Admin($id);
+        $staff = $this->SettingRepository->getStaff();
+        $role_type = $staff->setting_value['role_id'] == $admin->role_id ? 2 : 1;
+        return compact('menu','role_type');
     }
 
     public function updateCustomerStatus($token, $status)

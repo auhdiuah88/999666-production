@@ -229,6 +229,12 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post("/orderInfo","agent\AgentUserController@orderInfo");
             });
             Route::get("/backCards","agent\AgentBankCardController@backCardList");
+            //财务信息
+            Route::group(['prefix' => 'finance'], function(){
+                Route::post("/recharge","agent\AgentFinanceController@rechargeList");
+                Route::post("/withdraw","agent\AgentFinanceController@withdrawList");
+                Route::post("/commission","agent\AgentFinanceController@commissionList");
+            });
         });
     });
 });

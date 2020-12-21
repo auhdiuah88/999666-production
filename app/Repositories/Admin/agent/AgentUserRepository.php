@@ -70,4 +70,8 @@ class AgentUserRepository
         return $user_ids = $this->Cx_User->where($where)->pluck('id')->toArray();
     }
 
+    public function getLikePhoneUserId($phone){
+        return $this->Cx_User->where('phone', 'like', "%{$phone}%")->pluck('id')->toArray();
+    }
+
 }

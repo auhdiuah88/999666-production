@@ -14,11 +14,18 @@ class BaseAgentService extends BaseService
 
     protected $admin;
 
+    /**
+     * @var AgentUserRepository
+     */
     protected $AgentUserRepository;
 
     protected function getAdmin(){
         $this->admin_id = request()->get('admin_id');
         $this->admin = $this->AgentUserRepository->getAdminUserId($this->admin_id);
+    }
+
+    public function getRelationWhere($user_id){
+        return [['invite_relation', 'like', "%-{$user_id}-%"]];
     }
 
 }
