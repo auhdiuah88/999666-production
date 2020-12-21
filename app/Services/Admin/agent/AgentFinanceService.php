@@ -33,7 +33,9 @@ class AgentFinanceService extends BaseAgentService
         $this->getAdmin();
         $size = $this->sizeInput();
         $this->setWithdrawListWhere();
+//        DB::connection()->enableQueryLog();
         $data = $this->AgentFinanceRepository->withdrawList($this->where, $this->user_ids, $size);
+//        print_r(DB::getQueryLog());die;
         $this->_data = $data;
         return true;
     }

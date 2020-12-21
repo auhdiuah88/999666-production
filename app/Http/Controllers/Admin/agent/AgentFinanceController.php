@@ -55,7 +55,7 @@ class AgentFinanceController extends Controller
                 'status' => [
                     'required',
                     'integer',
-                    Rule::in([1,2])
+                    Rule::in([0,1,2])
                 ]
             ]);
             if($validator->fails())
