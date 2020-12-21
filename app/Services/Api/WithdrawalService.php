@@ -89,11 +89,11 @@ class WithdrawalService extends PayService
         $data = array_merge($data, $onlydata);
         $this->WithdrawalRepository->addRecord($data);
 
-      $user = $this->UserRepository->findByIdUser($data['user_id']);
-      return [
-          'balance' => $user->balance,
-          'commission' => $user->commission,
-      ];
+        $user = $this->UserRepository->findByIdUser($data['user_id']);
+        return [
+            'balance' => $user->balance,
+            'commission' => $user->commission,
+        ];
     }
 
     /**
@@ -107,13 +107,50 @@ class WithdrawalService extends PayService
         }
         $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
         $data = array_merge($data, $onlydata);
-          $this->WithdrawalRepository->addRecord($data);
+        $this->WithdrawalRepository->addRecord($data);
 
         $user = $this->UserRepository->findByIdUser($data['user_id']);
         return [
             'balance' => $user->balance,
             'commission' => $user->commission,
         ];
+    }
+
+    /**
+     * 佣金直接体现到余额
+     * @param Request $request
+     */
+    public function applyToBalance(Request $request)
+    {
+        $user_id = $this->getUserId($request->header("token"));
+        $user = $this->UserRepository->findByIdUser($user_id);
+        $money = (float)$request->money;
+        if ((float)$user->commission < $money) {
+            $this->_msg = 'The withdrawal amount is greater than the balance';
+            return false;
+        }
+        DB::beginTransaction();
+        try {
+            $dq_balance = $user->balance;
+            $wc_balance = bcadd($user->balance, $money, 2);
+
+            $dq_commission = $user->commission;
+            $wc_commission = bcsub($user->commission, $money, 2);
+
+            $user->commission = $wc_commission;
+            $user->balance = $wc_balance;
+            $user->save();
+            ##增加用户余额变化记录
+            $this->UserRepository->addBalanceLog($user_id, $money, 12, '佣金提现', $dq_balance, $wc_balance);
+            //增加用户佣金变化记录
+            $this->UserRepository->addCommissionLogs($user, $money, $dq_commission, $wc_commission, PayStrategy::onlyosn());
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->_msg = 'An unknown error occurred';
+            return false;
+        }
     }
 
     /**
@@ -134,10 +171,10 @@ class WithdrawalService extends PayService
             return false;
         }
 
-        $withdraw_type = $request->with_type ? : "";
-        if($withdraw_type == 'MTBpay'){
+        $withdraw_type = $request->with_type ?: "";
+        if ($withdraw_type == 'MTBpay') {
             ##验证是否支持
-            if(!$user_bank->mtbpy_code){
+            if (!$user_bank->mtbpy_code) {
                 $this->_msg = 'The bank card does not support this withdrawal method';
                 return false;
             }
@@ -163,12 +200,12 @@ class WithdrawalService extends PayService
                 return false;
             }
 
-            $cur_balance = bcsub($user->balance,$money,2);
+            $cur_balance = bcsub($user->balance, $money, 2);
             ##增加用户余额变化记录
-            $this->UserRepository->addBalanceLog($user_id, $money,3,'用户申请提现', $user->balance, $cur_balance);
+            $this->UserRepository->addBalanceLog($user_id, $money, 3, '用户申请提现', $user->balance, $cur_balance);
 
             $user->balance = $cur_balance;
-            $user->freeze_money = bcadd($user->freeze_money,$money,2);
+            $user->freeze_money = bcadd($user->freeze_money, $money, 2);
             $user->save();
 
         } elseif ($type == 1) {
@@ -179,8 +216,8 @@ class WithdrawalService extends PayService
             }
 
             //  0:代理提现  佣金提现
-            $user->commission= bcsub($user->commission,$money,2);
-            $user->freeze_agent_money= bcadd($user->freeze_agent_money,$money,2);
+            $user->commission = bcsub($user->commission, $money, 2);
+            $user->freeze_agent_money = bcadd($user->freeze_agent_money, $money, 2);
             $user->save();
         }
         $account_holder = $user_bank->account_holder;
@@ -189,7 +226,7 @@ class WithdrawalService extends PayService
         $ifsc_code = $user_bank->ifsc_code;
         $phone = $user_bank->phone;
         $email = $user_bank->mail;
-        $mtb_code = $user_bank->mtbpy_code ? : "";
+        $mtb_code = $user_bank->mtbpy_code ?: "";
         $order_no = PayStrategy::onlyosn();
         $data = [
             'user_id' => $user_id,
@@ -231,9 +268,9 @@ class WithdrawalService extends PayService
      */
     public function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback',$request->all());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('withdrawalCallback', $request->all());
 
-        $payProvide = $request->get('type','');
+        $payProvide = $request->get('type', '');
         if (!$payProvide) {
             $this->_msg = 'can not find pay Provide';
             return false;
@@ -248,7 +285,7 @@ class WithdrawalService extends PayService
             $this->_msg = $strategyClass->_msg;
             return false;
         }
-        $pltf_order_no = isset($where['plat_order_id'])?$where['plat_order_id']:'';
+        $pltf_order_no = isset($where['plat_order_id']) ? $where['plat_order_id'] : '';
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
         if (!$withdrawlLog) {
             $this->_msg = '找不到此提现订单';
@@ -269,26 +306,26 @@ class WithdrawalService extends PayService
             // 普通用户
             if ($withdrawlLog->type == 0) {
                 // 记录充值成功余额变动
-                $dq_balance = bcadd($user->balance,$user->freeze_money,2);     // 当前余额 (总余额+冻结金额)
+                $dq_balance = bcadd($user->balance, $user->freeze_money, 2);     // 当前余额 (总余额+冻结金额)
                 $wc_balance = bcsub($dq_balance, $money, 2);                   // 变动后余额
-                $this->UserRepository->addBalanceLog($user->id, $money, 3, "成功提现{$money};减少冻结金额{$money}",$dq_balance,$wc_balance);
+                $this->UserRepository->addBalanceLog($user->id, $money, 3, "成功提现{$money};减少冻结金额{$money}", $dq_balance, $wc_balance);
 
                 // 更新用户金额
-                $user->freeze_money = bcsub($user->freeze_money, $money,2); // 减掉冻结资金
-                $user->cl_withdrawal = bcadd($user->cl_withdrawal , $money,2); // 累计提现
+                $user->freeze_money = bcsub($user->freeze_money, $money, 2); // 减掉冻结资金
+                $user->cl_withdrawal = bcadd($user->cl_withdrawal, $money, 2); // 累计提现
                 $user->save();
 
-             // 代理用户
+                // 代理用户
             } elseif ($withdrawlLog->type == 1) {
                 // 记录充值成功余额变动
-                $dq_commission = bcadd($user->commission,$user->freeze_agent_money,2);     // 当前余额 (总佣金余额+冻结佣金金额)
+                $dq_commission = bcadd($user->commission, $user->freeze_agent_money, 2);     // 当前余额 (总佣金余额+冻结佣金金额)
                 $wc_commission = bcsub($dq_commission, $money, 2);                            // 变动后余额
                 $order_no = $withdrawlLog->order_no;
                 $this->UserRepository->addCommissionLogs($user, $money, $dq_commission, $wc_commission, $order_no);
 
                 // 更新用户金额
-                $user->freeze_agent_money = bcsub($user->freeze_agent_money, $money,2); // 减掉代理冻结代理资金
-                $user->cl_commission = bcadd($user->cl_commission , $money,2);
+                $user->freeze_agent_money = bcsub($user->freeze_agent_money, $money, 2); // 减掉代理冻结代理资金
+                $user->cl_commission = bcadd($user->cl_commission, $money, 2);
                 $user->save();
             }
 
