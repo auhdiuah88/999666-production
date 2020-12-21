@@ -145,7 +145,9 @@ class WithdrawalService extends PayService
             //增加用户佣金变化记录
             $this->UserRepository->addCommissionLogs($user, $money, $dq_commission, $wc_commission, PayStrategy::onlyosn());
             DB::commit();
-            return true;
+            return [
+                'total_commission' => $wc_commission,
+            ];
         } catch (\Exception $e) {
             DB::rollBack();
             $this->_msg = 'An unknown error occurred';
