@@ -176,6 +176,7 @@ class AdminService
         $token = urldecode($token);
         $id = explode("+", Crypt::decrypt($token))[0];
         $menu = $this->AdminRepository->getMenu($id);
+        return $menu;
         $admin = $this->AdminRepository->Find_By_Id_Admin($id);
         $staff = $this->SettingRepository->getStaff();
         $role_type = $staff->setting_value['role_id'] == $admin->role_id ? 2 : 1;
