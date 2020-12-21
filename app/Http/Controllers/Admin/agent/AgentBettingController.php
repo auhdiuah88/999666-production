@@ -17,9 +17,9 @@ class AgentBettingController extends Controller
         $this->AgentBettingService = $agentBettingService;
     }
 
-    public function findAll(Request $request)
+    public function orders(Request $request)
     {
-        $this->AgentBettingService->findAll($request->get("page"), $request->get("limit"));
+        $this->AgentBettingService->orders($request->get("page"), $request->get("limit"));
         return $this->AppReturn(
             $this->BettingService->_code,
             $this->BettingService->_msg,

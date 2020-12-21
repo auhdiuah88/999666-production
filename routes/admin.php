@@ -226,7 +226,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post("/firstRecharge","agent\AgentUserController@firstRechargeList");
             });
             Route::group(["prefix" => "order"], function(){
-                Route::get("/findAll","agent\AgentBettingController@findAll");
+                Route::get("/index","agent\AgentBettingController@orders");
             });
         });
     });

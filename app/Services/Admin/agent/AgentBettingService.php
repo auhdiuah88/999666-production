@@ -16,10 +16,11 @@ class AgentBettingService extends BaseService
         $this->agentBettingRepository = $agentBettingRepository;
     }
 
-    public function findAll($page, $limit)
+    public function orders($page, $limit)
     {
-        $list = $this->agentBettingRepository->findAll(($page - 1) * $limit, $limit);
-        $total = $this->agentBettingRepository->count();
+        $admin_id = request()->get('admin_id');
+        $list = $this->agentBettingRepository->orders($admin_id);
+        $total = $this->agentBettingRepository->ordersCount();
         $this->_data = ["total" => $total, "list" => $list];
     }
 }
