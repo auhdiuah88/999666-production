@@ -21,9 +21,9 @@ class AgentBettingController extends Controller
     {
         $this->AgentBettingService->orders($request->get("page"), $request->get("limit"));
         return $this->AppReturn(
-            $this->BettingService->_code,
-            $this->BettingService->_msg,
-            $this->BettingService->_data
+            $this->AgentBettingService->_code,
+            $this->AgentBettingService->_msg,
+            $this->AgentBettingService->_data
         );
     }
 }

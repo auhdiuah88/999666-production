@@ -19,8 +19,8 @@ class AgentBettingService extends BaseService
     public function orders($page, $limit)
     {
         $admin_id = request()->get('admin_id');
-        $list = $this->agentBettingRepository->orders($admin_id);
-        $total = $this->agentBettingRepository->ordersCount();
+        $list = $this->agentBettingRepository->orders($admin_id, max($page - 1, 0) * $limit, $limit);
+        $total = $this->agentBettingRepository->ordersCount($admin_id);
         $this->_data = ["total" => $total, "list" => $list];
     }
 }

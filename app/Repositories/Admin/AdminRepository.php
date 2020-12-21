@@ -110,7 +110,6 @@ class AdminRepository
 
     public function Redis_Get_Admin_User($userId)
     {
-        return true;
         return json_decode(Redis::get($this->user . $userId), true);
     }
 
