@@ -82,12 +82,48 @@ class AgentFinanceController extends Controller
                 'type' => [
                     'required',
                     'integer',
-                    Rule::in([0,1,2])
+                    Rule::in([1,2])
                 ]
             ]);
             if($validator->fails())
                 return $this->AppReturn(401,$validator->errors()->first());
             $this->AgentFinanceService->commissionList();
+            return $this->AppReturn(
+                $this->AgentFinanceService->_code,
+                $this->AgentFinanceService->_msg,
+                $this->AgentFinanceService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
+    }
+
+    /**
+     * 裂变红包任务
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function envelopeList(){
+        try{
+            $this->AgentFinanceService->envelopeList();
+            return $this->AppReturn(
+                $this->AgentFinanceService->_code,
+                $this->AgentFinanceService->_msg,
+                $this->AgentFinanceService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
+    }
+
+    /**
+     * 签到红包
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function signInList(){
+        try{
+            $this->AgentFinanceService->signInList();
             return $this->AppReturn(
                 $this->AgentFinanceService->_code,
                 $this->AgentFinanceService->_msg,
