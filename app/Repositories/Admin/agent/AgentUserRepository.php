@@ -59,7 +59,7 @@ class AgentUserRepository
             ->with(
                 [
                     'recharge' => function($query){
-                        $query->where([['status', '=', 2], ['is_first_recharge', '=', 1]])->orderByAsc('arrive_time')->select(['user_id', 'arrive_time']);
+                        $query->where([['status', '=', 2], ['is_first_recharge', '=', 1]])->orderBy('arrive_time', 'asc')->select(['user_id', 'arrive_time']);
                     }
                 ]
             )
