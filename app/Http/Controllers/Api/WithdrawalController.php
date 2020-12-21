@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Api;
 
 
+use App\Dictionary\WithdrawalAmount;
 use App\Http\Controllers\Controller;
 use App\Services\Api\WithdrawalService;
 use App\Services\Pay\PayContext;
@@ -139,7 +140,7 @@ class WithdrawalController extends Controller
     {
         $data = $request->post();
         $rules = [
-            "money" => "required|integer|min:500|max:25000"
+            "money" => "required|integer|min:".WithdrawalAmount::MIN."|max:" . WithdrawalAmount::MAX
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
