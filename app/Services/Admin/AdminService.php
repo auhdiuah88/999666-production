@@ -27,7 +27,7 @@ class AdminService
             if ($isLimitHost && !$this->AdminRepository->getIp($request->ip())) {
                 return response()->json([
                     "code" => 402,
-                    "msg" => "您的ip不再本站IP白名单中，请联系管理员添加IP"
+                    "msg" => "您的ip不在本站IP白名单中，请联系管理员添加IP"
                 ]);
             }
         }
