@@ -25,7 +25,7 @@ class BaseAgentService extends BaseService
     }
 
     public function getRelationWhere($user_id){
-        return [['invite_relation', 'like', "%-{$user_id}-%"]];
+        return ['invite_relation' => ['like', "%-{$user_id}-%"]];
     }
 
 }

@@ -37,12 +37,12 @@ class AgentFinanceRepository
     /**
      * 充值列表
      * @param $where
-     * @param $user_ids
      * @param $size
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function rechargeList($where, $user_ids, $size){
-        return $this->Cx_User_Recharge_Logs
+    public function rechargeList($where, $size){
+        $model = makeModel($where, $this->Cx_User_Recharge_Logs);
+        return $model
             ->with(
                 [
                     'user' => function($query){
@@ -51,8 +51,6 @@ class AgentFinanceRepository
                 ]
             )
             ->select(["*", "phone as phone_hide"])
-            ->whereIntegerInRaw('user_id',$user_ids)
-            ->where($where)
             ->orderByDesc('time')
             ->paginate($size);
     }
@@ -65,9 +63,8 @@ class AgentFinanceRepository
      * @return mixed
      */
     public function withdrawList($where, $user_ids, $size){
-        return $this->Cx_Withdrawal_Record
-            ->whereIntegerInRaw('user_id',$user_ids)
-            ->where($where)
+        $model = makeModel($where, $this->Cx_Withdrawal_Record);
+        return $model
             ->with(
                 [
                     'user' => function($query){
@@ -82,14 +79,12 @@ class AgentFinanceRepository
     /**
      * 分佣列表
      * @param $where
-     * @param $user_ids
      * @param $size
      * @return mixed
      */
-    public function commissionList($where, $user_ids, $size){
-        return $this->Cx_Charge_Logs
-            ->whereIntegerInRaw('charge_user_id',$user_ids)
-            ->where($where)
+    public function commissionList($where, $size){
+        $model = makeModel($where, $this->Cx_Charge_Logs);
+        return $model
             ->with(
                 [
                     'charge_user' => function($query){
@@ -104,14 +99,12 @@ class AgentFinanceRepository
     /**
      * 裂变红包任务
      * @param $where
-     * @param $user_ids
      * @param $size
      * @return mixed
      */
-    public function envelopeList($where, $user_ids, $size){
-        return $this->Cx_User_Balance_Logs
-            ->whereIntegerInRaw('user_id',$user_ids)
-            ->where($where)
+    public function envelopeList($where, $size){
+        $model = makeModel($where, $this->Cx_User_Balance_Logs);
+        return $model
             ->with(
                 [
                     'user' => function($query){
@@ -127,14 +120,12 @@ class AgentFinanceRepository
     /**
      * 签到红包
      * @param $where
-     * @param $user_ids
      * @param $size
      * @return mixed
      */
-    public function signInList($where, $user_ids, $size){
-        return $this->Cx_Sign_Order
-            ->whereIntegerInRaw('user_id',$user_ids)
-            ->where($where)
+    public function signInList($where, $size){
+        $model = makeModel($where, $this->Cx_Sign_Order);
+        return $model
             ->select(['id', 'phone as phone_hide', 'nickname', 'user_id', 'amount', 'daily_rebate', 'start_time', 'end_time', 'yet_receive_count', 'yet_receive_amount'])
             ->orderByDesc('start_time')
             ->paginate($size);
@@ -143,12 +134,12 @@ class AgentFinanceRepository
     /**
      * 彩金
      * @param $where
-     * @param $user_ids
      * @param $size
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function bonusList($where, $user_ids, $size){
-        return $this->Cx_User_Balance_Logs
+    public function bonusList($where, $size){
+        $model = makeModel($where, $this->Cx_User_Balance_Logs);
+        return $model
             ->with(
                 [
                     'user' => function($query){
@@ -159,8 +150,6 @@ class AgentFinanceRepository
                     }
                 ]
             )
-            ->whereIntegerInRaw('user_id',$user_ids)
-            ->where($where)
             ->select(['id', 'user_id', 'money', 'msg', 'admin_id', 'dq_balance', 'wc_balance'])
             ->orderByDesc('time')
             ->paginate($size);
@@ -173,8 +162,9 @@ class AgentFinanceRepository
      * @param $size
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function upAndDownList($where, $user_ids, $size){
-        return $this->Cx_User_Balance_Logs
+    public function upAndDownList($where, $size){
+        $model = makeModel($where, $this->Cx_User_Balance_Logs);
+        return $model
             ->with(
                 [
                     'user' => function($query){
@@ -185,9 +175,8 @@ class AgentFinanceRepository
                     }
                 ]
             )
-            ->whereIntegerInRaw('user_id',$user_ids)
-            ->where($where)
             ->select(['id', 'user_id', 'money', 'msg', 'admin_id', 'type', 'type as type_map', 'dq_balance', 'wc_balance'])
+            ->orderByDesc('time')
             ->paginate($size);
     }
 

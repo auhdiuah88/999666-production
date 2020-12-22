@@ -25,7 +25,8 @@ class AgentUserRepository
     }
 
     public function searchUser($where, $size){
-        $list = $this->Cx_User
+        $model = makeModel($where, $this->Cx_User);
+        $list = $model
             ->where($where)
             ->orderBy('reg_time', 'desc')
             ->select(['*', 'phone as phone_hide', 'one_recommend_phone as one_recommend_phone_hide', 'two_recommend_phone as two_recommend_phone_hide'])
@@ -34,8 +35,9 @@ class AgentUserRepository
     }
 
     public function firstRechargeList($where, $size){
+        $model = makeModel($where, $this->Cx_User_Recharge_logs);
 //        DB::connection()->enableQueryLog();
-        $list = $this->Cx_User_Recharge_logs->query()->from('user_recharge_logs as r')
+        $list = $model->query()->from('user_recharge_logs as r')
             ->leftJoin('users as u','r.user_id', '=', 'u.id')
             ->where($where)
             ->with(
@@ -53,7 +55,8 @@ class AgentUserRepository
     }
 
     public function orderInfoList($where, $size){
-        return $this->Cx_User
+        $model = makeModel($where, $this->Cx_User);
+        return $model
             ->where($where)
             ->select(['id', 'nickname', 'phone as phone_hide', 'total_recharge', 'cl_withdrawal', 'balance', 'commission', 'status', 'cl_betting', 'cl_betting_total'])
             ->with(
@@ -67,7 +70,7 @@ class AgentUserRepository
     }
 
     public function getUserIds($where){
-        return $user_ids = $this->Cx_User->where($where)->pluck('id')->toArray();
+        return $user_ids = makeModel($where, $this->Cx_User)->pluck('id')->toArray();
     }
 
     public function getLikePhoneUserId($phone){

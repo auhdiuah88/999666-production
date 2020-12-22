@@ -30,10 +30,10 @@ class AgentBankCardService extends BaseAgentService
     }
 
     protected function setBankCardListWhere(){
-        $where[] = ['invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
+        $where['invite_relation'] = ['like', '%-'. $this->admin->user_id .'-%'];
         $phone = $this->strInput("phone");
         if($phone)
-            $where[] = ["phone", "=", $phone];
+            $where["phone"] = ["=", $phone];
         $user_ids = $this->AgentUserRepository->getUserIds($where);
         $this->where = $user_ids;
     }

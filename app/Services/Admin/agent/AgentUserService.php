@@ -50,36 +50,36 @@ class AgentUserService extends BaseAgentService
         $where = [];
         $phone = $this->searchInput("mobile");
         if($phone)
-            $where[] = ['phone', '=', $phone];
+            $where['phone'] = ['=', $phone];
         $one_recommend_phone =$this->searchInput("one_recommend_phone");
         if($one_recommend_phone)
-            $where[] = ['one_recommend_phone', '=', $one_recommend_phone];
+            $where['one_recommend_phone'] = ['=', $one_recommend_phone];
         $two_recommend_phone =$this->searchInput("two_recommend_phone");
         if($two_recommend_phone)
-            $where[] = ['two_recommend_phone', '=', $one_recommend_phone];
+            $where['two_recommend_phone'] = ['=', $one_recommend_phone];
         $status = $this->intInput('status',-1);
         if($status != -1)
-            $where[] = ['status', '=', $status];
+            $where['status'] = ['=', $status];
         $register_time_start = $this->intInput('start_time');
         $register_time_end = $this->intInput('end_time');
         if($register_time_start && $register_time_end)
-            $where[] = ['reg_time', 'BETWEEN', [$register_time_start, $register_time_end]];
-        $where[] = $this->relationLike();
+            $where['reg_time'] = ['BETWEEN', [$register_time_start, $register_time_end]];
+        $where['invite_relation'] = $this->relationLike();
         $this->where = $where;
     }
 
     public function setFirstRechargeListWhere(){
         $where = [];
-        $where[] = ['r.is_first_recharge', '=', 1];
-        $where[] = ['r.status', '=', 2];
+        $where['r.is_first_recharge'] = ['=', 1];
+        $where['r.status'] = ['=', 2];
         $phone = $this->searchInput("mobile");
         if($phone)
-            $where[] = ['u.phone', '=', $phone];
+            $where['u.phone'] = ['=', $phone];
         $register_time_start = $this->intInput('start_time');
         $register_time_end = $this->intInput('end_time');
         if($register_time_start && $register_time_end)
-            $where[] = ['r.time', 'BETWEEN', [$register_time_start, $register_time_end]];
-        $where[] = ['u.invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
+            $where['r.time'] = ['BETWEEN', [$register_time_start, $register_time_end]];
+        $where['u.invite_relation'] = ['like', '%-'. $this->admin->user_id .'-%'];
         $this->where = $where;
     }
 
@@ -87,11 +87,11 @@ class AgentUserService extends BaseAgentService
         $where = [];
         $phone = $this->searchInput("mobile");
         if($phone)
-            $where[] = ['phone', '=', $phone];
+            $where['phone'] = ['=', $phone];
         $min_recharge = $this->intInput("min_recharge");
         if($min_recharge > 0)
-            $where[] = ['total_recharge', '>', $min_recharge];
-        $where[] = ['invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
+            $where['total_recharge'] = ['>', $min_recharge];
+        $where['invite_relation'] = ['like', '%-'. $this->admin->user_id .'-%'];
         $this->where = $where;
     }
 

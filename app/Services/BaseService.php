@@ -82,7 +82,7 @@ abstract class BaseService
     }
 
     public function relationLike(){
-        return ['invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
+        return ['like', '%-'. $this->admin->user_id .'-%'];
     }
 
     public function sizeInput($default=10){
