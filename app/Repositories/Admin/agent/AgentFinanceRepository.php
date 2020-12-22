@@ -150,7 +150,7 @@ class AgentFinanceRepository
                     }
                 ]
             )
-            ->select(['id', 'user_id', 'money', 'msg', 'admin_id', 'dq_balance', 'wc_balance'])
+            ->select(['id', 'user_id', 'money', 'msg', 'admin_id', 'dq_balance', 'wc_balance', 'time'])
             ->orderByDesc('time')
             ->paginate($size);
     }
@@ -175,7 +175,7 @@ class AgentFinanceRepository
                     }
                 ]
             )
-            ->select(['id', 'user_id', 'money', 'msg', 'admin_id', 'type', 'type as type_map', 'dq_balance', 'wc_balance'])
+            ->select(['id', 'user_id', 'money', 'msg', 'admin_id', 'type', 'type as type_map', 'dq_balance', 'wc_balance', 'time'])
             ->orderByDesc('time')
             ->paginate($size);
     }
