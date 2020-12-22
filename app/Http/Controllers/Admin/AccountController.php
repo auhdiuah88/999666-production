@@ -60,11 +60,10 @@ class AccountController extends Controller
     public function editAccount(Request $request)
     {
         $id = $request->post('id',0);
-        $phone = DB::table('users')->where('id',$id)->value('phone');
         $validator = Validator::make($request->input(), [
             'id' => 'required|gt:0|integer',
             'nickname' => 'required|between:2,20|alpha_dash',
-            'phone' => "required|unique:users,phone,{$phone},id|between:8,13|integer",
+            'phone' => "required|unique:users,phone,{$id},id|regex:/^\d{8,13}$/",
             'password' => 'required|between:6,20|alpha_num',
         ]);
         if($validator->fails()){

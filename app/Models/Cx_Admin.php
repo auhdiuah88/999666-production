@@ -14,6 +14,8 @@ class Cx_Admin extends Model
 
     public $timestamps = false;
 
+    protected $guarded = [];
+
     public function Role()
     {
         return $this->hasOne(Cx_Role::class, "id");
