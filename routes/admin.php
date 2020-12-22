@@ -239,6 +239,11 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post("/bonus","agent\AgentFinanceController@bonusList");
                 Route::post("/upAndDown","agent\AgentFinanceController@upAndDownList");
             });
+            //统计报表
+            Route::group(['prefix' => 'statistical'], function(){
+                Route::post('dailyWinRank', "agent\AgentStatisticalReportController@dailyWinRank");
+                Route::post('dailyLoseRank', "agent\AgentStatisticalReportController@dailyLoseRank");
+            });
         });
     });
 });
