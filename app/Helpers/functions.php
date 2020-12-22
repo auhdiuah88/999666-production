@@ -31,19 +31,19 @@ function makeModel($where, $model){
     foreach($where as $key => $item){
         switch ($item[0]){
             case '=':
-                $model->where($key, $item[1]);
+                $model = $model->where($key, $item[1]);
                 break;
             case 'BETWEEN':
-                $model->whereBetween($key, $item[1]);
+                $model = $model->whereBetween($key, $item[1]);
                 break;
             case 'in':
-                $model->whereIn($key, $item[1]);
+                $model = $model->whereIn($key, $item[1]);
                 break;
             case 'IntegerInRaw':
-                $model->whereIntegerInRaw($key,$item[1]);
+                $model = $model->whereIntegerInRaw($key,$item[1]);
                 break;
             case 'like':
-                $model->where($key, 'like', $item[1]);
+                $model = $model->where($key, 'like', $item[1]);
                 break;
         }
     }
