@@ -79,7 +79,7 @@ class AgentBettingRepository extends BaseRepository
         if (isset($search['number']) && $search['number']) {
             $model->whereIn('game_p_id', $this->findNumberId($search["number"]));
         }
-        if (isset($search['type']) && $search['type']) {
+        if (isset($search['type'])) {
             $model->where('type', $search['type']);
         }
         //下注时间
