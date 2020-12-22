@@ -7,6 +7,7 @@ namespace App\Services\Admin\agent;
 use App\Repositories\Admin\agent\AgentFinanceRepository;
 use App\Repositories\Admin\agent\AgentUserRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AgentFinanceService extends BaseAgentService
 {
@@ -44,7 +45,10 @@ class AgentFinanceService extends BaseAgentService
         $this->getAdmin();
         $size = $this->sizeInput();
         $this->setCommissionListWhere();
+        DB::connection()->enableQueryLog();
         $data = $this->AgentFinanceRepository->commissionList($this->where, $this->user_ids, $size);
+        $sql = DB::getQueryLog();
+        Log::channel('kidebug')->debug('sql',[$sql]);
         $this->_data = $data;
         return true;
     }
