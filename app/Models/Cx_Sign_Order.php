@@ -14,4 +14,8 @@ class Cx_Sign_Order extends Model
 
     public $timestamps = false;
 
+    public function getPhoneHideAttribute($value){
+        return hide($value,3,4);
+    }
+
 }

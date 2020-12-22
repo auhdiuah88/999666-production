@@ -22,3 +22,7 @@ function day_start(){
 function day_end(){
     return strtotime(date('Y-m-d') . ' 23:59:59');
 }
+
+function makeInviteRelation($relation, $user_id){
+    return '-' . trim($user_id . '-' . trim($relation,'-'),'-') . '-';
+}

@@ -234,6 +234,15 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post("/recharge","agent\AgentFinanceController@rechargeList");
                 Route::post("/withdraw","agent\AgentFinanceController@withdrawList");
                 Route::post("/commission","agent\AgentFinanceController@commissionList");
+                Route::post("/signIn","agent\AgentFinanceController@signInList");
+                Route::post("/envelope","agent\AgentFinanceController@envelopeList");
+                Route::post("/bonus","agent\AgentFinanceController@bonusList");
+                Route::post("/upAndDown","agent\AgentFinanceController@upAndDownList");
+            });
+            //统计报表
+            Route::group(['prefix' => 'statistical'], function(){
+                Route::post('dailyWinRank', "agent\AgentStatisticalReportController@dailyWinRank");
+                Route::post('dailyLoseRank', "agent\AgentStatisticalReportController@dailyLoseRank");
             });
         });
     });

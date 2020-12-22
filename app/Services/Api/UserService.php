@@ -181,6 +181,10 @@ class UserService
                 return false;
             }
             unset($data["code"]);
+
+            ##增加邀请关系
+            $data["invite_relation"] = makeInviteRelation($list["user"]->invite_relation, $list["user"]->id);
+
             if ($list["user"]->is_customer_service == 1) {
                 $data["customer_service_id"] = $list["user"]->id;
             } else {

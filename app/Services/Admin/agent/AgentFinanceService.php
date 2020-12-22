@@ -44,7 +44,43 @@ class AgentFinanceService extends BaseAgentService
         $this->getAdmin();
         $size = $this->sizeInput();
         $this->setCommissionListWhere();
-        $data = $this->AgentFinanceRepository->commissionList($this->where, $size);
+        $data = $this->AgentFinanceRepository->commissionList($this->where, $this->user_ids, $size);
+        $this->_data = $data;
+        return true;
+    }
+
+    public function envelopeList(){
+        $this->getAdmin();
+        $size = $this->sizeInput();
+        $this->setEnvelopeListWhere();
+        $data = $this->AgentFinanceRepository->envelopeList($this->where, $this->user_ids, $size);
+        $this->_data = $data;
+        return true;
+    }
+
+    public function signInList(){
+        $this->getAdmin();
+        $size = $this->sizeInput();
+        $this->setSignInListWhere();
+        $data = $this->AgentFinanceRepository->signInList($this->where, $this->user_ids, $size);
+        $this->_data = $data;
+        return true;
+    }
+
+    public function bonusList(){
+        $this->getAdmin();
+        $size = $this->sizeInput();
+        $this->setBonusListWhere();
+        $data = $this->AgentFinanceRepository->bonusList($this->where, $this->user_ids, $size);
+        $this->_data = $data;
+        return true;
+    }
+
+    public function upAndDownList(){
+        $this->getAdmin();
+        $size = $this->sizeInput();
+        $this->setUpAndDownListWhere();
+        $data = $this->AgentFinanceRepository->upAndDownList($this->where, $this->user_ids, $size);
         $this->_data = $data;
         return true;
     }
@@ -89,7 +125,7 @@ class AgentFinanceService extends BaseAgentService
         $this->where = $where;
     }
 
-    public function setCommissionListWhere(){
+    protected function setCommissionListWhere(){
         $where = [];
         $type = $this->intInput('type');
         $where[] = ['type', '=', $type];
@@ -103,8 +139,77 @@ class AgentFinanceService extends BaseAgentService
             $betting_user_ids= $this->AgentUserRepository->getLikePhoneUserId($betting_user_phone);
             $where[] = ['betting_user_id', 'in', $betting_user_ids];
         }
-        $user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
-        $where[] = ['charge_user_id', 'in', $user_ids];
+        $start_time = $this->strInput('start_time');
+        $end_time = $this->strInput('end_time');
+        if($start_time && $end_time)
+            $where[] = ['create_time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+        $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
+        $this->where = $where;
+    }
+
+    protected function setEnvelopeListWhere(){
+        $where = [];
+        $where[] = ['type', '=', 5];
+        $phone = $this->strInput('phone');
+        if($phone)
+            $where[] = ['phone', '=', $phone];
+        $start_time = $this->strInput('start_time');
+        $end_time = $this->strInput('end_time');
+        if($start_time && $end_time)
+            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+        $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
+        $this->where = $where;
+    }
+
+    protected function setSignInListWhere(){
+        $where = [];
+        $phone = $this->strInput('phone');
+        if($phone)
+            $where[] = ['phone', '=', $phone];
+        $start_time = $this->strInput('start_time');
+        $end_time = $this->strInput('end_time');
+        if($start_time && $end_time)
+            $where[] = ['start_time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+        $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
+        $this->where = $where;
+    }
+
+    protected function setBonusListWhere(){
+        $where = [];
+        $where[] = ['type', '=', 8];
+        $phone = $this->strInput('phone');
+        if($phone)
+            $where[] = ['phone', '=', $phone];
+        $start_time = $this->strInput('start_time');
+        $end_time = $this->strInput('end_time');
+        if($start_time && $end_time)
+            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+        $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
+        $this->where = $where;
+    }
+
+    protected function setUpAndDownListWhere(){
+        $where = [];
+        $type = $this->intInput('type',0);
+        switch ($type){
+            case 0:
+                $where[] = [DB::Raw("type in (9, 10)"), 1];
+                break;
+            case 1:
+                $where[] = ['type', '=', 9];
+                break;
+            case 2:
+                $where[] = ['type', '=', 10];
+                break;
+        }
+        $phone = $this->strInput('phone');
+        if($phone)
+            $where[] = ['phone', '=', $phone];
+        $start_time = $this->strInput('start_time');
+        $end_time = $this->strInput('end_time');
+        if($start_time && $end_time)
+            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+        $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }
 
