@@ -158,9 +158,9 @@ class AgentBettingRepository extends BaseRepository
     {
         $user = $this->Cx_User->where("phone", $phone)->first();
         if ($user) {
-            return null;
+            return $user->id;
         } else {
-            return $user->phone;
+            return null;
         }
     }
 
