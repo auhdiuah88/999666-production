@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class AgentBettingRepository extends BaseRepository
 {
-    private $Cx_Admin, $Cx_Game_Betting, $Cx_Game_Config, $Cx_User, $Cx_Game_Play;
+    private $Cx_Admin, $Cx_Game_Betting, $Cx_Game_Config, $Cx_User, $Cx_Game_Play, $Admin = false;
 
     public function __construct(Cx_Admin $Cx_Admin,
                                 Cx_Game_Betting $game_Betting,
@@ -38,13 +38,18 @@ class AgentBettingRepository extends BaseRepository
     public function orders(int $admin_id, int $offset, int $limit)
     {
         $model = $this->getModel();
-        $model = $this->whereIn($model, $admin_id, $offset, $limit);
+        $model = $this->whereIn($model, $this->getAdminUserId($admin_id), $offset, $limit);
         return $model->select(["gb.betting_num", "gb.betting_time", "gb.user_id", "gb.game_id", "gb.id", "gb.game_c_x_id", "gb.game_p_id", "gb.money", "gb.odds",
             "gb.service_charge", "gb.type", "gb.status"
         ])
             ->orderByDesc("betting_time")
             ->get()
             ->toArray();
+    }
+
+    private function getAdminUserId($admin_id)
+    {
+        return Cx_Admin::find($admin_id)->user_id ?? 0;
     }
 
     private function setSearchCondition($model)
@@ -115,7 +120,7 @@ class AgentBettingRepository extends BaseRepository
     public function ordersCount(int $admin_id)
     {
         return $this->getModel()
-            ->whereExists($this->getWhereExists($admin_id))
+            ->whereExists($this->getWhereExists($this->getAdminUserId($admin_id)))
             ->count();
     }
 
