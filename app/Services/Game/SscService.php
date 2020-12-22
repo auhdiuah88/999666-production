@@ -220,7 +220,7 @@ class SscService
             ##按照局杀操作
             $can_donate_money = (1-$kill_rate) * $cur_betting_money;
         }
-        Log::channel('kidebug')->debug('game_play_open', compact('game_play_info','can_donate_money','cur_betting_money'));
+        Log::channel('mytest')->debug('game_play_open', compact('game_play_info','can_donate_money','cur_betting_money'));
         $calc = $this->calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money);
 
         ##输赢 1赢 2输 3平
