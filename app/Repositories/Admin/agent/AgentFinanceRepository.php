@@ -62,7 +62,7 @@ class AgentFinanceRepository
      * @param $size
      * @return mixed
      */
-    public function withdrawList($where, $user_ids, $size){
+    public function withdrawList($where, $size){
         $model = makeModel($where, $this->Cx_Withdrawal_Record);
         return $model
             ->with(

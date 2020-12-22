@@ -27,7 +27,6 @@ class AgentUserRepository
     public function searchUser($where, $size){
         $model = makeModel($where, $this->Cx_User);
         $list = $model
-            ->where($where)
             ->orderBy('reg_time', 'desc')
             ->select(['*', 'phone as phone_hide', 'one_recommend_phone as one_recommend_phone_hide', 'two_recommend_phone as two_recommend_phone_hide'])
             ->paginate($size);
@@ -39,7 +38,6 @@ class AgentUserRepository
 //        DB::connection()->enableQueryLog();
         $list = $model->query()->from('user_recharge_logs as r')
             ->leftJoin('users as u','r.user_id', '=', 'u.id')
-            ->where($where)
             ->with(
                 [
                     'user' => function($query){
@@ -57,7 +55,6 @@ class AgentUserRepository
     public function orderInfoList($where, $size){
         $model = makeModel($where, $this->Cx_User);
         return $model
-            ->where($where)
             ->select(['id', 'nickname', 'phone as phone_hide', 'total_recharge', 'cl_withdrawal', 'balance', 'commission', 'status', 'cl_betting', 'cl_betting_total'])
             ->with(
                 [
