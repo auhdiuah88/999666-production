@@ -46,7 +46,7 @@ class AccountController extends Controller
             'password' => 'required|between:6,20|alpha_num',
         ]);
         if($validator->fails()){
-//            return $this->AppReturn();
+            return $this->AppReturn(402,$validator->errors()->first());
         }
         $this->AccountService->addAccount($request->post());
         return $this->AppReturn(
@@ -58,6 +58,16 @@ class AccountController extends Controller
 
     public function editAccount(Request $request)
     {
+        $id = $request->post('id',0);
+        $validator = Validator::make($request->input(), [
+            'id' => 'required|gt:0|integer',
+            'nickname' => 'required|between:2,20|alpha_dash',
+            'phone' => "required|unique:users,phone|between:8,13|integer",
+            'password' => 'required|between:6,20|alpha_num',
+        ]);
+        if($validator->fails()){
+            return $this->AppReturn(402,$validator->errors()->first());
+        }
         $this->AccountService->editAccount($request->post());
         return $this->AppReturn(
             $this->AccountService->_code,
