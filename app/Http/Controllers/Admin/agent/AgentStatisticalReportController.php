@@ -17,6 +17,10 @@ class AgentStatisticalReportController extends Controller
         $this->StatisticalService = $agentStatisticalReportService;
     }
 
+    /**
+     * 当日会员盈利榜
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function dailyWinRank(){
         try{
             $this->StatisticalService->dailyWinRank();
@@ -31,6 +35,10 @@ class AgentStatisticalReportController extends Controller
         }
     }
 
+    /**
+     * 当日会员亏损帮
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function dailyLoseRank(){
         try{
             $this->StatisticalService->dailyLoseRank();

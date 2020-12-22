@@ -60,10 +60,10 @@ class AgentUserService extends BaseAgentService
         $status = $this->intInput('status',-1);
         if($status != -1)
             $where[] = ['status', '=', $status];
-        $register_time_start = $this->strInput('start_time');
-        $register_time_end = $this->strInput('end_time');
+        $register_time_start = $this->intInput('start_time');
+        $register_time_end = $this->intInput('end_time');
         if($register_time_start && $register_time_end)
-            $where[] = ['reg_time', 'BETWEEN', [strtotime($register_time_start), strtotime($register_time_end)]];
+            $where[] = ['reg_time', 'BETWEEN', [$register_time_start, $register_time_end]];
         $where[] = $this->relationLike();
         $this->where = $where;
     }
@@ -75,10 +75,10 @@ class AgentUserService extends BaseAgentService
         $phone = $this->searchInput("mobile");
         if($phone)
             $where[] = ['u.phone', '=', $phone];
-        $register_time_start = $this->strInput('start_time');
-        $register_time_end = $this->strInput('end_time');
+        $register_time_start = $this->intInput('start_time');
+        $register_time_end = $this->intInput('end_time');
         if($register_time_start && $register_time_end)
-            $where[] = ['r.time', 'BETWEEN', [strtotime($register_time_start), strtotime($register_time_end)]];
+            $where[] = ['r.time', 'BETWEEN', [$register_time_start, $register_time_end]];
         $where[] = ['u.invite_relation', 'like', '%-'. $this->admin->user_id .'-%'];
         $this->where = $where;
     }

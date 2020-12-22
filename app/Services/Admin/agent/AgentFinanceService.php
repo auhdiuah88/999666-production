@@ -95,10 +95,10 @@ class AgentFinanceService extends BaseAgentService
         $phone = $this->strInput('phone');
         if($phone)
             $where[] = ['phone', '=', $phone];
-        $start_time = $this->strInput('start_time');
-        $end_time = $this->strInput('end_time');
+        $start_time = $this->intInput('start_time');
+        $end_time = $this->intInput('end_time');
         if($start_time && $end_time)
-            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+            $where[] = ['time', 'BETWEEN', [$start_time, $end_time]];
         $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }
@@ -113,14 +113,14 @@ class AgentFinanceService extends BaseAgentService
         $phone = $this->strInput('phone');
         if($phone)
             $where[] = ['phone', '=', $phone];
-        $start_time_withdraw = $this->strInput('start_time_withdraw');
-        $end_time_withdraw = $this->strInput('end_time_withdraw');
+        $start_time_withdraw = $this->intInput('start_time_withdraw');
+        $end_time_withdraw = $this->intInput('end_time_withdraw');
         if($start_time_withdraw && $end_time_withdraw)
-            $where[] = ['create_time', 'BETWEEN', [strtotime($start_time_withdraw), strtotime($end_time_withdraw)]];
-        $start_time_exam = $this->strInput('start_time_exam');
-        $end_time_exam = $this->strInput('end_time_exam');
+            $where[] = ['create_time', 'BETWEEN', [$start_time_withdraw, $end_time_withdraw]];
+        $start_time_exam = $this->intInput('start_time_exam');
+        $end_time_exam = $this->intInput('end_time_exam');
         if($start_time_exam && $end_time_exam)
-            $where[] = ['approval_time', 'BETWEEN', [strtotime($start_time_exam), strtotime($end_time_exam)]];
+            $where[] = ['approval_time', 'BETWEEN', [$start_time_exam, $end_time_exam]];
         $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }
@@ -139,10 +139,10 @@ class AgentFinanceService extends BaseAgentService
             $betting_user_ids= $this->AgentUserRepository->getLikePhoneUserId($betting_user_phone);
             $where[] = ['betting_user_id', 'in', $betting_user_ids];
         }
-        $start_time = $this->strInput('start_time');
-        $end_time = $this->strInput('end_time');
+        $start_time = $this->intInput('start_time');
+        $end_time = $this->intInput('end_time');
         if($start_time && $end_time)
-            $where[] = ['create_time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+            $where[] = ['create_time', 'BETWEEN', [$start_time, $end_time]];
         $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }
@@ -153,10 +153,10 @@ class AgentFinanceService extends BaseAgentService
         $phone = $this->strInput('phone');
         if($phone)
             $where[] = ['phone', '=', $phone];
-        $start_time = $this->strInput('start_time');
-        $end_time = $this->strInput('end_time');
+        $start_time = $this->intInput('start_time');
+        $end_time = $this->intInput('end_time');
         if($start_time && $end_time)
-            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+            $where[] = ['time', 'BETWEEN', [$start_time, $end_time]];
         $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }
@@ -166,10 +166,10 @@ class AgentFinanceService extends BaseAgentService
         $phone = $this->strInput('phone');
         if($phone)
             $where[] = ['phone', '=', $phone];
-        $start_time = $this->strInput('start_time');
-        $end_time = $this->strInput('end_time');
+        $start_time = $this->intInput('start_time');
+        $end_time = $this->intInput('end_time');
         if($start_time && $end_time)
-            $where[] = ['start_time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+            $where[] = ['start_time', 'BETWEEN', [$start_time, $end_time]];
         $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }
@@ -180,10 +180,10 @@ class AgentFinanceService extends BaseAgentService
         $phone = $this->strInput('phone');
         if($phone)
             $where[] = ['phone', '=', $phone];
-        $start_time = $this->strInput('start_time');
-        $end_time = $this->strInput('end_time');
+        $start_time = $this->intInput('start_time');
+        $end_time = $this->intInput('end_time');
         if($start_time && $end_time)
-            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+            $where[] = ['time', 'BETWEEN', [$start_time, $end_time]];
         $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }
@@ -205,10 +205,10 @@ class AgentFinanceService extends BaseAgentService
         $phone = $this->strInput('phone');
         if($phone)
             $where[] = ['phone', '=', $phone];
-        $start_time = $this->strInput('start_time');
-        $end_time = $this->strInput('end_time');
+        $start_time = $this->intInput('start_time');
+        $end_time = $this->intInput('end_time');
         if($start_time && $end_time)
-            $where[] = ['time', 'BETWEEN', [strtotime($start_time), strtotime($end_time)]];
+            $where[] = ['time', 'BETWEEN', [$start_time, $end_time]];
         $this->user_ids = $this->AgentUserRepository->getUserIds($this->getRelationWhere($this->admin->user_id));
         $this->where = $where;
     }
