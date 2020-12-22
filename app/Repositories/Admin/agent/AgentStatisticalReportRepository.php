@@ -18,18 +18,20 @@ class AgentStatisticalReportRepository
         $this->Cx_Game_Betting = $cx_Game_Betting;
     }
 
-    public function dailyWinRank($where, $user_ids, $size)
+    /**
+     * 当日会员盈利榜
+     * @param $where
+     * @param $size
+     * @param $page
+     * @return array
+     */
+    public function dailyWinRank($where, $size, $page)
     {
-//        return $this->Cx_Game_Betting
-//            ->whereIntegerInRaw('user_id',$user_ids)
-//            ->where($where)
-//            ->select(['sum(money) as betting_money', 'sum(win_money) as win_money', 'user_id'])
-//            ->groupBy('user_id')
-//            ->having('betting_money', '>', 'win_money')
-//            ->orderByDesc('lose_money')
-//            ->paginate($size);
-        $offset =
-        return DB::select('select sum(money) as toal_betting_money, sum(win_money) as total_win_money, user_id from `cx_game_betting` group by user_id order by (total_win_money - toal_betting_money) desc');
+        $prefix = DB::getConfig('prefix');
+        $offset = ($page - 1) * $size;
+        $list = DB::select('select sum(gb.money) as total_betting_money, sum(gb.win_money) as total_win_money, sum(gb.service_charge) as total_service_charge, gb.user_id, u.phone from `'.$prefix.'game_betting` gb left join `'.$prefix.'users` u on gb.user_id = u.id '. $where.' group by user_id order by (total_win_money - total_betting_money) desc limit '. $offset .','.$size);
+        $total = count(DB::select('select count(*) from `'.$prefix.'game_betting` '. $where.' group by user_id'));
+        return compact('list','total');
     }
 
 }

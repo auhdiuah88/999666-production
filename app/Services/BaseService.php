@@ -89,4 +89,8 @@ abstract class BaseService
         return min(intval(request()->input('size',$default)),30);
     }
 
+    public function pageInput(){
+        return max(1, intval(request()->input('page',1)));
+    }
+
 }

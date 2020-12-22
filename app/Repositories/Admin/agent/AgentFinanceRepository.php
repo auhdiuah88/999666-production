@@ -71,7 +71,7 @@ class AgentFinanceRepository
             ->with(
                 [
                     'user' => function($query){
-                        $query->select(['id', 'nickname', 'total_recharge', 'cl_withdrawal', 'commission', 'cl_betting', 'cl_betting_total']);
+                        $query->select(['id', 'nickname', 'total_recharge', 'cl_withdrawal', 'commission', 'cl_betting', 'cl_betting_total', 'phone as phone_hide']);
                     }
                 ]
             )
