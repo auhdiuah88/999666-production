@@ -102,7 +102,7 @@ class AccountService extends BaseService
         if (array_key_exists("password", $data)) {
             $data["password"] = Crypt::encrypt($data["password"]);
         }
-        if ($this->AccountRepository->editAccount($data)) {
+        if ($this->AccountRepository->editAccount($data) !== false) {
             $this->_msg = "编辑成功";
         } else {
             $this->_code = 402;

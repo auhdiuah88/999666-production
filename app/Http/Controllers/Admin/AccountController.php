@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\AccountService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
@@ -42,7 +43,7 @@ class AccountController extends Controller
     {
         $validator = Validator::make($request->input(), [
             'nickname' => 'required|between:2,20|alpha_dash',
-            'phone' => 'required|unique:users,phone|between:8,13|integer',
+            'phone' => 'required|unique:users,phone|regex:/^\d{8,13}$/',
             'password' => 'required|between:6,20|alpha_num',
         ]);
         if($validator->fails()){
@@ -59,10 +60,11 @@ class AccountController extends Controller
     public function editAccount(Request $request)
     {
         $id = $request->post('id',0);
+        $phone = DB::table('users')->where('id',$id)->value('phone');
         $validator = Validator::make($request->input(), [
             'id' => 'required|gt:0|integer',
             'nickname' => 'required|between:2,20|alpha_dash',
-            'phone' => "required|unique:users,phone|between:8,13|integer",
+            'phone' => "required|unique:users,phone,{$phone},id|between:8,13|integer",
             'password' => 'required|between:6,20|alpha_num',
         ]);
         if($validator->fails()){
