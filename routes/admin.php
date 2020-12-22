@@ -244,6 +244,9 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post('dailyWinRank', "agent\AgentStatisticalReportController@dailyWinRank");
                 Route::post('dailyLoseRank', "agent\AgentStatisticalReportController@dailyLoseRank");
             });
+            Route::group(["prefix" => "order"], function(){
+                Route::get("/index","agent\AgentBettingController@orders");
+            });
         });
     });
 });
