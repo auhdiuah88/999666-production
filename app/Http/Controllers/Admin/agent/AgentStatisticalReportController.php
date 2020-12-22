@@ -32,7 +32,17 @@ class AgentStatisticalReportController extends Controller
     }
 
     public function dailyLoseRank(){
-
+        try{
+            $this->StatisticalService->dailyLoseRank();
+            return $this->AppReturn(
+                $this->StatisticalService->_code,
+                $this->StatisticalService->_msg,
+                $this->StatisticalService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
     }
 
 }
