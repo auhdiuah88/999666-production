@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\AccountService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
@@ -39,6 +40,14 @@ class AccountController extends Controller
 
     public function addAccount(Request $request)
     {
+        $validator = Validator::make($request->input(), [
+            'nickname' => 'required|between:2,20|alpha_dash',
+            'phone' => 'required|unique:users,phone|between:8,13|integer',
+            'password' => 'required|between:6,20|alpha_num',
+        ]);
+        if($validator->fails()){
+//            return $this->AppReturn();
+        }
         $this->AccountService->addAccount($request->post());
         return $this->AppReturn(
             $this->AccountService->_code,

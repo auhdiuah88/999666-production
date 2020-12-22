@@ -4,16 +4,18 @@
 namespace App\Repositories\Admin;
 
 
+use App\Models\Cx_Admin;
 use App\Models\Cx_User;
 use App\Repositories\BaseRepository;
 
 class AccountRepository extends BaseRepository
 {
-    private $Cx_User;
+    private $Cx_User, $Cx_Admin;
 
-    public function __construct(Cx_User $cx_User)
+    public function __construct(Cx_User $cx_User, Cx_Admin $cx_Admin)
     {
         $this->Cx_User = $cx_User;
+        $this->Cx_Admin = $cx_Admin;
     }
 
     public function findAll($offset, $limit)
@@ -118,5 +120,9 @@ class AccountRepository extends BaseRepository
                 $query->where("phone", "like", "%" . $where["phone"] . "%");
             }
         })->where("is_customer_service", 1)->count("id");
+    }
+
+    public function addAdmin($admin_data){
+        return $this->Cx_Admin->create($admin_data);
     }
 }

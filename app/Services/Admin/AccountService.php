@@ -5,16 +5,19 @@ namespace App\Services\Admin;
 
 
 use App\Repositories\Admin\AccountRepository;
+use App\Repositories\Admin\SettingRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class AccountService extends BaseService
 {
-    private $AccountRepository;
+    private $AccountRepository, $SettingRepository;
 
-    public function __construct(AccountRepository $accountRepository)
+    public function __construct(AccountRepository $accountRepository, SettingRepository $settingRepository)
     {
         $this->AccountRepository = $accountRepository;
+        $this->SettingRepository = $settingRepository;
     }
 
     public function findAll($page, $limit)
@@ -36,8 +39,16 @@ class AccountService extends BaseService
             $this->_msg = "账号已存在";
             return false;
         }
+        $agent_role = $this->SettingRepository->getStaff();
+        if(!$agent_role){
+            $this->_code = 402;
+            $this->_msg = "请先设置代理员工角色";
+            return false;
+        }
+        $role_id = $agent_role['setting_value']['role_id'];
         $data["is_customer_service"] = 1;
         $data["reg_time"] = time();
+        $password = $data["password"];
         $data["password"] = Crypt::encrypt($data["password"]);
         if (!array_key_exists("nickname", $data)) {
             $data["nickname"] = "用户" . md5($data["phone"]);
@@ -51,14 +62,39 @@ class AccountService extends BaseService
         $data["is_withdrawal"] = 1;
         $data["is_withdrawal"] = 1;
         $data["code"] = $this->AccountRepository->getCode();
-        if ($this->AccountRepository->addAccount($data)) {
-            $this->_msg = "添加成功";
+        DB::beginTransaction();
+        try{
+            ##增加代理用户账号
+            if (!$user_id = $this->AccountRepository->addAccount($data)) {
+                throw new \Exception("代理用户账号添加失败");
+            }
+            ##增加管理员账号
+            $admin_data = [
+                'username' => $data["phone"],
+                'nickname' => $data["nickname"],
+                'password' => $data["password"],
+                'status' => 2,
+                'role_id' => $role_id,
+                'user_id' => $user_id
+            ];
+            $res = $this->AccountRepository->addAdmin($admin_data);
+            if($res === false){
+                throw new \Exception("代理用户管理员账号添加失败");
+            }
+            DB::commit();
+            $this->_msg = '代理员工账号创建成功';
+            $this->_data = [
+                'account' => $admin_data['username'],
+                'password' => $password,
+            ];
             return true;
-        } else {
+        }catch(\Exception $e){
+            $this->_msg = $e->getMessage();
             $this->_code = 402;
-            $this->_msg = "添加失败";
+            DB::rollBack();
             return false;
         }
+
     }
 
     public function editAccount($data)
