@@ -32,7 +32,7 @@ class AdminLogRepository
                     $query->select(["id", "username"]);
                 }
             ])
-            ->select('id','exec_time', 'path', 'method', 'ip', 'admin_id')
+            ->select('id','exec_time', 'path', 'method', 'ip', 'admin_id', 'c_time')
             ->whereIn('log.id', $ids)
             ->orderByDesc('log.id')
             ->get()
@@ -41,11 +41,28 @@ class AdminLogRepository
 
     public function getCurPageIds($offset, $limit)
     {
-        return array_column($this->cx_Admin_Operation_Log->select('id')->orderByDesc('id')->offset($offset)->limit($limit)->get()->toArray(), 'id');
+        return array_column($this->initModel()->select('id')->orderByDesc('id')->offset($offset)->limit($limit)->get()->toArray(), 'id');
     }
 
     public function getCount()
     {
-        return $this->cx_Admin_Operation_Log->count();
+        return $this->initModel()->count();
+    }
+
+    public function initModel()
+    {
+        return $this->setTimeSearch($this->cx_Admin_Operation_Log);
+    }
+
+    public function setTimeSearch($model)
+    {
+        if (request()->has('time_start')){
+            $model = $model->where('c_time', '>=', request()->get('time_start'));
+        }
+
+        if (request()->has('time_end')){
+            $model = $model->where('c_time', '<', request()->get('time_end'));
+        }
+        return $model;
     }
 }

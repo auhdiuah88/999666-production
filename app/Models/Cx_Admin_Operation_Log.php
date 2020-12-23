@@ -35,4 +35,12 @@ class Cx_Admin_Operation_Log extends Model
     {
         return json_encode(unserialize($value));
     }
+
+    public function scopeCTimeRange($query)
+    {
+
+
+        var_dump(request());die;
+        return $query;
+    }
 }
