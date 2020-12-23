@@ -51,7 +51,7 @@ class SettingController extends Controller
                 ]
             );
             if($validator->fails())
-                return $this->AppReturn(401,$validator->errors()->first());
+                return $this->AppReturn(402,$validator->errors()->first());
             $this->SettingService->editStaffId();
             return $this->AppReturn(
                 $this->SettingService->_code,

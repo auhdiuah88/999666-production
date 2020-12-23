@@ -66,6 +66,5 @@ class SettingRepository extends BaseRepository
                 ]
             ]
         );
-        return 1;
     }
 }

@@ -37,6 +37,15 @@ class UserController extends Controller
         );
     }
 
+    public function findByPhone(Request $request){
+        try{
+            
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
     public function addUser(Request $request)
     {
         $this->UserService->addUser($request->post());

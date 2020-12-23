@@ -96,4 +96,13 @@ class AccountController extends Controller
             $this->AccountService->_data
         );
     }
+
+    public function bindAccount(Request $request){
+        try{
+
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
 }
