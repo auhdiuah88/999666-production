@@ -104,6 +104,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/up", "UserController@upperSeparation");
             Route::post("/down", "UserController@downSeparation");
             Route::post("/logs", "UserController@getBalanceLogs");
+            Route::get("/findCustomerServiceByPhone", "UserController@findCustomerServiceByPhone");
         });
 
         // 用户下注信息
@@ -182,6 +183,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::get("/findById", "AccountController@findById");
             Route::post("/add", "AccountController@addAccount");
             Route::post("/edit", "AccountController@editAccount");
+            Route::post("/bind", "AccountController@bindAccount");
             Route::post("/del", "AccountController@delAccount");
             Route::post("/search", "AccountController@searchAccount");
         });

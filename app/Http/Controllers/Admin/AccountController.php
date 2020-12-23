@@ -99,7 +99,21 @@ class AccountController extends Controller
 
     public function bindAccount(Request $request){
         try{
-
+            $validator = Validator::make($request->input(), [
+                'user_id' => 'required|integer|min:1',
+                'nickname' => 'required|between:2,20|alpha_dash',
+                'account' => "required|unique:admin,username|alpha_num|between:4,20",
+                'password' => 'required|between:6,20|alpha_num'
+            ]);
+            if($validator->fails()){
+                return $this->AppReturn(402,$validator->errors()->first());
+            }
+            $this->AccountService->bindAccount();
+            return $this->AppReturn(
+                $this->AccountService->_code,
+                $this->AccountService->_msg,
+                $this->AccountService->_data
+            );
         }catch(\Exception $e){
             $this->logError('adminerr',$e);
             return $this->AppReturn(402,$e->getMessage());

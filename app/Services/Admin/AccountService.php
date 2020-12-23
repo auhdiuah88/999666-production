@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 
 
 use App\Repositories\Admin\AccountRepository;
+use App\Repositories\Admin\AdminRepository;
 use App\Repositories\Admin\SettingRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\Crypt;
@@ -12,12 +13,18 @@ use Illuminate\Support\Facades\DB;
 
 class AccountService extends BaseService
 {
-    private $AccountRepository, $SettingRepository;
+    private $AccountRepository, $SettingRepository, $AdminRepository;
 
-    public function __construct(AccountRepository $accountRepository, SettingRepository $settingRepository)
+    public function __construct
+    (
+        AccountRepository $accountRepository,
+        SettingRepository $settingRepository,
+        AdminRepository $adminRepository
+    )
     {
         $this->AccountRepository = $accountRepository;
         $this->SettingRepository = $settingRepository;
+        $this->AdminRepository = $adminRepository;
     }
 
     public function findAll($page, $limit)
@@ -108,6 +115,37 @@ class AccountService extends BaseService
             $this->_code = 402;
             $this->_msg = "编辑失败";
         }
+    }
+
+    public function bindAccount(){
+        $data = [
+            'user_id' => $this->intInput('user_id'),
+            'username' => $this->strInput('account'),
+            'nickname' => $this->strInput('nickname'),
+            'status' => 1,
+            'password' => Crypt::encrypt($this->strInput('password'))
+        ];
+        ##判断用户是否已绑定
+        if($this->AdminRepository->Check_Bind($data['user_id'])){
+            $this->_code = 402;
+            $this->_msg = "该账号已绑定管理员账号";
+            return false;
+        }
+        $agent_role = $this->SettingRepository->getStaff();
+        if(!$agent_role){
+            $this->_code = 402;
+            $this->_msg = "请先设置代理员工角色";
+            return false;
+        }
+        $data['role_id'] = $agent_role['setting_value']['role_id'];
+        ##绑定
+        if(!$this->AccountRepository->addAdmin($data)){
+            $this->_code = 402;
+            $this->_msg = '绑定失败';
+            return false;
+        }
+        $this->_msg = '绑定成功';
+        return true;
     }
 
     public function delAccount($id)

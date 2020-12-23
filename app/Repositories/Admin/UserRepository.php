@@ -51,6 +51,16 @@ class UserRepository extends BaseRepository
         return $this->Cx_User->where("id", $id)->first();
     }
 
+    public function findByPhone($phone)
+    {
+        return $this->Cx_User->where("phone", $phone)->select(['id', 'nickname', 'phone'])->first();
+    }
+
+    public function findCustomerServiceByPhone($phone)
+    {
+        return $this->Cx_User->where("phone", $phone)->where("is_customer_service", 1)->select(['id', 'nickname', 'phone'])->first();
+    }
+
     public function getUserByConditions($data, $offset, $limit)
     {
         return $this->whereCondition($data, $this->Cx_User)->offset($offset)->limit($limit)->orderByDesc("last_time")->get()->toArray();

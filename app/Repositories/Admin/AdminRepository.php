@@ -201,4 +201,8 @@ class AdminRepository
     {
         return $this->Cx_Admin->where("id", $id)->update(["customer_status" => $status]);
     }
+
+    public function Check_Bind($user_id){
+        return $this->Cx_Admin->where("user_id", $user_id)->count();
+    }
 }

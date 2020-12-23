@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -37,9 +38,20 @@ class UserController extends Controller
         );
     }
 
-    public function findByPhone(Request $request){
+    public function findCustomerServiceByPhone(Request $request){
         try{
-            
+            $validator = Validator::make($request->input(),[
+                'phone' => 'required|regex:/^\d{8,13}$/'
+            ]);
+            if($validator->fails()){
+                return $this->AppReturn(402, $validator->errors()->first());
+            }
+            $this->UserService->findCustomerServiceByPhone($request->get('phone'));
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
         }catch(\Exception $e){
             $this->logError('adminErr', $e);
             return $this->AppReturn(402, $e->getMessage());

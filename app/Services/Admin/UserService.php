@@ -32,6 +32,17 @@ class UserService extends BaseService
         $this->_data = $this->UserRepository->findById($id);
     }
 
+    public function findCustomerServiceByPhone($phone)
+    {
+         $data = $this->UserRepository->findCustomerServiceByPhone($phone);
+         if($data){
+            $this->_data = $data;
+         }else{
+             $this->_code = 402;
+             $this->_msg = '用户不存在';
+         }
+    }
+
     public function addUser($data)
     {
         if ($this->ApiUserRepository->findByPhone($data["phone"])) {
