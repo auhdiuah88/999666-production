@@ -171,9 +171,9 @@ class AgentBettingRepository extends BaseRepository
 
     public function statistic($admin_id)
     {
-        $betting_count = $this->ordersCount($admin_id);
-        $data = $this->sumAll(['money' => 'betting_money','service_charge' => 'service_charge','win_money' => 'win_money'], $admin_id);
-        return $data['betting_count'] = $betting_count;
+        $data = $this->sumAll(['money' => 'total_betting_money','service_charge' => 'total_service_charge','win_money' => 'total_win_money'], $admin_id);
+        $data['betting_count'] = $this->ordersCount($admin_id);
+        return $data;
     }
 
     /**
@@ -182,23 +182,13 @@ class AgentBettingRepository extends BaseRepository
      */
     public function sumAll(array $columnArr, int $admin_id)
     {
-        DB::connection()->enableQueryLog();
-
         $model = $this->Cx_Game_Betting->query()->from('game_betting as gb');
         foreach ($columnArr as $column => $alias) {
             if ($column && $alias) {
                 $model->selectRaw("sum({$column}) as {$alias}");
             }
         }
-        $collection = $model->whereExists($this->getWhereExists($this->getAdminUserId($admin_id)))->first();
-        dd($collection);
-        $res = DB::getQueryLog();
-//        foreach ($collection as $value) {
-//            var_dump($value);die;
-//        }
-        var_dump($res);
-        var_dump($collection->betting_money);
-        die;
+        return $model->whereExists($this->getWhereExists($this->getAdminUserId($admin_id)))->first()->toArray();
     }
 
 }
