@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
 
@@ -508,5 +509,11 @@ class TestController extends Controller
                 $this->GameRepository->Result_Entry($val,2,4.5);
             }
         }
+    }
+
+    public function initInviteRelation(){
+        $data = DB::table('game_betting')->selectRaw("sum(money) as betting_money, sum(win_money) as total_win_money")->first();
+        echo $data->betting_money;
+        dd($data);
     }
 }
