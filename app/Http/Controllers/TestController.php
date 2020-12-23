@@ -512,8 +512,6 @@ class TestController extends Controller
     }
 
     public function initInviteRelation(){
-        $data = DB::table('game_betting')->selectRaw("sum(money) as betting_money, sum(win_money) as total_win_money")->first();
-        echo $data->betting_money;
-        dd($data);
+        $list = DB::table('user')
     }
 }
