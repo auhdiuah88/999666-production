@@ -26,4 +26,14 @@ class AgentBettingController extends Controller
             $this->AgentBettingService->_data
         );
     }
+
+    public function statistic()
+    {
+        $this->AgentBettingService->statistic();
+        return $this->AppReturn(
+            $this->AgentBettingService->_code,
+            $this->AgentBettingService->_msg,
+            $this->AgentBettingService->_data
+        );
+    }
 }

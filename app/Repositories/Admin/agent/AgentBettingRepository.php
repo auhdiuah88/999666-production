@@ -95,17 +95,17 @@ class AgentBettingRepository extends BaseRepository
 
     /**
      * @param $mode ;
-     * @param $admin_id
+     * @param $admin_user_id
      * @param $offset
      * @param $limit
      * @return mixed
      */
-    private function whereIn($model, $admin_id, $offset, $limit)
+    private function whereIn($model, $admin_user_id, $offset, $limit)
     {
         $subModel = Cx_Game_Betting::query()->from('game_betting as gb');
         //接收查询参数
         $subModel = $this->setSearchCondition($subModel);
-        $game_betting_ids = $subModel->whereExists($this->getWhereExists($admin_id))
+        $game_betting_ids = $subModel->whereExists($this->getWhereExists($admin_user_id))
             ->select("gb.id")
             ->orderByDesc("betting_time")
             ->offset($offset)
@@ -138,7 +138,7 @@ class AgentBettingRepository extends BaseRepository
 
     public function getModel()
     {
-        return  $this->Cx_Game_Betting->query()->from('game_betting as gb')->with(["user" => function ($query) {
+        return $this->Cx_Game_Betting->query()->from('game_betting as gb')->with(["user" => function ($query) {
             $query->select(["id", "phone", "nickname"]);
         }, "game_name" => function ($query) {
             $query->select(["id", "name"]);
@@ -167,6 +167,38 @@ class AgentBettingRepository extends BaseRepository
     private function findNumberId($number)
     {
         return array_column($this->Cx_Game_Play->where("number", $number)->get("id")->toArray(), "id");
+    }
+
+    public function statistic($admin_id)
+    {
+        $betting_count = $this->ordersCount($admin_id);
+        $data = $this->sumAll(['money' => 'betting_money','service_charge' => 'service_charge','win_money' => 'win_money'], $admin_id);
+        return $data['betting_count'] = $betting_count;
+    }
+
+    /**
+     * @param array $columnArr
+     * @param int $admin_id
+     */
+    public function sumAll(array $columnArr, int $admin_id)
+    {
+        DB::connection()->enableQueryLog();
+
+        $model = $this->Cx_Game_Betting->query()->from('game_betting as gb');
+        foreach ($columnArr as $column => $alias) {
+            if ($column && $alias) {
+                $model->selectRaw("sum({$column}) as {$alias}");
+            }
+        }
+        $collection = $model->whereExists($this->getWhereExists($this->getAdminUserId($admin_id)))->first();
+        dd($collection);
+        $res = DB::getQueryLog();
+//        foreach ($collection as $value) {
+//            var_dump($value);die;
+//        }
+        var_dump($res);
+        var_dump($collection->betting_money);
+        die;
     }
 
 }

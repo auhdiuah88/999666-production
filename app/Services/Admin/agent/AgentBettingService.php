@@ -23,4 +23,11 @@ class AgentBettingService extends BaseService
         $total = $this->agentBettingRepository->ordersCount($admin_id);
         $this->_data = ["total" => $total, "list" => $list];
     }
+
+    //统计
+    public function statistic()
+    {
+        $admin_id = request()->get('admin_id');
+        $this->_data = $this->agentBettingRepository->statistic($admin_id);
+    }
 }
