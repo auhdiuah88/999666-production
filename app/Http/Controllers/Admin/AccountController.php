@@ -64,7 +64,7 @@ class AccountController extends Controller
             'id' => 'required|gt:0|integer',
             'nickname' => 'required|between:2,20|alpha_dash',
             'phone' => "required|unique:users,phone,{$id},id|regex:/^\d{8,13}$/",
-            'password' => 'required|between:6,20|alpha_num',
+            'password' => 'between:6,20|alpha_num',
         ]);
         if($validator->fails()){
             return $this->AppReturn(402,$validator->errors()->first());

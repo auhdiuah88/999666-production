@@ -512,6 +512,44 @@ class TestController extends Controller
     }
 
     public function initInviteRelation(){
-//        $list = DB::table('users')->
+        $level = request()->input('level');
+        $table = DB::table('users');
+        switch ($level){
+            case 1:
+                $list = $table->whereNotNull("customer_service_id")->select(['id', 'customer_service_id'])->get();
+                if(!$list->isEmpty()){
+                    foreach($list as $key => $item){
+                        $table->where("id", $item->id)->update(['invite_relation'=>makeInviteRelation("", $item->customer_service_id)]);
+                    }
+                }
+                break;
+            case 2:
+                $list2 = $table->whereNull('customer_service_id')->whereNull('one_recommend_id')->whereNotNull('two_recommend_id')->select(['id', 'two_recommend_id'])->get();
+                if(!$list2->isEmpty()){
+                    foreach($list2 as $k => $i){
+                        $relation = $table->where("id", $i->two_recommend_id)->select(['invite_relation', 'id'])->first();
+                        if(!$relation){
+                            continue;
+                        }else{
+                            $table->where("id", $i->id)->update(['invite_relation'=>makeInviteRelation($relation->invite_relation, $i->two_recommend_id)]);
+                        }
+                    }
+                }
+                break;
+            case 3:
+                $list3 = $table->whereNull('customer_service_id')->whereNotNull('one_recommend_id')->whereNotNull('two_recommend_id')->select(['id', 'two_recommend_id'])->get();
+                if(!$list3->isEmpty()){
+                    foreach($list3 as $k3 => $i3){
+                        $relation = $table->where("id", $i3->two_recommend_id)->select(['invite_relation', 'id'])->first();
+                        if(!$relation){
+                            continue;
+                        }else{
+                            $table->where("id", $i3->id)->update(['invite_relation'=>makeInviteRelation($relation->invite_relation, $i3->two_recommend_id)]);
+                        }
+                    }
+                }
+                break;
+        }
+
     }
 }
