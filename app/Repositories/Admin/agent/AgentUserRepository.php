@@ -36,7 +36,7 @@ class AgentUserRepository
     public function firstRechargeList($where, $size){
         $model = makeModel($where, $this->Cx_User_Recharge_logs);
 //        DB::connection()->enableQueryLog();
-        $list = $model->query()->from('user_recharge_logs as r')
+        $list = $model->from('user_recharge_logs as r')
             ->leftJoin('users as u','r.user_id', '=', 'u.id')
             ->with(
                 [
