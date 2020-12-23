@@ -516,7 +516,7 @@ class TestController extends Controller
         $table = DB::table('users');
         switch ($level){
             case 1:
-                $list = $table->whereNotNull("customer_service_id")->select(['id', 'customer_service_id'])->get();
+                $list = $table->whereNotNull("customer_service_id")->whereNull('invite_relation')->select(['id', 'customer_service_id'])->get();
                 if(!$list->isEmpty()){
                     foreach($list as $key => $item){
                         $table->where("id", $item->id)->update(['invite_relation'=>makeInviteRelation("", $item->customer_service_id)]);
@@ -524,7 +524,7 @@ class TestController extends Controller
                 }
                 break;
             case 2:
-                $list2 = $table->whereNull('customer_service_id')->whereNull('one_recommend_id')->whereNotNull('two_recommend_id')->select(['id', 'two_recommend_id'])->get();
+                $list2 = $table->whereNull('customer_service_id')->whereNull('one_recommend_id')->whereNull('invite_relation')->whereNotNull('two_recommend_id')->select(['id', 'two_recommend_id'])->get();
                 if(!$list2->isEmpty()){
                     foreach($list2 as $k => $i){
                         $relation = $table->where("id", $i->two_recommend_id)->select(['invite_relation', 'id'])->first();
@@ -537,7 +537,7 @@ class TestController extends Controller
                 }
                 break;
             case 3:
-                $list3 = $table->whereNull('customer_service_id')->whereNotNull('one_recommend_id')->whereNotNull('two_recommend_id')->select(['id', 'two_recommend_id'])->get();
+                $list3 = $table->whereNull('customer_service_id')->whereNull('invite_relation')->whereNotNull('one_recommend_id')->whereNotNull('two_recommend_id')->select(['id', 'two_recommend_id'])->get();
                 if(!$list3->isEmpty()){
                     foreach($list3 as $k3 => $i3){
                         $relation = $table->where("id", $i3->two_recommend_id)->select(['invite_relation', 'id'])->first();
