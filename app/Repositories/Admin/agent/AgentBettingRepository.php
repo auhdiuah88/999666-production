@@ -37,6 +37,7 @@ class AgentBettingRepository extends BaseRepository
      */
     public function orders(int $admin_id, int $offset, int $limit)
     {
+
         $model = $this->getModel();
         $model = $this->whereIn($model, $this->getAdminUserId($admin_id), $offset, $limit);
         return $model->select(["gb.betting_num", "gb.betting_time", "gb.user_id", "gb.game_id", "gb.id", "gb.game_c_x_id", "gb.game_p_id", "gb.money", "gb.odds",
@@ -99,18 +100,19 @@ class AgentBettingRepository extends BaseRepository
      * @param $limit
      * @return mixed
      */
-    private function whereIn($mode, $admin_id, $offset, $limit)
+    private function whereIn($model, $admin_id, $offset, $limit)
     {
-        $game_betting_ids = Cx_Game_Betting::query()->from('game_betting as gb')
-            ->whereExists($this->getWhereExists($admin_id))
-            ->leftJoin('users as u', 'u.id', '=', 'gb.user_id')
+        $subModel = Cx_Game_Betting::query()->from('game_betting as gb');
+        //接收查询参数
+        $subModel = $this->setSearchCondition($subModel);
+        $game_betting_ids = $subModel->whereExists($this->getWhereExists($admin_id))
             ->select("gb.id")
             ->orderByDesc("betting_time")
             ->offset($offset)
             ->limit($limit)
             ->get()
             ->toArray();
-        return $mode->whereIn('id', array_column($game_betting_ids, 'id'));
+        return $model->whereIn('gb.id', array_column($game_betting_ids, 'id'));
     }
 
     /**
@@ -119,8 +121,8 @@ class AgentBettingRepository extends BaseRepository
      */
     public function ordersCount(int $admin_id)
     {
-        return $this->getModel()
-            ->whereExists($this->getWhereExists($this->getAdminUserId($admin_id)))
+        $model = $this->setSearchCondition($this->getModel());
+        return $model->whereExists($this->getWhereExists($this->getAdminUserId($admin_id)))
             ->count();
     }
 
@@ -136,7 +138,7 @@ class AgentBettingRepository extends BaseRepository
 
     public function getModel()
     {
-        $model = $this->Cx_Game_Betting->query()->from('game_betting as gb')->with(["user" => function ($query) {
+        return  $this->Cx_Game_Betting->query()->from('game_betting as gb')->with(["user" => function ($query) {
             $query->select(["id", "phone", "nickname"]);
         }, "game_name" => function ($query) {
             $query->select(["id", "name"]);
@@ -145,8 +147,6 @@ class AgentBettingRepository extends BaseRepository
         }, "game_c_x" => function ($query) {
             $query->select(["id", "name"]);
         }]);
-
-        return $this->setSearchCondition($model);
     }
 
     private function findPlayIds($value)
