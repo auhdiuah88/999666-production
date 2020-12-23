@@ -513,13 +513,16 @@ class TestController extends Controller
 
     public function initInviteRelation(){
         $level = request()->input('level');
+        $handle_ids = $select_ids = [];
         $table = DB::table('users');
         switch ($level){
             case 1:
                 $list = $table->whereNotNull("customer_service_id")->whereNull('invite_relation')->select(['id', 'customer_service_id'])->get();
                 if(!$list->isEmpty()){
                     foreach($list as $key => $item){
+                        $select_ids[] = $item->id;
                         $table->where("id", $item->id)->update(['invite_relation'=>makeInviteRelation("", $item->customer_service_id)]);
+                        $handle_ids[] = $item->id;
                     }
                 }
                 break;
@@ -527,11 +530,13 @@ class TestController extends Controller
                 $list2 = $table->whereNull('customer_service_id')->whereNull('one_recommend_id')->whereNull('invite_relation')->whereNotNull('two_recommend_id')->select(['id', 'two_recommend_id'])->get();
                 if(!$list2->isEmpty()){
                     foreach($list2 as $k => $i){
+                        $select_ids[] = $i->id;
                         $relation = $table->where("id", $i->two_recommend_id)->select(['invite_relation', 'id'])->first();
                         if(!$relation){
                             continue;
                         }else{
                             $table->where("id", $i->id)->update(['invite_relation'=>makeInviteRelation($relation->invite_relation, $i->two_recommend_id)]);
+                            $handle_ids[] = $i->id;
                         }
                     }
                 }
@@ -540,11 +545,13 @@ class TestController extends Controller
                 $list3 = $table->whereNull('customer_service_id')->whereNull('invite_relation')->whereNotNull('one_recommend_id')->whereNotNull('two_recommend_id')->select(['id', 'two_recommend_id'])->get();
                 if(!$list3->isEmpty()){
                     foreach($list3 as $k3 => $i3){
+                        $select_ids[] = $i3->id;
                         $relation = $table->where("id", $i3->two_recommend_id)->select(['invite_relation', 'id'])->first();
                         if(!$relation){
                             continue;
                         }else{
                             $table->where("id", $i3->id)->update(['invite_relation'=>makeInviteRelation($relation->invite_relation, $i3->two_recommend_id)]);
+                            $handle_ids[] = $i3->id;
                         }
                     }
                 }
@@ -553,6 +560,8 @@ class TestController extends Controller
                 echo $level;
                 break;
         }
+        print_r($handle_ids);
+        print_r($select_ids);
 
     }
 }
