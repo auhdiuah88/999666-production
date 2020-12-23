@@ -549,6 +549,9 @@ class TestController extends Controller
                     }
                 }
                 break;
+            default:
+                echo $level;
+                break;
         }
 
     }
