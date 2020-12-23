@@ -526,6 +526,7 @@ class TestController extends Controller
     }
 
     public function handleRelation($id, $relation){
+        print_r("-" .$id. "-");
         $table = DB::table('users');
         $ids = $table->where('two_recommend_id', $id)->pluck('id')->toArray();
         if($ids){
