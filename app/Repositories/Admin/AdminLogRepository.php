@@ -56,12 +56,12 @@ class AdminLogRepository
 
     public function setTimeSearch($model)
     {
-        if (request()->has('time_start')){
-            $model = $model->where('c_time', '>=', request()->get('time_start'));
+        if ($time_start = request()->get('time_start')){
+            $model = $model->where('c_time', '>=', $time_start);
         }
 
-        if (request()->has('time_end')){
-            $model = $model->where('c_time', '<', request()->get('time_end'));
+        if ($time_end = request()->get('time_end')){
+            $model = $model->where('c_time', '<', $time_end);
         }
         return $model;
     }
