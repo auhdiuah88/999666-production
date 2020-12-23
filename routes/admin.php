@@ -250,6 +250,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             });
             Route::group(["prefix" => "order"], function(){
                 Route::get("/index","agent\AgentBettingController@orders");
+                Route::get("/statistic","agent\AgentBettingController@statistic");
             });
         });
     });
