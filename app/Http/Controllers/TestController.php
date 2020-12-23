@@ -512,6 +512,29 @@ class TestController extends Controller
     }
 
     public function initInviteRelation(){
+        $table = DB::table('users');
+        $ids = $table->where("is_customer_service",1)->pluck('id')->toArray();
+        foreach($ids as $id){
+            $this->handleRelation($id,"");
+        }
+        echo 'success';
+    }
+
+    public function handleRelation($id, $relation){
+        $table = DB::table('users');
+        $ids = $table->where('two_recommend_id', $id)->pluck('id')->toArray();
+        if($ids){
+            $invite_relation = makeInviteRelation($relation, $id);
+            $table->whereIntegerInRaw('id',$ids)->update(['invite_relation'=>$invite_relation]);
+            foreach($ids as $index){
+                $this->handleRelation($index,$invite_relation);
+            }
+        }else{
+            return true;
+        }
+    }
+
+    public function initInviteRelation2(){
         $level = request()->input('level');
         $handle_ids = $select_ids = [];
         $table = DB::table('users');
