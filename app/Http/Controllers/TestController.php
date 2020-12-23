@@ -512,14 +512,12 @@ class TestController extends Controller
     }
 
     public function initInviteRelation(){
-        $table = DB::table('users');
-        $ids = $table->where("is_customer_service",1)->pluck('id')->toArray();
+        $ids = DB::table('users')->where("is_customer_service",1)->pluck('id')->toArray();
         foreach($ids as $id){
             $this->handleRelation($id,"");
         }
         echo 'success--1';
-        $user_ids = $table->where("is_customer_service",0)->whereNull('one_recommend_id')->whereNull('two_recommend_id')->pluck('id')->toArray();
-        print_r($user_ids);die;
+        $user_ids = DB::table('users')->where("is_customer_service",0)->whereNull('one_recommend_id')->whereNull('two_recommend_id')->pluck('id')->toArray();
         foreach($user_ids as $user_id){
             $this->handleRelation($user_id,"");
         }

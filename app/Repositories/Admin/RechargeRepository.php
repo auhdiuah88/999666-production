@@ -18,7 +18,20 @@ class RechargeRepository extends BaseRepository
 
     public function findAll($offset, $limit, $status)
     {
-        return $this->Cx_User_Recharge_Logs->where("status", $status)->offset($offset)->limit($limit)->orderByDesc("time")->get()->toArray();
+        return $this->Cx_User_Recharge_Logs
+            ->with(
+                [
+                    'user' => function($query){
+                        $query->select(['id', 'code', 'phone', 'reg_time', 'balance', 'nickname']);
+                    }
+                ]
+            )
+            ->where("status", $status)
+            ->offset($offset)
+            ->limit($limit)
+            ->orderByDesc("time")
+            ->get()
+            ->toArray();
     }
 
     public function countAll($status)

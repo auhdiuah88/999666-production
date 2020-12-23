@@ -46,7 +46,7 @@ class AgentFinanceRepository
             ->with(
                 [
                     'user' => function($query){
-                        $query->select(['id', 'phone as phone_hide', 'nickname']);
+                        $query->select(['id', 'phone as phone_hide', 'nickname', 'balance', 'reg_time', 'code']);
                     }
                 ]
             )
