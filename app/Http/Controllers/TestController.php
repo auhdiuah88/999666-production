@@ -512,6 +512,6 @@ class TestController extends Controller
     }
 
     public function initInviteRelation(){
-        $list = DB::table('user')
+//        $list = DB::table('users')->
     }
 }
