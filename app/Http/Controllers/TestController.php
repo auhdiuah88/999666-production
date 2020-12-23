@@ -519,6 +519,7 @@ class TestController extends Controller
         }
         echo 'success--1';
         $user_ids = $table->where("is_customer_service",0)->whereNull('one_recommend_id')->whereNull('two_recommend_id')->pluck('id')->toArray();
+        print_r($user_ids);die;
         foreach($user_ids as $user_id){
             $this->handleRelation($user_id,"");
         }
