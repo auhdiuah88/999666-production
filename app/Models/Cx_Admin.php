@@ -18,7 +18,7 @@ class Cx_Admin extends Model
 
     public function Role()
     {
-        return $this->hasOne(Cx_Role::class, "id");
+        return $this->belongsTo(Cx_Role::class, "role_id",'id');
     }
 
     public function balance()
