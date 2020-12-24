@@ -46,7 +46,7 @@ class AgentStatisticalReportRepository
         $prefix = DB::getConfig('prefix');
         $offset = ($page - 1) * $size;
         $list = DB::select('select sum(gb.money - gb.win_money) as cha, sum(gb.money) as total_betting_money, sum(gb.win_money) as total_win_money, sum(gb.service_charge) as total_service_charge, gb.user_id, u.phone from `'.$prefix.'game_betting` gb left join `'.$prefix.'users` u on gb.user_id = u.id '. $where .' group by user_id having cha > 0 order by cha desc limit '. $offset .','.$size);
-        $total = count(DB::select('select count(*) from `'.$prefix.'game_betting` bg '. $where.' group by user_id'));
+        $total = count(DB::select('select count(*) from `'.$prefix.'game_betting` gb '. $where.' group by user_id'));
         return compact('list','total');
     }
 
