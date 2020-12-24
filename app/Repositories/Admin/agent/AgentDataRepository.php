@@ -123,7 +123,7 @@ class AgentDataRepository
     public function getGiveMoney(){
         $where = [
             'user_id' => ['in', $this->user_ids],
-            'type' => ['=', 5]
+            'type' => ['=', 8]
         ];
         if($this->time_map)
             $where['time'] = ['BETWEEN', $this->time_map];
