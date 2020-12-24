@@ -90,6 +90,9 @@ class AgentFinanceService extends BaseAgentService
         $where = [];
         $status = $this->intInput('status');
         $where['status'] = ['=', $status];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['user_id'] = ['=', $user_id];
         $order_no = $this->strInput('order_no');
         if($order_no)
             $where['order_no'] = ['=', $order_no];
@@ -109,6 +112,9 @@ class AgentFinanceService extends BaseAgentService
         $where = [];
         $status = $this->intInput('status');
         $where['status'] = ['=', $status];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['user_id'] = ['=', $user_id];
         $order_no = $this->strInput('order_no');
         if($order_no)
             $where['order_no'] = ['=', $order_no];
@@ -132,6 +138,9 @@ class AgentFinanceService extends BaseAgentService
         $where = [];
         $type = $this->intInput('type');
         $where['type'] = ['=', $type];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['charge_user_id'] = ['=', $user_id];
         $user_phone = $this->strInput('user_phone');
         if($user_phone){
             $charge_user_ids = $this->AgentUserRepository->getLikePhoneUserId($user_phone);
@@ -154,6 +163,9 @@ class AgentFinanceService extends BaseAgentService
     protected function setEnvelopeListWhere(){
         $where = [];
         $where['type'] = ['=', 5];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['user_id'] = ['=', $user_id];
         $phone = $this->strInput('phone');
         if($phone)
             $where['phone'] = ['=', $phone];
@@ -168,6 +180,9 @@ class AgentFinanceService extends BaseAgentService
 
     protected function setSignInListWhere(){
         $where = [];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['user_id'] = ['=', $user_id];
         $phone = $this->strInput('phone');
         if($phone)
             $where['phone'] = ['=', $phone];
@@ -183,6 +198,9 @@ class AgentFinanceService extends BaseAgentService
     protected function setBonusListWhere(){
         $where = [];
         $where['type'] = ['=', 8];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['user_id'] = ['=', $user_id];
         $phone = $this->strInput('phone');
         if($phone)
             $where['phone'] = ['=', $phone];
@@ -197,6 +215,9 @@ class AgentFinanceService extends BaseAgentService
 
     protected function setUpAndDownListWhere(){
         $where = [];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['user_id'] = ['=', $user_id];
         $type = $this->intInput('type',0);
         switch ($type){
             case 0:

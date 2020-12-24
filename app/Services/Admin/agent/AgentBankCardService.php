@@ -31,6 +31,9 @@ class AgentBankCardService extends BaseAgentService
 
     protected function setBankCardListWhere(){
         $where['invite_relation'] = ['like', '%-'. $this->admin->user_id .'-%'];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where["user_id"] = ["=", $user_id];
         $phone = $this->strInput("phone");
         if($phone)
             $where["phone"] = ["=", $phone];

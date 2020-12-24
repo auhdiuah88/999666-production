@@ -48,6 +48,9 @@ class AgentUserService extends BaseAgentService
 
     public function setSearchUserWhere(){
         $where = [];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['id'] = ['=', $user_id];
         $phone = $this->searchInput("mobile");
         if($phone)
             $where['phone'] = ['=', $phone];
@@ -75,6 +78,9 @@ class AgentUserService extends BaseAgentService
         $phone = $this->searchInput("mobile");
         if($phone)
             $where['u.phone'] = ['=', $phone];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['r.user_id'] = ['=', $user_id];
         $register_time_start = $this->intInput('start_time');
         $register_time_end = $this->intInput('end_time');
         if($register_time_start && $register_time_end)
@@ -85,6 +91,9 @@ class AgentUserService extends BaseAgentService
 
     public function setOrderInfoListWhere(){
         $where = [];
+        $user_id = $this->intInput('user_id');
+        if($user_id > 0)
+            $where['id'] = ['=', $user_id];
         $phone = $this->searchInput("mobile");
         if($phone)
             $where['phone'] = ['=', $phone];
