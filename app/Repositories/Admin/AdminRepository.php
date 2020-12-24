@@ -224,7 +224,7 @@ class AdminRepository
      */
     public function delByUserId($user_id)
     {
-        return $this->Cx_Admin->where("user_id", $user_id)->destroy();
+        return $this->Cx_Admin->where("user_id", $user_id)->delete();
     }
 
     /**
