@@ -20,7 +20,7 @@ class AccountRepository extends BaseRepository
 
     public function findAll($offset, $limit)
     {
-        return $this->Cx_User->where("is_customer_service", 1)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->offset($offset)->limit($limit)->get()->toArray();
+        return $this->Cx_User->where("is_customer_service", 1)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link", "status"])->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countAll()
@@ -122,7 +122,18 @@ class AccountRepository extends BaseRepository
         })->where("is_customer_service", 1)->count("id");
     }
 
-    public function addAdmin($admin_data){
+    public function addAdmin($admin_data)
+    {
         return $this->Cx_Admin->create($admin_data);
+    }
+
+    /**
+     * 冻结用户账号
+     * @param $user_id
+     * @return mixed
+     */
+    public function frozen($user_id)
+    {
+        return $this->Cx_User->where("id", $user_id)->update(['status'=>1]);
     }
 }

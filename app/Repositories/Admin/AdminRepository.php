@@ -202,7 +202,28 @@ class AdminRepository
         return $this->Cx_Admin->where("id", $id)->update(["customer_status" => $status]);
     }
 
-    public function Check_Bind($user_id){
+    public function Check_Bind($user_id)
+    {
         return $this->Cx_Admin->where("user_id", $user_id)->count();
+    }
+
+    /**
+     * 通过user_id 封禁管理员账号
+     * @param $user_id
+     * @return mixed
+     */
+    public function frozenByUserId($user_id)
+    {
+        return $this->Cx_Admin->where("user_id", $user_id)->update(["status"=>3]);
+    }
+
+    /**
+     * 通过user_id 删除管理员账号
+     * @param $user_id
+     * @return mixed
+     */
+    public function delByUserId($user_id)
+    {
+        return $this->Cx_Admin->where("user_id", $user_id)->destroy();
     }
 }

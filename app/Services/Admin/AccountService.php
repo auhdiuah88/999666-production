@@ -153,11 +153,22 @@ class AccountService extends BaseService
 
     public function delAccount($id)
     {
-        if ($this->AccountRepository->delAccount($id)) {
-            $this->_msg = "删除成功";
-        } else {
+        DB::beginTransaction();
+        try{
+            $res = $this->AccountRepository->delAccount($id);
+            if($res === false)
+                throw new \Exception('员工h5账号删除失败');
+            $res = $this->AdminRepository->delByUserId($id);
+            if($res === false)
+                throw new \Exception('员工管理员账号删除失败');
+            DB::commit();
+            $this->_msg = '操作成功';
+            return true;
+        }catch(\Exception $e){
+            DB::rollBack();
+            $this->_msg = $e->getMessage();
             $this->_code = 402;
-            $this->_msg = "删除失败";
+            return false;
         }
     }
 
@@ -226,4 +237,27 @@ class AccountService extends BaseService
         $this->_data = compact('member_data','money_data','order_data');
         return true;
     }
+
+    public function frozenAccount()
+    {
+        $user_id = $this->intInput('user_id');
+        DB::beginTransaction();
+        try{
+            ##冻结用户h5账号
+            $res = $this->AccountRepository->frozen($user_id);
+            if($res === false)throw new \Exception("冻结员工h5账号失败");
+            ##冻结用户admin账号
+            $res = $this->AdminRepository->frozenByUserId($user_id);
+            if($res === false)throw new \Exception("冻结员工管理员账号失败");
+            DB::commit();
+            $this->_msg = "操作成功";
+            return true;
+        }catch(\Exception $e){
+            DB::rollBack();
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+            return false;
+        }
+    }
+
 }

@@ -5,9 +5,13 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cx_Admin extends Model
 {
+
+    use SoftDeletes;
+
     protected $table = "admin";
 
     protected $primaryKey = "id";
