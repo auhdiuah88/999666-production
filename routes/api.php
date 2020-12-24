@@ -61,6 +61,9 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/withdrawal", "WithdrawalController@withdrawalBydai");        //  申请代付提现-请求出金订单
         Route::post("/withdrawalbyupi", "WithdrawalController@withdrawalByUpiID");  //  申请paytm-upi_id提现-请求出金订单
         Route::post("/extension", "AgentController@getExtensionUser");    // 促销记录
+
+        Route::post("/recharge_confirm", "RechargeController@rechargeConfirm");        //  充值金额主动确认
+
     });
     Route::group(["prefix" => "bank"], function () {
         Route::get("/findAll", "InfoController@getBanks"); // 查询用户银行卡

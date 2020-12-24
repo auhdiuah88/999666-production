@@ -9,6 +9,7 @@ use App\Services\Api\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 
 class RechargeController extends Controller
@@ -101,5 +102,30 @@ class RechargeController extends Controller
             return false;
         }
 
+    }
+
+    public function rechargeConfirm(Request $request)
+    {
+        $confirm_recharge_log = env('CONFIRM_RECHARGE_LOG', false);
+        if (!$confirm_recharge_log) {
+            return $this->AppReturn(403, 'forbidden');
+        }
+
+        $rules = [
+            "order_no" => [
+                "required",
+                Rule::exists('user_recharge_logs')->where(function ($query) use ($request) {
+                    $query->where([
+                        ['order_no', '=', $request->input('order_no')],
+                        ['status', '=', 1]
+                    ]);
+                }),
+            ],
+        ];
+        $validator = Validator::make($request->post(), $rules);
+        if ($validator->fails()) {
+            return $this->AppReturn(414, $validator->errors()->first());
+        }
+        return $this->AppReturn(200, 'success', $this->rechargeService->rechargeConfirm($request));
     }
 }

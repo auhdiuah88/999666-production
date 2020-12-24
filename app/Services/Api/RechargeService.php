@@ -75,7 +75,7 @@ class RechargeService extends PayService
         $native_url = $result['native_url'];
         $verify_money = $result['verify_money'];
         $match_code = $result['match_code'];
-        $result['is_post'] = isset($result['is_post'])?$result['is_post']:0;
+        $result['is_post'] = isset($result['is_post']) ? $result['is_post'] : 0;
         $this->rechargeRepository->addRechargeLog($user, $money, $order_no, $pay_type, $pltf_order_id, $native_url, $verify_money, $match_code);
         return $result;
     }
@@ -113,9 +113,9 @@ class RechargeService extends PayService
      */
     public function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback',$request->all());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', $request->all());
 
-        $payProvide = $request->input('type','');
+        $payProvide = $request->input('type', '');
         if (!$payProvide) {
             $this->_msg = 'can not find pay Provide';
             return false;
@@ -131,7 +131,7 @@ class RechargeService extends PayService
         }
 
         ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money
-        $money = isset($request->money)?$request->money : (isset($request->pay_amount)?$request->pay_amount:$request->amount);
+        $money = isset($request->money) ? $request->money : (isset($request->pay_amount) ? $request->pay_amount : $request->amount);
         // 下面的方法相同
         $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
         if (!$rechargeLog) {
@@ -182,6 +182,26 @@ class RechargeService extends PayService
     public function rechargeLog($request)
     {
         return $this->rechargeRepository->getRechargeLogs($request->status, $request->limit, $request->page);
+    }
+
+    public function rechargeConfirm($request)
+    {
+        DB::beginTransaction();
+        $order_no = $request->input('order_no');
+        try {
+            $rechargeLog = $this->rechargeRepository->findRechargeLogByOrderNo($order_no);
+            //修改订单记录
+            $this->rechargeRepository->rechargeConfirm($order_no);
+            $user = $this->userRepository->findByIdUser($rechargeLog->user_id);
+            //修改用户余额 添加余额变动记录
+            $this->userRepository->updateRechargeBalance($user, $rechargeLog->money);
+            DB::commit();
+        } catch (\Exception $e) {
+            $this->_msg = 'error';
+            DB::rollBack();
+            return false;
+        }
+        return [];
     }
 }
 

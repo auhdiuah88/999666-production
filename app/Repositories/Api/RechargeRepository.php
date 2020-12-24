@@ -7,6 +7,7 @@ namespace App\Repositories\Api;
 use App\Models\Cx_User_Recharge_Log;
 use App\Models\Cx_Withdrawal_Record;
 use App\Mongodb;
+use Illuminate\Support\Facades\DB;
 
 class RechargeRepository
 {
@@ -79,5 +80,26 @@ class RechargeRepository
     public function getRechargeInfoByCondition(array $where)
     {
         return $this->cx_User_Recharge_Log->where($where)->first();
+    }
+
+    /**
+     * 充值模拟确认
+     * @param $order_no
+     * @throws \HttpResponseException
+     */
+    public function rechargeConfirm($order_no)
+    {
+        $rechargeLog = $this->cx_User_Recharge_Log->where([
+            ['order_no', '=', $order_no],
+            ['status', '=', 1]
+        ])->lockForUpdate()->first();
+        if (!$rechargeLog) {
+            throw new \HttpResponseException('order err', 414);
+        } else {
+            $rechargeLog->arrive_money = $rechargeLog->money;
+            $rechargeLog->status = 2;
+            $rechargeLog->save();
+        }
+
     }
 }
