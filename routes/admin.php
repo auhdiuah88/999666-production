@@ -187,6 +187,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/bind", "AccountController@bindAccount");
             Route::post("/del", "AccountController@delAccount");
             Route::post("/search", "AccountController@searchAccount");
+            Route::post("/showData", "AccountController@showData");
         });
 
         // ip白名单管理
