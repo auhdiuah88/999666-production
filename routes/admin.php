@@ -105,6 +105,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/down", "UserController@downSeparation");
             Route::post("/logs", "UserController@getBalanceLogs");
             Route::get("/findCustomerServiceByPhone", "UserController@findCustomerServiceByPhone");
+            Route::post("/editFakeBettingMoney", "UserController@editFakeBettingMoney");
         });
 
         // 用户下注信息

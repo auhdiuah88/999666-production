@@ -69,27 +69,38 @@ abstract class BaseService
         return $model;
     }
 
-    public function searchInput($key){
+    public function searchInput($key)
+    {
         return search_filter(request()->input($key,''));
     }
 
-    public function strInput($key){
+    public function strInput($key)
+    {
         return str_filter(request()->input($key,''));
     }
 
-    public function intInput($key, $default=0){
+    public function intInput($key, $default=0)
+    {
         return intval(request()->input($key, $default));
     }
 
-    public function relationLike(){
+    public function floatInput($key, $default=0)
+    {
+        return floatval(request()->input($key, $default));
+    }
+
+    public function relationLike()
+    {
         return ['like', '%-'. $this->admin->user_id .'-%'];
     }
 
-    public function sizeInput($default=10){
+    public function sizeInput($default=10)
+    {
         return min(intval(request()->input('size',$default)),30);
     }
 
-    public function pageInput(){
+    public function pageInput()
+    {
         return max(1, intval(request()->input('page',1)));
     }
 

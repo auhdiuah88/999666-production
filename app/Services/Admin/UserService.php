@@ -280,4 +280,17 @@ class UserService extends BaseService
         $total = $this->UserRepository->countBalanceLogs($id);
         $this->_data = ["total" => $total, "list" => $list];
     }
+
+    public function editFakeBettingMoney(){
+        $user_id = $this->intInput('user_id');
+        $money = $this->floatInput('money');
+        $res = $this->UserRepository->editFakeBettingMoney($user_id, $money);
+        if($res === false){
+            $this->_msg = "操作失败";
+            $this->_code = 402;
+            return false;
+        }
+        $this->_msg = "操作成功";
+        return true;
+    }
 }

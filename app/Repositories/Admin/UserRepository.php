@@ -142,4 +142,15 @@ class UserRepository extends BaseRepository
         ];
         return $this->Cx_User_Balance_Logs->insert($data);
     }
+
+    /**
+     * 修改用户假流水
+     * @param $user_id
+     * @param $money
+     * @return mixed
+     */
+    public function editFakeBettingMoney($user_id, $money)
+    {
+        return $this->Cx_User->where('id', $user_id)->update(['fake_betting_money'=>$money]);
+    }
 }

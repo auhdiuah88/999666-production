@@ -187,4 +187,26 @@ class UserController extends Controller
             $this->UserService->_data
         );
     }
+
+    public function editFakeBettingMoney(Request $request){
+        try{
+            $validator = Validator::make($request->input(),[
+                'money' => 'required|integer',
+                'user_id' => 'required|integer|gt:0'
+            ]);
+            if($validator->fails()){
+                return $this->AppReturn(402, $validator->errors()->first());
+            }
+            $this->UserService->editFakeBettingMoney();
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
 }
