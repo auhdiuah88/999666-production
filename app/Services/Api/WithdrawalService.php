@@ -191,8 +191,9 @@ class WithdrawalService extends PayService
             }
 
             $system = $this->systemRepository->getSystem();
+            $fake_betting_money = isset($user->fake_betting_money)?$user->fake_betting_money:0;
             if ((int)$system->multiple > 0) {
-                if (((float)$user->total_recharge * (int)$system->multiple) < $money) {
+                if (((float)$user->total_recharge * (int)$system->multiple) + (float)$fake_betting_money < $money) {
                     $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
                     return false;
                 }
