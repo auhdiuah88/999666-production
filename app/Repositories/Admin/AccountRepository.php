@@ -136,4 +136,14 @@ class AccountRepository extends BaseRepository
     {
         return $this->Cx_User->where("id", $user_id)->update(['status'=>1]);
     }
+
+    /**
+     * 解冻用户账号
+     * @param $user_id
+     * @return mixed
+     */
+    public function disFrozen($user_id)
+    {
+        return $this->Cx_User->where("id", $user_id)->update(['status'=>0]);
+    }
 }

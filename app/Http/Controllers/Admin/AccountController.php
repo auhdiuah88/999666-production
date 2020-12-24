@@ -163,4 +163,24 @@ class AccountController extends Controller
         }
     }
 
+    public function disFrozenAccount(Request $request){
+        try{
+            $validator = Validator::make($request->input(), [
+                'user_id' => 'required|integer|min:1'
+            ]);
+            if($validator->fails()){
+                return $this->AppReturn(402,$validator->errors()->first());
+            }
+            $this->AccountService->disFrozenAccount();
+            return $this->AppReturn(
+                $this->AccountService->_code,
+                $this->AccountService->_msg,
+                $this->AccountService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

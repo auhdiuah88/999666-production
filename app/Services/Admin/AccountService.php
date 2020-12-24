@@ -260,4 +260,26 @@ class AccountService extends BaseService
         }
     }
 
+    public function disFrozenAccount()
+    {
+        $user_id = $this->intInput('user_id');
+        DB::beginTransaction();
+        try{
+            ##解冻用户h5账号
+            $res = $this->AccountRepository->disFrozen($user_id);
+            if($res === false)throw new \Exception("解冻员工h5账号失败");
+            ##解冻用户admin账号
+            $res = $this->AdminRepository->disFrozenByUserId($user_id);
+            if($res === false)throw new \Exception("解冻员工管理员账号失败");
+            DB::commit();
+            $this->_msg = "操作成功";
+            return true;
+        }catch(\Exception $e){
+            DB::rollBack();
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+            return false;
+        }
+    }
+
 }

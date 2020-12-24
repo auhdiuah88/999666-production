@@ -226,4 +226,15 @@ class AdminRepository
     {
         return $this->Cx_Admin->where("user_id", $user_id)->destroy();
     }
+
+    /**
+     * 解冻用户账号
+     * @param $user_id
+     * @return mixed
+     */
+    public function disFrozenByUserId($user_id)
+    {
+        return $this->Cx_Admin->where("user_id", $user_id)->update(["status"=>2]);
+    }
+
 }
