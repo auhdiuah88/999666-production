@@ -198,8 +198,8 @@ class WithdrawalService extends PayService
                     return false;
                 }
             }
-            if (((float)$user->cl_betting - $user->cl_withdrawal) < $money * (int)$system->multiple) {
-                $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
+            if (((float)$user->cl_betting - $user->cl_withdrawal + (float)$fake_betting_money) < $money * (int)$system->multiple) {
+                $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal1";
                 return false;
             }
 
