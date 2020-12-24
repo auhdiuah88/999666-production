@@ -40,12 +40,19 @@ class AgentBettingRepository extends BaseRepository
 
         $model = $this->getModel();
         $model = $this->whereIn($model, $this->getAdminUserId($admin_id), $offset, $limit);
-        return $model->select(["gb.betting_num", "gb.betting_time", "gb.user_id", "gb.game_id", "gb.id", "gb.game_c_x_id", "gb.game_p_id", "gb.money", "gb.odds",
+        $orders = $model->select(["gb.betting_num", "gb.betting_time", "gb.user_id", "gb.game_id", "gb.id", "gb.game_c_x_id", "gb.game_p_id", "gb.money", "gb.odds",
             "gb.service_charge", "gb.type", "gb.status"
         ])
             ->orderByDesc("betting_time")
             ->get()
             ->toArray();
+        foreach ($orders as &$order) {
+            if (isset($order['user']) && $order['user']) {
+                $order['user']['phone'] = $order['user']['phone'] ? hide($order['user']['phone'], 3, 4) : '';
+            }
+
+        }
+        return $orders;
     }
 
     private function getAdminUserId($admin_id)
