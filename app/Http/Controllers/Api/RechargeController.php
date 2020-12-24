@@ -106,6 +106,11 @@ class RechargeController extends Controller
 
     public function rechargeConfirm(Request $request)
     {
+        $confirm_recharge_log = env('CONFIRM_RECHARGE_LOG', false);
+        if (!$confirm_recharge_log) {
+            return $this->AppReturn(403, 'forbidden');
+        }
+
         $rules = [
             "order_no" => [
                 "required",

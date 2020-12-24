@@ -201,7 +201,7 @@ class RechargeService extends PayService
             DB::rollBack();
             return false;
         }
-        return null;
+        return [];
     }
 }
 
