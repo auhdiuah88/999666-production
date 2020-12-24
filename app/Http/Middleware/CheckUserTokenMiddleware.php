@@ -50,13 +50,13 @@ class CheckUserTokenMiddleware
         }
 
         $user_id = $data[0];
-//        $cache_token = cache()->get(md5('usertoken'.$user_id));
-//        if(!$cache_token || $cache_token != $token1){
-//            return response()->json([
-//                "code" => 401,
-//                "msg" => "Login failed. Please login again"
-//            ]);
-//        }
+        $cache_token = cache()->get(md5('usertoken'.$user_id));
+        if(!$cache_token || $cache_token != $token1){
+            return response()->json([
+                "code" => 401,
+                "msg" => "Login failed. Please login again"
+            ]);
+        }
 
         if (!$user = $this->UserRepository->cacheUser($user_id)) {
             return response()->json([

@@ -139,7 +139,7 @@ class GameController extends Controller
         $balance = $this->GameService->Betting($request);
         if ($balance) {
             $data['balance']=$balance;
-            return $this->AppReturn(200, "投注成功",$data);
+            return $this->AppReturn(200, "Betting Success",$data);
         } else {
             return $this->AppReturn(413, 'Insufficient balance or not within the allowed betting time of the period');
         }
