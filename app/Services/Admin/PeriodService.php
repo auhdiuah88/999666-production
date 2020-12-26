@@ -38,6 +38,12 @@ class PeriodService extends BaseService
         $limit = $data["limit"];
         $offset = ($page - 1) * $limit;
         $list = $this->PeriodRepository->searchPeriod($data, $offset, $limit);
+
+        foreach ($list as $ind => $val) {
+            if (!$val['is_status'] || ($val['end_time'] - 10) > time()) {
+                $list[$ind]['prize_sd_btn'] = true;
+            }
+        }
         $total = $this->PeriodRepository->countSearchPeriod($data);
         $this->_data = ["total" => $total, "list" => $list];
     }
