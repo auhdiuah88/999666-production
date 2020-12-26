@@ -28,7 +28,7 @@ class AgentUserRepository
         $model = makeModel($where, $this->Cx_User);
         $list = $model
             ->orderBy('reg_time', 'desc')
-            ->select(['*', 'phone as phone_hide', 'one_recommend_phone as one_recommend_phone_hide', 'two_recommend_phone as two_recommend_phone_hide'])
+            ->select(['*', 'phone as phone_hide', 'one_recommend_phone as one_recommend_phone_hide', 'two_recommend_phone as two_recommend_phone_hide', 'id as total_win_money'])
             ->paginate($size);
         return $list;
     }
