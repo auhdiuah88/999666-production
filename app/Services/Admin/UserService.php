@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class UserService extends BaseService
 {
-    private $UserRepository, $ApiUserRepository;
+    protected $UserRepository, $ApiUserRepository;
 
     public function __construct(Repository $userRepository, UserRepository $repository)
     {

@@ -104,6 +104,11 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/up", "UserController@upperSeparation");
             Route::post("/down", "UserController@downSeparation");
             Route::post("/logs", "UserController@getBalanceLogs");
+            Route::group(["prefix" => "groupLeader"], function () {
+                Route::post("/add", "LeaderController@add");
+                Route::get("/list", "LeaderController@list");
+                Route::post("/del", "LeaderController@logicDel");
+            });
         });
 
         // 用户下注信息

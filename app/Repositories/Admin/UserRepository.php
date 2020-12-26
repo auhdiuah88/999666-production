@@ -132,4 +132,20 @@ class UserRepository extends BaseRepository
         ];
         return $this->Cx_User_Balance_Logs->insert($data);
     }
+
+
+    public function findGroupLeaders($where, $offset, $limit)
+    {
+        return $this->Cx_User->where($where)->offset($offset)->limit($limit)->orderByDesc("last_time")->get()->toArray();
+    }
+
+    public function countGroupLeaders($where)
+    {
+        return $this->Cx_User->where($where)->count();
+    }
+
+    public function logicDel($id)
+    {
+        return $this->Cx_User->where('id',$id)->update(['deleted_at' => time()]);
+    }
 }
