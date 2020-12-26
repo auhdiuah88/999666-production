@@ -1036,4 +1036,9 @@ class GameRepository
         )->where("game_id", $game_id)->where("status",1)->offset($offset)->limit($limit)->orderBy('start_time', 'desc')->get();
     }
 
+
+    public function getEndTime($playId)
+    {
+        return $this->Cx_Game_Play->where('id', $playId)->value('end_time') ?? 0;
+    }
 }
