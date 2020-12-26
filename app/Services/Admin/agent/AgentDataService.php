@@ -76,4 +76,20 @@ class AgentDataService extends BaseAgentService
         return true;
     }
 
+    public function inviteInfo()
+    {
+        $this->getAdmin();
+        $user = $this->AgentUserRepository->getInviteInfo($this->admin->user_id);
+        if(!$user){
+            $this->_msg = '请先绑定员工帐号';
+            $this->_code = 403;
+            return false;
+        }
+        $code = $user->code;
+        ## https://goshop6.in/?code=AAAAAA#/pages/register/register
+        $url = env('APP_URL','https://goshop6.in') . "/?code={$code}#/pages/register/register";
+        $this->_data = compact('code','url');
+        return true;
+    }
+
 }

@@ -74,4 +74,9 @@ class AgentUserRepository
         return $this->Cx_User->where('phone', 'like', "%{$phone}%")->pluck('id')->toArray();
     }
 
+    public function getInviteInfo($user_id)
+    {
+        return $this->Cx_User->where('id', '=', $user_id)->select(['id', 'code'])->first();
+    }
+
 }

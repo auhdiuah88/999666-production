@@ -30,4 +30,19 @@ class AgentDataController extends Controller
         }
     }
 
+    public function inviteInfo()
+    {
+        try{
+            $this->AgentDataService->inviteInfo();
+            return $this->AppReturn(
+                $this->AgentDataService->_code,
+                $this->AgentDataService->_msg,
+                $this->AgentDataService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
+    }
+
 }
