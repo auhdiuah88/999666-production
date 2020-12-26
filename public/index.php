@@ -7,6 +7,10 @@
  * @author   Taylor Otwell <taylor@laravel.com>
  */
 
+if(preg_match('/^api1.\w/', $_SERVER['HTTP_HOST'])){
+    header('Access-Control-Allow-Origin:*');
+}
+
 define('LARAVEL_START', microtime(true));
 
 /*

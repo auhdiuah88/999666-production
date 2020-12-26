@@ -57,9 +57,14 @@ class TestController extends Controller
     }
 
     public function test(){
-        $phone = request()->input('phone');
-        $res = Redis::set("REGIST_CODE:" . $phone, 666666);
-        dd($res);
+        try{
+            $phone = request()->input('phone');
+            $res = Redis::set("REGIST_CODE:" . $phone, 666666);
+            dd($res);
+        }catch(\Exception $e){
+            echo $e->getMessage();
+        }
+
     }
 
     public function makeSign(){
