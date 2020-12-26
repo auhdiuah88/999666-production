@@ -64,4 +64,9 @@ class LeaderController extends UserController
             $this->groupUserService->_data
         );
     }
+
+    public function edit(Request $request)
+    {
+        parent::editUser($request);
+    }
 }
