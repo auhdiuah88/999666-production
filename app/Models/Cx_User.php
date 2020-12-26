@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Cx_User extends Model
 {
@@ -48,6 +49,13 @@ class Cx_User extends Model
 
     public function getTwoRecommendPhoneHideAttribute($value){
         return hide($value, 3, 4);
+    }
+
+    public function getTotalWinMoneyAttribute()
+    {
+        $total_betting = DB::table('game_betting')->where("user_id","=", $this->id)->sum('money');
+        $total_win = DB::table('game_betting')->where("user_id","=", $this->id)->sum('win_money');
+        return $total_win - $total_betting;
     }
 
 //    public function getNumLoseAttribute()

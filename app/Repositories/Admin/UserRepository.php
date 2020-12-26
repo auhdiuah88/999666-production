@@ -21,7 +21,7 @@ class UserRepository extends BaseRepository
 
     public function findAll($offset, $limit)
     {
-        return $this->Cx_User->where("is_customer_service", 0)->orderByDesc("last_time")->offset($offset)->limit($limit)->get()->toArray();
+        return $this->Cx_User->where("is_customer_service", 0)->orderByDesc("last_time")->offset($offset)->limit($limit)->select(["*", "id as total_win_money"])->get()->toArray();
     }
 
     public function getBalanceLogs($userId, $offset, $limit)
