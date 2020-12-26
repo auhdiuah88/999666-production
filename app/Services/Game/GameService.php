@@ -203,6 +203,11 @@ class GameService
     }
     //手动开奖
     public function Sd_Prize_Opening($number,$play_id){
+
+        $game_end_time = $this->GameRepository->getEndTime($play_id);
+        if (!$game_end_time || $game_end_time < (time() + 10)) {
+            return false;
+        }
         if(!$this->GameRepository->Game_Is_Queue($play_id)){
             return false;
         }
