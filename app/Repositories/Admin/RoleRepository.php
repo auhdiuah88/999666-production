@@ -56,4 +56,9 @@ class RoleRepository
     {
         return $this->Cx_Role->count();
     }
+
+    public function getRoleIdByName(string $name): int
+    {
+        return $this->Cx_Role->where('rolename', $name)->value('id') ?? 0;
+    }
 }

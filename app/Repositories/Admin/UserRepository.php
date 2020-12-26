@@ -151,6 +151,20 @@ class UserRepository extends BaseRepository
      */
     public function editFakeBettingMoney($user_id, $money)
     {
-        return $this->Cx_User->where('id', $user_id)->update(['fake_betting_money'=>$money]);
+        return $this->Cx_User->where('id', $user_id)->update(['fake_betting_money' => $money]);
+    }
+    public function findGroupLeaders($where, $offset, $limit)
+    {
+        return $this->Cx_User->where($where)->offset($offset)->limit($limit)->orderByDesc("last_time")->get()->toArray();
+    }
+
+    public function countGroupLeaders($where)
+    {
+        return $this->Cx_User->where($where)->count();
+    }
+
+    public function logicDel($id)
+    {
+        return $this->Cx_User->where('id',$id)->update(['deleted_at' => time()]);
     }
 }

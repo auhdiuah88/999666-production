@@ -237,4 +237,8 @@ class AdminRepository
         return $this->Cx_Admin->where("user_id", $user_id)->update(["status"=>2]);
     }
 
+    public function logicDelByUserId($userId)
+    {
+        return $this->Cx_Admin->where('user_id', $userId)->update(['deleted_at' => time()]);
+    }
 }
