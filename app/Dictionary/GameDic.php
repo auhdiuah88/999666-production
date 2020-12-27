@@ -26,4 +26,8 @@ class GameDic
         return self::$openType[$type];
     }
 
+    public static function getOpenType(){
+        return self::$openType;
+    }
+
 }

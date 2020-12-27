@@ -31,9 +31,9 @@ class Cx_Game extends Model
         }
     }
 
-    public function getOpenTypeAttribute()
+    public function getOpenTypeAttribute($value)
     {
-        return GameDic::data($this->open_type);
+        return GameDic::data($value);
     }
 
     public function game_name()

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\SettingService;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class SettingController extends Controller
 {
@@ -72,6 +73,32 @@ class SettingController extends Controller
     {
         try{
             $this->SettingService->gameRule();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function setGameRule()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'id' => ['required', 'integer', 'gt:0'],
+                'open_type' => ['required', Rule::in([1, 2, 3])],
+                'date_kill' => ['required', 'gt:0', 'lte:1'],
+                'one_kill' => ['required', 'gt:0', 'lte:1']
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->setGameRule();
             return $this->AppReturn(
                 $this->SettingService->_code,
                 $this->SettingService->_msg,

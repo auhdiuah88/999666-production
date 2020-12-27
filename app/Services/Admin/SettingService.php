@@ -4,6 +4,7 @@
 namespace App\Services\Admin;
 
 
+use App\Dictionary\GameDic;
 use App\Repositories\Admin\SettingRepository;
 use App\Services\BaseService;
 
@@ -14,7 +15,7 @@ class SettingService extends BaseService
 
     public function __construct
     (
-        SettingRepository $settingRepository,
+        SettingRepository $settingRepository
     )
     {
         $this->SettingRepository = $settingRepository;
@@ -59,7 +60,26 @@ class SettingService extends BaseService
 
     public function gameRule()
     {
-        $this->_data = $this->SettingRepository->gameRule();
+        $games = $this->SettingRepository->gameRule();
+        $rules = GameDic::getOpenType();
+        $this->_data = compact('games','rules');
+    }
+
+    public function setGameRule()
+    {
+        $id = $this->intInput('id');
+        $open_type = $this->intInput('open_type');
+        $date_kill = $this->floatInput('date_kill');
+        $one_kill = $this->floatInput('one_kill');
+        $data = compact('open_type','date_kill','one_kill');
+        $res = $this->SettingRepository->setGameRule($id, $data);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '操作失败';
+            return false;
+        }
+        $this->_msg = '操作成功';
+        return true;
     }
 
 }

@@ -83,4 +83,15 @@ class SettingRepository extends BaseRepository
         return $this->Cx_Game->select(['id', 'name', 'open_type', 'date_kill', 'one_kill'])->get();
     }
 
+    /**
+     * 更新游戏开奖规则
+     * @param $id
+     * @param $data
+     * @return mixed
+     */
+    public function setGameRule($id, $data)
+    {
+        return $this->Cx_Game->where("id", $id)->update($data);
+    }
+
 }

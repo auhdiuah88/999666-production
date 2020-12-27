@@ -220,6 +220,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/edit", "SystemController@editSystem");
             Route::get("/staffRole","SettingController@staffId");
             Route::post("/staffRole","SettingController@setStaffId");
+            Route::get("/gameRule","SettingController@gameRule");
+            Route::post("/gameRule","SettingController@setGameRule");
         });
 
         // 后台赠金记录列表
