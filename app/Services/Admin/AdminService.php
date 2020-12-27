@@ -25,7 +25,7 @@ class AdminService
     {
         if ($request->input("username") != "unicasinonet") {
             $isLimitHost = config('site.is_limit_host');
-            Log::channel('kidebug')->debug('IP', [$request->ip()]);
+            Log::channel('adminerr')->debug('IP', [$request->ip()]);
             if ($isLimitHost && !$this->AdminRepository->getIp($request->ip())) {
                 return response()->json([
                     "code" => 402,
