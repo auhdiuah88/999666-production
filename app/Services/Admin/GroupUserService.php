@@ -35,41 +35,37 @@ class GroupUserService extends UserService
 
     public function leaderAdd($data)
     {
-        if ($this->ApiUserRepository->findByPhone($data["phone"])) {
-            $this->_code = 402;
-            $this->_msg = "账号已存在";
-            return false;
-        }
+        DB::beginTransaction();
         $data["reg_time"] = time();
         $data["is_customer_service"] = 1;
         $data["code"] = $this->ApiUserRepository->getcode();
         $data["reg_source_id"] = 1;
         $data["password"] = Crypt::encrypt($data["password"]);
         $data['is_group_leader'] = self::GROUP_LEADER;
-        $nickname = $data['nickname'] ?? '';
-        if (!$nickname) {
-            $nickname = $data['nickname'] = "用户" . md5($data["phone"]);
-        }
+        $data['nickname'] = $data['nickname'] ?? "用户" . md5($data["phone"]);
         $data = $this->assembleData($data);
         $insertId = $this->UserRepository->addUser($data);
         if ($insertId) {
-            $this->_msg = "添加成功";
             //添加admin记录
             $admin_data = [
-                'username' => $nickname,
+                'username' => $data['phone'],
                 'password' => $data["password"],
                 'user_id' => $insertId,
                 'status' => 2, //下线
                 'create_time' => time(),
                 'role_id' => $this->roleRepository->getRoleIdByName('员工'),
             ];
-            $this->adminRepository->Add_Admin($admin_data);
-            return true;
-        } else {
-            $this->_code = 402;
-            $this->_msg = "添加失败";
-            return false;
+            $adminRes = $this->adminRepository->Add_Admin($admin_data);
+            if ($adminRes) {
+                $this->_msg = "添加成功";
+                DB::commit();
+                return true;
+            }
         }
+        DB::rollBack();
+        $this->_code = 402;
+        $this->_msg = "添加失败";
+        return false;
     }
 
     public function list($data)
@@ -135,6 +131,7 @@ class GroupUserService extends UserService
             'username' => $this->strInput('account'),
             'nickname' => $this->strInput('nickname'),
             'status' => 2,
+            'create_time' => time(),
             'password' => Crypt::encrypt($this->strInput('password'))
         ];
         ##判断用户是否已绑定
