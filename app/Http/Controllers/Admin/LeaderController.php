@@ -26,7 +26,7 @@ class LeaderController extends UserController
     {
         $validator = Validator::make($request->all(), [
             'password' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|unique:users,phone|unique:admin,username',
         ]);
         if ($validator->fails()) {
             return $this->AppReturn(400, $validator->errors()->first());
