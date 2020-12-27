@@ -69,4 +69,50 @@ class LeaderController extends UserController
     {
         parent::editUser($request);
     }
+
+    public function searchAccount(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required|numeric|',
+        ]);
+        if($validator->fails()){
+            return $this->AppReturn(402,$validator->errors()->first());
+        }
+        $this->groupUserService->searchAccount($request->get('phone'));
+        return $this->AppReturn(
+            $this->groupUserService->_code,
+            $this->groupUserService->_msg,
+            $this->groupUserService->_data
+        );
+    }
+
+    /**
+     * 绑定组长
+     * @param Request $request
+     * @return LeaderController
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function bindAccount(Request $request)
+    {
+        try{
+            $validator = Validator::make($request->post(), [
+                'user_id' => 'required|integer|min:1',
+                'nickname' => 'required|between:2,20|alpha_dash',
+                'account' => "required|unique:admin,username|alpha_num|between:4,20",
+                'password' => 'required|between:6,20|alpha_num'
+            ]);
+            if($validator->fails()){
+                return $this->AppReturn(402,$validator->errors()->first());
+            }
+            $this->groupUserService->bindAccount();
+            return $this->AppReturn(
+                $this->groupUserService->_code,
+                $this->groupUserService->_msg,
+                $this->groupUserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
 }
