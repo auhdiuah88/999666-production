@@ -113,7 +113,7 @@ class SettingService extends BaseService
         $withdraw_type = config('pay.withdraw',[]);
         if(!isset($withdraw_type[$type])){
             $this->_code = 403;
-            $this->_msg = '体现类型不支持';
+            $this->_msg = '提现类型不支持';
             return false;
         }
         $setting = $this->SettingRepository->getWithdraw();
@@ -134,8 +134,14 @@ class SettingService extends BaseService
                 ];
             }
         }
-        ##更新
-        $res = $this->SettingRepository->setWithdrawConfig($config);
+        if(!$setting){
+            ##新增
+            $res = $this->SettingRepository->addWithdrawConfig($config);
+        }else{
+            ##更新
+            $res = $this->SettingRepository->setWithdrawConfig($config);
+        }
+
         if($res === false){
             $this->_code = 403;
             $this->_msg = '操作失败';

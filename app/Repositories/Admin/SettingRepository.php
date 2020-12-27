@@ -116,7 +116,17 @@ class SettingRepository extends BaseRepository
      */
     public function setWithdrawConfig($config)
     {
-        return $this->Cx_Settings->where("setting_key", "withdraw")->update(["setting_value"=>$config]);
+        return $this->Cx_Settings->where("setting_key", "withdraw")->update(["setting_value"=>json_encode($config)]);
+    }
+
+    /**
+     * 新增提现配置
+     * @param $config
+     * @return mixed
+     */
+    public function addWithdrawConfig($config)
+    {
+        return $this->Cx_Settings->create(["setting_value"=>$config, 'setting_key'=>'withdraw']);
     }
 
 }
