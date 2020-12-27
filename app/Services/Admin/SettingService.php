@@ -61,7 +61,7 @@ class SettingService extends BaseService
     public function gameRule()
     {
         $games = $this->SettingRepository->gameRule();
-        $rules = GameDic::getOpenType();
+        $rules = array_values(GameDic::getOpenType());
         $this->_data = compact('games','rules');
     }
 

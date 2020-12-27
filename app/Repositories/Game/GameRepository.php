@@ -955,6 +955,18 @@ class GameRepository
         }
         return $data;
     }
+
+    public function Get_Game_Config($id)
+    {
+        $key = "GAME_CONFIG_{$id}";
+        if(Redis::exists($key)){
+            $data=json_decode(Redis::get($key));
+        }else{
+            $data = $this->Cx_Game->where("id", "=", $id)->first();
+            Redis::set($key, json_encode($data,JSON_UNESCAPED_UNICODE));
+        }
+    }
+
     public function Get_Date_Money(){
         $date=date('Y-m-d',time());
         $date_count=$this->Cx_Date_Prize->where("date",$date)->count();
