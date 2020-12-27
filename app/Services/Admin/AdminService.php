@@ -7,6 +7,7 @@ use App\Repositories\Admin\AdminRepository;
 use App\Repositories\Admin\SettingRepository;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class AdminService
 {
@@ -24,6 +25,7 @@ class AdminService
     {
         if ($request->input("username") != "unicasinonet") {
             $isLimitHost = config('site.is_limit_host');
+            Log::channel('kidebug')->debug('IP', [$request->ip()]);
             if ($isLimitHost && !$this->AdminRepository->getIp($request->ip())) {
                 return response()->json([
                     "code" => 402,
