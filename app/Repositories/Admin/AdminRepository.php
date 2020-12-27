@@ -241,4 +241,9 @@ class AdminRepository
     {
         return $this->Cx_Admin->where('user_id', $userId)->update(['deleted_at' => time()]);
     }
+
+    public function addAdmin($admin_data)
+    {
+        return $this->Cx_Admin->create($admin_data);
+    }
 }

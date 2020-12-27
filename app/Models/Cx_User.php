@@ -109,4 +109,9 @@ class Cx_User extends Model
     {
         return $this->hasMany(Cx_User_Recharge_Logs::class,"user_id","id");
     }
+
+    public function scopeGroupLeader($query)
+    {
+        $query->where('is_group_leader', 1);
+    }
 }

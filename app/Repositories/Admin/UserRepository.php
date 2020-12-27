@@ -155,16 +155,25 @@ class UserRepository extends BaseRepository
     }
     public function findGroupLeaders($where, $offset, $limit)
     {
-        return $this->Cx_User->where($where)->offset($offset)->limit($limit)->orderByDesc("last_time")->get()->toArray();
+        return $this->Cx_User->groupLeader()->where($where)->offset($offset)->limit($limit)->orderByDesc("last_time")->get()->toArray();
     }
 
     public function countGroupLeaders($where)
     {
-        return $this->Cx_User->where($where)->count();
+        return $this->Cx_User->groupLeader()->where($where)->count();
     }
 
     public function logicDel($id)
     {
         return $this->Cx_User->where('id',$id)->update(['deleted_at' => time()]);
+    }
+
+    public function searchAccount($phone)
+    {
+        return $this->Cx_User->where([
+            ['phone', $phone],
+            ['is_group_leader',  2],
+            ['is_customer_service', 1]
+        ])->select(['id', 'nickname', 'phone'])->first();
     }
 }
