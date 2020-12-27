@@ -8,6 +8,7 @@ use App\Models\Cx_Game;
 use App\Models\Cx_Role;
 use App\Models\Cx_Settings;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Redis;
 
 class SettingRepository extends BaseRepository
 {
@@ -91,7 +92,12 @@ class SettingRepository extends BaseRepository
      */
     public function setGameRule($id, $data)
     {
-        return $this->Cx_Game->where("id", $id)->update($data);
+        $key = "GAME_CONFIG_{$id}";
+        $res = $this->Cx_Game->where("id", $id)->update($data);
+        if($res === false)return $res;
+        $data = $this->Cx_Game->where("id", $id)->first();
+        Redis::set($key, json_encode($data,JSON_UNESCAPED_UNICODE));
+        return $res;
     }
 
 }

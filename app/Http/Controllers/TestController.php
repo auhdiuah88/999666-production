@@ -83,7 +83,7 @@ class TestController extends Controller
     }
 
     public function openGame(SscService $sscService, Ssc_TwoService $ssc_TwoService){
-        $sscService->ssc_ki(1);
+        $sscService->ssc_ki(56443);
     }
 
     public function openGameBetting(){

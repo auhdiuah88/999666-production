@@ -965,6 +965,7 @@ class GameRepository
             $data = $this->Cx_Game->where("id", "=", $id)->first();
             Redis::set($key, json_encode($data,JSON_UNESCAPED_UNICODE));
         }
+        return $data;
     }
 
     public function Get_Date_Money(){

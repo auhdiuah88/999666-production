@@ -16,6 +16,7 @@ class SscService
     protected $winmoney1;
     protected $GameRepository;
     protected $REDIS_LOGIN="REDIS_ZONG_SHALV";
+    protected $game_id = 1;
 
     public function __construct(SscRepository $SscRepository,GameRepository $GameRepository)
     {
@@ -204,23 +205,33 @@ class SscService
         }
         ##获取本期的情况
         $game_play_info = $this->GameRepository->Get_Game_play($play_id);
-        //单局杀率判定
-        $system=$this->GameRepository->Get_System();
-        $kill_rate=$system->one_kill;//获得局杀率
-
         ##本局的下注金额
         $cur_betting_money = $this->GameRepository->Get_Cur_Betting_Money($play_id);
-        if($system->is_date_kill==1){ ##开启天杀优先天杀
-            $date_kill = $system->date_kill;
-            ##今天内的投注金额 s_money，中奖金额 y_money
-            $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
-            ##可赔金额
-            $can_donate_money = (1-$date_kill) * ($new_money_sum['s_money'] + $cur_betting_money - $new_money_sum['y_money']);
-        }else{
-            ##按照局杀操作
-            $can_donate_money = (1-$kill_rate) * $cur_betting_money;
+        //单局杀率判定
+//        $system=$this->GameRepository->Get_System();
+        $system=$this->GameRepository->Get_Game_Config($this->game_id);
+        $open_type = intval($system['open_type']['value']);
+        switch ($open_type){
+            case 1: //天杀
+                $date_kill = $system->date_kill;  //获得天杀率
+                ##今天内的投注金额 s_money，中奖金额 y_money
+                $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
+                ##可赔金额
+                $can_donate_money = (1-$date_kill) * ($new_money_sum['s_money'] + $cur_betting_money - $new_money_sum['y_money']);
+                break;
+            case 2:  //局杀
+                $kill_rate = $system->one_kill;//获得局杀率
+                $can_donate_money = (1-$kill_rate) * $cur_betting_money;
+                break;
+            case 3:  //随机
+                $can_donate_money = 0;
+                break;
+            default:
+                $can_donate_money = 0;
+                Log::channel('kidebug')->error('开奖处出现异常',compact('play_id'));
+                break;
         }
-        $calc = $this->calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money);
+        $calc = $this->calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money, $open_type);
 
         ##输赢 1赢 2输 3平
         $type = $calc['win_money'] > $cur_betting_money ? 2 : ($calc['win_money'] < $cur_betting_money ? 1 : 3) ;
@@ -249,9 +260,9 @@ class SscService
         return compact('result_array','temp_win_money');
     }
 
-    public function calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money){
+    public function calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money, $open_type){
         ##没有人投注[随机出结果]
-        if($cur_betting_money <= 0){
+        if($open_type == 3 || $cur_betting_money <= 0){
             $result_array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
             $idx = mt_rand(0, 9);
             $result = $result_array[$idx];
