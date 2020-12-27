@@ -76,21 +76,14 @@ class GroupUserService extends UserService
     {
         $limit = $data['limit'] ?? 10;
         $offset = (($data['page'] ?? 1) - 1) * $limit;
-//        DB::connection()->enableQueryLog();
         $list = $this->UserRepository->findGroupLeaders($this->initSearchWhere($data), $offset, $limit);
         $total = $this->UserRepository->countGroupLeaders($this->initSearchWhere($data));
         $this->_data = ["total" => $total, "list" => $list];
-//        $sql = DB::getQueryLog();
-//        var_dump($sql);
-//        dd($this->_data);
     }
 
     public function initSearchWhere($data)
     {
-        $where = [
-            ['is_group_leader', 1],
-            'deleted_at' => null
-        ];
+        $where = [];
         if (isset($data['id']) && $data['id']) {
             $where[] = ['id', $data['id']];
         }
@@ -108,8 +101,8 @@ class GroupUserService extends UserService
         DB::beginTransaction();
         try {
             $userRes = $this->UserRepository->logicDel($id);
-        $adminRes = $this->adminRepository->logicDelByUserId($id);
-        if ($userRes && $adminRes) {
+            $adminRes = $this->adminRepository->logicDelByUserId($id);
+            if ($userRes && $adminRes) {
                 DB::commit();
             } else {
                 DB::rollBack();
@@ -122,6 +115,57 @@ class GroupUserService extends UserService
             $this->_code = 402;
             $this->_msg = "操作失败";
         }
+    }
+
+    public function searchAccount($phone)
+    {
+        $account = $this->_data = $this->UserRepository->searchAccount($phone);
+        if ($account) {
+            $this->_data = $account->toArray();
+            return;
+        }
+        $this->_code = 402;
+        $this->_msg = '用户不存在';
+    }
+
+    public function bindAccount()
+    {
+        $data = [
+            'user_id' => $this->intInput('user_id'),
+            'username' => $this->strInput('account'),
+            'nickname' => $this->strInput('nickname'),
+            'status' => 2,
+            'password' => Crypt::encrypt($this->strInput('password'))
+        ];
+        ##判断用户是否已绑定
+        if($this->adminRepository->Check_Bind($data['user_id'])){
+            $this->_code = 402;
+            $this->_msg = "该账号已绑定管理员账号";
+            return false;
+        }
+        $role_id = $this->roleRepository->getRoleIdByName('员工');
+        if(!$role_id){
+            $this->_code = 402;
+            $this->_msg = "请先设置员工角色";
+            return false;
+        }
+        $data['role_id'] = $role_id;
+        DB::beginTransaction();
+        ##绑定
+        $userRes = $this->UserRepository->editUser([
+            'id' => $this->intInput('user_id'),
+            'is_group_leader' => 1
+        ]);
+        $adminRes = $this->adminRepository->addAdmin($data);
+        if(!$adminRes || !$userRes){
+            $this->_code = 402;
+            $this->_msg = '绑定失败';
+            DB::rollBack();
+            return false;
+        }
+        DB::commit();
+        $this->_msg = '绑定成功';
+        return true;
     }
 
 }

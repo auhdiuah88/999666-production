@@ -111,6 +111,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post("/add", "LeaderController@add");
                 Route::get("/list", "LeaderController@list");
                 Route::post("/del", "LeaderController@logicDel");
+                Route::get("/searchAccount", "LeaderController@searchAccount");
+                Route::post("/bindAccount", "LeaderController@bindAccount");
             });
         });
 

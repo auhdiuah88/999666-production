@@ -248,12 +248,17 @@ class AdminRepository
             ->where("id", $admin_id)
             ->with(
                 [
-                    'user' => function($query){
+                    'user' => function ($query) {
                         $query->select(["id", "phone", "invite_relation"]);
                     }
                 ]
             )
             ->first()
             ->toArray();
+    }
+
+    public function addAdmin($admin_data)
+    {
+        return $this->Cx_Admin->create($admin_data);
     }
 }
