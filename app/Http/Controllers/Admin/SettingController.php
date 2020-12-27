@@ -84,6 +84,10 @@ class SettingController extends Controller
         }
     }
 
+    /**
+     * 设置游戏开奖规则
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function setGameRule()
     {
         try{
@@ -99,6 +103,48 @@ class SettingController extends Controller
                     $validator->errors()->first()
                 );
             $this->SettingService->setGameRule();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    /**
+     * 获取提现配置
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function withdrawConfig()
+    {
+        try{
+            $this->SettingService->withdrawConfig();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function setWithdrawConfig()
+    {
+        try{
+            $validator = Validator::make(request()->input(),[
+                'type' => ['required'],
+                'max' => ['required', 'integer', 'gt:1'],
+                'min' => ['required', 'integer', 'gt:1'],
+                'btn' => ['required']
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(403,$validator->errors()->first());
+            $this->SettingService->setWithdrawConfig();
             return $this->AppReturn(
                 $this->SettingService->_code,
                 $this->SettingService->_msg,

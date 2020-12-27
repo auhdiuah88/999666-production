@@ -7,6 +7,7 @@ namespace App\Services\Admin;
 use App\Dictionary\GameDic;
 use App\Repositories\Admin\SettingRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\DB;
 
 class SettingService extends BaseService
 {
@@ -73,6 +74,68 @@ class SettingService extends BaseService
         $one_kill = $this->floatInput('one_kill');
         $data = compact('open_type','date_kill','one_kill');
         $res = $this->SettingRepository->setGameRule($id, $data);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '操作失败';
+            return false;
+        }
+        $this->_msg = '操作成功';
+        return true;
+    }
+
+    public function withdrawConfig()
+    {
+        $withdraw_type = config('pay.withdraw',[]);
+        $setting = $this->SettingRepository->getWithdraw();
+        $setting_value = $setting['setting_value'];
+        $config = [];
+        foreach($withdraw_type as $key => $item){
+            $config[] = [
+                'type' => $key,
+                'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
+                'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[]
+            ];
+        }
+        $this->_data = $config;
+    }
+
+    public function setWithdrawConfig()
+    {
+        $type = $this->strInput('type');
+        $max = $this->intInput('max');
+        $min = $this->intInput('min');
+        if($max <= $min){
+            $this->_code = 403;
+            $this->_msg = '最高限制应高于最低限制';
+            return false;
+        }
+        $btn = request()->post('btn');
+        $withdraw_type = config('pay.withdraw',[]);
+        if(!isset($withdraw_type[$type])){
+            $this->_code = 403;
+            $this->_msg = '体现类型不支持';
+            return false;
+        }
+        $setting = $this->SettingRepository->getWithdraw();
+        $setting_value = $setting['setting_value'];
+        $config = [];
+        foreach($withdraw_type as $key => $item){
+            if($key == $type){
+                $config[$key] = [
+                    'type' => $key,
+                    'limit' => ['max'=>$max,'min'=>$min],
+                    'btn' => array_values($btn)
+                ];
+            }else{
+                $config[$key] = [
+                    'type' => $key,
+                    'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
+                    'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[]
+                ];
+            }
+        }
+        ##更新
+        $res = $this->SettingRepository->setWithdrawConfig($config);
         if($res === false){
             $this->_code = 403;
             $this->_msg = '操作失败';
