@@ -146,4 +146,30 @@ class AccountRepository extends BaseRepository
     {
         return $this->Cx_User->where("id", $user_id)->update(['status'=>0]);
     }
+
+    /**
+     * 修改用户的推荐关系
+     * @param $user_id
+     * @param $relation
+     * @return mixed
+     */
+    public function editInviteRelation($user_id, $relation)
+    {
+        return $this->Cx_User->where("id", $user_id)->update(['invite_relation'=>$relation]);
+    }
+
+    /**
+     * 批量更新用户推荐关系
+     * @param $user_id
+     * @param $relation
+     */
+    public function editUserInviteRelation($user_id, $relation)
+    {
+        $list = $this->Cx_User->where('invite_relation', 'like', "%-$user_id-%")->select(['id', 'invite_relation'])->get()->toArray();
+        foreach($list as $item){
+            $temp_relation = trim(trim(explode("-{$user_id}-",$item['invite_relation'])[0],'-') . "-{$user_id}-" . trim($relation,'-'),'-');
+            $new_relation = $temp_relation?'-' . $temp_relation . '-':"";
+            $this->Cx_User->where("id", $item['id'])->update(['invite_relation'=>$new_relation]);
+        }
+    }
 }

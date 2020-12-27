@@ -241,4 +241,19 @@ class AdminRepository
     {
         return $this->Cx_Admin->where('user_id', $userId)->update(['deleted_at' => time()]);
     }
+
+    public function getAdminUserById($admin_id)
+    {
+        return $this->Cx_Admin
+            ->where("id", $admin_id)
+            ->with(
+                [
+                    'user' => function($query){
+                        $query->select(["id", "phone", "invite_relation"]);
+                    }
+                ]
+            )
+            ->first()
+            ->toArray();
+    }
 }

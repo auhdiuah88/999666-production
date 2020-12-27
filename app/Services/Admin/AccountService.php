@@ -72,6 +72,12 @@ class AccountService extends BaseService
         $data["is_withdrawal"] = 1;
         $data["is_withdrawal"] = 1;
         $data["code"] = $this->AccountRepository->getCode();
+        $admin_id = request()->get('admin_id');
+        $admin = $this->AdminRepository->getAdminUserById($admin_id);
+        if($admin['user']){
+            $data["invite_relation"] = makeInviteRelation($admin['user']['invite_relation'], $admin['user']['id']);
+        }
+
         DB::beginTransaction();
         try{
             ##增加代理用户账号
@@ -141,14 +147,32 @@ class AccountService extends BaseService
             return false;
         }
         $data['role_id'] = $agent_role['setting_value']['role_id'];
-        ##绑定
-        if(!$this->AccountRepository->addAdmin($data)){
+
+        $admin_id = request()->get('admin_id');
+        $admin = $this->AdminRepository->getAdminUserById($admin_id);
+        $invite_relation = makeInviteRelation($admin['user']['invite_relation'], $admin['user']['id']);
+        DB::beginTransaction();
+        try{
+            ##增加后台管理账号
+            if(!$this->AccountRepository->addAdmin($data))
+                throw new \Exception('增加员工管理账号失败');
+            ##修改邀请关系
+            $res = $this->AccountRepository->editInviteRelation($data['user_id'], $invite_relation);
+            if($res === false)
+                throw new \Exception('员工关联关系绑定失败');
+            ##修改员工下面的用户的邀请关系
+            $this->AccountRepository->editUserInviteRelation($data['user_id'], $invite_relation);
+
+            DB::commit();
+            $this->_msg = '绑定成功';
+            return true;
+        }catch(\Exception $e){
+            DB::rollBack();
             $this->_code = 402;
-            $this->_msg = '绑定失败';
+            $this->_msg = $e->getMessage();
             return false;
         }
-        $this->_msg = '绑定成功';
-        return true;
+
     }
 
     public function delAccount($id)
