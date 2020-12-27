@@ -14,7 +14,7 @@ class SettingService extends BaseService
 
     public function __construct
     (
-        SettingRepository $settingRepository
+        SettingRepository $settingRepository,
     )
     {
         $this->SettingRepository = $settingRepository;
@@ -55,6 +55,11 @@ class SettingService extends BaseService
         }
         $this->_msg = "操作成功";
         return true;
+    }
+
+    public function gameRule()
+    {
+        $this->_data = $this->SettingRepository->gameRule();
     }
 
 }

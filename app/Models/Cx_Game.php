@@ -4,6 +4,7 @@
 namespace App\Models;
 
 
+use App\Dictionary\GameDic;
 use Illuminate\Database\Eloquent\Model;
 
 class Cx_Game extends Model
@@ -29,6 +30,12 @@ class Cx_Game extends Model
             return asset($value);
         }
     }
+
+    public function getOpenTypeAttribute()
+    {
+        return GameDic::data($this->open_type);
+    }
+
     public function game_name()
     {
         return $this->belongsTo('App\Models\Cx_Game_Betting', "game_id");

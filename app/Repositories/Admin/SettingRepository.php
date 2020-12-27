@@ -4,6 +4,7 @@
 namespace App\Repositories\Admin;
 
 
+use App\Models\Cx_Game;
 use App\Models\Cx_Role;
 use App\Models\Cx_Settings;
 use App\Repositories\BaseRepository;
@@ -11,17 +12,18 @@ use App\Repositories\BaseRepository;
 class SettingRepository extends BaseRepository
 {
 
-    private $Cx_Settings;
-    private $Cx_Role;
+    private $Cx_Settings, $Cx_Role, $Cx_Game;
 
     public function __construct
     (
         Cx_Settings $cx_Settings,
-        Cx_Role $cx_Role
+        Cx_Role $cx_Role,
+        Cx_Game $cx_Game
     )
     {
         $this->Cx_Settings = $cx_Settings;
         $this->Cx_Role = $cx_Role;
+        $this->Cx_Game = $cx_Game;
     }
 
     /**
@@ -29,7 +31,8 @@ class SettingRepository extends BaseRepository
      * @param $role_id
      * @return mixed
      */
-    public function checkRole($role_id){
+    public function checkRole($role_id)
+    {
         return $this->Cx_Role->where("id", $role_id)->first();
     }
 
@@ -37,7 +40,8 @@ class SettingRepository extends BaseRepository
      * 获取员工角色ID
      * @return mixed
      */
-    public function getStaff(){
+    public function getStaff()
+    {
         return $this->Cx_Settings->where("setting_key", "staff_id")->first();
     }
 
@@ -46,7 +50,8 @@ class SettingRepository extends BaseRepository
      * @param $role_id
      * @return mixed
      */
-    public function editStaff($role_id){
+    public function editStaff($role_id)
+    {
         return $this->Cx_Settings->where("setting_key", "staff_id")->update(['setting_value'=>[
             'role_id' => $role_id
         ]]);
@@ -57,7 +62,8 @@ class SettingRepository extends BaseRepository
      * @param $role_id
      * @return mixed
      */
-    public function addStaff($role_id){
+    public function addStaff($role_id)
+    {
         return $this->Cx_Settings->create(
             [
                 'setting_key' => 'staff_id',
@@ -67,4 +73,14 @@ class SettingRepository extends BaseRepository
             ]
         );
     }
+
+    /**
+     * 游戏开奖规则
+     * @return mixed
+     */
+    public function gameRule()
+    {
+        return $this->Cx_Game->select(['id', 'name', 'open_type', 'date_kill', 'one_kill'])->get();
+    }
+
 }

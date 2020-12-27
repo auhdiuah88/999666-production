@@ -64,4 +64,23 @@ class SettingController extends Controller
         }
     }
 
+    /**
+     * 游戏开奖规则
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function gameRule()
+    {
+        try{
+            $this->SettingService->gameRule();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }
