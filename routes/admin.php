@@ -264,6 +264,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             });
 
             Route::get("/inviteInfo","agent\AgentDataController@inviteInfo");
+
+            Route::get("/staffLists","agent\AgentStaffController@staffLists");
         });
     });
 });

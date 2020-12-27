@@ -20,7 +20,7 @@ class AgentStaffController extends Controller
         $this->AgentStaffService = $agentStaffService;
     }
 
-    public function lists()
+    public function staffLists()
     {
         try{
             $this->AgentStaffService->getLists();

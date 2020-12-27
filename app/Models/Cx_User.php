@@ -58,6 +58,20 @@ class Cx_User extends Model
         return $total_win - $total_betting;
     }
 
+    public function getTotalInviteAttribute()
+    {
+        return $this->where("invite_relation", "like", "%-{$this->id}-%")->where("is_customer_service", "=", 0)->count();
+    }
+
+    public function getInviteAttribute()
+    {
+        return $this
+            ->where("invite_relation", "like", "%-{$this->id}-%")
+            ->whereBetween("reg_time", [day_start(), day_end()])
+            ->where("is_customer_service", "=", 0)
+            ->count();
+    }
+
 //    public function getNumLoseAttribute()
 //    {
 //        $total_recharge = $this->attributes["total_recharge"];
