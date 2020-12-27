@@ -332,18 +332,24 @@ class UserRepository
     public function UpPwd($phone, $pwd)
     {
         if ($this->Cx_User->where("phone", $phone)->count() < 1) {
-            return $data = array("code" => 401,
-                "msg" => "该用户不存在请检查手机号是否输入正确",
-                "data" => null);
+            return [
+                "code" => 401,
+                "msg" => "The user does not exist, please check whether the phone number is entered correctly",
+                "data" => null
+            ];
         } else {
             if ($this->Cx_User->where("phone", $phone)->update(["password" => $pwd])) {
-                return $data = array("code" => 200,
-                    "msg" => "重置密码成功",
-                    "data" => null);
+                return [
+                    "code" => 200,
+                    "msg" => "Password reset successfully",
+                    "data" => null
+                ];
             } else {
-                return $data = array("code" => 402,
-                    "msg" => "重置密码失败，请联系客服",
-                    "data" => null);
+                return [
+                    "code" => 402,
+                    "msg" => "Password reset failed, please contact customer service",
+                    "data" => null
+                ];
             }
         }
     }

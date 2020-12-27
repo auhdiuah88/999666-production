@@ -26,12 +26,15 @@ class UserService
     const REDIS_REGIST_CODE = "REGIST_CODE:";    // redis短信验证码key
     // 找回密码redis键
     const REDIS_RETRIEVE_PWD_CODE = "RETRIEVE_PWD_CODE:";
+    // 忘记密码redis键
+    const REDIS_FORGET_PWD_CODE = "FORGET_PWD_CODE:";
     // redis短信验证码过期时间
     const REDIS_CODE_TTL = 120;
 
     // 验证码type 0注册短信 1重置密码短信
     const MESSAGE_REGISTER = 0;
     const MESSAGE_REPASS = 1;
+    const FORGET_PASS = 2;
 
     // 登录
     const  LOGIN_FORBIDDEN_ERR_FREQUENCY = 5;  // 登录禁用错误次数
@@ -83,7 +86,7 @@ class UserService
             'token' => $token,
             'last_time' => time()
         ];
-        cache()->set(md5('usertoken'.$userObj->id), $token,7*24*60*60);
+        cache()->set(md5('usertoken' . $userObj->id), $token, 7 * 24 * 60 * 60);
         $userObj = $this->UserRepository->updateUser($userObj->id, $userModifyData);
         $this->data = $userObj;
         return true;
@@ -148,6 +151,32 @@ class UserService
     }
 
     /**
+     * 忘记密码修改
+     * @param $data
+     * @return array
+     */
+    public function forgetPass($data)
+    {
+        $code = Redis::get(self::REDIS_FORGET_PWD_CODE . $data['phone']);
+        if ($code) {
+            if ($code !== $data['code']) {
+                return array("code" => 402,
+                    "msg" => "The SMS verification code is incorrect",
+                    "data" => null);
+            } else {
+                $pasword = Crypt::encrypt($data['password']);
+                $return = $this->UserRepository->UpPwd($data['phone'], $pasword);
+                return $return;
+            }
+        } else {
+            return array(
+                "code" => 414,
+                "msg" => "The SMS verification code has expired",
+                "data" => null);
+        }
+    }
+
+    /**
      * 注册到我们的数据库中
      * @param $data
      * @return bool
@@ -175,7 +204,7 @@ class UserService
         // 判断是否有代理
         if (array_key_exists("code", $data)) {
             $list = $this->UserRepository->findAgentByCode($data["code"]);
-            if(empty($list)){
+            if (empty($list)) {
                 $this->error_code = 414;
                 $this->error = '邀请用户不存在';
                 return false;
@@ -252,6 +281,13 @@ class UserService
             $key = self::REDIS_REGIST_CODE;
         } else if ($type == self::MESSAGE_REPASS) {
             $key = self::REDIS_RETRIEVE_PWD_CODE;
+        } else if ($type == self::FORGET_PASS) {
+            if (!$this->UserRepository->getUser($phone)) {
+                $this->error_code = 414;
+                $this->error = 'The user does not exists';
+                return false;
+            }
+            $key = self::REDIS_FORGET_PWD_CODE;
         }
 
         if (Redis::exists($key . $phone)) {
