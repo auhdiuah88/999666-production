@@ -36,7 +36,7 @@ class PeriodRepository extends BaseRepository
 
     public function searchPeriod($data, $offset, $limit)
     {
-        return $this->whereCondition($data, $this->Cx_Game_Play)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderBy("id", "asc")->offset($offset)->limit($limit)->get()->toArray();
+        return $this->whereCondition($data, $this->Cx_Game_Play)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderBy("id", "asc")->offset($offset)->limit($limit)->get()->setAppends(['prize_sd_btn'])->toArray();
     }
 
     public function countSearchPeriod($data)

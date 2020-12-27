@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,5 +25,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        Collection::macro('setAppends', function ($attributes) {
+            return $this->map(function ($item) use ($attributes) {
+                return $item->setAppends($attributes);
+            });
+        });
     }
 }

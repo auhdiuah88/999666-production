@@ -138,6 +138,29 @@ class UserController extends Controller
         return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
     }
 
+    //忘记密码重置
+    public function resetPass(Request $request)
+    {
+        $data = $request->post();
+        $rules = [
+            "phone" => "required",
+            "code" => "required",
+            "password" => "required",
+            "re_password" => "required|same:password",
+        ];
+        $validator = Validator::make($data, $rules);
+        if ($validator->fails()) {
+            $result = [
+                "code" => 414,
+                "massage" => $validator->errors()->all(),
+                "data" => null
+            ];
+            return response()->json($result);     //显示所有错误组成的数组
+        }
+        $return = $this->UserService->forgetPass($data);
+        return response()->json($return);
+    }
+
     /**
      * 重置密码接口
      * @param Request $request
