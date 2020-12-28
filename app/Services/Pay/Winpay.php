@@ -4,6 +4,7 @@
 namespace App\Services\Pay;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Winpay支付商
@@ -30,8 +31,11 @@ class Winpay extends PayStrategy
 //        if (empty(self::$merchantID) || empty(self::$secretkey)) {
 //            die('请设置支付商户号和密钥');
 //        }
-        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
-        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
+        $config = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
+//        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
+//        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
+        $this->merchantID = $config[$this->company]['merchant_id'];
+        $this->secretkey = $config[$this->company]['secret_key'];
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;

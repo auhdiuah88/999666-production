@@ -6,6 +6,7 @@ namespace App\Services\Pay;
 use App\Repositories\Api\UserRepository;
 use App\Services\RequestService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
     Leap支付 充值和提现类
@@ -33,8 +34,11 @@ class Leap extends PayStrategy
 //            die('请设置 ipay 支付商户号和密钥');
 //        }
 
-        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
-        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
+        $config = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
+//        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
+//        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
+        $this->merchantID = $config[$this->company]['merchant_id'];
+        $this->secretkey = $config[$this->company]['secret_key'];
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;

@@ -24,8 +24,10 @@ class MTBpay extends PayStrategy
     public function _initialize()
     {
         $config = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
-        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
-        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
+//        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
+//        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
+        $this->merchantID = $config[$this->company]['merchant_id'];
+        $this->secretkey = $config[$this->company]['secret_key'];
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
