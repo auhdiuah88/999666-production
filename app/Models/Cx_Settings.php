@@ -10,7 +10,9 @@ class Cx_Settings extends Model
 {
     protected $table = 'settings';
 
-//    public $incrementing = false;  //关掉自增
+    public $incrementing = false;  //关掉自增
+
+    protected $primaryKey = "setting_key";
 
     protected $dateFormat  = "U";
 
