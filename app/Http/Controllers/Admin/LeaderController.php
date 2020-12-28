@@ -67,7 +67,7 @@ class LeaderController extends UserController
 
     public function edit(Request $request)
     {
-        parent::editUser($request);
+        return parent::editUser($request);
     }
 
     public function searchAccount(Request $request)

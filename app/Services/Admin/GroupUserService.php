@@ -62,7 +62,7 @@ class GroupUserService extends UserService
         $userData["password"] = Crypt::encrypt($data["password"]);
         $userData['is_group_leader'] = self::GROUP_LEADER;
         $userData['nickname'] = $data['nickname'] ?? "用户" . md5($data["phone"]);
-        $userData = $this->assembleData($data);
+        $userData = $this->assembleData($userData);
         $insertId = $this->UserRepository->addUser($userData);
         if ($insertId) {
             //获取组长role_id
