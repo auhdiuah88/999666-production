@@ -58,6 +58,7 @@ class Ssc_ThreeService
         //单局杀率判定
 //        $system=$this->GameRepository->Get_System();
         $system=$this->GameRepository->Get_Game_Config($this->game_id);
+        $system = json_decode($system,true);
         $open_type = intval($system['open_type']['value']);
         switch ($open_type){
             case 1: //天杀
