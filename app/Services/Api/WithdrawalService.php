@@ -4,6 +4,7 @@
 namespace App\Services\Api;
 
 
+use App\Repositories\Api\SettingRepository;
 use App\Repositories\Api\SystemRepository;
 use App\Repositories\Api\UserRepository;
 use App\Repositories\Api\WithdrawalRepository;
@@ -17,25 +18,25 @@ use Illuminate\Support\Facades\DB;
 
 class WithdrawalService extends PayService
 {
-    private $WithdrawalRepository, $UserRepository;
-    private $systemRepository;
-    private $requestService;
-    private $payContext;
+    private $WithdrawalRepository, $UserRepository, $systemRepository, $requestService, $payContext, $SettingRepository;
 
     public static $service_charge = 45;  // 手续费
 
-    public function __construct(WithdrawalRepository $repository,
-                                UserRepository $userRepository,
-                                RequestService $requestService,
-                                PayContext $payContext,
-                                SystemRepository $systemRepository
+    public function __construct
+    (
+        WithdrawalRepository $repository,
+        UserRepository $userRepository,
+        RequestService $requestService,
+        PayContext $payContext,
+        SystemRepository $systemRepository,
+        SettingRepository $settingRepository
     )
     {
         $this->WithdrawalRepository = $repository;
         $this->UserRepository = $userRepository;
         $this->requestService = $requestService;
         $this->systemRepository = $systemRepository;
-
+        $this->SettingRepository = $settingRepository;
         $this->payContext = $payContext;
     }
 
@@ -381,5 +382,22 @@ class WithdrawalService extends PayService
         ];
         $params['sign'] = self::generateSign($params);
         return $this->requestService->postJsonData(self::$url . '/withdrawalQuery', $params);
+    }
+
+    public function withdrawType()
+    {
+        $withdraw_type = config('pay.withdraw',[]);
+        $setting_value = $this->SettingRepository->getWithdraw();
+        $config = [];
+        foreach($withdraw_type as $key => $item){
+            $config[] = [
+                'type' => $key,
+                'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
+                'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
+                'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
+                'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:""
+            ];
+        }
+        $this->_data = $config;
     }
 }

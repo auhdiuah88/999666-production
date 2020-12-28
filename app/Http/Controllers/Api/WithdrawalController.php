@@ -243,8 +243,13 @@ class WithdrawalController extends Controller
      */
     public function withdrawType(Request $request){
         try{
-            $list = config('pay.withdraw');
-            return $this->AppReturn(200,'', $list);
+//            $list = config('pay.withdraw');
+            $this->WithdrawalService->withdrawType();
+            return $this->AppReturn(
+                200,
+                '',
+                $this->WithdrawalService->_data
+            );
         }catch(\Exception $e){
             $this->logError('adminerr', $e);
             return $this->AppReturn(400, 'Withdrawal method request failed');
