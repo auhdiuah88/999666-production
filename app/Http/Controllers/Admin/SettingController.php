@@ -135,25 +135,52 @@ class SettingController extends Controller
 
     public function setWithdrawConfig()
     {
-        try{
-            $validator = Validator::make(request()->input(),[
+        try {
+            $validator = Validator::make(request()->input(), [
                 'type' => ['required'],
                 'max' => ['required', 'integer', 'gt:1'],
                 'min' => ['required', 'integer', 'gt:1'],
                 'btn' => ['required']
             ]);
-            if($validator->fails())
-                return $this->AppReturn(403,$validator->errors()->first());
+            if ($validator->fails())
+                return $this->AppReturn(403, $validator->errors()->first());
             $this->SettingService->setWithdrawConfig();
             return $this->AppReturn(
                 $this->SettingService->_code,
                 $this->SettingService->_msg,
                 $this->SettingService->_data
             );
-        }catch(\Exception $e){
-            $this->logError('adminerr',$e);
-            return $this->AppReturn(402,$e->getMessage());
+        } catch (\Exception $e) {
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(402, $e->getMessage());
         }
+    }
+
+    public function getGroupLeaderRoleId()
+    {
+        $this->SettingService->queryGroupLeaderRoleId();
+        return $this->AppReturn(
+            $this->SettingService->_code,
+            $this->SettingService->_msg,
+            $this->SettingService->_data
+        );
+    }
+
+    public function saveGroupLeaderRoleId()
+    {
+        $validator = Validator::make(request()->post(),
+            [
+                'role_id' => "required|gte:1|integer"
+            ]
+        );
+        if($validator->fails())
+            return $this->AppReturn(402,$validator->errors()->first());
+        $this->SettingService->saveGroupLeaderRoleId();
+        return $this->AppReturn(
+            $this->SettingService->_code,
+            $this->SettingService->_msg,
+            $this->SettingService->_data
+        );
     }
 
 }

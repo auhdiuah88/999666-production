@@ -14,6 +14,7 @@ class SettingRepository extends BaseRepository
 {
 
     private $Cx_Settings, $Cx_Role, $Cx_Game;
+    const GROUP_LEADER_ROLE_KEY = 'GROUP_LEADER_ROLE_ID';
 
     public function __construct
     (
@@ -129,4 +130,16 @@ class SettingRepository extends BaseRepository
         return $this->Cx_Settings->create(["setting_value"=>$config, 'setting_key'=>'withdraw']);
     }
 
+    public function getSettingByKey($key)
+    {
+        return $this->Cx_Settings->where("setting_key", $key)->first();
+    }
+
+    public function saveSetting($key, array $value)
+    {
+        return $this->Cx_Settings->updateOrCreate(
+            ['setting_key' => $key],
+            ['setting_value' => $value]
+        );
+    }
 }
