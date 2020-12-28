@@ -108,14 +108,14 @@ class SettingService extends BaseService
         $min = $this->intInput('min');
         $secret_key = $this->strInput('secret_key');
         $merchant_id = $this->strInput('merchant_id');
-        if($max <= $min){
+        if ($max <= $min) {
             $this->_code = 403;
             $this->_msg = '最高限制应高于最低限制';
             return false;
         }
         $btn = request()->post('btn');
-        $withdraw_type = config('pay.withdraw',[]);
-        if(!isset($withdraw_type[$type])){
+        $withdraw_type = config('pay.withdraw', []);
+        if (!isset($withdraw_type[$type])) {
             $this->_code = 403;
             $this->_msg = '提现类型不支持';
             return false;
@@ -123,16 +123,16 @@ class SettingService extends BaseService
         $setting = $this->SettingRepository->getWithdraw();
         $setting_value = $setting['setting_value'];
         $config = [];
-        foreach($withdraw_type as $key => $item){
-            if($key == $type){
+        foreach ($withdraw_type as $key => $item) {
+            if ($key == $type) {
                 $config[$key] = [
                     'type' => $key,
                     'limit' => ['max'=>$max,'min'=>$min],
                     'btn' => array_values($btn),
                     'merchant_id' => $merchant_id,
-                    'secret_key' => $secret_key
+                    'secret_key' => $secret_key,
                 ];
-            }else{
+            } else {
                 $config[$key] = [
                     'type' => $key,
                     'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
@@ -142,20 +142,46 @@ class SettingService extends BaseService
                 ];
             }
         }
-        if(!$setting){
+        if (!$setting) {
             ##新增
             $res = $this->SettingRepository->addWithdrawConfig($config);
-        }else{
+        } else {
             ##更新
             $res = $this->SettingRepository->setWithdrawConfig($config);
         }
 
-        if($res === false){
+        if ($res === false) {
             $this->_code = 403;
             $this->_msg = '操作失败';
             return false;
         }
         $this->_msg = '操作成功';
+        return true;
+    }
+
+    public function queryGroupLeaderRoleId()
+    {
+        $val = $this->SettingRepository->getSettingByKey(SettingRepository::GROUP_LEADER_ROLE_KEY);
+        $this->_data = $val ? ["role_id"=>$val->setting_value['role_id']]: ["role_id"=>""] ;
+        return true;
+    }
+
+    public function saveGroupLeaderRoleId()
+    {
+        $role_id = $this->intInput('role_id');
+        ##判断角色是否存在
+        if(!$this->SettingRepository->checkRole($role_id)){
+            $this->_code = 401;
+            $this->_msg = "角色不存在";
+            return false;
+        }
+        $res = $this->SettingRepository->saveSetting(SettingRepository::GROUP_LEADER_ROLE_KEY, ['role_id' => $role_id]);
+        if($res === false){
+            $this->_code = 401;
+            $this->_msg = "操作失败";
+            return false;
+        }
+        $this->_msg = "操作成功";
         return true;
     }
 
