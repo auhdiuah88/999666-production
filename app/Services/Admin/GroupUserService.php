@@ -59,6 +59,22 @@ class GroupUserService extends UserService
         $userData["is_customer_service"] = 1;
         $userData["code"] = $this->ApiUserRepository->getcode();
         $userData["reg_source_id"] = 1;
+        $userData["phone"] = $data["phone"];
+        if (array_key_exists('remarks', $data)) {
+            $userData["remarks"] = $data["remarks"];
+        }
+        if (array_key_exists('is_login', $data)) {
+            $userData["is_login"] = $data["is_login"];
+        }
+        if (array_key_exists('is_transaction', $data)) {
+            $userData["is_transaction"] = $data["is_transaction"];
+        }
+        if (array_key_exists('is_recharge', $data)) {
+            $userData["is_recharge"] = $data["is_recharge"];
+        }
+        if (array_key_exists('is_login', $data)) {
+            $userData["is_withdrawal"] = $data["is_withdrawal"];
+        }
         $userData["password"] = Crypt::encrypt($data["password"]);
         $userData['is_group_leader'] = self::GROUP_LEADER;
         $userData['nickname'] = $data['nickname'] ?? "用户" . md5($data["phone"]);

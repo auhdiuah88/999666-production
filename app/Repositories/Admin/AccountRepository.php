@@ -18,19 +18,19 @@ class AccountRepository extends BaseRepository
         $this->Cx_Admin = $cx_Admin;
     }
 
-    public function findAll($offset, $limit)
+    public function findAll($offset, $limit, $user_id)
     {
-        return $this->Cx_User->where("is_customer_service", 1)->where("is_group_leader", 2)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link", "status"])->offset($offset)->limit($limit)->get()->toArray();
+        return $this->Cx_User->where("is_customer_service", 1)->where("is_group_leader", 2)->where("invite_relation", "like", "%-{$user_id}-%")->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link", "status"])->offset($offset)->limit($limit)->get()->toArray();
     }
 
-    public function countAll()
+    public function countAll($user_id)
     {
-        return $this->Cx_User->where("is_customer_service", 1)->where("is_group_leader", 2)->count("id");
+        return $this->Cx_User->where("is_customer_service", 1)->where("is_group_leader", 2)->where("invite_relation", "like", "%-{$user_id}-%")->count("id");
     }
 
-    public function findById($id)
+    public function findById($id, $user_id)
     {
-        return $this->Cx_User->where("id", $id)->where("is_customer_service", 1)->where("is_group_leader", 2)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->first();
+        return $this->Cx_User->where("id", $id)->where("is_customer_service", 1)->where("is_group_leader", 2)->where("invite_relation", "like", "%-{$user_id}-%")->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->first();
     }
 
     public function getCode()
@@ -98,7 +98,7 @@ class AccountRepository extends BaseRepository
         return $this->Cx_User->where("id", $id)->delete();
     }
 
-    public function searchAccount($where, $offset, $limit)
+    public function searchAccount($where, $offset, $limit, $user_id)
     {
         return $this->Cx_User->where(function ($query) use ($where) {
             if (array_key_exists("nickname", $where) && $where["nickname"]) {
@@ -107,10 +107,10 @@ class AccountRepository extends BaseRepository
             if (array_key_exists("phone", $where) && $where["phone"]) {
                 $query->where("phone", "like", "%" . $where["phone"] . "%");
             }
-        })->where("is_customer_service", 1)->where("is_group_leader", 2)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->offset($offset)->limit($limit)->get()->toArray();
+        })->where("is_customer_service", 1)->where("is_group_leader", 2)->where("invite_relation", "like", "%-{$user_id}-%")->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->offset($offset)->limit($limit)->get()->toArray();
     }
 
-    public function countSearchAccount($where)
+    public function countSearchAccount($where, $user_id)
     {
         return $this->Cx_User->where(function ($query) use ($where) {
             if (array_key_exists("nickname", $where) && $where["nickname"]) {
@@ -119,7 +119,7 @@ class AccountRepository extends BaseRepository
             if (array_key_exists("phone", $where) && $where["phone"]) {
                 $query->where("phone", "like", "%" . $where["phone"] . "%");
             }
-        })->where("is_customer_service", 1)->count("id");
+        })->where("is_customer_service", 1)->where("invite_relation", "like", "%-{$user_id}-%")->count("id");
     }
 
     public function addAdmin($admin_data)

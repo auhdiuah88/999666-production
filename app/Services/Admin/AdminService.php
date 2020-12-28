@@ -179,7 +179,8 @@ class AdminService
 //        return $menu;
         $admin = $this->AdminRepository->Find_By_Id_Admin($id);
         $staff = $this->SettingRepository->getStaff();
-        $role_type = $staff->setting_value['role_id'] == $admin->role_id ? 2 : 1;
+        $leader = $this->SettingRepository->getLeader();
+        $role_type = ($staff->setting_value['role_id'] == $admin->role_id || $leader->setting_value['role_id'] == $admin->role_id) ? 2 : 1;
         return compact('menu','role_type');
     }
 

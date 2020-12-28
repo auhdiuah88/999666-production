@@ -46,18 +46,22 @@ class AgentStaffRepository
            return ['list'=>[], 'total'=>0];
 
         $list = $list->toArray();
-        $user_ids = array_column($list,'id');
         $time_map = [day_start(), day_end()];
         foreach($list as &$item){
+            $user_ids = $this->Cx_User->where("invite_relation", "like", "%-{$item['id']}-%")->pluck('id');
             $item['total_recharge'] = $this->Cx_User_Balance_Logs->whereIn("user_id", $user_ids)->where("type", "=", 2)->sum('money');
             $item['total_betting'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->sum('money');
             $item['total_win'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->sum('win_money');
             $item['total_win_money'] = $item['total_win'] - $item['total_betting'];
+            if($item['total_win_money'] > 0)
+                $item['total_win_money'] = "+" . $item['total_win_money'];
 
             $item['betting'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->whereBetween('betting_time', $time_map)->sum('money');
             $item['win'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->whereBetween('betting_time', $time_map)->sum('win_money');
             $item['recharge'] = $this->Cx_User_Balance_Logs->whereIn("user_id", $user_ids)->whereBetween('time', $time_map)->where("type", "=", 2)->sum('money');
             $item['win_money'] = $item['win'] - $item['betting'];
+            if($item['win_money'] > 0)
+                $item['win_money'] = "+" . $item['win_money'];
         }
         $total = $model->count();
         return compact('list','total');

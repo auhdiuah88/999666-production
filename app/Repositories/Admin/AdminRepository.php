@@ -5,21 +5,30 @@ namespace App\Repositories\Admin;
 use App\Models\Cx_Admin;
 use App\Models\Cx_Role;
 use App\Models\Cx_Jurisdiction;
+use App\Models\Cx_Settings;
 use App\Models\Cx_White_List;
 use Illuminate\Support\Facades\Redis;
 
 class AdminRepository
 {
-    protected $Cx_Admin, $Cx_Role, $Cx_Jurisdiction, $Cx_White_List;
+    protected $Cx_Admin, $Cx_Role, $Cx_Jurisdiction, $Cx_White_List, $Cx_Settings;
     protected $admin = "ADMIN:";
     protected $user = "ADMIN_USER:";
 
-    public function __construct(Cx_Admin $Cx_Admin, Cx_Role $Cx_Role, Cx_Jurisdiction $Cx_Jurisdiction, Cx_White_List $cx_White_List)
+    public function __construct
+    (
+        Cx_Admin $Cx_Admin,
+        Cx_Role $Cx_Role,
+        Cx_Jurisdiction $Cx_Jurisdiction,
+        Cx_White_List $cx_White_List,
+        Cx_Settings $cx_Settings
+    )
     {
         $this->Cx_Admin = $Cx_Admin;
         $this->Cx_Role = $Cx_Role;
         $this->Cx_Jurisdiction = $Cx_Jurisdiction;
         $this->Cx_White_List = $cx_White_List;
+        $this->Cx_Settings = $cx_Settings;
     }
 
     // 查询IP是否在白名单
@@ -60,7 +69,16 @@ class AdminRepository
 
     public function FindAllRole()
     {
-        return $this->Cx_Role->get()->toArray();
+        $exclude = [];
+        ##排除员工和组长
+        $staff = $this->Cx_Settings->where('setting_key', 'staff_id')->value('setting_value');
+        if($staff)$exclude[] = $staff['role_id'];
+        $leader = $this->Cx_Settings->where('setting_key', 'GROUP_LEADER_ROLE_ID')->value('setting_value');
+        if($leader)$exclude[] = $leader['role_id'];
+        if($exclude)
+            return $this->Cx_Role->whereNotIn('id', $exclude)->get()->toArray();
+        else
+            return $this->Cx_Role->get()->toArray();
     }
 
     public function Get_Role($role_id)
