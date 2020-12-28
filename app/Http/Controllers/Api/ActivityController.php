@@ -33,7 +33,7 @@ class ActivityController extends Controller
     public function taskList(Request $request)
     {
         $data = $this->activityService->getTaskList($request);
-        return $this->AppReturn(200, '任务列表', $data);
+        return $this->AppReturn(200, 'successfully', $data);
     }
 
     /**
@@ -45,14 +45,14 @@ class ActivityController extends Controller
             "task_id" => "required",
         ];
         $massages = [
-            "phone.required" => "task_id不能为空",
+            "task_id.required" => "task_id can not be empty",
         ];
         $validator = Validator::make($request->post(), $rules, $massages);
         if ($validator->fails()) {
             return $this->AppReturn(414, $validator->errors()->first());
         }
         if ($this->activityService->taskRewardGet($request, $request->post())) {
-            return $this->AppReturn(200, '提取成功');
+            return $this->AppReturn(200, 'successfully');
         }
         return $this->AppReturn(414, $this->activityService->_msg);
     }
@@ -62,7 +62,7 @@ class ActivityController extends Controller
      */
     public function signInfo(Request $request)
     {
-        return $this->AppReturn(200,'我的签到信息',$this->activityService->signInfo($request));
+        return $this->AppReturn(200,'successfully',$this->activityService->signInfo($request));
     }
 
     /**
@@ -70,7 +70,7 @@ class ActivityController extends Controller
      */
     public function signInGetMoneyList(Request $request)
     {
-        return $this->AppReturn(200, '每日签到包列表', $this->activityService->getAllSignInGetMoney($request));
+        return $this->AppReturn(200, 'successfully', $this->activityService->getAllSignInGetMoney($request));
     }
 
     /**
@@ -89,7 +89,7 @@ class ActivityController extends Controller
         if (!$this->activityService->buySignInGetMoney($request)) {
             return $this->AppReturn($this->activityService->_code, $this->activityService->_msg);
         }
-        return $this->AppReturn(200, '购买每日签到回扣包成功');
+        return $this->AppReturn(200, 'Successfully purchased the daily check-in rebate package');
     }
 
     /**
@@ -108,7 +108,7 @@ class ActivityController extends Controller
         if (!$this->activityService->doGetMoney($request)) {
             return $this->AppReturn($this->activityService->_code, $this->activityService->_msg);
         }
-        return $this->AppReturn(200, '领取回扣成功');
+        return $this->AppReturn(200, 'Successfully claim the rebate');
     }
 
     /**
@@ -116,7 +116,7 @@ class ActivityController extends Controller
      */
     public function getPackageReceiveInfo()
     {
-        return $this->AppReturn(200, "最近的其他用户领取回扣记录", $this->activityService->getPackageReceiveInfo());
+        return $this->AppReturn(200, "Successfully ", $this->activityService->getPackageReceiveInfo());
     }
 
 
