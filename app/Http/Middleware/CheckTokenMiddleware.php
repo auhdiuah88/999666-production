@@ -34,10 +34,10 @@ class CheckTokenMiddleware
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
         if (!$this->repository->Redis_Get_Admin_User($data[0])) {
-//            return response()->json([
-//                "code" => 1001,
-//                "msg" => "token验证失败"
-//            ]);
+            return response()->json([
+                "code" => 1001,
+                "msg" => "token验证失败"
+            ]);
         }
         $request->attributes->add(['admin_id'=>$data[0]]);
         return $next($request);
