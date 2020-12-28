@@ -53,13 +53,17 @@ class GroupUserService extends UserService
         }
         $rol_id = $val->setting_value['role_id'];
         DB::beginTransaction();
-        $userData["reg_time"] = $data['reg_time'] ?? time();
         $userData["whats_app_account"] = $data['whats_app_account'] ?? null;
         $userData["whats_app_link"] = $data['whats_app_link'] ?? null;
         $userData["is_customer_service"] = 1;
         $userData["code"] = $this->ApiUserRepository->getcode();
         $userData["reg_source_id"] = 1;
         $userData["phone"] = $data["phone"];
+        if (array_key_exists('reg_time', $data)) {
+            $userData["reg_time"] = $data["reg_time"];
+        } else {
+            $userData["reg_time"] = time();
+        }
         if (array_key_exists('remarks', $data)) {
             $userData["remarks"] = $data["remarks"];
         }
@@ -109,6 +113,7 @@ class GroupUserService extends UserService
         $limit = $data['limit'] ?? 10;
         $offset = (($data['page'] ?? 1) - 1) * $limit;
         $list = $this->UserRepository->findGroupLeaders($this->initSearchWhere($data), $offset, $limit);
+        dd($list);
         $total = $this->UserRepository->countGroupLeaders($this->initSearchWhere($data));
         $this->_data = ["total" => $total, "list" => $list];
     }
