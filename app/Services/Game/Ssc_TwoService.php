@@ -58,8 +58,7 @@ class Ssc_TwoService
         //单局杀率判定
 //        $system=$this->GameRepository->Get_System();
         $system=$this->GameRepository->Get_Game_Config($this->game_id);
-        $system = json_decode(json_encode($system),true);
-        $open_type = intval($system['open_type']['value']);
+        $open_type = intval($system->open_type->value);
         switch ($open_type){
             case 1: //天杀
                 $date_kill = $system->date_kill;  //获得天杀率
