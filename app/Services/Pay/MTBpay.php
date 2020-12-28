@@ -5,6 +5,8 @@ namespace App\Services\Pay;
 
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 class MTBpay extends PayStrategy
 {
 
@@ -21,6 +23,7 @@ class MTBpay extends PayStrategy
 
     public function _initialize()
     {
+        $config = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
         $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
         $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
 

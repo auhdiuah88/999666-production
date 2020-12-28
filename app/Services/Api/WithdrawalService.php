@@ -178,6 +178,21 @@ class WithdrawalService extends PayService
         }
 
         $withdraw_type = $request->with_type ?: "";
+        ##判断提现类型是否支持
+        $withdraw_conf = $this->WithdrawalRepository->getConfig();
+        if(!isset($withdraw_conf[$withdraw_type])){
+            $this->_msg = 'Withdrawal method not supported';
+            return false;
+        }
+        $withdraw_conf = $withdraw_conf[$withdraw_type];
+        if($money > $withdraw_conf['limit']['max']){
+            $this->_msg = 'The maximum withdrawal amount is ' . $withdraw_conf['limit']['max'];
+            return false;
+        }
+        if($money > $withdraw_conf['limit']['min']){
+            $this->_msg = 'The minimum withdrawal amount is ' . $withdraw_conf['limit']['min'];
+            return false;
+        }
         if ($withdraw_type == 'MTBpay') {
             ##验证是否支持
             if (!$user_bank->mtbpy_code) {

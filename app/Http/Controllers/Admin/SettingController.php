@@ -140,7 +140,9 @@ class SettingController extends Controller
                 'type' => ['required'],
                 'max' => ['required', 'integer', 'gt:1'],
                 'min' => ['required', 'integer', 'gt:1'],
-                'btn' => ['required']
+                'btn' => ['required'],
+                'secret_key' => ['required'],
+                'merchant_id' => ['required']
             ]);
             if($validator->fails())
                 return $this->AppReturn(403,$validator->errors()->first());

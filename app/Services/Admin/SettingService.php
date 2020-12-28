@@ -93,7 +93,9 @@ class SettingService extends BaseService
             $config[] = [
                 'type' => $key,
                 'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
-                'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[]
+                'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
+                'merchant_id' => isset($setting_value[$key])?$setting_value[$key]['merchant_id']:"",
+                'secret_key' => isset($setting_value[$key])?$setting_value[$key]['secret_key']:""
             ];
         }
         $this->_data = $config;
@@ -104,6 +106,8 @@ class SettingService extends BaseService
         $type = $this->strInput('type');
         $max = $this->intInput('max');
         $min = $this->intInput('min');
+        $secret_key = $this->strInput('secret_key');
+        $merchant_id = $this->strInput('merchant_id');
         if($max <= $min){
             $this->_code = 403;
             $this->_msg = '最高限制应高于最低限制';
@@ -124,13 +128,17 @@ class SettingService extends BaseService
                 $config[$key] = [
                     'type' => $key,
                     'limit' => ['max'=>$max,'min'=>$min],
-                    'btn' => array_values($btn)
+                    'btn' => array_values($btn),
+                    'merchant_id' => $merchant_id,
+                    'secret_key' => $secret_key
                 ];
             }else{
                 $config[$key] = [
                     'type' => $key,
                     'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
-                    'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[]
+                    'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
+                    'merchant_id' => isset($setting_value[$key])?$setting_value[$key]['merchant_id']:"",
+                    'secret_key' => isset($setting_value[$key])?$setting_value[$key]['secret_key']:""
                 ];
             }
         }

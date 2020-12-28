@@ -5,16 +5,23 @@ namespace App\Repositories\Api;
 
 
 use App\Models\Cx_Charge_Logs;
+use App\Models\Cx_Settings;
 use App\Models\Cx_Withdrawal_Record;
 
 class WithdrawalRepository
 {
-    private $Cx_Withdrawal_Record, $Cx_Charge_Logs;
+    private $Cx_Withdrawal_Record, $Cx_Charge_Logs, $Cx_Settings;
 
-    public function __construct(Cx_Withdrawal_Record $cx_Withdrawal_Record, Cx_Charge_Logs $charge_Logs)
+    public function __construct
+    (
+        Cx_Withdrawal_Record $cx_Withdrawal_Record,
+        Cx_Charge_Logs $charge_Logs,
+        Cx_Settings $cx_Settings
+    )
     {
         $this->Cx_Withdrawal_Record = $cx_Withdrawal_Record;
         $this->Cx_Charge_Logs = $charge_Logs;
+        $this->Cx_Settings = $cx_Settings;
     }
 
     public function findRecordByUserId($userId)
@@ -90,5 +97,16 @@ class WithdrawalRepository
     {
         if(isset($where['plat_order_id']))unset($where['plat_order_id']);
         return $this->Cx_Withdrawal_Record->where($where)->first();
+    }
+
+    /**
+     * 获取提现配置
+     * @return array
+     */
+    public function getConfig()
+    {
+        $setting = $this->Cx_Settings->where('setting_keys', 'withdraw')->first();
+        if(!$setting)return [];
+        return $setting['setting_value'];
     }
 }
