@@ -82,20 +82,20 @@ class ActivityService extends BaseService
         $task = $this->activityRepository->getTaskByID($task_id);
 
         if ($this->activityRepository->isTaskUserGeted($task, $user)) {
-            $this->_msg = '您已经领取过奖励';
+            $this->_msg = 'You have already claimed the reward';
             return false;
         }
 
         $preTaskSum = $this->activityRepository->getPreTaskSum($task->value);
         if ($preTaskSum > $user->rec_ok_count) {
-            $this->_msg = '请先完成前面的任务';
+            $this->_msg = 'Please complete the previous task first';
             return false;
         }
 
         DB::beginTransaction();
         try {
             $money = (int)$task->reward + (int)$task->add_reward;
-            $this->userRepository->updateBalance($user, $money, 5, '提取红包礼金成功，奖励金额' . $money);
+            $this->userRepository->updateBalance($user, $money, 5, 'Successfully withdraw red envelope gift money，Award amount ' . $money);
             $this->activityRepository->recordTaskUserGeted($task, $user);
             DB::commit();
         } catch (\Exception $e) {
@@ -214,14 +214,14 @@ class ActivityService extends BaseService
 
         $signOrder = $this->activityRepository->getValidSignOrder($product_id, $user_id);
         if (!$signOrder) {
-            $this->_msg = '还没购买此商品';
+            $this->_msg = 'Have not purchased this product';
             return false;
         }
 
         $lastSignOrderOp = $this->activityRepository->getLastSignOrderOp($product_id, $user_id, $signOrder->id);
         if ($lastSignOrderOp) {
             if (date("Y-m-d", $lastSignOrderOp->sign_time) == date("Y-m-d", time())) {
-                $this->_msg = '请在明天再来领取';
+                $this->_msg = 'Please come back tomorrow';
                 return false;
             }
         }

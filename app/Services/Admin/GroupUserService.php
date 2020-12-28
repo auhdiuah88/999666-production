@@ -113,7 +113,6 @@ class GroupUserService extends UserService
         $limit = $data['limit'] ?? 10;
         $offset = (($data['page'] ?? 1) - 1) * $limit;
         $list = $this->UserRepository->findGroupLeaders($this->initSearchWhere($data), $offset, $limit);
-        dd($list);
         $total = $this->UserRepository->countGroupLeaders($this->initSearchWhere($data));
         $this->_data = ["total" => $total, "list" => $list];
     }
