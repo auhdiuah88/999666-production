@@ -51,10 +51,10 @@ class WithdrawalService extends PayService
         $data["user_id"] = $userId;
         $data["create_time"] = time();
         if ($this->WithdrawalRepository->addRecord($data)) {
-            $this->_msg = "提现申请成功";
+            $this->_msg = "Successful withdrawal application";
         } else {
             $this->_code = 402;
-            $this->_msg = "提现申请失败";
+            $this->_msg = "Withdrawal application failed";
         }
     }
 
@@ -295,12 +295,12 @@ class WithdrawalService extends PayService
         $pltf_order_no = isset($where['plat_order_id']) ? $where['plat_order_id'] : '';
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
         if (!$withdrawlLog) {
-            $this->_msg = '找不到此提现订单';
+            $this->_msg = "Can't find this order";
             return false;
         }
 
         if ($withdrawlLog->pay_status == 1) {
-            $this->_msg = '已成功提现,无需再回调';
+            $this->_msg = 'Withdraw successfully, no need to call back';
             return false;
         }
 

@@ -49,8 +49,8 @@ class WithdrawalController extends Controller
             "money" => "required"
         ];
         $massages = [
-            "bank_id.required" => "银行卡id不能为空",
-            "money.required" => "提现金额不能为空"
+            "bank_id.required" => "Bank card id cannot be empty",
+            "money.required" => "The withdrawal amount cannot be empty"
         ];
         $validator = Validator::make($data, $rules, $massages);
         if ($validator->fails()) {
