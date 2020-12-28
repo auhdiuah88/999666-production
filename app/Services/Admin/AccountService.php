@@ -32,14 +32,18 @@ class AccountService extends BaseService
 
     public function findAll($page, $limit)
     {
-        $list = $this->AccountRepository->findAll(($page - 1) * $limit, $limit);
-        $total = $this->AccountRepository->countAll();
+        $admin_id = request()->get('admin_id');
+        $admin = $this->AdminRepository->getAdminUserById($admin_id);
+        $list = $this->AccountRepository->findAll(($page - 1) * $limit, $limit, $admin->user_id);
+        $total = $this->AccountRepository->countAll($admin->user_id);
         $this->_data = ["total" => $total, "list" => $list];
     }
 
     public function findById($id)
     {
-        $this->_data = $this->AccountRepository->findById($id);
+        $admin_id = request()->get('admin_id');
+        $admin = $this->AdminRepository->getAdminUserById($admin_id);
+        $this->_data = $this->AccountRepository->findById($id, $admin->user_id);
     }
 
     public function addAccount($data)
@@ -198,8 +202,10 @@ class AccountService extends BaseService
 
     public function searchAccount($data)
     {
-        $list = $this->AccountRepository->searchAccount($data, ($data["page"] - 1) * $data["limit"], $data["limit"]);
-        $total = $this->AccountRepository->countSearchAccount($data);
+        $admin_id = request()->get('admin_id');
+        $admin = $this->AdminRepository->getAdminUserById($admin_id);
+        $list = $this->AccountRepository->searchAccount($data, ($data["page"] - 1) * $data["limit"], $data["limit"], $admin->user_id);
+        $total = $this->AccountRepository->countSearchAccount($data, $admin->user_id);
         $this->_data = ["total" => $total, "list" => $list];
     }
 
