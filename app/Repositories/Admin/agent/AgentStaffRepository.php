@@ -46,9 +46,9 @@ class AgentStaffRepository
            return ['list'=>[], 'total'=>0];
 
         $list = $list->toArray();
-        $user_ids = array_column($list,'id');
         $time_map = [day_start(), day_end()];
         foreach($list as &$item){
+            $user_ids = $this->Cx_User->where("invite_relation", "like", "%-{$item['id']}-%")->pluck('id');
             $item['total_recharge'] = $this->Cx_User_Balance_Logs->whereIn("user_id", $user_ids)->where("type", "=", 2)->sum('money');
             $item['total_betting'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->sum('money');
             $item['total_win'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->sum('win_money');
