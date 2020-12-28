@@ -15,6 +15,7 @@ class SettingRepository extends BaseRepository
 
     private $Cx_Settings, $Cx_Role, $Cx_Game;
     const GROUP_LEADER_ROLE_KEY = 'GROUP_LEADER_ROLE_ID';
+    const WITHDRAW_KEY = 'withdraw';
 
     public function __construct
     (
@@ -107,7 +108,7 @@ class SettingRepository extends BaseRepository
      */
     public function getWithdraw()
     {
-        return $this->Cx_Settings->where("setting_key", "withdraw")->first();
+        return $this->Cx_Settings->where("setting_key", "withdraw")->value('setting_value');
     }
 
     /**
@@ -118,16 +119,6 @@ class SettingRepository extends BaseRepository
     public function setWithdrawConfig($config)
     {
         return $this->Cx_Settings->where("setting_key", "withdraw")->update(["setting_value"=>json_encode($config)]);
-    }
-
-    /**
-     * 新增提现配置
-     * @param $config
-     * @return mixed
-     */
-    public function addWithdrawConfig($config)
-    {
-        return $this->Cx_Settings->create(["setting_value"=>$config, 'setting_key'=>'withdraw']);
     }
 
     public function getSettingByKey($key)

@@ -86,16 +86,15 @@ class SettingService extends BaseService
     public function withdrawConfig()
     {
         $withdraw_type = config('pay.withdraw',[]);
-        $setting = $this->SettingRepository->getWithdraw();
-        $setting_value = $setting['setting_value'];
+        $setting_value = $this->SettingRepository->getWithdraw();
         $config = [];
         foreach($withdraw_type as $key => $item){
             $config[] = [
                 'type' => $key,
                 'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
                 'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
-                'merchant_id' => isset($setting_value[$key])?$setting_value[$key]['merchant_id']:"",
-                'secret_key' => isset($setting_value[$key])?$setting_value[$key]['secret_key']:""
+                'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
+                'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:""
             ];
         }
         $this->_data = $config;
@@ -120,8 +119,7 @@ class SettingService extends BaseService
             $this->_msg = '提现类型不支持';
             return false;
         }
-        $setting = $this->SettingRepository->getWithdraw();
-        $setting_value = $setting['setting_value'];
+        $setting_value = $this->SettingRepository->getWithdraw();
         $config = [];
         foreach ($withdraw_type as $key => $item) {
             if ($key == $type) {
@@ -137,18 +135,13 @@ class SettingService extends BaseService
                     'type' => $key,
                     'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
                     'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
-                    'merchant_id' => isset($setting_value[$key])?$setting_value[$key]['merchant_id']:"",
-                    'secret_key' => isset($setting_value[$key])?$setting_value[$key]['secret_key']:""
+                    'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
+                    'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:""
                 ];
             }
         }
-        if (!$setting) {
-            ##新增
-            $res = $this->SettingRepository->addWithdrawConfig($config);
-        } else {
-            ##更新
-            $res = $this->SettingRepository->setWithdrawConfig($config);
-        }
+        ##更新
+        $res = $this->SettingRepository->saveSetting(SettingRepository::WITHDRAW_KEY, $config);
 
         if ($res === false) {
             $this->_code = 403;
