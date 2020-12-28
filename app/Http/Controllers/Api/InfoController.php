@@ -78,10 +78,10 @@ class InfoController extends Controller
             "account_holder" => "required"
         ];
         $massages = [
-            "bank_num.required" => "银行卡号码不能为空",
-            "mail.required" => "邮箱不能为空",
-            "phone.required" => "银行卡预留电话号码不能为空",
-            "account_holder.required" => "银行卡开户人不能为空",
+            "bank_num.required" => "Bank card number cannot be empty",
+            "mail.required" => "E-mail can not be empty",
+            "phone.required" => "Bank card reserved phone number cannot be empty",
+            "account_holder.required" => "Bank card account holder cannot be empty",
         ];
         $validator = Validator::make($data, $rules, $massages);
         if ($validator->fails()) {
@@ -111,11 +111,11 @@ class InfoController extends Controller
             "account_holder" => "required"
         ];
         $massages = [
-            "id.required" => "银行卡ID不能为空",
-            "mail.required" => "邮箱不能为空",
-            "bank_opening.required" => "银行卡开户行不能为空",
-            "phone.required" => "银行卡预留电话号码不能为空",
-            "account_holder.required" => "银行卡开户人不能为空",
+            "id.required" => "Bank card ID cannot be empty",
+            "mail.required" => "E-mail can not be empty",
+            "bank_opening.required" => "Bank card account bank cannot be empty",
+            "phone.required" => "Bank card reserved phone number cannot be empty",
+            "account_holder.required" => "Bank card account holder cannot be empty",
         ];
         $validator = Validator::make($data, $rules, $massages);
         if ($validator->fails()) {
@@ -141,7 +141,7 @@ class InfoController extends Controller
             "id" => "required"
         ];
         $massages = [
-            "id.required" => "银行卡ID不能为空"
+            "id.required" => "Bank card ID cannot be empty"
         ];
         $validator = Validator::make($data, $rules, $massages);
         if ($validator->fails()) {
@@ -167,7 +167,7 @@ class InfoController extends Controller
             "nickname" => "required"
         ];
         $massages = [
-            "nickname.required" => "昵称不能为空"
+            "nickname.required" => "Nickname should be filled"
         ];
         $validator = Validator::make($data, $rules, $massages);
         if ($validator->fails()) {
@@ -193,8 +193,8 @@ class InfoController extends Controller
             "l_password" => "required"
         ];
         $massages = [
-            "o_password.required" => "原密码不能为空",
-            "l_password.required" => "新密码不能为空"
+            "o_password.required" => "The original password cannot be empty",
+            "l_password.required" => "New password cannot be empty"
         ];
         $validator = Validator::make($data, $rules, $massages);
         if ($validator->fails()) {
