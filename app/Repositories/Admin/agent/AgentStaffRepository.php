@@ -53,6 +53,10 @@ class AgentStaffRepository
             $item['total_betting'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->sum('money');
             $item['total_win'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->sum('win_money');
             $item['total_win_money'] = $item['total_win'] - $item['total_betting'];
+            if($item['total_win_money'] > 0)
+                $item['total_win_money'] = "+" . $item['total_win_money'];
+            elseif ($item['total_win_money'] < 0)
+                $item['total_win_money'] = "-" . $item['total_win_money'];
 
             $item['betting'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->whereBetween('betting_time', $time_map)->sum('money');
             $item['win'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->whereBetween('betting_time', $time_map)->sum('win_money');
