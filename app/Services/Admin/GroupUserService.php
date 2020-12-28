@@ -60,7 +60,9 @@ class GroupUserService extends UserService
         $userData["code"] = $this->ApiUserRepository->getcode();
         $userData["reg_source_id"] = 1;
         $userData["phone"] = $data["phone"];
-        $userData["remarks"] = $data["remarks"];
+        if (array_key_exists('remarks', $data)) {
+            $userData["remarks"] = $data["remarks"];
+        }
         if (array_key_exists('is_login', $data)) {
             $userData["is_login"] = $data["is_login"];
         }
