@@ -10,7 +10,7 @@ use App\Repositories\BaseRepository;
 
 class SettingRepository extends BaseRepository
 {
-    const GROUP_LEADER_ROLE_KEY = 'GROUP_LEADER_ROLE_ID';
+    const GROUP_LEADER_ROLE_KEY = 'GROUP_LEADER_ROLE_ID'; //对应setting表的 setting_key 字段
     private $Cx_Settings;
     private $Cx_Role;
 
