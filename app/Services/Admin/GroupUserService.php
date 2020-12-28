@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 class GroupUserService extends UserService
 {
 
+    const GROUP_LEADER = 1; //组长
+    const NOT_GROUP_LEADER = 2; //不是组长
+
     /**
      * @var AdminRepository
      */
@@ -25,26 +28,24 @@ class GroupUserService extends UserService
     public function __construct(Repository $userRepository, UserRepository $repository, AdminRepository $adminRepository, RoleRepository $roleRepository)
     {
         parent::__construct($userRepository, $repository);
-
         $this->adminRepository = $adminRepository;
         $this->roleRepository = $roleRepository;
     }
 
-    const GROUP_LEADER = 1; //组长
-    const NOT_GROUP_LEADER = 2; //不是组长
-
     public function leaderAdd($data)
     {
         DB::beginTransaction();
-        $data["reg_time"] = time();
-        $data["is_customer_service"] = 1;
-        $data["code"] = $this->ApiUserRepository->getcode();
-        $data["reg_source_id"] = 1;
-        $data["password"] = Crypt::encrypt($data["password"]);
-        $data['is_group_leader'] = self::GROUP_LEADER;
-        $data['nickname'] = $data['nickname'] ?? "用户" . md5($data["phone"]);
-        $data = $this->assembleData($data);
-        $insertId = $this->UserRepository->addUser($data);
+        $userData["reg_time"] = $data['reg_time'] ?? time();
+        $userData["whats_app_account"] = $data['whats_app_account'] ?? null;
+        $userData["whats_app_link"] = $data['whats_app_link'] ?? null;
+        $userData["is_customer_service"] = 1;
+        $userData["code"] = $this->ApiUserRepository->getcode();
+        $userData["reg_source_id"] = 1;
+        $userData["password"] = Crypt::encrypt($data["password"]);
+        $userData['is_group_leader'] = self::GROUP_LEADER;
+        $userData['nickname'] = $data['nickname'] ?? "用户" . md5($data["phone"]);
+        $userData = $this->assembleData($data);
+        $insertId = $this->UserRepository->addUser($userData);
         if ($insertId) {
             //添加admin记录
             $admin_data = [
@@ -135,13 +136,13 @@ class GroupUserService extends UserService
             'password' => Crypt::encrypt($this->strInput('password'))
         ];
         ##判断用户是否已绑定
-        if($this->adminRepository->Check_Bind($data['user_id'])){
+        if ($this->adminRepository->Check_Bind($data['user_id'])) {
             $this->_code = 402;
             $this->_msg = "该账号已绑定管理员账号";
             return false;
         }
         $role_id = $this->roleRepository->getRoleIdByName('员工');
-        if(!$role_id){
+        if (!$role_id) {
             $this->_code = 402;
             $this->_msg = "请先设置员工角色";
             return false;
@@ -154,7 +155,7 @@ class GroupUserService extends UserService
             'is_group_leader' => 1
         ]);
         $adminRes = $this->adminRepository->addAdmin($data);
-        if(!$adminRes || !$userRes){
+        if (!$adminRes || !$userRes) {
             $this->_code = 402;
             $this->_msg = '绑定失败';
             DB::rollBack();

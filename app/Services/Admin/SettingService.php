@@ -57,4 +57,30 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function queryGroupLeaderRoleId()
+    {
+        $val = $this->SettingRepository->getSettingByKey(SettingRepository::GROUP_LEADER_ROLE_KEY);
+        $this->_data = $val ? ["role_id"=>$val->setting_value['role_id']]: ["role_id"=>""] ;
+        return true;
+    }
+
+    public function saveGroupLeaderRoleId()
+    {
+        $role_id = $this->intInput('role_id');
+        ##判断角色是否存在
+        if(!$this->SettingRepository->checkRole($role_id)){
+            $this->_code = 401;
+            $this->_msg = "角色不存在";
+            return false;
+        }
+        $res = $this->SettingRepository->saveSetting(SettingRepository::GROUP_LEADER_ROLE_KEY, ['role_id' => $role_id]);
+        if($res === false){
+            $this->_code = 401;
+            $this->_msg = "操作失败";
+            return false;
+        }
+        $this->_msg = "操作成功";
+        return true;
+    }
+
 }

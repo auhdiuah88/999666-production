@@ -64,4 +64,31 @@ class SettingController extends Controller
         }
     }
 
+    public function getGroupLeaderRoleId()
+    {
+        $this->SettingService->queryGroupLeaderRoleId();
+        return $this->AppReturn(
+            $this->SettingService->_code,
+            $this->SettingService->_msg,
+            $this->SettingService->_data
+        );
+    }
+
+    public function saveGroupLeaderRoleId()
+    {
+        $validator = Validator::make(request()->post(),
+            [
+                'role_id' => "required|gte:1|integer"
+            ]
+        );
+        if($validator->fails())
+            return $this->AppReturn(402,$validator->errors()->first());
+        $this->SettingService->saveGroupLeaderRoleId();
+        return $this->AppReturn(
+            $this->SettingService->_code,
+            $this->SettingService->_msg,
+            $this->SettingService->_data
+        );
+    }
+
 }

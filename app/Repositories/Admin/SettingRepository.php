@@ -10,7 +10,7 @@ use App\Repositories\BaseRepository;
 
 class SettingRepository extends BaseRepository
 {
-
+    const GROUP_LEADER_ROLE_KEY = 'GROUP_LEADER_ROLE_ID';
     private $Cx_Settings;
     private $Cx_Role;
 
@@ -65,6 +65,19 @@ class SettingRepository extends BaseRepository
                     'role_id' => $role_id
                 ]
             ]
+        );
+    }
+
+    public function getSettingByKey($key)
+    {
+        return $this->Cx_Settings->where("setting_key", $key)->first();
+    }
+
+    public function saveSetting($key, array $value)
+    {
+        return $this->Cx_Settings->updateOrCreate(
+            ['setting_key' => $key],
+            ['setting_value' => $value]
         );
     }
 }
