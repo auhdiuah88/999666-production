@@ -29,4 +29,9 @@ class Cx_Admin extends Model
     {
         return $this->belongsTo(Cx_User_Balance_Logs::class, "admin_id");
     }
+
+    public function user()
+    {
+        return $this->belongsTo(Cx_User::class,'user_id','id');
+    }
 }
