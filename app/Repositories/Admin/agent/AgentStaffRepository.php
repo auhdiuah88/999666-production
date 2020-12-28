@@ -55,13 +55,13 @@ class AgentStaffRepository
             $item['total_win_money'] = $item['total_win'] - $item['total_betting'];
             if($item['total_win_money'] > 0)
                 $item['total_win_money'] = "+" . $item['total_win_money'];
-            elseif ($item['total_win_money'] < 0)
-                $item['total_win_money'] = "-" . $item['total_win_money'];
 
             $item['betting'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->whereBetween('betting_time', $time_map)->sum('money');
             $item['win'] = $this->Cx_Game_Betting->whereIn("user_id", $user_ids)->whereBetween('betting_time', $time_map)->sum('win_money');
             $item['recharge'] = $this->Cx_User_Balance_Logs->whereIn("user_id", $user_ids)->whereBetween('time', $time_map)->where("type", "=", 2)->sum('money');
             $item['win_money'] = $item['win'] - $item['betting'];
+            if($item['win_money'] > 0)
+                $item['win_money'] = "+" . $item['win_money'];
         }
         $total = $model->count();
         return compact('list','total');
