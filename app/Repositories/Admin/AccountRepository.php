@@ -20,17 +20,17 @@ class AccountRepository extends BaseRepository
 
     public function findAll($offset, $limit)
     {
-        return $this->Cx_User->where("is_customer_service", 1)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link", "status"])->offset($offset)->limit($limit)->get()->toArray();
+        return $this->Cx_User->where("is_customer_service", 1)->where("is_group_leader", 2)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link", "status"])->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countAll()
     {
-        return $this->Cx_User->where("is_customer_service", 1)->count("id");
+        return $this->Cx_User->where("is_customer_service", 1)->where("is_group_leader", 2)->count("id");
     }
 
     public function findById($id)
     {
-        return $this->Cx_User->where("id", $id)->where("is_customer_service", 1)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->first();
+        return $this->Cx_User->where("id", $id)->where("is_customer_service", 1)->where("is_group_leader", 2)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->first();
     }
 
     public function getCode()
@@ -107,7 +107,7 @@ class AccountRepository extends BaseRepository
             if (array_key_exists("phone", $where) && $where["phone"]) {
                 $query->where("phone", "like", "%" . $where["phone"] . "%");
             }
-        })->where("is_customer_service", 1)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->offset($offset)->limit($limit)->get()->toArray();
+        })->where("is_customer_service", 1)->where("is_group_leader", 2)->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countSearchAccount($where)

@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 
 use App\Repositories\Admin\AdminRepository;
 use App\Repositories\Admin\RoleRepository;
+use App\Repositories\Admin\SettingRepository;
 use App\Repositories\Admin\UserRepository as Repository;
 use App\Repositories\Api\UserRepository;
 use Illuminate\Support\Facades\Crypt;
@@ -24,16 +25,33 @@ class GroupUserService extends UserService
      * @var RoleRepository
      */
     private $roleRepository;
+    /**
+     * @var SettingRepository
+     */
+    private $settingRepository;
 
-    public function __construct(Repository $userRepository, UserRepository $repository, AdminRepository $adminRepository, RoleRepository $roleRepository)
+    public function __construct(Repository $userRepository,
+                                UserRepository $repository,
+                                AdminRepository $adminRepository,
+                                RoleRepository $roleRepository,
+                                SettingRepository $settingRepository)
     {
         parent::__construct($userRepository, $repository);
         $this->adminRepository = $adminRepository;
         $this->roleRepository = $roleRepository;
+        $this->settingRepository = $settingRepository;
     }
 
     public function leaderAdd($data)
     {
+        //获取组长role_id
+        $val = $this->settingRepository->getSettingByKey(SettingRepository::GROUP_LEADER_ROLE_KEY);
+        if (!$val) {
+            $this->_code = 402;
+            $this->_msg = "请先设置组长角色ID";
+            return false;
+        }
+        $rol_id = $val->setting_value['role_id'];
         DB::beginTransaction();
         $userData["reg_time"] = $data['reg_time'] ?? time();
         $userData["whats_app_account"] = $data['whats_app_account'] ?? null;
@@ -44,17 +62,18 @@ class GroupUserService extends UserService
         $userData["password"] = Crypt::encrypt($data["password"]);
         $userData['is_group_leader'] = self::GROUP_LEADER;
         $userData['nickname'] = $data['nickname'] ?? "用户" . md5($data["phone"]);
-        $userData = $this->assembleData($data);
+        $userData = $this->assembleData($userData);
         $insertId = $this->UserRepository->addUser($userData);
         if ($insertId) {
+            //获取组长role_id
             //添加admin记录
             $admin_data = [
                 'username' => $data['phone'],
-                'password' => $data["password"],
+                'password' => $userData["password"],
                 'user_id' => $insertId,
                 'status' => 2, //下线
                 'create_time' => time(),
-                'role_id' => $this->roleRepository->getRoleIdByName('员工'),
+                'role_id' => $rol_id,
             ];
             $adminRes = $this->adminRepository->Add_Admin($admin_data);
             if ($adminRes) {
@@ -141,13 +160,14 @@ class GroupUserService extends UserService
             $this->_msg = "该账号已绑定管理员账号";
             return false;
         }
-        $role_id = $this->roleRepository->getRoleIdByName('员工');
-        if (!$role_id) {
+        $val = $this->settingRepository->getSettingByKey(SettingRepository::GROUP_LEADER_ROLE_KEY);
+        if (!$val) {
             $this->_code = 402;
-            $this->_msg = "请先设置员工角色";
+            $this->_msg = "请先设置组长角色ID";
             return false;
         }
-        $data['role_id'] = $role_id;
+        $rol_id = $val->setting_value['role_id'];
+        $data['role_id'] = $rol_id;
         DB::beginTransaction();
         ##绑定
         $userRes = $this->UserRepository->editUser([

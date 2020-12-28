@@ -14,8 +14,8 @@ class SettingRepository extends BaseRepository
 {
 
     private $Cx_Settings, $Cx_Role, $Cx_Game;
-    const GROUP_LEADER_ROLE_KEY = 'GROUP_LEADER_ROLE_ID';
     const WITHDRAW_KEY = 'withdraw';
+    const GROUP_LEADER_ROLE_KEY = 'GROUP_LEADER_ROLE_ID'; //对应setting表的 setting_key 字段
 
     public function __construct
     (
