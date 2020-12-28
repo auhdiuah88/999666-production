@@ -47,6 +47,11 @@ class SettingRepository extends BaseRepository
         return $this->Cx_Settings->where("setting_key", "staff_id")->first();
     }
 
+    public function getLeader()
+    {
+        return $this->Cx_Settings->where("setting_key", self::GROUP_LEADER_ROLE_KEY)->first();
+    }
+
     /**
      * 修改员工角色ID
      * @param $role_id
