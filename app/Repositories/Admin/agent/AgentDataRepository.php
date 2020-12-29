@@ -158,8 +158,12 @@ class AgentDataRepository
         return makeModel($where, $this->Cx_Game_Betting)->sum('win_money');
     }
 
-    public function getServiceMoney(){
-        return $this->Cx_Charge_logs->where('charge_user_id', '=', $this->user_id)->sum('money');
+    public function getServiceMoney()
+    {
+        $where = [
+            'user_id' => ['in', $this->user_ids]
+        ];
+        return makeModel($where, $this->Cx_Game_Betting)->sum('service_charge');
     }
 
     protected function getBalance(){
