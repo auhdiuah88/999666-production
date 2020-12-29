@@ -142,7 +142,8 @@ class SettingController extends Controller
                 'min' => ['required', 'integer', 'gt:1'],
                 'btn' => ['required'],
                 'secret_key' => ['required'],
-                'merchant_id' => ['required']
+                'merchant_id' => ['required'],
+                'status' => ['required', Rule::in([0, 1])]
             ]);
             if ($validator->fails())
                 return $this->AppReturn(403, $validator->errors()->first());

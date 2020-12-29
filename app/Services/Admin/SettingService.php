@@ -108,6 +108,7 @@ class SettingService extends BaseService
         $min = $this->intInput('min');
         $secret_key = $this->strInput('secret_key');
         $merchant_id = $this->strInput('merchant_id');
+        $status = $this->intInput('status');
         if ($max <= $min) {
             $this->_code = 403;
             $this->_msg = '最高限制应高于最低限制';
@@ -130,6 +131,7 @@ class SettingService extends BaseService
                     'btn' => array_values($btn),
                     'merchant_id' => $merchant_id,
                     'secret_key' => $secret_key,
+                    'status' => $status
                 ];
             } else {
                 $config[$key] = [
@@ -137,7 +139,8 @@ class SettingService extends BaseService
                     'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
                     'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
                     'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
-                    'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:""
+                    'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:"",
+                    'status' => isset($setting_value[$key]) && isset($setting_value[$key]['status'])?$setting_value[$key]['status']:0
                 ];
             }
         }
