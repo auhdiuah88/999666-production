@@ -38,6 +38,8 @@ class Leap extends PayStrategy
 
         $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
         $rechargeConfig = DB::table('settings')->where('setting_key','recharge')->value('setting_value');
+        $withdrawConfig && $withdrawConfig = json_decode($withdrawConfig,true);
+        $rechargeConfig && $rechargeConfig = json_decode($rechargeConfig,true);
 //        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
 //        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
         $this->withdrawMerchantID = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['merchant_id']:"";
