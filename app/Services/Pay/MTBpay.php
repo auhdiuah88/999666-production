@@ -17,17 +17,23 @@ class MTBpay extends PayStrategy
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
 
-    public $merchantID;
-    public $secretkey;
+    public $withdrawMerchantID;
+    public $withdrawSecretkey;
+    public $rechargeMerchantID;
+    public $rechargeSecretkey;
     public $company = 'MTBpay';   // 支付公司名
 
     public function _initialize()
     {
-        $config = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
+        $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
+        $rechargeConfig = DB::table('settings')->where('setting_key','recharge')->value('setting_value');
 //        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
 //        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
-        $this->merchantID = isset($config[$this->company])?$config[$this->company]['merchant_id']:"";
-        $this->secretkey = isset($config[$this->company])?$config[$this->company]['secret_key']:"";
+        $this->withdrawMerchantID = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['merchant_id']:"";
+        $this->withdrawSecretkey = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['secret_key']:"";
+
+        $this->rechargeMerchantID = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['merchant_id']:"";
+        $this->rechargeSecretkey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['secret_key']:"";
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
@@ -36,25 +42,27 @@ class MTBpay extends PayStrategy
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
-    public  function generateSign(array $params)
+    public  function generateSign(array $params, $type=1)
     {
+        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . '&key=' .  $this->secretkey;
+        $sign = (implode('&', $string)) . '&key=' .  $secretKey;
         return md5($sign);
     }
 
-    public function generateSignRigorous(array $params){
+    public function generateSignRigorous(array $params, $type=1){
+        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
             if($value)
                 $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . '&key=' .  $this->secretkey;
+        $sign = (implode('&', $string)) . '&key=' .  $secretKey;
         return md5($sign);
     }
 
@@ -65,7 +73,7 @@ class MTBpay extends PayStrategy
     {
         $order_no = self::onlyosn();
         $params = [
-            'mer_no' => $this->merchantID,
+            'mer_no' => $this->rechargeMerchantID,
             'mer_order_no' => $order_no,
             'pname' => 'ZhangSan',
             'pemail' => '11111111@qq.com',
@@ -77,7 +85,7 @@ class MTBpay extends PayStrategy
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
         ];
-        $params['sign'] = $this->generateSign($params);
+        $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder', [$params]);
 
@@ -122,7 +130,7 @@ class MTBpay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-        if ($this->generateSignRigorous($params) <> $sign) {
+        if ($this->generateSignRigorous($params,1) <> $sign) {
             $this->_msg = 'MTB-签名错误';
             return false;
         }
@@ -146,7 +154,7 @@ class MTBpay extends PayStrategy
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'mer_no' => $this->merchantID,
+            'mer_no' => $this->withdrawMerchantID,
             'mer_order_no' => $order_no,
             'acc_no' => $withdrawalRecord->bank_number,
             'acc_name' => $withdrawalRecord->account_holder,
@@ -156,7 +164,7 @@ class MTBpay extends PayStrategy
             'summary' => 'Balance Withdrawal',
             'province' => $withdrawalRecord->ifsc_code
         ];
-        $params['sign'] = $this->generateSign($params);
+        $params['sign'] = $this->generateSign($params,2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleOrder', $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$res);
@@ -185,7 +193,7 @@ class MTBpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params) <> $sign) {
+        if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'leap-签名错误';
             return false;
         }
@@ -211,7 +219,7 @@ class MTBpay extends PayStrategy
         $mer_order_no = $withdrawalRecord->order_no;
 
         $params = compact('request_no','request_time','mer_no','mer_order_no');
-        $params['sign'] = $this->generateSign($params);
+        $params['sign'] = $this->generateSign($params,2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Param',$params);
         $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
         if(!$res){

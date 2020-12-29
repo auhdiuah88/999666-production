@@ -20,22 +20,23 @@ class Winpay extends PayStrategy
 
     //public static $company = 'winpay';   // 支付公司名
 
-    public $merchantID;
-    public $secretkey;
+    public $withdrawMerchantID;
+    public $withdrawSecretkey;
+    public $rechargeMerchantID;
+    public $rechargeSecretkey;
     public  $company = 'winpay';   // 支付公司名
 
     public function _initialize()
     {
-//        self::$merchantID = config("pay.company.".$this->company.".merchant_id");
-//        self::$secretkey = config("pay.company.".$this->company.".secret_key");
-//        if (empty(self::$merchantID) || empty(self::$secretkey)) {
-//            die('请设置支付商户号和密钥');
-//        }
-        $config = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
+        $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
+        $rechargeConfig = DB::table('settings')->where('setting_key','recharge')->value('setting_value');
 //        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
 //        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
-        $this->merchantID = isset($config[$this->company])?$config[$this->company]['merchant_id']:"";
-        $this->secretkey = isset($config[$this->company])?$config[$this->company]['secret_key']:"";
+        $this->withdrawMerchantID = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['merchant_id']:"";
+        $this->withdrawSecretkey = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['secret_key']:"";
+
+        $this->rechargeMerchantID = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['merchant_id']:"";
+        $this->rechargeSecretkey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['secret_key']:"";
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
@@ -44,8 +45,9 @@ class Winpay extends PayStrategy
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
-    public function generateSign(array $params)
+    public function generateSign(array $params, $type=1)
     {
+        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
@@ -67,7 +69,7 @@ class Winpay extends PayStrategy
         $order_no = self::onlyosn();
 //        $pay_type = 'QUICK_PAY';
         $params = [
-            'merchant' => $this->merchantID,
+            'merchant' => $this->rechargeMerchantID,
             'orderId' => $order_no,
             'amount' => $money,
             'customName' => $user->nickname,
@@ -78,7 +80,7 @@ class Winpay extends PayStrategy
             'notifyUrl' => $this->recharge_callback_url,
             'callbackUrl' => $this->compalateUrl,
         ];
-        $params['sign'] = $this->generateSign($params);
+        $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_rechargeOrder', $params);
 
@@ -89,7 +91,7 @@ class Winpay extends PayStrategy
         }
         $resData = [
             'out_trade_no' => $order_no,
-            'shop_id' => $this->merchantID,
+            'shop_id' => $this->rechargeMerchantID,
             'pay_company' => $this->company,
             'pay_type' => $pay_type,
             'native_url' => $res['data']['url'],
@@ -138,7 +140,7 @@ class Winpay extends PayStrategy
 
         $params = [
 //            'type' => $pay_type,    // 1 银行卡 2 Paytm 3代付
-            'merchant' => $this->merchantID,
+            'merchant' => $this->withdrawMerchantID,
             'orderId' => $order_no,
             'amount' => $money,
             'customName' => $account_holder,
@@ -149,7 +151,7 @@ class Winpay extends PayStrategy
             'ifscCode' => $ifsc_code,
             'notifyUrl' => $this->withdrawal_callback_url,
         ];
-        $params['sign'] = $this->generateSign($params);
+        $params['sign'] = $this->generateSign($params,2);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_withdrawalOrder',$params);
         $res = $this->requestService->postFormData(self::$url . '/openApi/payout/createOrder', $params);
@@ -180,7 +182,7 @@ class Winpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params) <> $sign) {
+        if ($this->generateSign($params,1) <> $sign) {
             $this->_msg = 'winpay-签名错误';
             return false;
         }
@@ -206,7 +208,7 @@ class Winpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params) <> $sign) {
+        if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'winpay-签名错误';
             return false;
         }

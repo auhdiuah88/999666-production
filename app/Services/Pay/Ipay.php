@@ -25,8 +25,10 @@ class Ipay extends PayStrategy
 
     //public static $company = 'ipay';   // 支付公司名
 
-    public $merchantID;
-    public $secretkey;
+    public $withdrawMerchantID;
+    public $withdrawSecretkey;
+    public $rechargeMerchantID;
+    public $rechargeSecretkey;
     public $company = 'ipay';   // 支付公司名
 
     public function _initialize()
@@ -36,11 +38,15 @@ class Ipay extends PayStrategy
 //        if (empty(self::$merchantID) || empty(self::$secretkey)) {
 //            die('请设置 ipay 支付商户号和密钥');
 //        }
-        $config = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
+        $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
+        $rechargeConfig = DB::table('settings')->where('setting_key','recharge')->value('setting_value');
 //        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
 //        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
-        $this->merchantID = isset($config[$this->company])?$config[$this->company]['merchant_id']:"";
-        $this->secretkey = isset($config[$this->company])?$config[$this->company]['secret_key']:"";
+        $this->withdrawMerchantID = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['merchant_id']:"";
+        $this->withdrawSecretkey = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['secret_key']:"";
+
+        $this->rechargeMerchantID = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['merchant_id']:"";
+        $this->rechargeSecretkey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['secret_key']:"";
 
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
@@ -50,14 +56,15 @@ class Ipay extends PayStrategy
     /**
      * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
      */
-    public function generateSign(array $params)
+    public function generateSign(array $params, $type=1)
     {
+        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . $this->secretkey;
+        $sign = (implode('&', $string)) . $secretKey;
         return md5($sign);
     }
 
@@ -74,9 +81,9 @@ class Ipay extends PayStrategy
             'notify_url' => $this->recharge_callback_url ,
             'order_des' => '支付充值',
             'out_trade_no' => $order_no,
-            'shop_id' =>$this->merchantID,
+            'shop_id' =>$this->rechargeMerchantID,
         ];
-        $params['sign'] = $this->generateSign($params);
+        $params['sign'] = $this->generateSign($params,1);
 //        print_r($params);die;
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_rechargeOrder', $params);
@@ -90,7 +97,7 @@ class Ipay extends PayStrategy
         }
         $resData = [
             'out_trade_no' => $order_no,
-            'shop_id' => $this->merchantID,
+            'shop_id' => $this->rechargeMerchantID,
             'pay_company' => $this->company,
             'pay_type' => $pay_type,
             'native_url' => $res['native_url'],
@@ -121,10 +128,10 @@ class Ipay extends PayStrategy
             'money' => $money,
             'notify_url' => $this->withdrawal_callback_url , // 回调url，用来接收订单支付结果
             'out_trade_no' => $order_no,
-            'shop_id' => $this->merchantID,
+            'shop_id' => $this->withdrawMerchantID,
             'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
         ];
-        $params['sign'] = $this->generateSign($params);
+        $params['sign'] = $this->generateSign($params,2);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_withdrawalOrder',$params);
 
@@ -143,7 +150,7 @@ class Ipay extends PayStrategy
     function rechargeCallback(Request $request)
     {
         // 验证参数
-        if ($request->shop_id <> $this->merchantID
+        if ($request->shop_id <> $this->rechargeMerchantID
             || $request->api_name <> 'quickpay.all.native.callback'
             || $request->pay_result <> 'success'
         ) {
@@ -155,7 +162,7 @@ class Ipay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params) <> $sign){
+        if ($this->generateSign($params,1) <> $sign){
             $this->_msg = '签名错误';
             return false;
         }
@@ -190,7 +197,7 @@ class Ipay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params) <> $sign) {
+        if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = '签名错误';
             return false;
         }
