@@ -183,8 +183,8 @@ class SettingController extends Controller
         try {
             $validator = Validator::make(request()->input(), [
                 'type' => ['required'],
-                'max' => ['required', 'integer', 'gt:1'],
-                'min' => ['required', 'integer', 'gt:1'],
+                'max' => ['required', 'integer', 'gte:1'],
+                'min' => ['required', 'integer', 'gte:1'],
                 'btn' => ['required'],
                 'secret_key' => ['required'],
                 'merchant_id' => ['required'],
@@ -192,7 +192,7 @@ class SettingController extends Controller
             ]);
             if ($validator->fails())
                 return $this->AppReturn(403, $validator->errors()->first());
-            $this->SettingService->setWithdrawConfig();
+            $this->SettingService->setRechargeConfig();
             return $this->AppReturn(
                 $this->SettingService->_code,
                 $this->SettingService->_msg,

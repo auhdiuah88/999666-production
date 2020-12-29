@@ -227,6 +227,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/gameRule","SettingController@setGameRule");
             Route::get("/withdrawConfig","SettingController@withdrawConfig");
             Route::post("/withdrawConfig","SettingController@setWithdrawConfig");
+            Route::get("/rechargeConfig","SettingController@rechargeConfig");
+            Route::post("/rechargeConfig","SettingController@setRechargeConfig");
             Route::get("/leaderRole","SettingController@getGroupLeaderRoleId");
             Route::post("/leaderRole","SettingController@saveGroupLeaderRoleId");
         });

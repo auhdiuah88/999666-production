@@ -200,4 +200,60 @@ class SettingService extends BaseService
         $this->_data = $config;
     }
 
+    public function setRechargeConfig()
+    {
+        $type = $this->strInput('type');
+        $max = $this->intInput('max');
+        $min = $this->intInput('min');
+        $secret_key = $this->strInput('secret_key');
+        $merchant_id = $this->strInput('merchant_id');
+        $status = $this->intInput('status');
+        if ($max <= $min) {
+            $this->_code = 403;
+            $this->_msg = '最高限制应高于最低限制';
+            return false;
+        }
+        $btn = request()->post('btn');
+        $recharge_type = config('pay.recharge', []);
+        $recharge_type2 = array_flip($recharge_type);
+        if (!isset($recharge_type2[$type])) {
+            $this->_code = 403;
+            $this->_msg = '充值类型不支持';
+            return false;
+        }
+        $setting_value = $this->SettingRepository->getRecharge();
+        $config = [];
+        foreach ($recharge_type as $key) {
+            if ($key == $type) {
+                $config[$key] = [
+                    'type' => $key,
+                    'limit' => ['max'=>$max,'min'=>$min],
+                    'btn' => array_values($btn),
+                    'merchant_id' => $merchant_id,
+                    'secret_key' => $secret_key,
+                    'status' => $status
+                ];
+            } else {
+                $config[$key] = [
+                    'type' => $key,
+                    'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
+                    'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
+                    'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
+                    'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:"",
+                    'status' => isset($setting_value[$key]) && isset($setting_value[$key]['status'])?$setting_value[$key]['status']:0
+                ];
+            }
+        }
+        ##更新
+        $res = $this->SettingRepository->saveSetting(SettingRepository::RECHARGE_KEY, $config);
+
+        if ($res === false) {
+            $this->_code = 403;
+            $this->_msg = '操作失败';
+            return false;
+        }
+        $this->_msg = '操作成功';
+        return true;
+    }
+
 }
