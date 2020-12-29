@@ -182,4 +182,22 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function rechargeConfig()
+    {
+        $recharge_type = config('pay.recharge',[]);
+        $setting_value = $this->SettingRepository->getRecharge();
+        $config = [];
+        foreach($recharge_type as $key){
+            $config[] = [
+                'type' => $key,
+                'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
+                'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
+                'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
+                'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:"",
+                'status' => isset($setting_value[$key]) && isset($setting_value[$key]['status'])?$setting_value[$key]['status']:0
+            ];
+        }
+        $this->_data = $config;
+    }
+
 }

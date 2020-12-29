@@ -159,6 +159,51 @@ class SettingController extends Controller
         }
     }
 
+    /**
+     * 获取充值配置
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function rechargeConfig()
+    {
+        try{
+            $this->SettingService->rechargeConfig();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function setRechargeConfig()
+    {
+        try {
+            $validator = Validator::make(request()->input(), [
+                'type' => ['required'],
+                'max' => ['required', 'integer', 'gt:1'],
+                'min' => ['required', 'integer', 'gt:1'],
+                'btn' => ['required'],
+                'secret_key' => ['required'],
+                'merchant_id' => ['required'],
+                'status' => ['required', Rule::in([0, 1])]
+            ]);
+            if ($validator->fails())
+                return $this->AppReturn(403, $validator->errors()->first());
+            $this->SettingService->setWithdrawConfig();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        } catch (\Exception $e) {
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
     public function getGroupLeaderRoleId()
     {
         $this->SettingService->queryGroupLeaderRoleId();
