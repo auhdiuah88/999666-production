@@ -39,10 +39,10 @@ class InfoService extends BaseService
         $data["user_id"] = $this->getUserId($token);
         $data["add_time"] = time();
         if ($this->InfoRepository->addBank($data)) {
-            $this->_msg = "添加成功";
+            $this->_msg = "Added successfully";
         } else {
             $this->_code = 402;
-            $this->_msg = "添加失败";
+            $this->_msg = "Add failed";
         }
     }
 
@@ -51,20 +51,20 @@ class InfoService extends BaseService
         $data["user_id"] = $this->getUserId($token);
         $data["update_time"] = time();
         if ($this->InfoRepository->editBank($data)) {
-            $this->_msg = "编辑成功";
+            $this->_msg = "Edit successfully";
         } else {
             $this->_code = 402;
-            $this->_msg = "编辑失败";
+            $this->_msg = "Edit failed";
         }
     }
 
     public function delBank($id, $token)
     {
         if ($this->InfoRepository->delBank($id)) {
-            $this->_msg = "删除成功";
+            $this->_msg = "successfully deleted";
         } else {
             $this->_code = 402;
-            $this->_msg = "删除失败";
+            $this->_msg = "failed to delete";
         }
     }
 
@@ -73,10 +73,10 @@ class InfoService extends BaseService
         $userId = $this->getUserId($token);
         $data = ["nickname" => $nickname, "id" => $userId];
         if ($this->InfoRepository->editUser($data)) {
-            $this->_msg = "编辑成功";
+            $this->_msg = "Edit successfully";
         } else {
             $this->_code = 402;
-            $this->_msg = "编辑失败";
+            $this->_msg = "Edit failed";
         }
     }
 
@@ -85,23 +85,23 @@ class InfoService extends BaseService
         $userId = $this->getUserId($token);
         $userInfo = $this->InfoRepository->findById($userId);
         if ($data["o_password"] != Crypt::decrypt($userInfo->password)) {
-            $this->_msg = "原密码错误，请重新输入";
+            $this->_msg = "The original password is wrong, please re-enter";
             $this->_code = 401;
             return;
         }
 
         if ($data["f_password"] != $data["l_password"]) {
-            $this->_msg = "两次输入密码不一致，请重新输入";
+            $this->_msg = "The two passwords are inconsistent, please re-enter";
             $this->_code = 401;
             return;
         }
 
         $insertData = ["password" => Crypt::encrypt($data["l_password"]), "id" => $userId];
         if ($this->InfoRepository->editUser($insertData)) {
-            $this->_msg = "编辑成功";
+            $this->_msg = "Edit successfully";
         } else {
             $this->_code = 402;
-            $this->_msg = "编辑失败";
+            $this->_msg = "Edit failed";
         }
     }
 }

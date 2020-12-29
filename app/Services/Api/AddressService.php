@@ -31,10 +31,10 @@ class AddressService extends BaseService
     {
         $data["user_id"] = $this->getUserId($token);
         if ($this->AddressRepository->addAddress($data)) {
-            $this->_msg = "添加成功";
+            $this->_msg = "Added successfully";
         } else {
             $this->_code = 402;
-            $this->_msg = "添加失败";
+            $this->_msg = "add failed";
         }
     }
 
@@ -42,20 +42,20 @@ class AddressService extends BaseService
     {
         $data["user_id"] = $this->getUserId($token);
         if ($this->AddressRepository->editAddress($data)) {
-            $this->_msg = "编辑成功";
+            $this->_msg = "Edit successfully";
         } else {
             $this->_code = 402;
-            $this->_msg = "编辑失败";
+            $this->_msg = "Edit failed";
         }
     }
 
     public function delAddress($id)
     {
         if ($this->AddressRepository->delAddress($id)) {
-            $this->_msg = "删除成功";
+            $this->_msg = "successfully deleted";
         } else {
             $this->_code = 402;
-            $this->_msg = "删除失败";
+            $this->_msg = "failed to delete";
         }
     }
 }

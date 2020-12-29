@@ -112,7 +112,7 @@ class UserController extends Controller
             return $this->AppReturn(414, $validator->errors()->first());
         }
         if ($this->UserService->ValidatorSms($request->post("phone"), $request->post("code"))) {
-            return $this->AppReturn(200, '验证成功');
+            return $this->AppReturn(200, 'Verified successfully');
         }
         return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
     }
@@ -200,7 +200,7 @@ class UserController extends Controller
     {
         $meObj = $auth::instance()->getUser();
         $meObj->IM_token = Redis::get("USER_IM_TOKEN:" . $meObj->id);
-        return $this->AppReturn(200, '我的资料', $meObj);
+        return $this->AppReturn(200, 'My Profile', $meObj);
     }
 
     /**
