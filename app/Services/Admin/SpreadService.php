@@ -18,27 +18,28 @@ class SpreadService extends BaseService
 
     public function getProfitList($page, $limit, $status)
     {
-        $timeMap = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
+//        $timeMap = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
         $ids = $this->SpreadRepository->getSystemUserIds();
-        $users = $this->SpreadRepository->findUsers($timeMap, $ids);
-        $profitList = [];
-        $lossList = [];
-        foreach ($users as $user) {
-            $user->service_charge = $this->SpreadRepository->sumServiceCharge($user->id, $timeMap);
-            if ($user->profit_loss < 0) {
-                $lossList[] = $user;
-            } else {
-                $profitList[] = $user;
-            }
-        }
-        if ($status == 0) {
-            $list = collect($profitList)->sortByDesc("profit_loss")->slice(($page - 1) * $limit, $limit)->values();
-            $total = collect($profitList)->count();
-            $this->_data = ["total" => $total, "list" => $list];
-        } else {
-            $list = collect($lossList)->sortByDesc("profit_loss")->slice(($page - 1) * $limit, $limit)->values();
-            $total = collect($lossList)->count();
-            $this->_data = ["total" => $total, "list" => $list];
-        }
+        $users = $this->SpreadRepository->findUsers($ids, $page, $limit, $status);
+        $this->_data = $users;
+//        $profitList = [];
+//        $lossList = [];
+//        foreach ($users as $user) {
+//            $user->service_charge = $this->SpreadRepository->sumServiceCharge($user->id, $timeMap);
+//            if ($user->profit_loss < 0) {
+//                $lossList[] = $user;
+//            } else {
+//                $profitList[] = $user;
+//            }
+//        }
+//        if ($status == 0) {
+//            $list = collect($profitList)->sortByDesc("profit_loss")->slice(($page - 1) * $limit, $limit)->values();
+//            $total = collect($profitList)->count();
+//            $this->_data = ["total" => $total, "list" => $list];
+//        } else {
+//            $list = collect($lossList)->sortByDesc("profit_loss")->slice(($page - 1) * $limit, $limit)->values();
+//            $total = collect($lossList)->count();
+//            $this->_data = ["total" => $total, "list" => $list];
+//        }
     }
 }
