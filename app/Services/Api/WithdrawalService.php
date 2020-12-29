@@ -396,7 +396,10 @@ class WithdrawalService extends PayService
                     $config[] = [
                         'type' => $key,
                         'limit' => $val['limit'],
-                        'btn' => $val['btn']
+                        'btn' => $val['btn'],
+                        'start_week' => $val['start_week'],
+                        'end_week' => $val['end_week'],
+                        'during_time' => $val['during_time'],
                     ];
             }
         }

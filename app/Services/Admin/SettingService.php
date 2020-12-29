@@ -95,7 +95,10 @@ class SettingService extends BaseService
                 'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
                 'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
                 'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:"",
-                'status' => isset($setting_value[$key]) && isset($setting_value[$key]['status'])?$setting_value[$key]['status']:0
+                'status' => isset($setting_value[$key]) && isset($setting_value[$key]['status'])?$setting_value[$key]['status']:0,
+                'start_week' => isset($setting_value[$key]) && isset($setting_value[$key]['start_week'])?$setting_value[$key]['start_week']:'',
+                'end_week' => isset($setting_value[$key]) && isset($setting_value[$key]['end_week'])?$setting_value[$key]['end_week']:'',
+                'during_time' => isset($setting_value[$key]) && isset($setting_value[$key]['during_time'])?$setting_value[$key]['during_time']:''
             ];
         }
         $this->_data = $config;
@@ -108,6 +111,9 @@ class SettingService extends BaseService
         $min = $this->intInput('min');
         $secret_key = $this->strInput('secret_key');
         $merchant_id = $this->strInput('merchant_id');
+        $start_week = $this->strInput('start_week');
+        $end_week = $this->strInput('end_week');
+        $during_time = $this->strInput('during_time');
         $status = $this->intInput('status');
         if ($max <= $min) {
             $this->_code = 403;
@@ -131,7 +137,10 @@ class SettingService extends BaseService
                     'btn' => array_values($btn),
                     'merchant_id' => $merchant_id,
                     'secret_key' => $secret_key,
-                    'status' => $status
+                    'status' => $status,
+                    'start_week' => $start_week,
+                    'end_week' => $end_week,
+                    'during_time' => $during_time,
                 ];
             } else {
                 $config[$key] = [
@@ -140,7 +149,10 @@ class SettingService extends BaseService
                     'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
                     'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
                     'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:"",
-                    'status' => isset($setting_value[$key]) && isset($setting_value[$key]['status'])?$setting_value[$key]['status']:0
+                    'status' => isset($setting_value[$key]) && isset($setting_value[$key]['status'])?$setting_value[$key]['status']:0,
+                    'start_week' => isset($setting_value[$key]) && isset($setting_value[$key]['start_week'])?$setting_value[$key]['start_week']:'',
+                    'end_week' => isset($setting_value[$key]) && isset($setting_value[$key]['end_week'])?$setting_value[$key]['end_week']:'',
+                    'during_time' => isset($setting_value[$key]) && isset($setting_value[$key]['during_time'])?$setting_value[$key]['during_time']:''
                 ];
             }
         }

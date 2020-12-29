@@ -143,7 +143,10 @@ class SettingController extends Controller
                 'btn' => ['required'],
                 'secret_key' => ['required'],
                 'merchant_id' => ['required'],
-                'status' => ['required', Rule::in([1, 2])]
+                'status' => ['required', Rule::in([1, 2])],
+                'start_week' => ['required'],
+                'end_week' => ['required'],
+                'during_time' => ['required'],
             ]);
             if ($validator->fails())
                 return $this->AppReturn(403, $validator->errors()->first());
