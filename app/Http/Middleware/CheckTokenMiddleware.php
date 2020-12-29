@@ -33,7 +33,7 @@ class CheckTokenMiddleware
         }
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
-        if (env('IS_DEV',false) && !$this->repository->Redis_Get_Admin_User($data[0])) {
+        if (!env('IS_DEV',false) && !$this->repository->Redis_Get_Admin_User($data[0])) {
             return response()->json([
                 "code" => 1001,
                 "msg" => "token验证失败"
