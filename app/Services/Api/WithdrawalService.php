@@ -390,13 +390,15 @@ class WithdrawalService extends PayService
         $setting_value = $this->SettingRepository->getWithdraw();
         $config = [];
         foreach($withdraw_type as $key => $item){
-            $config[] = [
-                'type' => $key,
-                'limit' => isset($setting_value[$key])?$setting_value[$key]['limit']:['max'=>0,'min'=>0],
-                'btn' => isset($setting_value[$key])?$setting_value[$key]['btn']:[],
-                'merchant_id' => isset($setting_value[$key]) && isset($setting_value[$key]['merchant_id'])?$setting_value[$key]['merchant_id']:"",
-                'secret_key' => isset($setting_value[$key]) && isset($setting_value[$key]['secret_key'])?$setting_value[$key]['secret_key']:""
-            ];
+            if(isset($setting_value[$key])){
+                $val = $setting_value[$key];
+                if(isset($val['status']) && $val['status'] == 1)
+                    $config[] = [
+                        'type' => $key,
+                        'limit' => $val['limit'],
+                        'btn' => $val['btn']
+                    ];
+            }
         }
         $this->_data = $config;
     }

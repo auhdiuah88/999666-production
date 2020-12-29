@@ -143,7 +143,7 @@ class SettingController extends Controller
                 'btn' => ['required'],
                 'secret_key' => ['required'],
                 'merchant_id' => ['required'],
-                'status' => ['required', Rule::in([0, 1])]
+                'status' => ['required', Rule::in([1, 2])]
             ]);
             if ($validator->fails())
                 return $this->AppReturn(403, $validator->errors()->first());
@@ -188,7 +188,7 @@ class SettingController extends Controller
                 'btn' => ['required'],
                 'secret_key' => ['required'],
                 'merchant_id' => ['required'],
-                'status' => ['required', Rule::in([0, 1])]
+                'status' => ['required', Rule::in([1, 2])]
             ]);
             if ($validator->fails())
                 return $this->AppReturn(403, $validator->errors()->first());

@@ -34,14 +34,15 @@ class RechargeController extends Controller
 //        if ($validator->fails()) {
 //            return $this->AppReturn(414, $validator->errors()->first());
 //        }
-        $host = $request->getHost();
-        $provider = explode('.', $host);
-        $result = config('pay.pay_provider.'.$provider[1]);
-        if (empty($result)){
-            $this->AppReturn(400, 'please set recharge method',$result);
-        }
+//        $host = $request->getHost();
+//        $provider = explode('.', $host);
+//        $result = config('pay.pay_provider.'.$provider[1]);
+//        if (empty($result)){
+//            $this->AppReturn(400, 'please set recharge method',$result);
+//        }
+        $this->rechargeService->getConfig();
+        $result = $this->rechargeService->_data;
         ##获取用户余额
-
         $balance = $request->get('userInfo')['balance'];
 
         $res = compact('balance');

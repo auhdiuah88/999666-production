@@ -28,4 +28,13 @@ class SettingRepository
         return $this->Cx_Settings->where("setting_key", "withdraw")->value('setting_value');
     }
 
+    /**
+     * 获取充值配置
+     * @return mixed
+     */
+    public function getRecharge()
+    {
+        return $this->Cx_Settings->where("setting_key", "recharge")->value('setting_value');
+    }
+
 }

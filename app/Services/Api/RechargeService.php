@@ -5,6 +5,7 @@ namespace App\Services\Api;
 
 use App\Common\Common;
 use App\Repositories\Api\RechargeRepository;
+use App\Repositories\Api\SettingRepository;
 use App\Repositories\Api\UserRepository;
 use App\Repositories\Api\WithdrawalRepository;
 use App\Services\Library\Auth;
@@ -19,17 +20,16 @@ use Illuminate\Support\Facades\DB;
 
 class RechargeService extends PayService
 {
-    private $userRepository;
-    private $rechargeRepository;
-    private $withdrawalRepository;
-    private $requestService;
-    private $payContext;
+    private $userRepository, $rechargeRepository, $withdrawalRepository, $requestService, $payContext, $SettingRepository;
 
-    public function __construct(UserRepository $userRepository,
-                                RechargeRepository $rechargeRepository,
-                                WithdrawalRepository $withdrawalRepository,
-                                RequestService $requestService,
-                                PayContext $payContext
+    public function __construct
+    (
+        UserRepository $userRepository,
+        RechargeRepository $rechargeRepository,
+        WithdrawalRepository $withdrawalRepository,
+        RequestService $requestService,
+        PayContext $payContext,
+        SettingRepository $settingRepository
     )
     {
         $this->userRepository = $userRepository;
@@ -37,6 +37,7 @@ class RechargeService extends PayService
         $this->withdrawalRepository = $withdrawalRepository;
         $this->requestService = $requestService;
         $this->payContext = $payContext;
+        $this->SettingRepository = $settingRepository;
     }
 
     /***
@@ -202,6 +203,26 @@ class RechargeService extends PayService
             return false;
         }
         return [];
+    }
+
+    public function getConfig()
+    {
+        $recharge_type = config('pay.recharge',[]);
+        $setting_value = $this->SettingRepository->getRecharge();
+        $config = [];
+        foreach($recharge_type as $key){
+            if(isset($setting_value[$key])){
+                $item = $setting_value[$key];
+                if(isset($item['status']) && $item['status'] == 1)
+                    $config[] = [
+                        'company' => $key,
+                        'max_money' => $item['limit']['max'],
+                        'min_money' => $item['limit']['min'],
+                        'money' => $item['btn'],
+                    ];
+            }
+        }
+        $this->_data = $config;
     }
 }
 
