@@ -55,7 +55,7 @@ class Winpay extends PayStrategy
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . '&key=' . $this->secretkey;
+        $sign = (implode('&', $string)) . '&key=' . $secretKey;
 //        dump(self::$merchantID);
 //        dd(self::$secretkey);
         return strtolower(md5($sign));
