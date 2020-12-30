@@ -31,7 +31,7 @@ class PeriodRepository extends BaseRepository
 
     public function countAll($status)
     {
-        return $this->Cx_Game_Play->where("game_id", $status)->count("id");
+        return $this->Cx_Game_Play->where("game_id", $status)->where("status", 1)->count("id");
     }
 
     public function searchPeriod($data, $offset, $limit)
@@ -45,7 +45,11 @@ class PeriodRepository extends BaseRepository
 
     public function countSearchPeriod($data)
     {
-        return $this->whereCondition($data, $this->Cx_Game_Play)->count("id");
+        if(isset($data['conditions']['status']) && $data['conditions']['status'] == 0){
+            return $this->whereCondition($data, $this->Cx_Game_Play)->count("id");
+        }else{
+            return $this->whereCondition($data, $this->Cx_Game_Play)->where("status", 1)->count("id");
+        }
     }
 
     public function findById($id)
