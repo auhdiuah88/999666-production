@@ -18,7 +18,7 @@ class PeriodRepository extends BaseRepository
 
     public function findAll($offset, $limit, $status)
     {
-        return $this->Cx_Game_Play->where("game_id", $status)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderByDesc("prize_time")->offset($offset)->limit($limit)->get()->toArray();
+        return $this->Cx_Game_Play->where("game_id", $status)->where("status", 1)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderBy("prize_time", "desc")->orderBy("end_time", "desc")->offset($offset)->limit($limit)->get()->toArray();
     }
 
     /**
@@ -36,7 +36,11 @@ class PeriodRepository extends BaseRepository
 
     public function searchPeriod($data, $offset, $limit)
     {
-        return $this->whereCondition($data, $this->Cx_Game_Play)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderBy("id", "asc")->offset($offset)->limit($limit)->get()->setAppends(['prize_sd_btn'])->toArray();
+        if(isset($data['conditions']['status']) && $data['conditions']['status'] == 0){
+            return $this->whereCondition($data, $this->Cx_Game_Play)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderBy("id", "asc")->offset($offset)->limit($limit)->get()->setAppends(['prize_sd_btn'])->toArray();
+        }else{
+            return $this->whereCondition($data, $this->Cx_Game_Play)->where("status", 1)->select(["id", "number", "prize_number", "status", "prize_time", "end_time", "is_status"])->orderBy("prize_time", "desc")->orderBy("end_time", "desc")->offset($offset)->limit($limit)->get()->setAppends(['prize_sd_btn'])->toArray();
+        }
     }
 
     public function countSearchPeriod($data)
