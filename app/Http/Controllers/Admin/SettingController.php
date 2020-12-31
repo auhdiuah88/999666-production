@@ -234,4 +234,43 @@ class SettingController extends Controller
         );
     }
 
+    public function h5AlertContent()
+    {
+        try{
+            $this->SettingService->h5AlertContent();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function setH5AlertContent()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'type' => ['required', 'integer', Rule::in([1, 2])],
+                'content' => ['required']
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->setH5AlertContent();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

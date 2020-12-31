@@ -231,6 +231,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/rechargeConfig","SettingController@setRechargeConfig");
             Route::get("/leaderRole","SettingController@getGroupLeaderRoleId");
             Route::post("/leaderRole","SettingController@saveGroupLeaderRoleId");
+            Route::get("/h5Alert","SettingController@h5AlertContent");
+            Route::post("/h5Alert","SettingController@setH5AlertContent");
         });
 
         // 后台赠金记录列表

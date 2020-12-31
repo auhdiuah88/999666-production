@@ -268,4 +268,38 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function h5AlertContent()
+    {
+        $loginAlertValue = $this->SettingRepository->getSettingValueByKey("login_alert");
+        $logoutAlertValue = $this->SettingRepository->getSettingValueByKey("logout_alert");
+        $loginAlert = $loginAlertValue ? htmlspecialchars_decode($loginAlertValue['content']) : "";
+        $logoutAlert = $logoutAlertValue ? htmlspecialchars_decode($logoutAlertValue['content']) : "";
+        $this->_data = compact('loginAlert','logoutAlert');
+    }
+
+    public function setH5AlertContent()
+    {
+        $type = $this->intInput('type',1);
+        $content = $this->htmlInput('content');
+        $key = "";
+        switch ($type){
+            case 1:
+                $key = "login_alert";
+                break;
+            case 2:
+                $key = "logout_alert";
+                break;
+            default:
+                break;
+        }
+        $res = $this->SettingRepository->saveSetting($key, compact('content'));
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = "操作失败";
+            return false;
+        }
+        $this->_msg = "操作成功";
+        return true;
+    }
+
 }

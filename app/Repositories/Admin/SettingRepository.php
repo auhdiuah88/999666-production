@@ -148,4 +148,14 @@ class SettingRepository extends BaseRepository
             ['setting_value' => $value]
         );
     }
+
+    /**
+     * 获取setting_value
+     * @param $key
+     * @return mixed
+     */
+    public function getSettingValueByKey($key)
+    {
+        return $this->Cx_Settings->where("setting_key", $key)->value("setting_value");
+    }
 }

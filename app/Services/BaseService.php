@@ -104,4 +104,9 @@ abstract class BaseService
         return max(1, intval(request()->input('page',1)));
     }
 
+    public function htmlInput($key, $default='')
+    {
+        return htmlspecialchars(request()->input($key, $default));
+    }
+
 }
