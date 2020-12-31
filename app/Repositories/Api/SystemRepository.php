@@ -4,16 +4,22 @@
 namespace App\Repositories\Api;
 
 
+use App\Models\Cx_Settings;
 use App\Models\Cx_System;
 use App\Repositories\BaseRepository;
 
 class SystemRepository extends BaseRepository
 {
-    private $Cx_System;
+    private $Cx_System, $Cx_Settings;
 
-    public function __construct(Cx_System $cx_System)
+    public function __construct
+    (
+        Cx_System $cx_System,
+        Cx_Settings $cx_Settings
+    )
     {
         $this->Cx_System = $cx_System;
+        $this->Cx_Settings = $cx_Settings;
     }
 
     public function getGroupUrl()
@@ -32,5 +38,15 @@ class SystemRepository extends BaseRepository
     public function getSystem()
     {
         return $this->Cx_System->first();
+    }
+
+    /**
+     * 获取setting_value
+     * @param $key
+     * @return mixed
+     */
+    public function getSettingValueByKey($key)
+    {
+        return $this->Cx_Settings->where("setting_key", $key)->value("setting_value");
     }
 }

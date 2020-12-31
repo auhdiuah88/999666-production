@@ -35,4 +35,15 @@ class SystemController extends Controller
             $this->SystemService->_data
         );
     }
+
+    public function h5Alert()
+    {
+        $this->SystemService->getH5Alert();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
 }
