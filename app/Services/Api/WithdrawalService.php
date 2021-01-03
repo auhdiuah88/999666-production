@@ -269,7 +269,8 @@ class WithdrawalService extends PayService
             'email' => $email,
             'type' => $type,
             'mtb_code' => $mtb_code,
-            'with_type' => $withdraw_type
+            'with_type' => $withdraw_type,
+            'back_id' => $bank_id
         ];
         return $data;
     }
