@@ -160,11 +160,12 @@ class MTBpay extends PayStrategy
             'mer_order_no' => $order_no,
             'acc_no' => $withdrawalRecord->bank_number,
             'acc_name' => $withdrawalRecord->account_holder,
-            'ccy_no' => 'IND',
+            'ccy_no' => 'INR',
             'order_amount' => intval($money),
             'bank_code' => $withdrawalRecord->mtb_code,
             'summary' => 'Balance Withdrawal',
-            'province' => $withdrawalRecord->ifsc_code
+            'province' => $withdrawalRecord->ifsc_code,
+            'notifyUrl' => $this->withdrawal_callback_url
         ];
         $params['sign'] = $this->generateSign($params,2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$params);
@@ -185,22 +186,23 @@ class MTBpay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalCallback',$request->post());
 
-        if ($request->state <> 4) {
-            $this->_msg = 'Leap-withdrawal-交易未完成';
+        if ($request->status != 'SUCCESS') {
+            $this->_msg = 'MTBpay-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params,2) <> $sign) {
-            $this->_msg = 'leap-签名错误';
+        if ($this->generateSignRigorous($params,2) <> $sign) {
+            $this->_msg = 'MTBpay-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->sh_order,
+            'order_no' => $request->mer_order_no,
+            'plat_order_id' => $request->order_no
         ];
         return $where;
     }
