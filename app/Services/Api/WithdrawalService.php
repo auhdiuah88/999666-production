@@ -190,7 +190,7 @@ class WithdrawalService extends PayService
             $this->_msg = 'The maximum withdrawal amount is ' . $withdraw_conf['limit']['max'];
             return false;
         }
-        if($money > $withdraw_conf['limit']['min']){
+        if($money < $withdraw_conf['limit']['min']){
             $this->_msg = 'The minimum withdrawal amount is ' . $withdraw_conf['limit']['min'];
             return false;
         }
