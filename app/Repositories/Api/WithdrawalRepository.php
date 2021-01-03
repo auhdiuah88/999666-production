@@ -105,7 +105,7 @@ class WithdrawalRepository
      */
     public function getConfig()
     {
-        $setting = $this->Cx_Settings->where('setting_keys', 'withdraw')->first();
+        $setting = $this->Cx_Settings->where('setting_key', 'withdraw')->first();
         if(!$setting)return [];
         return $setting['setting_value'];
     }
