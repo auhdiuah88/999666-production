@@ -49,3 +49,13 @@ function makeModel($where, $model){
     }
     return $model;
 }
+
+function rpNBSP($html)
+{
+    return str_replace('&nbsp;',' ', $html);
+}
+
+function getHtml($html)
+{
+    return rpNBSP(htmlspecialchars_decode(htmlspecialchars_decode($html)));
+}

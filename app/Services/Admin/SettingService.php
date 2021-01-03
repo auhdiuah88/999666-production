@@ -272,8 +272,8 @@ class SettingService extends BaseService
     {
         $loginAlertValue = $this->SettingRepository->getSettingValueByKey("login_alert");
         $logoutAlertValue = $this->SettingRepository->getSettingValueByKey("logout_alert");
-        $loginAlert = $loginAlertValue ? htmlspecialchars_decode(htmlspecialchars_decode($loginAlertValue['content'])) : "";
-        $logoutAlert = $logoutAlertValue ? htmlspecialchars_decode(htmlspecialchars_decode($logoutAlertValue['content'])) : "";
+        $loginAlert = $loginAlertValue ? getHtml($loginAlertValue['content']) : "";
+        $logoutAlert = $logoutAlertValue ? getHtml($logoutAlertValue['content']) : "";
         $this->_data = compact('loginAlert','logoutAlert');
     }
 
