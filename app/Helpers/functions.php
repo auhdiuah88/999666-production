@@ -57,5 +57,5 @@ function rpNBSP($html)
 
 function getHtml($html)
 {
-    return htmlspecialchars_decode(htmlspecialchars_decode($html));
+    return rpNBSP(htmlspecialchars_decode(htmlspecialchars_decode($html)));
 }
