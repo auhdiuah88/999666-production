@@ -32,8 +32,8 @@ class SystemService extends Service
     {
         $login_value = $this->SystemRepository->getSettingValueByKey("login_alert");
         $logout_value = $this->SystemRepository->getSettingValueByKey("logout_alert");
-        $login_alert = $login_value ? $login_value['content'] : "";
-        $logout_alert = $logout_value ? $logout_value['content'] : "";
+        $login_alert = $login_value ? htmlspecialchars_decode($login_value['content']) : "";
+        $logout_alert = $logout_value ? htmlspecialchars_decode($logout_value['content']) : "";
         $this->_data = compact('login_alert','logout_alert');
     }
 }
