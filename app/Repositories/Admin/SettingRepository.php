@@ -3,7 +3,6 @@
 
 namespace App\Repositories\Admin;
 
-
 use App\Models\Cx_Game;
 use App\Models\Cx_Role;
 use App\Models\Cx_Settings;
@@ -143,10 +142,13 @@ class SettingRepository extends BaseRepository
 
     public function saveSetting($key, array $value)
     {
-        return $this->Cx_Settings->updateOrCreate(
+        $res = $this->Cx_Settings->updateOrCreate(
             ['setting_key' => $key],
             ['setting_value' => $value]
         );
+        $row = $this->getSettingValueByKey($key);
+        Redis::set($key, json_encode($row));
+        return $res;
     }
 
     /**

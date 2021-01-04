@@ -9,6 +9,7 @@ use App\Dictionary\SettingDic;
 use App\Repositories\Admin\SettingRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class SettingService extends BaseService
 {
@@ -309,14 +310,14 @@ class SettingService extends BaseService
         $btn_2 = request()->post('btn_2');
         $service = [
             'btn_1' => [
-                'link' => str_filter($btn_1['link']),
-                'title' => str_filter($btn_1['title']),
-                'icon' => str_filter($btn_1['icon']),
+                'link' => strip_tags($btn_1['link']),
+                'title' => strip_tags($btn_1['title']),
+                'icon' => strip_tags($btn_1['icon']),
             ],
             'btn_2' => [
-                'link' => str_filter($btn_2['link']),
-                'title' => str_filter($btn_2['title']),
-                'icon' => str_filter($btn_2['icon']),
+                'link' => strip_tags($btn_2['link']),
+                'title' => strip_tags($btn_2['title']),
+                'icon' => strip_tags($btn_2['icon']),
             ],
         ];
         $res = $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);

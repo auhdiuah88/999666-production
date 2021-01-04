@@ -8,7 +8,7 @@ class SettingDic
 {
 
     protected static $settingKeys = [
-        'STAFF_ID' => [
+        'staff_id' => [
             'title' => '员工角色ID',
             'key' => 'staff_id'
         ],
@@ -16,19 +16,19 @@ class SettingDic
             'title' => '组长角色ID',
             'key' => 'GROUP_LEADER_ROLE_ID'
         ],
-        'WITHDRAW' => [
+        'withdraw' => [
             'title' => '提现配置',
             'key' => 'withdraw'
         ],
-        'RECHARGE' => [
+        'recharge' => [
             'title' => '充值配置',
             'key' => 'recharge'
         ],
-        'LOGIN_ALERT' => [
+        'login_alert' => [
             'title' => '登陆弹窗信息',
             'key' => 'login_alert'
         ],
-        'LOGOUT_ALERT' => [
+        'logout_alert' => [
             'title' => '未登陆弹窗信息',
             'key' => 'logout_alert'
         ],
