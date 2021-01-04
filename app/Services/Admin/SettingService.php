@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 
 
 use App\Dictionary\GameDic;
+use App\Dictionary\SettingDic;
 use App\Repositories\Admin\SettingRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
@@ -318,7 +319,7 @@ class SettingService extends BaseService
                 'icon' => str_filter($btn_2['icon']),
             ],
         ];
-        $res = $this->SettingRepository->saveSetting('service', $service);
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);
         if($res === false){
             $this->_code = 403;
             $this->_msg = '修改失败';
@@ -330,7 +331,22 @@ class SettingService extends BaseService
 
     public function getService()
     {
-        $this->_data = $this->SettingRepository->getSettingValueByKey("service");
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('SERVICE'));
+        if(!$data){
+            $data = [
+                'btn_1' => [
+                    'link' => '',
+                    'title' => '',
+                    'icon' => ''
+                ],
+                'btn_2' => [
+                    'link' => '',
+                    'title' => '',
+                    'icon' => ''
+                ],
+            ];
+        }
+        $this->_data = $data;
     }
 
 }
