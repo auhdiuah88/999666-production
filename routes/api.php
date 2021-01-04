@@ -106,6 +106,10 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("sign/getmoney", "ActivityController@doGetMoney");            // 点击每日签到领取回扣
         Route::post("sign/getpackagereceiveinfo", "ActivityController@getPackageReceiveInfo"); // 最近的用户领取回扣记录
     });
+    //投注统计
+    Route::group(["prefix" => "betting"], function (){
+        Route::get("/statistics", "BettingController@statistics");
+    });
 });
 
 

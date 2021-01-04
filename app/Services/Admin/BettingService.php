@@ -78,4 +78,13 @@ class BettingService extends BaseService
         }
         return $data;
     }
+
+    /**
+     * @param $type
+     * @return mixed
+     */
+    public function statistics($type)
+    {
+        $this->_data = $this->BettingRepository->statistics($type);
+    }
 }
