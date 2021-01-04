@@ -46,4 +46,14 @@ class SystemController extends Controller
         );
     }
 
+    public function serviceSetting()
+    {
+        $this->SystemService->serviceSetting();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
 }
