@@ -273,4 +273,53 @@ class SettingController extends Controller
         }
     }
 
+    /**
+     * 编辑客服信息
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function serviceEdit()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'btn_1' => ['required'],
+                'btn_1.title' => ['required', 'max:15', 'min:1'],
+                'btn_1.icon' => ['required'],
+                'btn_1.link' => ['required'],
+                'btn_2' => ['required'],
+                'btn_2.title' => ['required', 'max:15', 'min:1'],
+                'btn_2.icon' => ['required'],
+                'btn_2.link' => ['required'],
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->serviceEdit();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function getService()
+    {
+        try{
+            $this->SettingService->getService();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }
