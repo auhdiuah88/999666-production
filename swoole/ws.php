@@ -2,11 +2,23 @@
 
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
+use Illuminate\Support\Facades\Redis;
 
 $server = new Swoole\WebSocket\Server("0.0.0.0", 9501);
 
 $server->on('handshake', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
-    print_r($request);
+    $user_id = $request->get['user_id'];
+    if(!$user_id){
+        $response->end();
+        return false;
+    }
+    ##将user_id加入在线集合中
+    Redis::sadd("SWOOLE:ONLINE_USER_ID", (string)$user_id);
+    ##将user_id和fd绑定
+    Redis::hset("SWOOLE:USER_ID_BIND_FD", (string)$user_id, (string)$request->fd);
+    ##将fd和user_id绑定
+    Redis::hset("SWOOLE:FD_BIND_USER_ID", (string)$request->fd, (string)$user_id);
+
     $key = base64_encode(
         sha1(
             $request->header['sec-websocket-key'] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11',
@@ -45,6 +57,17 @@ $server->on('message', function (Swoole\WebSocket\Server $server, $frame) {
 });
 
 $server->on('close', function ($ser, $fd) {
+    ##通过fd查找user_id
+    $user_id = Redis::hget("SWOOLE:FD_BIND_USER_ID", (string)$fd);
+    if($user_id){
+        ##将user_id从在线集合中删除
+        Redis::srem("SWOOLE:ONLINE_USER_ID", (string)$user_id);
+        ##将user_id和fd绑定
+        Redis::hdel("SWOOLE:USER_ID_BIND_FD", (string)$user_id);
+        ##将fd和user_id绑定
+        Redis::hset("SWOOLE:FD_BIND_USER_ID", (string)$fd);
+    }
+
     echo "client {$fd} closed\n";
 });
 
