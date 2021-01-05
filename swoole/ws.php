@@ -6,7 +6,7 @@ use Swoole\WebSocket\Server;
 $server = new Swoole\WebSocket\Server("0.0.0.0", 9501);
 
 $server->on('handshake', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
-    var_dump($request);
+    printf($request);
     $response->status(101);
     $response->end();
 });
