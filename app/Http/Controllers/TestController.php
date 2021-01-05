@@ -41,8 +41,8 @@ class TestController extends Controller
 //        $num = $redis->scard('swoft:ONLINE_USER_ID');
 //        $data = $redis->get('laravel_database_GAME_CONFIG_4');
         $aes = new Aes();
-        $data = $aes->encrypt(123);
-//        $data = $aes->decrypt('12312');
+        $data = $aes->encrypt();
+//        $data = $aes->decrypt('ixqHNhdUyAyQKDXlWe728g==');
         var_dump($data);
     }
 

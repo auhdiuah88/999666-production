@@ -9,7 +9,7 @@ class Aes{
     public $key;
 
     public function __construct(){
-        $key = env('AES_KEY',env('APP_URL','the-key'));
+        $key = env('AES_KEY',env('APP_URL','goshop6-666'));
         $this->key = $key;
     }
 
