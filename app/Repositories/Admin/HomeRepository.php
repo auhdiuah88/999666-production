@@ -12,6 +12,8 @@ use App\Models\Cx_User_Balance_Logs;
 use App\Models\Cx_User_Recharge_Logs;
 use App\Models\Cx_Withdrawal_Record;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Redis;
+use Predis\Client;
 
 class HomeRepository extends BaseRepository
 {
@@ -223,5 +225,13 @@ class HomeRepository extends BaseRepository
     public function sumUpperSeparation($ids, $timeMap)
     {
         return $this->Cx_User_Balance_Logs->where("type", 9)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+    }
+
+    public function sumOnlineNum()
+    {
+        $redisConfig = config('database.redis.default');
+        $redis = new Client($redisConfig);
+        $num = $redis->scard('swoft:ONLINE_USER_ID');
+        return $num;
     }
 }

@@ -93,6 +93,8 @@ class HomeService extends BaseService
         $item->upperSeparation = $this->HomeRepository->sumUpperSeparation($ids, $timeMap);
         // 当日下分
         $item->downSeparation = $this->HomeRepository->sumDownSeparation($ids, $timeMap);
+        // 在线人数
+        $item->onlineNum = $this->HomeRepository->sumOnlineNum();
         return $item;
     }
 }

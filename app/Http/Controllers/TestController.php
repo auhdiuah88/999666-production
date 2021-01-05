@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Libs\Aes;
 use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Game_Play;
 use App\Models\Cx_User;
@@ -17,6 +18,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
+use Predis\Client;
 
 class TestController extends Controller
 {
@@ -30,6 +32,18 @@ class TestController extends Controller
         $this->GameRepository = $gameRepository;
         $this->Ssc_FourService = $ssc_FourService;
         $this->Cx_User = $cx_User;
+    }
+
+    public function testRedis()
+    {
+//        $redisConfig = config('database.redis.default');
+//        $redis = new Client($redisConfig);
+//        $num = $redis->scard('swoft:ONLINE_USER_ID');
+//        $data = $redis->get('laravel_database_GAME_CONFIG_4');
+        $aes = new Aes();
+        $data = $aes->encrypt(123);
+//        $data = $aes->decrypt('12312');
+        var_dump($data);
     }
 
     public function getGameResult(){

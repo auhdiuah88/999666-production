@@ -4,6 +4,7 @@
 namespace App\Repositories\Api;
 
 
+use App\Libs\Aes;
 use App\Models\Cx_Charge_Logs;
 use App\Models\Cx_System;
 use App\Models\Cx_User;
@@ -211,6 +212,8 @@ class UserRepository
         if (!$objUser->save()) {
             return false;
         }
+        $aes = new Aes();
+        $objUser->ping = $aes->encrypt($objUser->id);
         return $objUser;
     }
 
