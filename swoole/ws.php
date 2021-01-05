@@ -5,6 +5,12 @@ use Swoole\WebSocket\Server;
 
 $server = new Swoole\WebSocket\Server("0.0.0.0", 9501);
 
+$server->on('handshake', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
+    var_dump($request);
+    $response->status(101);
+    $response->end();
+});
+
 $server->on('open', function (Swoole\WebSocket\Server $server, $request) {
     echo "server: handshake success with fd{$request->fd}\n";
 });
