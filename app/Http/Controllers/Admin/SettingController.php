@@ -322,4 +322,43 @@ class SettingController extends Controller
         }
     }
 
+    public function getCrisp()
+    {
+        try{
+            $this->SettingService->getCrisp();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function crispSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'status' => 'required|integer|in:0,1',
+                'crisp_website_id' => 'sometimes|required_if:status,1',
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->crispSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

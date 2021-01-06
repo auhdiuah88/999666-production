@@ -36,6 +36,10 @@ class SettingDic
             'title' => '客服配置',
             'key' => 'service'
         ],
+        'CRISP_WEBSITE_ID' => [
+            'title' => '第三方客服配置',
+            'key' => 'CRISP_WEBSITE_ID'
+        ],
     ];
 
     public static function key($key)

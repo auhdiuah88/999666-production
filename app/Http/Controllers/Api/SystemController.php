@@ -56,4 +56,14 @@ class SystemController extends Controller
         );
     }
 
+    public function crispSetting()
+    {
+        $this->SystemService->getCrisp();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
 }

@@ -350,4 +350,34 @@ class SettingService extends BaseService
         $this->_data = $data;
     }
 
+    public function getCrisp()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('CRISP_WEBSITE_ID'));
+        if (!$data){
+            $data = [
+                'status' => 0,
+                'crisp_website_id' => ''
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function crispSave()
+    {
+        $status = request()->post('status');
+        $crisp_website_id = request()->post('crisp_website_id', '');
+        $service = [
+            'status' => $status,
+            'crisp_website_id' => $crisp_website_id,
+        ];
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('CRISP_WEBSITE_ID'), $service);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
 }

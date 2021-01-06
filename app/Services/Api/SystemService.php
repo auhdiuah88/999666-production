@@ -58,4 +58,16 @@ class SystemService extends Service
         $data = array_values($data);
         $this->_data = $data;
     }
+
+    public function getCrisp()
+    {
+        $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key('CRISP_WEBSITE_ID'));
+        if (!$data){
+            $data = [
+                'status' => 0,
+                'crisp_website_id' => ''
+            ];
+        }
+        $this->_data = $data;
+    }
 }
