@@ -234,8 +234,9 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::get("/h5Alert","SettingController@h5AlertContent");
             Route::post("/h5Alert","SettingController@setH5AlertContent");
             Route::post("/service","SettingController@serviceEdit");
-            Route::get("/crisp","SettingController@getCrisp");
+            Route::get("/service","SettingController@getService");
             Route::post("/crisp","SettingController@crispSave");
+            Route::get("/crisp","SettingController@getCrisp");
         });
 
         // 后台赠金记录列表
