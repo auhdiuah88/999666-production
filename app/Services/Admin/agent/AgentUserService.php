@@ -54,6 +54,9 @@ class AgentUserService extends BaseAgentService
         $phone = $this->searchInput("mobile");
         if($phone)
             $where['phone'] = ['=', $phone];
+        $ip = $this->searchInput("ip");
+        if($ip)
+            $where['ip'] = ['=', $ip];
         $one_recommend_phone =$this->searchInput("one_recommend_phone");
         if($one_recommend_phone)
             $where['one_recommend_phone'] = ['=', $one_recommend_phone];
