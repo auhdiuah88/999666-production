@@ -63,7 +63,7 @@ class UserRepository extends BaseRepository
 
     public function getUserByConditions($data, $offset, $limit)
     {
-        return $this->whereCondition($data, $this->Cx_User)->offset($offset)->limit($limit)->orderByDesc("last_time")->select(['*', 'id as total_win_money'])->get()->toArray();
+        return $this->whereCondition($data, $this->Cx_User)->offset($offset)->limit($limit)->orderByDesc("last_time")->select(['*', 'id as total_win_money'])->get()->setAppends(['online_status'])->toArray();
     }
 
     public function countUserByConditions($data)
