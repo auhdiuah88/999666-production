@@ -281,6 +281,7 @@ class SettingController extends Controller
     {
         try{
             $validator = Validator::make(request()->input(), [
+                'status' => 'required|integer|in:0,1',
                 'btn_1' => ['required'],
                 'btn_1.title' => ['required', 'max:15', 'min:1'],
                 'btn_1.icon' => ['required'],

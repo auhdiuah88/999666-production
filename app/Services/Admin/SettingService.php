@@ -308,6 +308,7 @@ class SettingService extends BaseService
     {
         $btn_1 = request()->post('btn_1');
         $btn_2 = request()->post('btn_2');
+        $status = request()->post('status');
         $service = [
             'btn_1' => [
                 'link' => strip_tags($btn_1['link']),
@@ -319,6 +320,7 @@ class SettingService extends BaseService
                 'title' => strip_tags($btn_2['title']),
                 'icon' => strip_tags($btn_2['icon']),
             ],
+            'status' => $status
         ];
         $res = $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);
         if($res === false){
@@ -345,6 +347,7 @@ class SettingService extends BaseService
                     'title' => '',
                     'icon' => ''
                 ],
+                'status' => 0
             ];
         }
         $this->_data = $data;
