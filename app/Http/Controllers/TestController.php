@@ -36,16 +36,22 @@ class TestController extends Controller
 
     public function testRedis()
     {
-        $redisConfig = config('database.redis.default');
-        $redis = new Client($redisConfig);
-        $data = $redis->sismember('swoft:ONLINE_USER_ID',245);
-        print_r($data);
+//        $redisConfig = config('database.redis.default');
+//        $redis = new Client($redisConfig);
+//        $data = $redis->sismember('swoft:ONLINE_USER_ID',245);
+//        print_r($data);
 //        $num = $redis->scard('swoft:ONLINE_USER_ID');
 //        $data = $redis->get('laravel_database_GAME_CONFIG_4');
 //        $aes = new Aes();
 ////        $data = $aes->encrypt();
 //        $data = $aes->decrypt('1ayO2dTm+VwpasbQbNMm7Q==');
 //        var_dump($data);
+        $obj = new \ReflectionClass(Aes::class);
+        $methods = $obj->getMethods(\ReflectionMethod::IS_PUBLIC);
+        foreach ($methods as $item){
+            echo $item->name . PHP_EOL;
+        }
+//        print_r($methods);
     }
 
     public function getGameResult(){
