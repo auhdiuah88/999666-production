@@ -107,6 +107,9 @@ class AccountRepository extends BaseRepository
             if (array_key_exists("phone", $where) && $where["phone"]) {
                 $query->where("phone", "like", "%" . $where["phone"] . "%");
             }
+            if (array_key_exists("ip", $where) && $where["ip"]) {
+                $query->where("ip", "like", "%" . $where["ip"] . "%");
+            }
         })->where("is_customer_service", 1)->where("is_group_leader", 2)->where("invite_relation", "like", "%-{$user_id}-%")->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link"])->offset($offset)->limit($limit)->get()->toArray();
     }
 
@@ -118,6 +121,9 @@ class AccountRepository extends BaseRepository
             }
             if (array_key_exists("phone", $where) && $where["phone"]) {
                 $query->where("phone", "like", "%" . $where["phone"] . "%");
+            }
+            if (array_key_exists("ip", $where) && $where["ip"]) {
+                $query->where("ip", "like", "%" . $where["ip"] . "%");
             }
         })->where("is_customer_service", 1)->where("invite_relation", "like", "%-{$user_id}-%")->count("id");
     }
