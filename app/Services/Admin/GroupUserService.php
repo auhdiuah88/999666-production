@@ -129,6 +129,9 @@ class GroupUserService extends UserService
         if (isset($data['nickname']) && $data['nickname']) {
             $where[] = ['nickname', 'like', $data['nickname']];
         }
+        if (isset($data['ip']) && $data['ip']) {
+            $where[] = ['ip', $data['ip']];
+        }
         return $where;
     }
 
