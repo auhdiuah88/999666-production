@@ -7,6 +7,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
+use Predis\Client;
 
 class Cx_User extends Model
 {
@@ -37,6 +39,13 @@ class Cx_User extends Model
             return null;
         }
         return $phone->phone;
+    }
+
+    public function getOnlineStatusAttribute()
+    {
+        $redisConfig = config('database.redis.default');
+        $redis = new Client($redisConfig);
+        return $redis->sismember('swoft:ONLINE_USER_ID',(string)$this->id);
     }
 
     public function getPhoneHideAttribute($value){
