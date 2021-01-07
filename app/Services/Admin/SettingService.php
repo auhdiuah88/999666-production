@@ -324,7 +324,7 @@ class SettingService extends BaseService
         ];
         if ($status == 1) {
             $crisp = $this->SettingRepository->getSettingValueByKey(SettingDic::key('CRISP_WEBSITE_ID'));
-            if (array_key_exists('status', $crisp) && $crisp['status']) {
+            if ($crisp && array_key_exists('status', $crisp) && $crisp['status']) {
                 $crisp['status'] = 0;
                 $this->SettingRepository->saveSetting(SettingDic::key('CRISP_WEBSITE_ID'), $crisp);
             }
@@ -382,7 +382,7 @@ class SettingService extends BaseService
         ];
         if ($status == 1) {
             $service = $this->SettingRepository->getSettingValueByKey(SettingDic::key('SERVICE'));
-            if (array_key_exists('status', $service) && $service['status']) {
+            if ($service && array_key_exists('status', $service) && $service['status']) {
                 $service['status'] = 0;
                 $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);
             }
