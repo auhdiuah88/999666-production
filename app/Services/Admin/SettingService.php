@@ -322,6 +322,13 @@ class SettingService extends BaseService
             ],
             'status' => $status
         ];
+        if ($status == 1) {
+            $crisp = $this->SettingRepository->getSettingValueByKey(SettingDic::key('CRISP_WEBSITE_ID'));
+            if (array_key_exists('status', $crisp) && $crisp['status']) {
+                $crisp['status'] = 0;
+                $this->SettingRepository->saveSetting(SettingDic::key('CRISP_WEBSITE_ID'), $crisp);
+            }
+        }
         $res = $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);
         if($res === false){
             $this->_code = 403;
@@ -369,11 +376,18 @@ class SettingService extends BaseService
     {
         $status = request()->post('status');
         $crisp_website_id = request()->post('crisp_website_id', '');
-        $service = [
+        $crisp = [
             'status' => $status,
             'crisp_website_id' => $crisp_website_id,
         ];
-        $res = $this->SettingRepository->saveSetting(SettingDic::key('CRISP_WEBSITE_ID'), $service);
+        if ($status == 1) {
+            $service = $this->SettingRepository->getSettingValueByKey(SettingDic::key('SERVICE'));
+            if (array_key_exists('status', $service) && $service['status']) {
+                $service['status'] = 0;
+                $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);
+            }
+        }
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('CRISP_WEBSITE_ID'), $crisp);
         if($res === false){
             $this->_code = 403;
             $this->_msg = '修改失败';

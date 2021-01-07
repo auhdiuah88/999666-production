@@ -154,10 +154,14 @@ class SettingRepository extends BaseRepository
     /**
      * 获取setting_value
      * @param $key
+     * @param bool $from_cache
      * @return mixed
      */
-    public function getSettingValueByKey($key)
+    public function getSettingValueByKey($key, $from_cache = true)
     {
+        if ($from_cache && $cacheRes = Redis::get($key)) {
+            return json_decode($cacheRes, true);
+        }
         return $this->Cx_Settings->where("setting_key", $key)->value("setting_value");
     }
 }
