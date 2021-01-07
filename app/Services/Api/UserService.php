@@ -29,7 +29,7 @@ class UserService
     // 忘记密码redis键
     const REDIS_FORGET_PWD_CODE = "FORGET_PWD_CODE:";
     // redis短信验证码过期时间
-    const REDIS_CODE_TTL = 120;
+    const REDIS_CODE_TTL = 1800;
 
     // 验证码type 0注册短信 1重置密码短信
     const MESSAGE_REGISTER = 0;
@@ -185,12 +185,12 @@ class UserService
     {
         $Count = $this->UserRepository->Count($data['phone']);
         if ($Count > 0) {
-            $this->error_code = 401;
+            $this->error_code = 402;
             $this->error = 'This account already exists';
             return false;
         }
         if ($data["sms_code"] != Redis::get(self::REDIS_REGIST_CODE . $data["phone"])) {
-            $this->error_code = 401;
+            $this->error_code = 402;
             $this->error = "The phone verification code is incorrect";
             return false;
         }
