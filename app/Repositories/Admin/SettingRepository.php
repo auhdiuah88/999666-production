@@ -159,9 +159,20 @@ class SettingRepository extends BaseRepository
      */
     public function getSettingValueByKey($key, $from_cache = true)
     {
-        if ($from_cache && $cacheRes = Redis::get($key)) {
-            return json_decode($cacheRes, true);
+        $func = function () use ($key) {
+            return $this->Cx_Settings->where("setting_key", $key)->value("setting_value");
+        };
+        if ($from_cache) {
+            if ($cacheRes = Redis::get($key)) {
+                return json_decode($cacheRes, true);
+            } else {
+                $res = $func();
+                if ($res) {
+                    Redis::set($key, json_encode($res));
+                }
+                return $res;
+            }
         }
-        return $this->Cx_Settings->where("setting_key", $key)->value("setting_value");
+        return $func();
     }
 }
