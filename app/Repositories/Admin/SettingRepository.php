@@ -146,7 +146,7 @@ class SettingRepository extends BaseRepository
             ['setting_key' => $key],
             ['setting_value' => $value]
         );
-        $row = $this->getSettingValueByKey($key);
+        $row = $this->getSettingValueByKey($key, false);
         Redis::set($key, json_encode($row));
         return $res;
     }
