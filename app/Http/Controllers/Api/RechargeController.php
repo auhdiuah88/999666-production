@@ -94,6 +94,9 @@ class RechargeController extends Controller
     {
         try{
             if ($this->rechargeService->rechargeCallback($request)) {
+                $payProvide = $request->input('type', '');
+                if($payProvide == 'rspay')
+                    return 'OK';
                 return 'success';
             }
             Log::channel('kidebug')->error('recharge_callback', ['message'=>$this->rechargeService->_msg]);

@@ -124,10 +124,10 @@ class Rspay extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_rechargeCallback',$request->post());
 
-        if ($request->status != 'SUCCESS')  {
-            $this->_msg = 'MTB-recharge-交易未完成';
+        if ($request->payStatus != 1)  {
+            $this->_msg = 'rspay-recharge-交易未完成';
             return false;
         }
         // 验证签名
@@ -136,12 +136,12 @@ class Rspay extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,1) <> $sign) {
-            $this->_msg = 'MTB-签名错误';
+            $this->_msg = 'rspay-签名错误';
             return false;
         }
 
         $where = [
-            'order_no' => $request->mer_order_no,
+            'order_no' => $request->outOrderNo,
         ];
         return $where;
     }
@@ -151,35 +151,32 @@ class Rspay extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
-
-        // 1 银行卡 2 Paytm 3代付
-//        $pay_type = 3;
         $money = $withdrawalRecord->payment;    // 打款金额
 //        $ip = $this->request->ip();
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'mer_no' => $this->withdrawMerchantID,
-            'mer_order_no' => $order_no,
-            'acc_no' => $withdrawalRecord->bank_number,
-            'acc_name' => $withdrawalRecord->account_holder,
-            'ccy_no' => 'INR',
-            'order_amount' => intval($money),
-            'bank_code' => $withdrawalRecord->mtb_code,
-            'summary' => 'Balance Withdrawal',
-            'province' => $withdrawalRecord->ifsc_code,
-            'notifyUrl' => $this->withdrawal_callback_url
+            'appId' => $this->withdrawMerchantID,
+            'outOrderNo' => $order_no,
+            'applyDate' => date('Y-m-d H:i:s'),
+            'channel' => '912',
+            'notifyUrl' => $this->withdrawal_callback_url,
+            'amount' => intval($money),
+            'mode' => 'UPI',
+            'account' => $withdrawalRecord->bank_number,
+            'userId' => $withdrawalRecord->user_id,
+            'clientIp' => $this->request->ip(),
         ];
         $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$url . 'payout', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$res);
-        if ($res['status'] != 'SUCCESS') {
-            $this->_msg = $res['err_msg'];
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalOrder2',$res);
+        if ($res['statusCode'] != '00') {
+            $this->_msg = $res['message'];
             return false;
         }
         return  [
-            'pltf_order_no' => $res['order_no'],
+            'pltf_order_no' => $res['transactionId'],
             'order_no' => $order_no
         ];
     }
@@ -189,10 +186,10 @@ class Rspay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalCallback',$request->post());
 
-        if ($request->status != 'SUCCESS') {
-            $this->_msg = 'MTBpay-withdrawal-交易未完成';
+        if ((string)($request->payStatus) != '11') {
+            $this->_msg = 'rspay-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
@@ -204,8 +201,8 @@ class Rspay extends PayStrategy
             return false;
         }
         $where = [
-            'order_no' => $request->mer_order_no,
-            'plat_order_id' => $request->order_no
+            'order_no' => $request->outOrderNo,
+            'plat_order_id' => $request->transactionId
         ];
         return $where;
     }
