@@ -75,12 +75,15 @@ class Rspay extends PayStrategy
         $params = [
             'appId' => $this->rechargeMerchantID,
             'outOrderNo' => $order_no,
+//            'outOrderNo' => 202101081957588261145717,
             'applyDate' => time(),
+//            'applyDate' => 1610107078,
             'channel' => 912,
             'notifyUrl' => $this->recharge_callback_url,
-            'amount' => round(floatval($money),2),
+            'amount' => intval($money),
             'userId' => $this->getUserId(),
             'clientIp' => $this->request->ip(),
+//            'clientIp' => '182.239.92.158',
             'contactName' => 'ZhangSan',
             'email' => '11111111@qq.com',
             'contact' => 15988888888,
@@ -88,18 +91,19 @@ class Rspay extends PayStrategy
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_rechargeOrder', [$params]);
-
-        $res = $this->requestService->postJsonData(self::$url . 'pay' , $params);
-        if ($res['status'] != 'SUCCESS') {
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', $res);
-            $this->_msg = $res['err_msg'];
-            return false;
-        }
-        $native_url = $res['order_data'];
-        if(strpos($native_url,"POST;") == 0){
-            $native_url = str_replace('POST;','',$native_url);
-            $is_post = 1;
-        }
+//        $res = $this->requestService->postJsonData(self::$url . 'pay' , $params);
+//        if ($res['status'] != 'SUCCESS') {
+//            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', $res);
+//            $this->_msg = $res['err_msg'];
+//            return false;
+//        }
+//        $native_url = $res['order_data'];
+//        if(strpos($native_url,"POST;") == 0){
+//            $native_url = str_replace('POST;','',$native_url);
+//            $is_post = 1;
+//        }
+        $is_post=2;
+        $native_url = self::$url . 'pay';
         $resData = [
             'out_trade_no' => $order_no,
             'pay_type' => $pay_type,
@@ -109,7 +113,8 @@ class Rspay extends PayStrategy
             'pltf_order_id' => '',
             'verify_money' => '',
             'match_code' => '',
-            'is_post' => isset($is_post)?$is_post:0
+            'is_post' => isset($is_post)?$is_post:0,
+            'params' => $params
         ];
         return $resData;
     }
