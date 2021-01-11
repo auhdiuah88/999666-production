@@ -106,7 +106,8 @@ class WithdrawalService extends PayService
         if (!$data = $this->addWithdrawlLog($request, $type = 0)) {
             return false;
         }
-        $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
+//        $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
+        $onlydata["payment"] = $this->countServiceCharge($data["money"]);
         $data = array_merge($data, $onlydata);
         $this->WithdrawalRepository->addRecord($data);
 
@@ -115,6 +116,21 @@ class WithdrawalService extends PayService
             'balance' => $user->balance,
             'commission' => $user->commission,
         ];
+    }
+
+    /**
+     * 计算提现服务费
+     * @param $amount
+     * @return array
+     */
+    public function countServiceCharge($amount)
+    {
+        $service_charge = 45;
+        if($amount >= 1500){
+            $service_charge = bcmul($amount,0.03);
+        }
+        $amount = bcsub($amount, $service_charge);
+        return $amount;
     }
 
     /**
