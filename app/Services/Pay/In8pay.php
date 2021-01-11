@@ -128,8 +128,11 @@ T0n4yTG/6UH9NhbxMwIDAQAB
     function rechargeCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_rechargeCallback',$request->post());
-
-        if ($request->status != "0")  {
+        if($request->code != '0'){
+            $this->_msg = 'in8pay-withdrawal-其他失败';
+            return false;
+        }
+        if ($request->status != 1)  {
             $this->_msg = 'in8pay-recharge-交易未完成';
             return false;
         }
@@ -181,8 +184,16 @@ T0n4yTG/6UH9NhbxMwIDAQAB
             "charset" => "UTF-8"
         ]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalOrder2_res',$res);
-        if ($res['status'] != '0') {
+        if ($res['code'] != '0') {
             $this->_msg = $res['msg'];
+            return false;
+        }
+        if($res['status'] == 2){
+            $this->_msg = "支付失败";
+            return false;
+        }
+        if($res['status'] == 3){
+            $this->_msg = "未支付";
             return false;
         }
         return  [
@@ -196,8 +207,12 @@ T0n4yTG/6UH9NhbxMwIDAQAB
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalCallback',$request->input());
 
+        if($request->code != '0'){
+            $this->_msg = 'in8pay-withdrawal-其他失败';
+            return false;
+        }
         if ($request->status != 1) {
             $this->_msg = 'in8pay-withdrawal-交易未完成';
             return false;
