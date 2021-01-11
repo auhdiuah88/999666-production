@@ -188,14 +188,6 @@ T0n4yTG/6UH9NhbxMwIDAQAB
             $this->_msg = $res['msg'];
             return false;
         }
-        if($res['status'] == 2){
-            $this->_msg = "支付失败";
-            return false;
-        }
-        if($res['status'] == 3){
-            $this->_msg = "未支付";
-            return false;
-        }
         return  [
             'pltf_order_no' => $res['settle_sn'],
             'order_no' => $order_no
