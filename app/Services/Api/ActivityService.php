@@ -162,18 +162,18 @@ class ActivityService extends BaseService
         $signProduct = $this->activityRepository->findSignProductById($product_id);
 
         if ($signProduct->amount > $user->balance) {
-            $this->_msg = '余额不足，请充值';
+            $this->_msg = 'Insufficient balance, please recharge';
             return false;
         }
 
         $signOrder = $this->activityRepository->getValidSignOrder($product_id, $user_id);
         if ($signOrder) {
-            $this->_msg = '已经购买了此商品';
+            $this->_msg = 'This product has been purchased';
             return false;
         }
 
         if ($signProduct->stock == 0) {
-            $this->_msg = '此商品已经卖光';
+            $this->_msg = 'This product has sold out';
             return false;
         }
 
