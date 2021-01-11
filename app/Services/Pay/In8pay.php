@@ -57,7 +57,7 @@ T0n4yTG/6UH9NhbxMwIDAQA";
             $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-        return strtoupper(md5($sign));
+        return strtolower(md5($sign));
     }
 
     public function generateSignRigorous(array $params, $type=1){
@@ -69,7 +69,7 @@ T0n4yTG/6UH9NhbxMwIDAQA";
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-        return strtoupper(md5($sign));
+        return strtolower(md5($sign));
     }
 
     /**
