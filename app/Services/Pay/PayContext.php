@@ -22,7 +22,8 @@ class PayContext
         Leap $leap,
         Winpay $winpay,
         MTBpay $mtbpay,
-        Rspay $rspay
+        Rspay $rspay,
+        In8pay $in8pay
     )
     {
         // 每种api地址对应的支付公司
@@ -35,7 +36,8 @@ class PayContext
             'leap' => $leap,
             'winpay' => $winpay,
             'MTBpay' => $mtbpay,
-            'rspay' => $rspay
+            'rspay' => $rspay,
+            'in8pay' => $in8pay
         ];
     }
     /**
