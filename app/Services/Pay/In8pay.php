@@ -89,10 +89,14 @@ T0n4yTG/6UH9NhbxMwIDAQA";
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_rechargeOrder', [$params]);
-        $res = $this->requestService->postJsonData(self::$url . 'trans/pay' , $params,[
+        $res = $this->requestService->postFormData(self::$url . 'trans/pay', $params, [
             "content-type" => "application/x-www-form-urlencoded",
             "charset" => "UTF-8"
         ]);
+//        $res = $this->requestService->postJsonData(self::$url . 'trans/pay' , $params,[
+//            "content-type" => "application/x-www-form-urlencoded",
+//            "charset" => "UTF-8"
+//        ]);
         if ($res['code'] != "0") {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_rechargeOrder_return', $res);
             $this->_msg = $res['msg'];
