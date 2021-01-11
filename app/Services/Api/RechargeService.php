@@ -132,8 +132,11 @@ class RechargeService extends PayService
             return false;
         }
 
-        ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money
+        ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100
         $money = isset($request->money) ? $request->money : (isset($request->pay_amount) ? $request->pay_amount : $request->amount);
+        if($payProvide == 'in8pay'){ //返回的是分做单位的
+            $money = $money / 100;
+        }
         // 下面的方法相同
         $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
         if (!$rechargeLog) {

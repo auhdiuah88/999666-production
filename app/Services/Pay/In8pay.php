@@ -21,6 +21,8 @@ class In8pay extends PayStrategy
     public $rechargeSecretkey;
     public $company = 'in8pay';   // 支付公司名
 
+    protected $blackParams = ['merchant_sn'];
+
     // rsa公钥
     protected $rsaPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5iVJXx1YX/6dtPhxHBSs1r08U
 YW9NjnRTf/1cJIBp46PWSFBzngvYcOukclsl0vv+njeKVgaDXtDz5FiEt4ajBbEk
@@ -123,26 +125,26 @@ T0n4yTG/6UH9NhbxMwIDAQA";
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_rechargeCallback',$request->post());
 
-        if ($request->payStatus != 1)  {
-            $this->_msg = 'rspay-recharge-交易未完成';
+        if ($request->status != "0")  {
+            $this->_msg = 'in8pay-recharge-交易未完成';
             return false;
         }
         // 验证签名
-        $params = $request->post();
+        $params = $request->input();
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
         unset($params['code']);
         unset($params['msg']);
         if ($this->generateSignRigorous($params,1) <> $sign) {
-            $this->_msg = 'rspay-签名错误';
+            $this->_msg = 'in8pay-签名错误';
             return false;
         }
 
         $where = [
-            'order_no' => $request->outOrderNo,
+            'order_no' => $request->down_sn,
         ];
         return $where;
     }
@@ -156,28 +158,33 @@ T0n4yTG/6UH9NhbxMwIDAQA";
 //        $ip = $this->request->ip();
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
+
         $params = [
-            'appId' => $this->withdrawMerchantID,
-            'outOrderNo' => $order_no,
-            'applyDate' => date('Y-m-d H:i:s'),
-            'channel' => '912',
-            'notifyUrl' => $this->withdrawal_callback_url,
-            'amount' => intval($money),
-            'mode' => 'UPI',
-            'account' => $withdrawalRecord->bank_number,
-            'userId' => $withdrawalRecord->user_id,
-            'clientIp' => $this->request->ip(),
+            'down_sn' => $withdrawalRecord->order_no,
+            'amount' => (int)($money * 100),
+            'area' => 1,
+            'bank_account' => $withdrawalRecord->account_holder,
+            'bank_cardno' => $withdrawalRecord->bank_number,
+            'bank_code' => $withdrawalRecord->ifsc_code,
+            'channel_code' => 1007,
+            'mobile' => $withdrawalRecord->phone,
+            'notify_url' => $this->withdrawal_callback_url
         ];
         $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalOrder',$params);
-        $res = $this->requestService->postJsonData(self::$url . 'payout', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalOrder2',$res);
-        if ($res['statusCode'] != '00') {
-            $this->_msg = $res['message'];
+        $cipher_data = $this->rsaEncrypt($params);
+        $merchant_sn = $this->withdrawMerchantID;
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalOrder',$params);
+        $res = $this->requestService->postFormData(self::$url . 'settle/pay', compact('merchant_sn','cipher_data'),[
+            "content-type" => "application/x-www-form-urlencoded",
+            "charset" => "UTF-8"
+        ]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalOrder2_res',$res);
+        if ($res['statusCode'] != '0') {
+            $this->_msg = $res['msg'];
             return false;
         }
         return  [
-            'pltf_order_no' => $res['transactionId'],
+            'pltf_order_no' => $res['settle_sn'],
             'order_no' => $order_no
         ];
     }
@@ -187,54 +194,51 @@ T0n4yTG/6UH9NhbxMwIDAQA";
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalCallback',$request->post());
 
-        if ((string)($request->payStatus) != '11') {
-            $this->_msg = 'rspay-withdrawal-交易未完成';
+        if ($request->status != 1) {
+            $this->_msg = 'in8pay-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
-        $params = $request->post();
+        $params = $request->input();
         $sign = $params['sign'];
         unset($params['sign']);
+        unset($params['code']);
+        unset($params['msg']);
         if ($this->generateSignRigorous($params,2) <> $sign) {
-            $this->_msg = 'MTBpay-签名错误';
+            $this->_msg = 'in8pay-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->outOrderNo,
-            'plat_order_id' => $request->transactionId
+            'order_no' => $request->down_sn,
+            'plat_order_id' => $request->settle_sn,
+            'payment' => bcdiv($request->payment,100),
+            'service_charge' => bcdiv($request->fee_fix,100),
         ];
         return $where;
     }
 
-    protected function makeRequestNo($withdraw_id){
-        return date('YmdDis') . $withdraw_id;
+    protected function rsaEncrypt($params)
+    {
+        $params = $this->filterBlackParams($params);
+        $originalData = json_encode($params);
+        $crypto = '';
+        $encryptData = '';
+        foreach (str_split($originalData, 117) as $chunk) {
+            openssl_public_encrypt($chunk, $encryptData, $this->rsaPublicKey);
+            $crypto .= $encryptData;
+        }
+        return base64_encode($crypto);
     }
 
-    /**
-     * 请求待付状态
-     * @param $withdrawalRecord
-     * @return array|false|mixed|string
-     */
-    public function callWithdrawBack($withdrawalRecord){
-        $request_no = $this->makeRequestNo($withdrawalRecord->id);
-        $request_time = date("YmdHis");
-        $mer_no = $this->merchantID;
-        $mer_order_no = $withdrawalRecord->order_no;
-
-        $params = compact('request_no','request_time','mer_no','mer_order_no');
-        $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Param',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
-        if(!$res){
-            return false;
+    protected function filterBlackParams($params)
+    {
+        foreach ($this->blackParams as $item){
+            if(in_array($item, $params))
+                unset($params[$item]);
         }
-        if($res['query_status'] != 'SUCCESS'){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Err',$res);
-            return false;
-        }
-        return $res;
+        return $params;
     }
 
 }
