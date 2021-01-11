@@ -309,14 +309,6 @@ class WithdrawalService extends PayService
             $this->_msg = $strategyClass->_msg;
             return false;
         }
-        if(isset($where['payment'])){
-            $payment = $where['payment'];
-            unset($where['payment']);
-        }
-        if(isset($where['service_charge'])){
-            $payment = $where['service_charge'];
-            unset($where['service_charge']);
-        }
 
         $pltf_order_no = isset($where['plat_order_id']) ? $where['plat_order_id'] : '';
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
@@ -331,8 +323,7 @@ class WithdrawalService extends PayService
         }
 
         $money = $withdrawlLog->money;      // 申请金额
-        $payment = isset($payment)?:$withdrawlLog->payment;  // 手续费之后的金额
-        $service_charge = isset($service_charge)?:$withdrawlLog->service_charge;  // 手续费
+        $payment = $withdrawlLog->payment;  // 手续费之后的金额
         DB::beginTransaction();
         try {
             $user = $this->UserRepository->findByIdUser($withdrawlLog->user_id);
@@ -368,7 +359,6 @@ class WithdrawalService extends PayService
             $withdrawlLog->pay_status = 1;
             $withdrawlLog->loan_time = time();
             $withdrawlLog->payment = $payment;
-            $withdrawlLog->service_charge = $service_charge;
             $withdrawlLog->save();
 
             DB::commit();

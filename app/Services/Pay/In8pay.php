@@ -181,7 +181,7 @@ T0n4yTG/6UH9NhbxMwIDAQAB
             "charset" => "UTF-8"
         ]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalOrder2_res',$res);
-        if ($res['statusCode'] != '0') {
+        if ($res['status'] != '0') {
             $this->_msg = $res['msg'];
             return false;
         }
@@ -215,8 +215,6 @@ T0n4yTG/6UH9NhbxMwIDAQAB
         $where = [
             'order_no' => $request->down_sn,
             'plat_order_id' => $request->settle_sn,
-            'payment' => bcdiv($request->payment,100),
-            'service_charge' => bcdiv($request->fee_fix,100),
         ];
         return $where;
     }
