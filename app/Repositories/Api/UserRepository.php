@@ -464,4 +464,9 @@ class UserRepository
     {
         return $this->Cx_User->where("id", $id)->update(["new_old" => 1]);
     }
+
+    public function balance($id)
+    {
+        return $this->Cx_User->where("id", $id)->value("balance");
+    }
 }

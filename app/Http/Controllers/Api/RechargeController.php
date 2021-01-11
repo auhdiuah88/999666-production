@@ -43,7 +43,8 @@ class RechargeController extends Controller
         $this->rechargeService->getConfig();
         $result = $this->rechargeService->_data;
         ##获取用户余额
-        $balance = $request->get('userInfo')['balance'];
+        $balance = $this->UserService->getBalance($request->get('userInfo')['id']);
+//        $balance = $request->get('userInfo')['balance'];
 
         $res = compact('balance');
         $res['recharge_method'] = $result;

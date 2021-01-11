@@ -424,5 +424,10 @@ class UserService
         return $this->UserRepository->Withdrawal_List($limit, ($page - 1) * $limit, $user->id);
     }
 
+    //用户余额
+    public function getBalance($id)
+    {
+        return (float)($this->UserRepository->balance($id));
+    }
 
 }
