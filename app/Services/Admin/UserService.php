@@ -4,9 +4,11 @@
 namespace App\Services\Admin;
 
 
+use App\Models\Cx_User;
 use App\Repositories\Admin\UserRepository as Repository;
 use App\Repositories\Api\UserRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
@@ -93,6 +95,8 @@ class UserService extends BaseService
     public function delUser($id)
     {
         if ($this->UserRepository->delUser($id)) {
+            ##删除缓存
+            Cache::forget(Cx_User::CACHE_USER_PROFILE . $id);
             $this->_msg = "删除成功";
         } else {
             $this->_code = 402;
