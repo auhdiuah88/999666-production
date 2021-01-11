@@ -28,7 +28,7 @@ class In8pay extends PayStrategy
     MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5iVJXx1YX/6dtPhxHBSs1r08U
 YW9NjnRTf/1cJIBp46PWSFBzngvYcOukclsl0vv+njeKVgaDXtDz5FiEt4ajBbEk
 jVMO8sYFKU0qoWRE2GNsVobXPQ5BO/JeE6mgJTd3zqo1Q5X6aG0PrW7kwM9S4umt
-T0n4yTG/6UH9NhbxMwIDAQA
+T0n4yTG/6UH9NhbxMwIDAQAB
 -----END PUBLIC KEY-----";
     // rsa密钥
     protected $rsaSecretKey = "ea2fe6fc046a7e6db3f34a9212c2a48d";
