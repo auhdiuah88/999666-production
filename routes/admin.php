@@ -289,6 +289,10 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
 
             Route::get("/staffLists","agent\AgentStaffController@staffLists");
         });
+
+        Route::group(["prefix" => "goods"], function(){
+            Route::post("/add","ProductController@add");
+        });
     });
 });
 
