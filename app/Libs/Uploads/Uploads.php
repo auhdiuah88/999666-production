@@ -61,7 +61,7 @@ class Uploads
                 'file_path' => $filePath,
                 'type' => UploadDic::getType($this->ext),
                 'cate_id' => $this->cate,
-                'created_time' => time()
+                'created_at' => time()
             ]);
             return $id;
         }catch(\Exception $e){

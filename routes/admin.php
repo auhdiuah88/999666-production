@@ -32,6 +32,11 @@ Route::get("/betting/newests", "Admin\BettingController@syncInRealtime");
 Route::get("/withdrawal/auditlist", "Admin\WithdrawalController@syncInRealtime");
 Route::get("/withdrawal/auditnotice", "Admin\WithdrawalController@syncInRealtimeNotice");
 
+Route::group(['middleware' => ['token', "auth"]], function () {
+    //文件上传
+    Route::post("/upload", "Admin\UploadController@upload");
+});
+
 Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
     //操作日志查询
     Route::get("/log/adminList", "Admin\AdminLogController@list");

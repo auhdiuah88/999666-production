@@ -10,7 +10,7 @@ class UploadDic
     protected static $type = [
         '1' => [
             'value' => 1,
-            'title' => 'image'
+            'title' => 'jpg'
         ],
         '2' => [
             'value' => 2,
