@@ -6,6 +6,7 @@ namespace App\Libs\Uploads;
 use App\Dictionary\UploadDic;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use function Sodium\compare;
 
 class Uploads
 {
@@ -61,9 +62,9 @@ class Uploads
                 'file_path' => $filePath,
                 'type' => UploadDic::getType($this->ext),
                 'cate_id' => $this->cate,
-                'created_time' => time()
+                'created_at' => time()
             ]);
-            return $id;
+            return compact('id','path');
         }catch(\Exception $e){
             $this->error = $e->getMessage();
             return false;
