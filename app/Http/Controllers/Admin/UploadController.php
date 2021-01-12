@@ -22,9 +22,9 @@ class UploadController extends Controller
                 return $this->AppReturn(403,$validator->errors()->first());
             $name = request()->post('name');
             $uploadEngine = new Uploads($name,null,5000000,['jpg', 'png', 'jpeg']);
-            if(!$id = $uploadEngine->upload())
+            if(!$res = $uploadEngine->upload())
                 return $this->AppReturn(403,$uploadEngine->getError());
-            return $this->AppReturn(200,'upload success!',compact('id'));
+            return $this->AppReturn(200,'upload success!',$res);
         }catch(\Exception $e){
             $this->logError('adminerr', $e);
             return $this->AppReturn(501,$e->getMessage());
