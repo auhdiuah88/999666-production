@@ -28,4 +28,20 @@ class BannerRepository
     {
         return $this->cx_Banner->insertGetId($insertData);
     }
+
+    public function index($get)
+    {
+        return $this->cx_Banner
+            ->with([
+                'uploads' => function ($query){
+                    $query->select(["image_id", "path"]);
+                }
+            ])
+            ->addSelect(["id", "uploads_id","type", "location"])->get()->toArray();
+    }
+
+    public function count($get)
+    {
+        return $this->cx_Banner->count();
+    }
 }

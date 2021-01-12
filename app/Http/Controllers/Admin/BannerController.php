@@ -19,7 +19,15 @@ class BannerController extends Controller
         $this->bannerService = $bannerService;
     }
 
-    public function index(){}
+    public function index(Request $request)
+    {
+        $this->bannerService->index($request->all());
+        return $this->AppReturn(
+            $this->bannerService->_code,
+            $this->bannerService->_msg,
+            $this->bannerService->_data
+        );
+    }
 
     public function add(Request $request)
     {

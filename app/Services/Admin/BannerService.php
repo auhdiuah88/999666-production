@@ -29,4 +29,10 @@ class BannerService extends BaseService
     {
         return $this->bannerRepository->add($insertData);
     }
+
+    public function index($get)
+    {
+        $this->_data['total'] = $this->bannerRepository->count($get);
+        $this->_data['list'] = $this->bannerRepository->index($get);
+    }
 }
