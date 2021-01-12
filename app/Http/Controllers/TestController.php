@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Libs\Aes;
+use App\Libs\Uploads\Uploads;
 use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Game_Play;
 use App\Models\Cx_User;
@@ -32,6 +33,14 @@ class TestController extends Controller
         $this->GameRepository = $gameRepository;
         $this->Ssc_FourService = $ssc_FourService;
         $this->Cx_User = $cx_User;
+    }
+
+    public function upload()
+    {
+        $uploadEngine = new Uploads(null,'abcd',100000,['jpeg', 'png']);
+        $path = $uploadEngine->upload('goods');
+        print_r($path);
+        if(!$path)echo $uploadEngine->getError();
     }
 
     public function testRedis()

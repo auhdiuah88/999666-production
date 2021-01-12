@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get("/test", "TestController@test2");
 Route::get("/testRedis", "TestController@testRedis");
 Route::get("/test2", "TestController@test");
+Route::post("/upload", "TestController@upload");
 Route::get("/testGame", "TestController@openGame");
 Route::get("/openBetting", "TestController@openGameBetting");
 Route::post("/makeSign", "TestController@makeSign");
