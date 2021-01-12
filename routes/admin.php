@@ -284,6 +284,12 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
 
             Route::get("/staffLists","agent\AgentStaffController@staffLists");
         });
+
+        // banner设置
+        Route::group(["prefix" => "banner"], function () {
+            Route::get("/index", "BannerController@index");
+            Route::post("/add", "BannerController@add");
+        });
     });
 });
 
