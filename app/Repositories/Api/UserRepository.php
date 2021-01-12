@@ -226,7 +226,8 @@ class UserRepository
     {
         $this->Cx_User->fill($data);
         $this->Cx_User->save();
-        return $this->cacheUser($this->Cx_User->id);
+        $this->cacheUser($this->Cx_User->id);
+        return  $this->Cx_User->id;
     }
 
 

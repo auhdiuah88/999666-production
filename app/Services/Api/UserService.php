@@ -260,8 +260,17 @@ class UserService
         $data["code"] = $this->UserRepository->getcode();
 
 
-        $objUser = $this->UserRepository->createUser($data);
+        $user_id = $this->UserRepository->createUser($data);
+        $userObj = $this->UserRepository->findByIdUser($user_id);
 
+        $token = Crypt::encrypt($userObj->id . "+" . time());
+        $userModifyData = [
+            'token' => $token,
+            'last_time' => time()
+        ];
+        cache()->set(md5('usertoken' . $userObj->id), $token, 7 * 24 * 60 * 60);
+        $userObj = $this->UserRepository->updateUser($userObj->id, $userModifyData);
+        $this->data = $userObj;
         return true;
     }
 
