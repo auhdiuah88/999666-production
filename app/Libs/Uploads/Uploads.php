@@ -54,8 +54,10 @@ class Uploads
             if(!$this->check()){
                 return false;
             }
-            $filePath = $this->file->storeAs('public/' . $this->getDir(),$this->getFileName());
-            $path = 'storage/' . $this->getDir() . '/' . $this->getFileName();
+            $fileName = $this->getFileName();
+            $dir = $this->getDir();
+            $filePath = $this->file->storeAs('public/' . $dir,$fileName);
+            $path = 'storage/' . $dir . '/' . $fileName;
             ##添加图片记录
             $id = DB::table('uploads')->insertGetId([
                 'path' => $path,

@@ -29,19 +29,56 @@ class BannerRepository
         return $this->cx_Banner->insertGetId($insertData);
     }
 
-    public function index($get)
+    public function index($offset, $limit)
     {
-        return $this->cx_Banner
+        return $this->initModel()
             ->with([
                 'uploads' => function ($query){
                     $query->select(["image_id", "path"]);
                 }
             ])
-            ->addSelect(["id", "uploads_id","type", "location"])->get()->toArray();
+            ->orderByDesc('id')
+            ->offset($offset)
+            ->limit($limit)
+            ->addSelect(["id", "uploads_id","type", "location","url"])
+            ->get();
     }
 
-    public function count($get)
+    public function count()
     {
-        return $this->cx_Banner->count();
+        return $this->initModel()->count();
     }
+
+    /**
+     * @return Cx_Banner
+     */
+    public function initModel()
+    {
+        return $this->initQueryCondition($this->cx_Banner);
+    }
+
+    public function initQueryCondition($model)
+    {
+          $type = request()->get('type', 0);
+          if ($type > 0) {
+              $model = $model->where('type', $type);
+          }
+          $location = request()->get('location', 0);
+          if ($location > 0) {
+              $model = $model->where('location', $location);
+          }
+          return $model;
+    }
+
+    public function del($id)
+    {
+        return $this->cx_Banner->where('id', $id)->delete();
+    }
+
+    public function save($post)
+    {
+        return $this->cx_Banner->where('id', $post['id'])->update($post);
+    }
+
+
 }
