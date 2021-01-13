@@ -11,6 +11,10 @@ if(preg_match('/^api1.\w/', $_SERVER['HTTP_HOST'])){
     header('Access-Control-Allow-Origin:*');
 }
 
+if(preg_match('/^\/admin\/.\w/', $_SERVER['REQUEST_URI'])){
+    header('Access-Control-Allow-Origin:*');
+}
+
 define('LARAVEL_START', microtime(true));
 
 /*
@@ -58,7 +62,6 @@ $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );
-
 $response->send();
 
 $kernel->terminate($request, $response);
