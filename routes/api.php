@@ -113,6 +113,10 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
     Route::group(["prefix" => "betting"], function (){
         Route::get("/statistics", "BettingController@statistics");
     });
+    //banner管理
+    Route::group(["prefix" => "banner"], function (){
+        Route::get("/find", "BannerController@banners");
+    });
 });
 
 
