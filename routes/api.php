@@ -117,6 +117,10 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
     Route::group(["prefix" => "banner"], function (){
         Route::get("/find", "BannerController@banners");
     });
+    //商品
+    Route::group(["prefix" => "goods"], function (){
+        Route::get("/", "ProductController@lists");
+    });
 });
 
 
