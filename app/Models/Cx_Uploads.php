@@ -5,6 +5,7 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\URL;
 
 class Cx_Uploads extends Model
 {
@@ -20,4 +21,13 @@ class Cx_Uploads extends Model
     {
         return request()->getHttpHost() . '/' . $value ;
     }
+
+    const UPDATED_AT = null;
+
+    public function getPathUrlAttribute()
+    {
+        return URL::asset($this->path);
+    }
+
+    protected $appends = ['path_url'];
 }
