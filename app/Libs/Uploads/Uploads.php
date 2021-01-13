@@ -66,7 +66,8 @@ class Uploads
                 'cate_id' => $this->cate,
                 'created_at' => time()
             ]);
-            return compact('id','path');
+            $src = request()->getSchemeAndHttpHost() . '/' . $path;
+            return compact('id','src','fileName');
         }catch(\Exception $e){
             $this->error = $e->getMessage();
             return false;

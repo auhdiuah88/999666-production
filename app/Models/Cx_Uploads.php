@@ -10,9 +10,14 @@ class Cx_Uploads extends Model
 {
     protected $table = "uploads";
 
-    protected $primaryKey = "images_id";
+    protected $primaryKey = "image_id";
 
     protected $dateFormat = "U";
 
     protected $guarded = [];
+
+    public function getPathAttribute($value)
+    {
+        return request()->getHttpHost() . '/' . $value ;
+    }
 }

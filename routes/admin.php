@@ -292,6 +292,11 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
 
         Route::group(["prefix" => "goods"], function(){
             Route::post("/add","ProductController@add");
+            Route::get("/","ProductController@lists");
+            Route::post("/update","ProductController@update");
+            Route::post("/edit","ProductController@edit");
+            Route::get("/detail","ProductController@detail");
+            Route::post("/delete","ProductController@del");
         });
     });
 });

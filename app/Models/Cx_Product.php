@@ -4,6 +4,7 @@
 namespace App\Models;
 
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -20,9 +21,19 @@ class Cx_Product extends Model
 
     protected $guarded = [];
 
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
+
     public function banner()
     {
-        return $this->belongsToMany('App\Models\Cx_Uploads','file_id','image_id')->using('App\Models\Cx_Product_Images')->withPivot('sort','product_id','file_id');
+        return $this->belongsToMany('App\Models\Cx_Uploads','product_images','product_id','file_id');
+    }
+
+    public function coverImg()
+    {
+        return $this->belongsTo('App\Models\Cx_Uploads','cover','image_id');
     }
 
 }
