@@ -26,6 +26,11 @@ class Cx_Product extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
+    function getContentAttribute($value)
+    {
+        return htmlspecialchars_decode($value);
+    }
+
     public function banner()
     {
         return $this->belongsToMany('App\Models\Cx_Uploads','product_images','product_id','file_id');

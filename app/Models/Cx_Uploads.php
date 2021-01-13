@@ -19,14 +19,14 @@ class Cx_Uploads extends Model
 
     public function getPathAttribute($value)
     {
-        return request()->getHttpHost() . '/' . $value ;
+        return URL::asset($value) ;
     }
 
     const UPDATED_AT = null;
 
     public function getPathUrlAttribute()
     {
-        return URL::asset($this->path);
+        return $this->path;
     }
 
     protected $appends = ['path_url'];
