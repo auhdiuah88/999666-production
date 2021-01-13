@@ -11,10 +11,6 @@ if(preg_match('/^api1.\w/', $_SERVER['HTTP_HOST'])){
     header('Access-Control-Allow-Origin:*');
 }
 
-if(preg_match('/^\/admin\/.\w/', $_SERVER['REQUEST_URI'])){
-    header('Access-Control-Allow-Origin:*');
-}
-
 define('LARAVEL_START', microtime(true));
 
 /*

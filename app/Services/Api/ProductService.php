@@ -33,4 +33,22 @@ class ProductService extends BaseService
         return true;
     }
 
+    public function detail():bool
+    {
+        $product_id = request()->input('product_id',0);
+        $product = $this->ProductRepository->getProductById($product_id);
+        if(!$product){
+            $this->_code = 401;
+            $this->_msg = '商品不存在';
+            return false;
+        }
+        if($product['status'] != 1){
+            $this->_code = 401;
+            $this->_msg = '商品已下架';
+            return false;
+        }
+        $this->_data = $product;
+        return true;
+    }
+
 }

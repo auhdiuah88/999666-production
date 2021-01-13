@@ -120,6 +120,7 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
     //商品
     Route::group(["prefix" => "goods"], function (){
         Route::get("/", "ProductController@lists");
+        Route::get("/detail", "ProductController@detail");
     });
 });
 

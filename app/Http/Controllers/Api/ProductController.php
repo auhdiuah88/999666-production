@@ -37,4 +37,19 @@ class ProductController extends Controller
         );
     }
 
+    public function detail()
+    {
+        $validator = Validator::make(request()->input(), [
+            'product_id' => ['required', 'integer', 'gt:0']
+        ]);
+        if($validator->fails())
+            return $this->AppReturn(403,$validator->errors()->first());
+        $this->ProductService->detail();
+        return $this->AppReturn(
+            $this->ProductService->_code,
+            $this->ProductService->_msg,
+            $this->ProductService->_data
+        );
+    }
+
 }
