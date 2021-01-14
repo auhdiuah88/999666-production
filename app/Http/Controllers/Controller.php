@@ -17,7 +17,7 @@ class Controller extends BaseController
             [
                 "code" => $code,
                 "msg" => $msg,
-                "data" => is_array($data)? $data : ($data?: new \StdClass())
+                "data" => $data?: new \StdClass()
             ]
         )->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
