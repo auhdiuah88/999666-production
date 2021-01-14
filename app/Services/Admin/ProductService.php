@@ -97,6 +97,7 @@ class ProductService extends BaseService
             'sort' => $this->intInput('sort',9999),
             'status' => $this->intInput('status'),
             'cover' => $this->intInput('cover'),
+            'buy_status' => $this->intInput('buy_status')
         ];
     }
 

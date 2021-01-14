@@ -69,6 +69,11 @@ class ProductService extends BaseService
             $this->_msg = 'The goods have been taken off the shelves';
             return false;
         }
+        if($product['buy_status'] != 1){
+            $this->_code = 401;
+            $this->_msg = 'Commodity is not tradable';
+            return false;
+        }
         $num = request()->post('num',1);
         $user_id = request()->get('userInfo')['id'];
         $userInfo = $this->UserRepository->findByIdUser($user_id);
