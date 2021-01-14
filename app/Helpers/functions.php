@@ -59,3 +59,20 @@ function getHtml($html)
 {
     return rpNBSP(htmlspecialchars_decode(htmlspecialchars_decode($html)));
 }
+
+function redisHGetALl($key, $arrKey=[]):array
+{
+    $data = \Illuminate\Support\Facades\Redis::hgetall($key);
+    foreach($data as $k => &$val){
+        if(in_array($k, $arrKey))$val = json_decode($val,true);
+    }
+    return $data;
+}
+
+function redisHSetAll($key, $array)
+{
+    foreach($array as $k => $arr){
+        if(is_array($arr))$arr = json_encode($arr);
+        $data[$k] = \Illuminate\Support\Facades\Redis::hset($key, $k, $arr);
+    }
+}

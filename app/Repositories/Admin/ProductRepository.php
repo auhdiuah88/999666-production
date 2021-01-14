@@ -7,6 +7,7 @@ namespace App\Repositories\Admin;
 use App\Models\Cx_Product;
 use App\Models\Cx_Product_Images;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Redis;
 
 class ProductRepository extends BaseRepository
 {
@@ -92,6 +93,26 @@ class ProductRepository extends BaseRepository
     public function delProduct($product_id)
     {
         return $this->Cx_Product->where("product_id", "=", $product_id)->delete();
+    }
+
+    public function updateProductCache($product_id)
+    {
+        $product = $this->Cx_Product->where("product_id", "=", $product_id)->with(
+            [
+                'coverImg' => function($query){
+                    $query->select(['image_id', 'path']);
+                },
+                'banner' => function($query){
+                    $query->select(['image_id', 'path'])->orderBy('sort', 'asc');
+                }
+            ]
+        )->first()->toArray();
+        redisHSetAll('GOODS_INFO:' . $product_id, $product);
+    }
+
+    public function delProductCache($product_id)
+    {
+        Redis::del('GOODS_INFO:' . $product_id);
     }
 
 }

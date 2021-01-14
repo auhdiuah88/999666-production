@@ -121,6 +121,7 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
     Route::group(["prefix" => "goods"], function (){
         Route::get("/", "ProductController@lists");
         Route::get("/detail", "ProductController@detail");
+        Route::post("/buy", "ProductController@buy");
     });
 });
 

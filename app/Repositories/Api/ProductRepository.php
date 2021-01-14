@@ -5,19 +5,21 @@ namespace App\Repositories\Api;
 
 
 use App\Models\Cx_Product;
-use Illuminate\Support\Facades\Redis;
+use App\Models\Cx_Product_Orders;
 
 class ProductRepository
 {
 
-    protected $Cx_Product;
+    protected $Cx_Product, $Cx_Product_Orders;
 
     public function __construct
     (
-        Cx_Product $cx_Product
+        Cx_Product $cx_Product,
+        Cx_Product_Orders $cx_Product_Orders
     )
     {
         $this->Cx_Product = $cx_Product;
+        $this->Cx_Product_Orders = $cx_Product_Orders;
     }
 
     public function getProductList($size)
@@ -38,7 +40,7 @@ class ProductRepository
 
     public function getProductById($product_id)
     {
-        $product = Redis::hvals('GOODS_INFO:' . $product_id);
+        $product = redisHGetALl('GOODS_INFO:' . $product_id, ['banner', 'cover_img']);
         if(!$product){
             $product = $this->Cx_Product->where("product_id", "=", $product_id)->with(
                 [
@@ -50,11 +52,22 @@ class ProductRepository
                     }
                 ]
             )->first();
-            if($product)$product = $product->toArray();
-//            if($product)
-//                Redis::hset();
+            if($product){
+                $product = $product->toArray();
+                redisHSetAll('GOODS_INFO:' . $product_id, $product);
+            }
         }
         return $product;
+    }
+
+    public function createOrder($data)
+    {
+        return $this->Cx_Product_Orders->create($data);
+    }
+
+    public function addSaleNum($product_id, $num)
+    {
+        return $this->Cx_Product->where("product_id", "=", $product_id)->increment("sale_num", $num);
     }
 
 }

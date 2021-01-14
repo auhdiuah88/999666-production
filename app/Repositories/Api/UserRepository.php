@@ -470,4 +470,18 @@ class UserRepository
     {
         return $this->Cx_User->where("id", $id)->value("balance");
     }
+
+    public function buyProduct($user, $price, $back_money):bool
+    {
+        $dq_balance = $user->balance;
+        $wc_balance = bcadd($dq_balance, $back_money,2);
+        ##更新金额
+        $user->point = bcsub($user->point, $price,2);
+        $user->balance = $wc_balance;
+        $res = $user->save();
+        if(!$res)return false;
+        ##增加余额变化记录
+        $this->addBalanceLog($user->id, $back_money,13,"打码量兑换余额{$back_money}", $dq_balance, $wc_balance);
+        return true;
+    }
 }

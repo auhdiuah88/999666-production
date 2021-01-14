@@ -52,4 +52,20 @@ class ProductController extends Controller
         );
     }
 
+    public function buy()
+    {
+        $validator = Validator::make(request()->post(), [
+            'product_id' => ['required', 'integer', 'gt:0'],
+            'num' => ['required', 'integer', 'gt:0']
+        ]);
+        if($validator->fails())
+            return $this->AppReturn(403,$validator->errors()->first());
+        $this->ProductService->buy();
+        return $this->AppReturn(
+            $this->ProductService->_code,
+            $this->ProductService->_msg,
+            $this->ProductService->_data
+        );
+    }
+
 }

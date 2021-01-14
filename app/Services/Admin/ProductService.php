@@ -7,6 +7,7 @@ namespace App\Services\Admin;
 use App\Repositories\Admin\ProductRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class ProductService extends BaseService
 {
@@ -38,6 +39,7 @@ class ProductService extends BaseService
             $res = $this->ProductRepository->addProductImages($images, $product->product_id);
             if($res === false)throw new \Exception('banner关联失败');
             DB::commit();
+            $this->ProductRepository->updateProductCache($product->product_id);
             return true;
         }catch(\Exception $e){
             DB::rollBack();
@@ -75,6 +77,7 @@ class ProductService extends BaseService
             $res = $this->ProductRepository->addProductImages($images, $product_id);
             if($res === false)throw new \Exception('banner关联失败');
             DB::commit();
+            $this->ProductRepository->updateProductCache($product_id);
             return true;
         }catch(\Exception $e){
             DB::rollBack();
@@ -118,6 +121,7 @@ class ProductService extends BaseService
             return false;
         }
         $res = $this->ProductRepository->updateProduct($product_id, [$field=>$value]);
+        $this->ProductRepository->updateProductCache($product_id);
         if($res === false){
             $this->_code = 402;
             $this->_msg = '修改失败';
@@ -143,6 +147,7 @@ class ProductService extends BaseService
     {
         $product_id = $this->intInput('product_id');
         $this->ProductRepository->delProduct($product_id);
+        $this->ProductRepository->delProductCache($product_id);
     }
 
 }
