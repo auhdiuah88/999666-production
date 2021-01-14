@@ -31,6 +31,7 @@ class ProductService extends BaseService
         if($data->isEmpty()){
             $this->_code = 402;
             $this->_msg = 'No more commodity data';
+            $this->_data = [];
             return false;
         }
         $this->_data = $data;
