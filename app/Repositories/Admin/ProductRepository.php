@@ -6,22 +6,25 @@ namespace App\Repositories\Admin;
 
 use App\Models\Cx_Product;
 use App\Models\Cx_Product_Images;
+use App\Models\Cx_Product_Orders;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Redis;
 
 class ProductRepository extends BaseRepository
 {
 
-    protected $Cx_Product, $Cx_Product_Images;
+    protected $Cx_Product, $Cx_Product_Images, $Cx_Product_Orders;
 
     public function __construct
     (
         Cx_Product $cx_Product,
-        Cx_Product_Images $cx_Product_Images
+        Cx_Product_Images $cx_Product_Images,
+        Cx_Product_Orders $cx_Product_Orders
     )
     {
         $this->Cx_Product = $cx_Product;
         $this->Cx_Product_Images = $cx_Product_Images;
+        $this->Cx_Product_Orders = $cx_Product_Orders;
     }
 
     public function addProduct($data)
@@ -113,6 +116,23 @@ class ProductRepository extends BaseRepository
     public function delProductCache($product_id)
     {
         Redis::del('GOODS_INFO:' . $product_id);
+    }
+
+    public function orders($where, $size)
+    {
+        return makeModel($where, $this->Cx_Product_Orders)
+            ->with([
+//                'product' => function($query){
+//                    $query->select(['product_id', 'name', 'cover'])->with(['coverImg'=>function($query){
+//                        $query->select(['image_id', 'path']);
+//                    }]);
+//                },
+                'user' => function($query){
+                    $query->select(['id', 'phone']);
+                }
+            ])
+            ->orderByDesc('created_at')
+            ->paginate($size);
     }
 
 }

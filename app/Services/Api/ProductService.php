@@ -89,7 +89,8 @@ class ProductService extends BaseService
             'num' => $num,
             'user_id' => $user_id,
             'price' => $total_price,
-            'back_money' => $total_back_money
+            'back_money' => $total_back_money,
+            'product_data' => $product
         ];
         DB::beginTransaction();
         try{

@@ -305,6 +305,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/edit","ProductController@edit");
             Route::get("/detail","ProductController@detail");
             Route::post("/delete","ProductController@del");
+            Route::get("/orders","ProductController@orders");
         });
     });
 });

@@ -157,4 +157,25 @@ class ProductController extends Controller
         }
     }
 
+    public function orders()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'page' => ['required', 'integer', 'gt:0'],
+                'size' => ['required', 'integer', 'gt:0']
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(403,$validator->errors()->first());
+            $this->ProductService->orders();
+            return $this->AppReturn(
+                $this->ProductService->_code,
+                $this->ProductService->_msg,
+                $this->ProductService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
+    }
+
 }

@@ -5,20 +5,23 @@ namespace App\Services\Admin;
 
 
 use App\Repositories\Admin\ProductRepository;
+use App\Repositories\Admin\UserRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 class ProductService extends BaseService
 {
-    protected $ProductRepository;
+    protected $ProductRepository, $UserRepository;
 
     public function __construct
     (
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        UserRepository $userRepository
     )
     {
         $this->ProductRepository = $productRepository;
+        $this->UserRepository = $userRepository;
     }
 
     public function add():bool
@@ -149,6 +152,36 @@ class ProductService extends BaseService
         $product_id = $this->intInput('product_id');
         $this->ProductRepository->delProduct($product_id);
         $this->ProductRepository->delProductCache($product_id);
+    }
+
+    public function orders()
+    {
+        $size = $this->sizeInput();
+        $where = $this->setOrdersWhere();
+        $data = $this->ProductRepository->orders($where, $size);
+        if($data->isEmpty()){
+            $this->_code = 304;
+            $this->_msg = '没有更多数据';
+            return false;
+        }
+        $this->_data = $data;
+        return true;
+    }
+
+    protected function setOrdersWhere():array
+    {
+        $where = [];
+        $user_id = $this->intInput('user_id');
+        if($user_id)$where['user_id'] = ['=', $user_id];
+        $start_time = $this->intInput('start_time');
+        $end_time = $this->intInput('end_time');
+        if($start_time && $end_time)$where['created_at'] = ['BETWEEN', [$start_time, $end_time]];
+        $phone = $this->strInput('phone');
+        if($phone && !$user_id){
+            $user_ids = $this->UserRepository->getUserIds($phone);
+            $where['user_id'] = ['in', $user_ids];
+        }
+        return $where;
     }
 
 }
