@@ -47,7 +47,7 @@ class ProductController extends Controller
     {
         try{
             $validator = Validator::make(request()->post(), [
-                'name' => ['required', 'between:2,50'],
+                'name' => ['required', 'between:2,150'],
                 'price' => ['required', 'gt:0', 'numeric'],
                 'back_money' => ['required', 'gt:0', 'numeric'],
                 'sort' => ['integer', 'gt:0'],
@@ -74,7 +74,7 @@ class ProductController extends Controller
         try{
             $validator = Validator::make(request()->post(), [
                 'product_id' => ['required', 'integer', 'gt:0'],
-                'name' => ['required', 'between:2,50'],
+                'name' => ['required', 'between:2,150'],
                 'price' => ['required', 'gt:0', 'numeric'],
                 'back_money' => ['required', 'gt:0', 'numeric'],
                 'sort' => ['integer', 'gt:0'],
