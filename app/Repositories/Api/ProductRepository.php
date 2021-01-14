@@ -75,7 +75,7 @@ class ProductRepository
         return makeModel($where, $this->Cx_Product_Orders)
             ->with([
                 'product' => function($query){
-                    $query->select(['product_id', 'cover', 'name'])->with([
+                    $query->select(['product_id', 'cover', 'name', 'price', 'back_money'])->with([
                         'coverImg' => function($query){
                             $query->select(['image_id', 'path']);
                         }

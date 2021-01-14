@@ -19,6 +19,11 @@ class Cx_Product_Orders extends Model
 
     public const UPDATED_AT = null;
 
+    protected function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
+
     public function product()
     {
         return $this->belongsTo('App\Models\Cx_Product','product_id','product_id');
