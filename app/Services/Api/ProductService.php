@@ -28,7 +28,7 @@ class ProductService extends BaseService
     {
         $size = request()->input('size',10);
         $data = $this->ProductRepository->getProductList($size);
-        if(!$data){
+        if($data->isEmpty()){
             $this->_code = 402;
             $this->_msg = 'No more commodity data';
             return false;
@@ -93,12 +93,13 @@ class ProductService extends BaseService
         ];
         DB::beginTransaction();
         try{
+            ##增加余额扣除打码量
+            $log_id = $this->UserRepository->buyProduct($userInfo, $total_price, $total_back_money);
+            if(!$log_id)throw new \Exception('The purchase failed');
             ##创建订单
+            $order_data['balance_log_id'] = $log_id;
             $res = $this->ProductRepository->createOrder($order_data);
             if(!$res)throw new \Exception('Order creation failed');
-            ##增加余额扣除打码量
-            $res = $this->UserRepository->buyProduct($userInfo, $total_price, $total_back_money);
-            if(!$res)throw new \Exception('The purchase failed');
             ##增加销量
             $this->ProductRepository->addSaleNum($product_id, $num);
             DB::commit();
@@ -120,7 +121,7 @@ class ProductService extends BaseService
             'user_id' => ['=', $user_id]
         ];
         $data = $this->ProductRepository->orders($where, $size);
-        if(!$data){
+        if($data->isEmpty()){
             $this->_code = 402;
             $this->_msg = 'No more order data';
             return false;

@@ -179,6 +179,22 @@ class UserRepository
         return $this->Cx_User_Balance_Logs->insert($data);
     }
 
+    public function addBalanceLogGetId($user_id, $money, $type, $msg, $dq_balance, $wc_balance)
+    {
+        // 余额变动记录
+        $data = [
+            "user_id" => $user_id,
+            "type" => $type,
+            "dq_balance" => $dq_balance,
+            "wc_balance" => $wc_balance,
+            "time" => time(),
+            "msg" => $msg,
+            "money" => abs($money),
+//            "is_first_recharge" => $user->is_first_recharge == 1 ? 1 : 0,
+        ];
+        return $this->Cx_User_Balance_Logs->insertGetId($data);
+    }
+
     /**
      *  佣金余额变动记录
      */
@@ -471,7 +487,7 @@ class UserRepository
         return $this->Cx_User->where("id", $id)->value("balance");
     }
 
-    public function buyProduct($user, $price, $back_money):bool
+    public function buyProduct($user, $price, $back_money)
     {
         $dq_balance = $user->balance;
         $wc_balance = bcadd($dq_balance, $back_money,2);
@@ -481,7 +497,7 @@ class UserRepository
         $res = $user->save();
         if(!$res)return false;
         ##增加余额变化记录
-        $this->addBalanceLog($user->id, $back_money,13,"打码量兑换余额{$back_money}", $dq_balance, $wc_balance);
-        return true;
+        $log_id = $this->addBalanceLogGetId($user->id, $back_money,13,"打码量兑换余额{$back_money}", $dq_balance, $wc_balance);
+        return $log_id;
     }
 }
