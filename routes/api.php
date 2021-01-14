@@ -52,6 +52,16 @@ Route::group(['middleware' => ['user_token']], function () {
 
 });
 
+Route::group(["namespace" => "Api", "prefix" => "goods"], function (){
+    Route::get("/", "ProductController@lists");
+    Route::get("/detail", "ProductController@detail");
+});
+
+//banner管理
+Route::group(["namespace" => "Api", "prefix" => "banner"], function (){
+    Route::get("/find", "BannerController@banners");
+});
+
 Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function () {
 
     Route::group(["prefix" => "user"], function () {
@@ -119,8 +129,6 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
     });
     //商品
     Route::group(["prefix" => "goods"], function (){
-        Route::get("/", "ProductController@lists");
-        Route::get("/detail", "ProductController@detail");
         Route::post("/buy", "ProductController@buy");
         Route::get("/orders", "ProductController@orders");
     });
