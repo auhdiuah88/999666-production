@@ -19,4 +19,9 @@ class Cx_Product_Orders extends Model
 
     public const UPDATED_AT = null;
 
+    public function product()
+    {
+        return $this->belongsTo('App\Models\Cx_Product','product_id','product_id');
+    }
+
 }

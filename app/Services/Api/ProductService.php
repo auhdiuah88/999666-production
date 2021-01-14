@@ -29,7 +29,7 @@ class ProductService extends BaseService
         $size = request()->input('size',10);
         $data = $this->ProductRepository->getProductList($size);
         if(!$data){
-            $this->_code = 401;
+            $this->_code = 402;
             $this->_msg = 'No more commodity data';
             return false;
         }
@@ -42,12 +42,12 @@ class ProductService extends BaseService
         $product_id = request()->input('product_id',0);
         $product = $this->ProductRepository->getProductById($product_id);
         if(!$product){
-            $this->_code = 401;
+            $this->_code = 402;
             $this->_msg = 'The product does not exist';
             return false;
         }
         if($product['status'] != 1){
-            $this->_code = 401;
+            $this->_code = 402;
             $this->_msg = 'The goods have been taken off the shelves';
             return false;
         }
@@ -60,17 +60,17 @@ class ProductService extends BaseService
         $product_id = request()->input('product_id',0);
         $product = $this->ProductRepository->getProductById($product_id);
         if(!$product){
-            $this->_code = 401;
+            $this->_code = 402;
             $this->_msg = 'The product does not exist';
             return false;
         }
         if($product['status'] != 1){
-            $this->_code = 401;
+            $this->_code = 402;
             $this->_msg = 'The goods have been taken off the shelves';
             return false;
         }
         if($product['buy_status'] != 1){
-            $this->_code = 401;
+            $this->_code = 402;
             $this->_msg = 'Commodity is not tradable';
             return false;
         }
@@ -79,7 +79,7 @@ class ProductService extends BaseService
         $userInfo = $this->UserRepository->findByIdUser($user_id);
         $total_price = bcmul($num, $product['price'],2);
         if($userInfo->point < $total_price){
-            $this->_code = 401;
+            $this->_code = 402;
             $this->_msg = 'Insufficient balance is not enough';
             return false;
         }
@@ -107,9 +107,26 @@ class ProductService extends BaseService
         }catch(\Exception $e){
             DB::rollBack();
             $this->_msg = $e->getMessage();
-            $this->_code = 401;
+            $this->_code = 402;
             return false;
         }
+    }
+
+    public function orders():bool
+    {
+        $size = request()->input('size',10);
+        $user_id = request()->get('userInfo')['id'];
+        $where = [
+            'user_id' => ['=', $user_id]
+        ];
+        $data = $this->ProductRepository->orders($where, $size);
+        if(!$data){
+            $this->_code = 402;
+            $this->_msg = 'No more order data';
+            return false;
+        }
+        $this->_data = $data;
+        return true;
     }
 
 }

@@ -70,4 +70,20 @@ class ProductRepository
         return $this->Cx_Product->where("product_id", "=", $product_id)->increment("sale_num", $num);
     }
 
+    public function orders($where, $size)
+    {
+        return makeModel($where, $this->Cx_Product_Orders)
+            ->with([
+                'product' => function($query){
+                    $query->select(['product_id', 'cover', 'name'])->with([
+                        'coverImg' => function($query){
+                            $query->select(['image_id', 'path']);
+                        }
+                    ]);
+                }
+            ])
+            ->select(['id', 'product_id', 'price', 'back_money', 'created_at', 'num'])
+            ->paginate($size);
+    }
+
 }
