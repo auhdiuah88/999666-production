@@ -25,6 +25,7 @@ class BannerRepository
                     $query->select(["image_id", "path"]);
                 }
             ])
+            ->orderByDesc('sort')
             ->select(['id', 'uploads_id', 'url', 'type', 'location'])
             ->where('location', $location)
             ->get()

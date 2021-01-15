@@ -37,10 +37,10 @@ class BannerRepository
                     $query->select(["image_id", "path"]);
                 }
             ])
-            ->orderByDesc('id')
+            ->orderByDesc('sort')
             ->offset($offset)
             ->limit($limit)
-            ->addSelect(["id", "uploads_id","type", "location","url"])
+            ->addSelect(["id", "uploads_id","type", "location","url", "sort"])
             ->get();
     }
 
