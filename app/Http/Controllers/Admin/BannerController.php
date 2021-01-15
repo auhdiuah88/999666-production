@@ -35,11 +35,12 @@ class BannerController extends Controller
             'uploads_id' => 'required|int',
             'location' => 'required',
             'type' => 'required',
+            'sort' => 'required|int',
         ]);
         if($validator->fails()){
             return $this->AppReturn(402, $validator->errors()->first());
         }
-        $this->bannerService->add($request->only(['uploads_id', 'location', 'type', 'url']));
+        $this->bannerService->add($request->only(['uploads_id', 'location', 'type', 'url', 'sort']));
         return $this->AppReturn(
             $this->bannerService->_code,
             $this->bannerService->_msg,
@@ -51,11 +52,12 @@ class BannerController extends Controller
     {
         $validator = Validator::make($request->post(),[
             'id' => 'required|int',
+            'sort' => 'required|int',
         ]);
         if($validator->fails()){
             return $this->AppReturn(402, $validator->errors()->first());
         }
-        $this->bannerService->save($request->only(['uploads_id', 'location', 'type', 'url', 'id']));
+        $this->bannerService->save($request->only(['uploads_id', 'location', 'type', 'url', 'id', 'sort']));
         return $this->AppReturn(
             $this->bannerService->_code,
             $this->bannerService->_msg,
