@@ -164,6 +164,7 @@ T0n4yTG/6UH9NhbxMwIDAQAB
             'notifyUrl' => $this->withdrawal_callback_url,
             'timestamp' => time() * 1000,
         ];
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_withdrawalOrder_test',$params);
         $params['sign'] = $this->generateSign($params,2);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_withdrawalOrder',$params);
