@@ -242,6 +242,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::get("/service","SettingController@getService");
             Route::post("/crisp","SettingController@crispSave");
             Route::get("/crisp","SettingController@getCrisp");
+            Route::post("/app","SettingController@appSave");
+            Route::get("/app","SettingController@getApp");
         });
 
         // 后台赠金记录列表

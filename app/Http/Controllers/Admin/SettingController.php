@@ -362,4 +362,43 @@ class SettingController extends Controller
         }
     }
 
+    public function getApp()
+    {
+        try{
+            $this->SettingService->getApp();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function appSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'status' => 'required|integer|in:0,1',
+                'link' => 'required|url',
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->appSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

@@ -397,4 +397,34 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function getApp()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('DOWNLOAD_APP'));
+        if (!$data){
+            $data = [
+                'status' => 0,
+                'link' => ''
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function appSave():bool
+    {
+        $status = request()->post('status');
+        $link = request()->post('link', '');
+        $app = [
+            'status' => $status,
+            'link' => $link,
+        ];
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('DOWNLOAD_APP'), $app);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
 }
