@@ -82,9 +82,9 @@ T0n4yTG/6UH9NhbxMwIDAQAB
 //            'callbackUrl' => $this->recharge_callback_url,
             'channelId' => (string)($this->rechargeMerchantID),
             'channleOid' => (string)$order_no,
-            'email' => '11111111@qq.com',
-            'firstName' => 'ZhangSan',
-            'mobile' => '15988888888',
+            'email' => '88888888@in.com',
+            'firstName' => 'Tommy',
+            'mobile' => '88888888',
             'notifyUrl' => $this->recharge_callback_url,
             'payType' => 1,
             'remark' => 'recharge',
@@ -104,7 +104,7 @@ T0n4yTG/6UH9NhbxMwIDAQAB
             $this->_msg = $res['message'];
             return false;
         }
-        $native_url = $res['data']['pay_url'];
+        $native_url = $res['data']['payUrl'];
         $resData = [
             'out_trade_no' => $order_no,
             'pay_type' => $pay_type,
