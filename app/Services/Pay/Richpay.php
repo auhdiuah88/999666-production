@@ -60,18 +60,6 @@ T0n4yTG/6UH9NhbxMwIDAQAB
         return md5($sign);
     }
 
-    public function generateSignRigorous(array $params, $type=1){
-        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
-        ksort($params);
-        $string = [];
-        foreach ($params as $key => $value) {
-            if($value)
-                $string[] = $key . '=' . $value;
-        }
-        $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-        return strtolower(md5($sign));
-    }
-
     /**
      * 充值下单接口
      */

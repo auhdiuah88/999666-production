@@ -333,6 +333,11 @@ class WithdrawalService extends PayService
             return false;
         }
 
+        if ($withdrawlLog->status != 1) {
+            $this->_msg = 'This operation is not supported';
+            return false;
+        }
+
         if ($withdrawlLog->pay_status == 1) {
             $this->_msg = 'Withdraw successfully, no need to call back';
             return false;
