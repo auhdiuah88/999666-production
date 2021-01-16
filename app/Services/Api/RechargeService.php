@@ -131,7 +131,10 @@ class RechargeService extends PayService
             $this->_msg = $strategyClass->_msg;
             return false;
         }
-
+        if(isset($where['pltf_order_id'])){
+            $pltf_order_id = $where['pltf_order_id'];
+            unset($where['pltf_order_id']);
+        }
         ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100
         $money = isset($request->money) ? $request->money : (isset($request->pay_amount) ? $request->pay_amount : $request->amount);
         if($payProvide == 'in8pay'){ //返回的是分做单位的
@@ -169,6 +172,9 @@ class RechargeService extends PayService
             // 更新充值成功记录的状态
             $rechargeLog->arrive_time = time();
             $rechargeLog->arrive_money = $money;
+            if(isset($pltf_order_id)){
+                $rechargeLog->pltf_order_id = $pltf_order_id;
+            }
             $rechargeLog->status = 2;
             $rechargeLog->save();
 
