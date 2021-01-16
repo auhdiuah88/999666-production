@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class Richpay extends PayStrategy
 {
 
-    protected static $url = 'https://test.tshop.live/';    // 网关
+    protected static $url = 'https://test.tshop.live/order/';    // 网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
