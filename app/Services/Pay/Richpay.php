@@ -93,7 +93,7 @@ T0n4yTG/6UH9NhbxMwIDAQAB
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder', [$params]);
-        $res = $this->requestService->postJsonData(self::$url . 'trans/pay', $params);
+        $res = $this->requestService->postJsonData(self::$url . 'order/submit', $params);
 //        $res = $this->requestService->postJsonData(self::$url . 'trans/pay' , $params,[
 //            "content-type" => "application/x-www-form-urlencoded",
 //            "charset" => "UTF-8"
