@@ -70,4 +70,16 @@ class SystemService extends Service
         }
         $this->_data = $data;
     }
+
+    public function getDownloadAppLink()
+    {
+        $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key('DOWNLOAD_APP'));
+        if (!$data){
+            $data = [
+                'status' => 0,
+                'link' => ''
+            ];
+        }
+        $this->_data = $data;
+    }
 }

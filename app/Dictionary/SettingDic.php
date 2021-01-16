@@ -40,6 +40,10 @@ class SettingDic
             'title' => '第三方客服配置',
             'key' => 'CRISP_WEBSITE_ID'
         ],
+        'DOWNLOAD_APP' => [
+            'title' => '安卓app',
+            'key' => 'DOWNLOAD_APP'
+        ],
     ];
 
     public static function key($key)

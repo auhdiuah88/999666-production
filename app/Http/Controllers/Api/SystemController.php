@@ -66,4 +66,14 @@ class SystemController extends Controller
         );
     }
 
+    public function appSetting()
+    {
+        $this->SystemService->getDownloadAppLink();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
 }
