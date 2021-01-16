@@ -94,11 +94,6 @@ T0n4yTG/6UH9NhbxMwIDAQAB
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder', [$params]);
         $res = $this->requestService->postJsonData(self::$url . 'order/submit', $params);
-//        $res = $this->requestService->postJsonData(self::$url . 'trans/pay' , $params,[
-//            "content-type" => "application/x-www-form-urlencoded",
-//            "charset" => "UTF-8"
-//        ]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder_return', $res);
         if ($res['code'] != "0000") {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder_return', $res);
             $this->_msg = $res['message'];
@@ -151,36 +146,39 @@ T0n4yTG/6UH9NhbxMwIDAQAB
     public function withdrawalOrder(object $withdrawalRecord)
     {
         $money = $withdrawalRecord->payment;    // 打款金额
-//        $ip = $this->request->ip();
-//        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
 
         $params = [
-            'down_sn' => $withdrawalRecord->order_no,
-            'amount' => (int)($money * 100),
-            'area' => 1,
-            'bank_account' => $withdrawalRecord->account_holder,
-            'bank_cardno' => $withdrawalRecord->bank_number,
-            'bank_code' => $withdrawalRecord->ifsc_code,
-            'channel_code' => 1007,
-            'mobile' => $withdrawalRecord->phone,
-            'notify_url' => $this->withdrawal_callback_url
+            'amount' => (string)$money,
+            'channelId' => (string)$this->withdrawMerchantID,
+            'channelOid' => (string)$order_no,
+            'fundAccount' => [
+                'accountType' => 'bank_account',
+                'bankAccount' => [
+                    'accountNumber' => (string)$withdrawalRecord->bank_number,
+                    'ifsc' => (string)$withdrawalRecord->ifsc_code,
+                    'name' => (string)$withdrawalRecord->account_holder
+                ],
+            ],
+            'mode' => 'upi',
+            'notifyUrl' => $this->withdrawal_callback_url,
+            'timestamp' => time() * 1000,
         ];
         $params['sign'] = $this->generateSign($params,2);
-        $cipher_data = $this->rsaEncrypt($params);
-        $merchant_sn = $this->withdrawMerchantID;
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalOrder',$params);
-        $res = $this->requestService->postFormData(self::$url . 'settle/pay', compact('merchant_sn','cipher_data'),[
-            "content-type" => "application/x-www-form-urlencoded",
-            "charset" => "UTF-8"
-        ]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalOrder2_res',$res);
-        if ($res['code'] != '0') {
-            $this->_msg = $res['msg'];
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_withdrawalOrder',$params);
+        $res = $this->requestService->postJsonData(self::$url . 'order/payout/submit', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_withdrawalOrder2_res',$res);
+        if ($res['code'] != '0000') {
+            $this->_msg = $res['message'];
+            return false;
+        }
+        if (in_array($res['data']['state'], [2,3])) {
+            $this->_msg = $res['data']['msg'];
             return false;
         }
         return  [
-            'pltf_order_no' => $res['settle_sn'],
+            'pltf_order_no' => $res['data']['payOutId'],
             'order_no' => $order_no
         ];
     }
@@ -190,29 +188,22 @@ T0n4yTG/6UH9NhbxMwIDAQAB
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('in8pay_withdrawalCallback',$request->input());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_withdrawalCallback',$request->input());
 
-        if($request->code != '0'){
-            $this->_msg = 'in8pay-withdrawal-其他失败';
-            return false;
-        }
         if ($request->status != 1) {
-            $this->_msg = 'in8pay-withdrawal-交易未完成';
+            $this->_msg = 'richpay-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
         $params = $request->input();
         $sign = $params['sign'];
-        unset($params['sign']);
-        unset($params['code']);
-        unset($params['msg']);
-        if ($this->generateSignRigorous($params,2) <> $sign) {
-            $this->_msg = 'in8pay-签名错误';
+        if ($this->generateSign($params,2) <> $sign) {
+            $this->_msg = 'richpay-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->down_sn,
-            'plat_order_id' => $request->settle_sn,
+            'order_no' => $request->channleOid,
+            'plat_order_id' => $request->oid,
         ];
         return $where;
     }
