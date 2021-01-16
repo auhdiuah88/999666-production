@@ -83,6 +83,7 @@ T0n4yTG/6UH9NhbxMwIDAQAB
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder', [$params]);
         $res = $this->requestService->postJsonData(self::$url . 'order/submit', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder', [$res]);
         if ($res['code'] != "0000") {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder_return', $res);
             $this->_msg = $res['message'];
