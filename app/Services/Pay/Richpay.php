@@ -21,18 +21,6 @@ class Richpay extends PayStrategy
     public $rechargeSecretkey;
     public $company = 'richpay';   // 支付公司名
 
-    protected $blackParams = ['merchant_sn'];
-
-    // rsa公钥
-    protected $rsaPublicKey = "-----BEGIN PUBLIC KEY-----
-    MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5iVJXx1YX/6dtPhxHBSs1r08U
-YW9NjnRTf/1cJIBp46PWSFBzngvYcOukclsl0vv+njeKVgaDXtDz5FiEt4ajBbEk
-jVMO8sYFKU0qoWRE2GNsVobXPQ5BO/JeE6mgJTd3zqo1Q5X6aG0PrW7kwM9S4umt
-T0n4yTG/6UH9NhbxMwIDAQAB
------END PUBLIC KEY-----";
-    // rsa密钥
-    protected $rsaSecretKey = "ea2fe6fc046a7e6db3f34a9212c2a48d";
-
     public function _initialize()
     {
         $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
@@ -196,28 +184,6 @@ T0n4yTG/6UH9NhbxMwIDAQAB
             'plat_order_id' => $request->oid,
         ];
         return $where;
-    }
-
-    protected function rsaEncrypt($params)
-    {
-        $params = $this->filterBlackParams($params);
-        $originalData = json_encode($params);
-        $crypto = '';
-        $encryptData = '';
-        foreach (str_split($originalData, 117) as $chunk) {
-            openssl_public_encrypt($chunk, $encryptData, $this->rsaPublicKey);
-            $crypto .= $encryptData;
-        }
-        return base64_encode($crypto);
-    }
-
-    protected function filterBlackParams($params)
-    {
-        foreach ($this->blackParams as $item){
-            if(in_array($item, $params))
-                unset($params[$item]);
-        }
-        return $params;
     }
 
 }
