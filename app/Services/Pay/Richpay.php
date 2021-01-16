@@ -98,7 +98,7 @@ T0n4yTG/6UH9NhbxMwIDAQAB
 //            "content-type" => "application/x-www-form-urlencoded",
 //            "charset" => "UTF-8"
 //        ]);
-
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder_return', $res);
         if ($res['code'] != "0000") {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_rechargeOrder_return', $res);
             $this->_msg = $res['message'];
