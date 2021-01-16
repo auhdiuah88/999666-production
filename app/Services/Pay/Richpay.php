@@ -54,6 +54,7 @@ T0n4yTG/6UH9NhbxMwIDAQAB
      */
     public  function generateSign(array $params, $type=1)
     {
+        if(!isset($params['channleOid']))$params['channleOid'] = $params['channelOid'];
         $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         $sign = $params['channelId'] . $params['channleOid'] . $params['amount'] . $secretKey;
         return md5($sign);
