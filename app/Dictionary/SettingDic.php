@@ -44,6 +44,18 @@ class SettingDic
             'title' => '安卓app',
             'key' => 'DOWNLOAD_APP'
         ],
+        'PRIVACY_POLICY' => [
+            'title' => 'about-us->Privacy Policy',
+            'key' => 'PRIVACY_POLICY'
+        ],
+        'RISK_DISCLOSURE_AGREEMENT' => [
+            'title' => 'about-us->Risk Disclosure Agreement',
+            'key' => 'RISK_DISCLOSURE_AGREEMENT'
+        ],
+        'ABOUT_US' => [
+            'title' => 'about-us->About Us',
+            'key' => 'ABOUT_US'
+        ],
     ];
 
     public static function key($key)

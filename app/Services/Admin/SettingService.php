@@ -427,4 +427,55 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function getAboutUs()
+    {
+        $key = $this->getAboutUsKey();
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key($key));
+        if (!$data){
+            $data = [
+                'title' => '',
+                'content' => ''
+            ];
+        }else{
+            $data['content'] = htmlspecialchars_decode($data['content']);
+        }
+        $this->_data = $data;
+    }
+
+    public function aboutUsSave():bool
+    {
+        $title = $this->strInput('title');
+        $content = $this->htmlInput('content');
+        $data = compact('title','content');
+        $key = $this->getAboutUsKey();
+        $res = $this->SettingRepository->saveSetting(SettingDic::key($key), $data);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
+    public function getAboutUsKey():string
+    {
+        $type = $this->intInput('type');
+        switch($type){
+            case 1://Privacy Policy
+                $key = 'PRIVACY_POLICY';
+                break;
+            case 2:
+                $key = 'RISK_DISCLOSURE_AGREEMENT';
+                break;
+            case 3:
+                $key = 'ABOUT_US';
+                break;
+            default:
+                $key = '';
+                break;
+        }
+        return $key;
+    }
+
 }

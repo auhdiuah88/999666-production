@@ -401,4 +401,51 @@ class SettingController extends Controller
         }
     }
 
+    public function getAboutUs()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'type' => 'required|integer|in:1,2,3'
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->getAboutUs();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function aboutUsSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'type' => 'required|integer|in:1,2,3',
+                'title' => 'required|between:1,30',
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->aboutUsSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

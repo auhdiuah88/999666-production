@@ -82,4 +82,33 @@ class SystemService extends Service
         }
         $this->_data = $data;
     }
+
+    public function getAboutUsSetting($type)
+    {
+        switch($type){
+            case 1:
+                $key = 'PRIVACY_POLICY';
+                break;
+            case 2:
+                $key = 'RISK_DISCLOSURE_AGREEMENT';
+                break;
+            case 3:
+                $key = 'ABOUT_US';
+                break;
+            default:
+                $key = '';
+                break;
+        }
+        $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key($key));
+        if (!$data){
+            $data = [
+                'title' => '',
+                'content' => ''
+            ];
+        }else{
+            $data['content'] = htmlspecialchars_decode($data['content']);
+        }
+        $this->_data = $data;
+    }
+
 }

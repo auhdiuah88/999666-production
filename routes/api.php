@@ -130,6 +130,11 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/buy", "ProductController@buy");
         Route::get("/orders", "ProductController@orders");
     });
+
+    //配置
+    Route::group(["prefix" => "system"], function(){
+        Route::get('/aboutUs/{type}','SystemController@aboutUsSetting')->where(['type'=>'^[1-3]$']);
+    });
 });
 
 
