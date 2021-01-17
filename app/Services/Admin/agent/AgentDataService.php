@@ -87,7 +87,7 @@ class AgentDataService extends BaseAgentService
         }
         $code = $user->code;
         ## https://goshop6.in/?code=AAAAAA#/pages/register/register
-        $url = env('SHARE_URL','https://goshop6.in') . "/?code={$code}#/pages/register/register";
+        $url = env('SHARE_URL','') . "/?code={$code}#/pages/register/register";
         $this->_data = compact('code','url');
         return true;
     }
