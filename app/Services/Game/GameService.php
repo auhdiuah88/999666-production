@@ -151,12 +151,13 @@ class GameService
         $limit = $request->input('limit');
         $page = $request->input('page');
         $token = $request->header("token");
+        $game_id = $request->input('game_id');
         $data = $request->all();
         $token = urldecode($token);
         $user = explode("+", Crypt::decrypt($token));
         $user_id = $user[0];
 
-        return $this->GameRepository->Betting_List($user_id, $limit, ($page - 1) * $limit);
+        return $this->GameRepository->Betting_List($user_id, $game_id, $limit, ($page - 1) * $limit);
     }
 
     //获取游戏开奖历史列表

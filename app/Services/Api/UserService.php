@@ -189,11 +189,11 @@ class UserService
             $this->error = 'This account already exists';
             return false;
         }
-        if ($data["sms_code"] != Redis::get(self::REDIS_REGIST_CODE . $data["phone"])) {
-            $this->error_code = 402;
-            $this->error = "The phone verification code is incorrect";
-            return false;
-        }
+//        if ($data["sms_code"] != Redis::get(self::REDIS_REGIST_CODE . $data["phone"])) {
+//            $this->error_code = 402;
+//            $this->error = "The phone verification code is incorrect";
+//            return false;
+//        }
         unset($data["sms_code"]);
         if (isset($data["code"])) {
             if ($data["code"] == "" || empty($data["code"])) {
@@ -206,7 +206,7 @@ class UserService
             $list = $this->UserRepository->findAgentByCode($data["code"]);
             if (empty($list)) {
                 $this->error_code = 414;
-                $this->error = '邀请用户不存在';
+                $this->error = 'Invitation user does not exist';
                 return false;
             }
             unset($data["code"]);

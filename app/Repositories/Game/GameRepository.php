@@ -1022,7 +1022,7 @@ class GameRepository
         return $data;
     }
     //投注列表.
-    public function Betting_List($user, $limit, $offset)
+    public function Betting_List($user, $game_id, $limit, $offset)
     {
         return $this->Cx_Game_Betting->with(array(
                 'game_c_x' => function ($query) {
@@ -1037,7 +1037,7 @@ class GameRepository
                     }]);
                 }
             )
-        )->where("user_id", $user)->offset($offset)->limit($limit)->select(['*', 'id as betting_money'])->orderBy('betting_time', 'desc')->get();
+        )->where("user_id", $user)->where("game_id", $game_id)->offset($offset)->limit($limit)->select(['*', 'id as betting_money'])->orderBy('betting_time', 'desc')->get();
 
     }
     //开奖列表

@@ -151,6 +151,7 @@ class GameController extends Controller
         $rules = [
             "limit" => "required",
             "page" => "required",
+            "game_id" => ["required", "integer", "gt:0"]
         ];
         $massages = [
             "limit.required" => "条数不能为空",
