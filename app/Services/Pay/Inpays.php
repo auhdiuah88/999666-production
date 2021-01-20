@@ -67,7 +67,7 @@ class Inpays extends PayStrategy
             'customName' => 'Customer',
             'customMobile' => '88888888',
             'customEmail' => '88888888@in.com',
-            'channelType' => 'UPI',
+            'channelType' => 'QUICK_PAY',
             'notifyUrl' => $this->recharge_callback_url,
             'callbackUrl' => env('SHARE_URL',''),
         ];
