@@ -115,7 +115,6 @@ class Inpays extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-        Log::channel('mytest')->info('inpays_rechargeCallback_sign',['sign'=>$this->generateSign($params,1)]);
         if ($this->generateSign($params,1) <> $sign) {
             $this->_msg = 'inpays-签名错误';
             return false;
