@@ -98,6 +98,8 @@ class RechargeController extends Controller
                 $payProvide = $request->input('type', '');
                 if($payProvide == 'rspay')
                     return 'OK';
+                elseif ($payProvide == 'inpays')
+                    return 'ok';
                 return 'success';
             }
             Log::channel('kidebug')->error('recharge_callback', ['message'=>$this->rechargeService->_msg]);
