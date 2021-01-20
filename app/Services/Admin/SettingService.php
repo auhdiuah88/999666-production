@@ -10,6 +10,7 @@ use App\Repositories\Admin\SettingRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Validator;
 
 class SettingService extends BaseService
 {
@@ -274,9 +275,27 @@ class SettingService extends BaseService
     {
         $loginAlertValue = $this->SettingRepository->getSettingValueByKey("login_alert");
         $logoutAlertValue = $this->SettingRepository->getSettingValueByKey("logout_alert");
-        $loginAlert = $loginAlertValue ? getHtml($loginAlertValue['content']) : "";
-        $logoutAlert = $logoutAlertValue ? getHtml($logoutAlertValue['content']) : "";
-        $this->_data = compact('loginAlert','logoutAlert');
+        if($loginAlertValue){
+            $loginAlertValue['content'] = getHtml($loginAlertValue['content']);
+        }else{
+            $loginAlertValue = [
+                'content' => '',
+                'btn' => [
+                    'left' => [
+                        'text' => '',
+                        'link' => ''
+                    ],
+                    'right' => [
+                        'text' => '',
+                        'link' => ''
+                    ],
+                ],
+            ];
+        }
+        if($logoutAlertValue){
+            $logoutAlertValue['content'] = getHtml($loginAlertValue['content']);
+        }
+        $this->_data = compact('loginAlertValue','logoutAlertValue');
     }
 
     public function setH5AlertContent()
@@ -286,15 +305,41 @@ class SettingService extends BaseService
         $key = "";
         switch ($type){
             case 1:
+                $validator = Validator::make(request()->input(), [
+                    'left.text' => ['required', 'between:2,20', 'alpha_dash'],
+                    'right.text' => ['required', 'between:2,20', 'alpha_dash'],
+                    'left.link' => ['required', 'url'],
+                    'right.link' => ['required', 'url'],
+                ]);
+                if($validator->fails()){
+                    $this->_code = 403;
+                    $this->_msg = $validator->errors()->first();
+                    return false;
+                }
+                $data = [
+                    'content' => $content,
+                    'btn' => [
+                        'left' => [
+                            'text' => $this->strInput('left.text'),
+                            'link' => $this->strInput('left.link')
+                        ],
+                        'right' => [
+                            'text' => $this->strInput('right.text'),
+                            'link' => $this->strInput('right.link')
+                        ]
+                    ]
+                ];
                 $key = "login_alert";
                 break;
             case 2:
+                $data = compact('content');
                 $key = "logout_alert";
                 break;
             default:
+                $data = [];
                 break;
         }
-        $res = $this->SettingRepository->saveSetting($key, compact('content'));
+        $res = $this->SettingRepository->saveSetting($key, $data);
         if($res === false){
             $this->_code = 403;
             $this->_msg = "操作失败";
