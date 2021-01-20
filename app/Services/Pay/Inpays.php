@@ -137,27 +137,29 @@ class Inpays extends PayStrategy
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'appId' => $this->withdrawMerchantID,
-            'outOrderNo' => $order_no,
-            'applyDate' => date('Y-m-d H:i:s'),
-            'channel' => '912',
-            'notifyUrl' => $this->withdrawal_callback_url,
+            'merchant' => $this->withdrawMerchantID,
+            'orderId' => $order_no,
             'amount' => intval($money),
-            'mode' => 'UPI',
-            'account' => $withdrawalRecord->bank_number,
-            'userId' => $withdrawalRecord->user_id,
-            'clientIp' => $this->request->ip(),
+            'customName' => $withdrawalRecord->account_holder,
+            'customMobile' => $withdrawalRecord->phone,
+            'customEmail' => $withdrawalRecord->email,
+            'mode' => 'IMPS',
+            'bankAccount' => $withdrawalRecord->bank_number,
+            'ifscCode' => $withdrawalRecord->ifsc_code,
+            'notifyUrl' => $this->withdrawal_callback_url,
         ];
         $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalOrder',$params);
-        $res = $this->requestService->postJsonData(self::$url . 'payout', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalOrder2',$res);
-        if ($res['statusCode'] != '00') {
-            $this->_msg = $res['message'];
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder',$params);
+        $res = $this->requestService->postFormData(self::$url . 'openApi/payout/createOrder', $params,[
+            "content-type" => "application/x-www-form-urlencoded",
+        ]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder2',$res);
+        if ($res['code'] != 200) {
+            $this->_msg = $res['errorMessages'];
             return false;
         }
         return  [
-            'pltf_order_no' => $res['transactionId'],
+            'pltf_order_no' => $res['data']['platOrderId'],
             'order_no' => $order_no
         ];
     }
@@ -167,54 +169,25 @@ class Inpays extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalCallback',$request->post());
 
-        if ((string)($request->payStatus) != '11') {
-            $this->_msg = 'rspay-withdrawal-交易未完成';
+        if ((string)($request->status) != 'PAY_SUCCESS') {
+            $this->_msg = 'inpays-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSignRigorous($params,2) <> $sign) {
-            $this->_msg = 'MTBpay-签名错误';
+        if ($this->generateSign($params,2) <> $sign) {
+            $this->_msg = 'inpays-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->outOrderNo,
-            'plat_order_id' => $request->transactionId
+            'order_no' => $request->orderId,
+            'plat_order_id' => $request->platOrderId
         ];
         return $where;
-    }
-
-    protected function makeRequestNo($withdraw_id){
-        return date('YmdDis') . $withdraw_id;
-    }
-
-    /**
-     * 请求待付状态
-     * @param $withdrawalRecord
-     * @return array|false|mixed|string
-     */
-    public function callWithdrawBack($withdrawalRecord){
-        $request_no = $this->makeRequestNo($withdrawalRecord->id);
-        $request_time = date("YmdHis");
-        $mer_no = $this->merchantID;
-        $mer_order_no = $withdrawalRecord->order_no;
-
-        $params = compact('request_no','request_time','mer_no','mer_order_no');
-        $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Param',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
-        if(!$res){
-            return false;
-        }
-        if($res['query_status'] != 'SUCCESS'){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Err',$res);
-            return false;
-        }
-        return $res;
     }
 
 }
