@@ -193,6 +193,14 @@ return [
                 'tries' => 1,
                 'nice' => 0,
             ],
+            'supervisor-3' => [
+                'connection' => 'redis',
+                'queue' => ['Withdraw_Queue'],
+                'balance' => 'simple',
+                'processes' => 10,
+                'tries' => 1,
+                'nice' => 0,
+            ],
         ],
     ],
 ];
