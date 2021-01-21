@@ -4,6 +4,7 @@
 namespace App\Services\Admin;
 
 
+use App\Jobs\Withdraw_Call;
 use App\Repositories\Admin\UserRepository;
 use App\Repositories\Admin\WithdrawalRepository;
 use App\Services\BaseService;
@@ -112,15 +113,17 @@ class WithdrawalService extends BaseService
 
     public function batchPassRecord($data)
     {
-        $records = $this->WithdrawalRepository->findAllByIds($data["ids"]);
+        $ids = array_column($data['ids'],'id');
+        $records = $this->WithdrawalRepository->findAllByIds($ids);
         foreach ($records as $record) {
             if ($record["type"] == 1) {
                 $this->changeAgencyCommission($record["id"]);
             } else {
-                $this->addWithdrawalLogs($record["id"]);
+//                $this->addWithdrawalLogs($record["id"]);
+                $this->addWithdrawQueue($record['id']);
             }
         }
-        if ($this->WithdrawalRepository->batchUpdateRecord($data["ids"], 1)) {
+        if ($this->WithdrawalRepository->batchUpdateRecord($ids, 1)) {
             $this->_msg = "审核成功";
         } else {
             $this->_code = 402;
@@ -172,6 +175,11 @@ class WithdrawalService extends BaseService
             "msg" => $user->nickname . "提现" . $record->payment . "成功!"
         ];
         $this->WithdrawalRepository->addBalanceLogs($insert);
+    }
+
+    public function addWithdrawQueue($id)
+    {
+        Withdraw_Call::dispatch($id)->onQueue('Withdraw_Queue');;
     }
 
     public function searchRecord($data)

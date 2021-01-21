@@ -59,7 +59,7 @@ class WithdrawalRepository extends BaseRepository
     public function batchUpdateRecord($ids, $status, $message = null)
     {
         if ($message == null) {
-            return $this->Cx_Withdrawal_Record->whereIn("id", $ids)->update(["status" => $status, "approval_time" => time()]);
+            return $this->Cx_Withdrawal_Record->whereIn("id", $ids)->update(["status" => $status]);
         } else {
             return $this->Cx_Withdrawal_Record->whereIn("id", $ids)->update(["status" => $status, "approval_time" => time(), "message" => $message]);
         }
