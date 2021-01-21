@@ -37,7 +37,7 @@ class BettingRepository extends BaseRepository
 
     public function findAll($offset, $limit)
     {
-        return $this->getModel()->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->toArray();
+        return $this->getModel()->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->setAppends(['win_lose_money'])->toArray();
     }
 
     /**
@@ -60,7 +60,7 @@ class BettingRepository extends BaseRepository
 
     public function searchBettingLogs($data, $offset, $limit)
     {
-        return $this->whereCondition($data, $this->getModel())->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->toArray();
+        return $this->whereCondition($data, $this->getModel())->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->setAppends(['win_lose_money'])->toArray();
     }
 
     public function countSearchBettingLogs($data)

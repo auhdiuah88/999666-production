@@ -21,7 +21,7 @@ class AdminLogController extends Controller
     //
     public function list(Request $request)
     {
-        $this->adminLogService->list($request->get("page", 1), $request->get("limit", 10));
+        $this->adminLogService->list($request->get("page", 1), $request->get("size", 10));
         return $this->AppReturn(
             $this->adminLogService->_code,
             $this->adminLogService->_msg,
