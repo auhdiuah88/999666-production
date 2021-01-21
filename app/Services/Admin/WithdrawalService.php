@@ -212,6 +212,7 @@ class WithdrawalService extends BaseService
 
     public function cancellationRefund($id)
     {
+        $message = $this->strInput('message');
         $withdrawal = $this->WithdrawalRepository->findById($id);
         if ($withdrawal->status !== 1) {
             if ($withdrawal->pay_status !== 0) {
@@ -224,7 +225,7 @@ class WithdrawalService extends BaseService
                 return;
             }
         }
-        $updateWithdrawal = ["id" => $id, "status" => 2];
+        $updateWithdrawal = ["id" => $id, "status" => 2, "message" => $message];
         $withdrawalResult = $this->WithdrawalRepository->editRecord($updateWithdrawal);
         $user = $this->UserRepository->findById($withdrawal->user_id);
         if ($user->freeze_money < $withdrawal->money) {
@@ -232,6 +233,7 @@ class WithdrawalService extends BaseService
             $this->_code = 402;
             return;
         }
+        $this->UserRepository->addBalanceLog($user->id, $withdrawal->money,11,'后台取消用户提现', $user->balance, bcadd($user->balance, $withdrawal->money, 2));
         $updateUser = ["id" => $user->id, "freeze_money" => bcsub($user->freeze_money, $withdrawal->money, 2), "balance" => bcadd($user->balance, $withdrawal->money, 2)];
         $userResult = $this->UserRepository->editUser($updateUser);
         if ($withdrawalResult && $userResult) {
