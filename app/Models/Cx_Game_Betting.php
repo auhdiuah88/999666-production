@@ -46,4 +46,13 @@ class Cx_Game_Betting extends Model
     {
         return $this->belongsTo(Cx_User::class, "user_id", "id");
     }
+
+    public function getWinLoseMoneyAttribute()
+    {
+        if ($this->status > 0) {
+            return bcsub($this->win_money, $this->money, 2);
+        } else {
+            return '';
+        }
+    }
 }
