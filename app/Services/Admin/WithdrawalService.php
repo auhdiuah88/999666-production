@@ -133,12 +133,37 @@ class WithdrawalService extends BaseService
 
     public function batchFailureRecord($data)
     {
-        if ($this->WithdrawalRepository->batchUpdateRecord($data["ids"], 2, $data["message"])) {
-            $this->_msg = "审核成功";
-        } else {
+        $ids = array_column($data["ids"],'id');
+        DB::beginTransaction();
+        try{
+            ##修改提现记录
+            $res = $this->WithdrawalRepository->batchUpdateRecord($ids, 2, $data["message"]);
+            if (!$res)throw new \Exception('审核失败');
+            ##返还余额
+            $withdrawalRecords = $this->WithdrawalRepository->findByIds($ids);
+            foreach($withdrawalRecords as $withdrawalRecord){
+                $user_id = $withdrawalRecord['user_id'];
+                $user = $this->UserRepository->findById($user_id);
+                $money = $withdrawalRecord['money'];
+                $dq_balance = $user->balance;
+                $wc_balance = bcadd($dq_balance, $money,2);
+                ##增加用户余额变化记录
+                $this->UserRepository->addBalanceLog($user_id, $money,11,'用户提现驳回', $dq_balance, $wc_balance);
+                $freeze_money = bcsub($user->freeze_money, $money, 2);
+                ##更新用户数据
+                $res = $this->UserRepository->editUser(["id" => $user_id, "balance" => $wc_balance, 'freeze_money'=>$freeze_money]);
+                if($res === false)
+                    throw new \Exception('余额返还失败');
+            }
+            DB::commit();
+        }catch(\Exception $e){
             $this->_code = 402;
-            $this->_msg = "审核失败";
+            $this->_msg = $e->getMessage();
+            DB::rollBack();
         }
+
+
+
     }
 
     public function changeAgencyCommission($id)

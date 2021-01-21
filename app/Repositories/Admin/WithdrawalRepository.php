@@ -52,6 +52,11 @@ class WithdrawalRepository extends BaseRepository
         return $this->Cx_Withdrawal_Record->where("id", $id)->first();
     }
 
+    public function findByIds($ids)
+    {
+        return makeModel(['id'=>['in', $ids]], $this->Cx_Withdrawal_Record)->get()->toArray();
+    }
+
     public function addBalanceLogs($data)
     {
         return $this->Cx_User_Balance_Logs->insertGetId($data);

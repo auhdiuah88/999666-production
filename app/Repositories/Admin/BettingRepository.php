@@ -45,7 +45,7 @@ class BettingRepository extends BaseRepository
      */
     public function getNewest()
     {
-        return $this->getModel()->orderByDesc("betting_time")->limit(10)->get();
+        return $this->getModel()->orderByDesc("betting_time")->limit(10)->get()->setAppends(['win_lose_money']);
     }
 
     public function countAll()

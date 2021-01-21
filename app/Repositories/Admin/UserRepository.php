@@ -51,6 +51,11 @@ class UserRepository extends BaseRepository
         return $this->Cx_User->where("id", $id)->first();
     }
 
+    public function findByIds($ids)
+    {
+        return makeModel($this->Cx_User, ['id', 'in', $ids])->get()->toArray();
+    }
+
     public function findByPhone($phone)
     {
         return $this->Cx_User->where("phone", $phone)->select(['id', 'nickname', 'phone'])->first();
