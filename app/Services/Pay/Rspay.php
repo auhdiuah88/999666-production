@@ -162,8 +162,9 @@ class Rspay extends PayStrategy
             'channel' => '912',
             'notifyUrl' => $this->withdrawal_callback_url,
             'amount' => intval($money),
-            'mode' => 'UPI',
+            'mode' => 'IMPS',
             'account' => $withdrawalRecord->bank_number,
+            'accountIFSC' => $withdrawalRecord->ifsc_code,
             'userId' => $withdrawalRecord->user_id,
             'clientIp' => $this->request->ip(),
         ];
