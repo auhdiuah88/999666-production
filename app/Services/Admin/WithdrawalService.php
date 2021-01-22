@@ -251,22 +251,27 @@ class WithdrawalService extends BaseService
             }
         }
         $updateWithdrawal = ["id" => $id, "status" => 2, "message" => $message];
-        $withdrawalResult = $this->WithdrawalRepository->editRecord($updateWithdrawal);
-        $user = $this->UserRepository->findById($withdrawal->user_id);
-        if ($user->freeze_money < $withdrawal->money) {
-            $this->_msg = "提现冻结金额小于提现金额";
+        DB::beginTransaction();
+        try{
+            $withdrawalResult = $this->WithdrawalRepository->editRecord($updateWithdrawal);
+            $user = $this->UserRepository->findById($withdrawal->user_id);
+            if ($user->freeze_money < $withdrawal->money)
+                throw new \Exception('提现冻结金额小于提现金额');
+            $this->UserRepository->addBalanceLog($user->id, $withdrawal->money,11,'后台取消用户提现', $user->balance, bcadd($user->balance, $withdrawal->money, 2));
+            $updateUser = ["id" => $user->id, "freeze_money" => bcsub($user->freeze_money, $withdrawal->money, 2), "balance" => bcadd($user->balance, $withdrawal->money, 2)];
+            $userResult = $this->UserRepository->editUser($updateUser);
+            if ($withdrawalResult && $userResult) {
+                $this->_msg = "退款成功";
+            } else {
+                throw new \Exception('退款失败');
+            }
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollBack();
+            $this->_msg = $e->getMessage();
             $this->_code = 402;
-            return;
         }
-        $this->UserRepository->addBalanceLog($user->id, $withdrawal->money,11,'后台取消用户提现', $user->balance, bcadd($user->balance, $withdrawal->money, 2));
-        $updateUser = ["id" => $user->id, "freeze_money" => bcsub($user->freeze_money, $withdrawal->money, 2), "balance" => bcadd($user->balance, $withdrawal->money, 2)];
-        $userResult = $this->UserRepository->editUser($updateUser);
-        if ($withdrawalResult && $userResult) {
-            $this->_msg = "退款成功";
-        } else {
-            $this->_code = 402;
-            $this->_msg = "退款失败";
-        }
+
 
     }
 }
