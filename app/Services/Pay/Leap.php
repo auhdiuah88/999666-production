@@ -222,7 +222,15 @@ class Leap extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Leap_withdrawalCallback',$request->post());
 
-        if ($request->state <> 4) {
+        $pay_status = 0;
+        $status = $request->state;
+        if(in_array($status, [3,5])){
+            $pay_status = 3;
+        }
+        if($status == 4){
+            $pay_status = 1;
+        }
+        if ($pay_status == 0) {
             $this->_msg = 'Leap-withdrawal-交易未完成';
             return false;
         }
@@ -236,6 +244,7 @@ class Leap extends PayStrategy
         }
         $where = [
             'order_no' => $request->sh_order,
+            'pay_status' => $pay_status
         ];
         return $where;
     }

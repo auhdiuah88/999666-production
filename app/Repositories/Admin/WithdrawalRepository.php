@@ -29,7 +29,7 @@ class WithdrawalRepository extends BaseRepository
         return $this->Cx_Withdrawal_Record
             ->with([
                 "user" => function ($query) {
-                    $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total","phone", "remarks", "is_withdrawal"]);
+                    $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total","phone", "remarks", "is_withdrawal", "phone"]);
                 },
                 "bank"
             ])
@@ -75,7 +75,7 @@ class WithdrawalRepository extends BaseRepository
     public function batchUpdateRecord($ids, $status, $message = null)
     {
         if ($message == null) {
-            return $this->Cx_Withdrawal_Record->whereIn("id", $ids)->update(["status" => $status]);
+            return $this->Cx_Withdrawal_Record->whereIn("id", $ids)->update(["status" => $status, "approval_time" => time()]);
         } else {
             return $this->Cx_Withdrawal_Record->whereIn("id", $ids)->update(["status" => $status, "approval_time" => time(), "message" => $message]);
         }
@@ -89,7 +89,7 @@ class WithdrawalRepository extends BaseRepository
     public function searchRecord($data, $offset, $limit)
     {
         return $this->whereCondition($data, $this->Cx_Withdrawal_Record->with(["user" => function ($query) {
-            $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total", "is_withdrawal", "remarks"]);
+            $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total", "is_withdrawal", "remarks", "phone"]);
         }, "bank"]))->orderByDesc("create_time")->offset($offset)->limit($limit)->get()->toArray();
     }
 

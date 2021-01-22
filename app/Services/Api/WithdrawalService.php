@@ -327,6 +327,7 @@ class WithdrawalService extends PayService
         }
 
         $pltf_order_no = isset($where['plat_order_id']) ? $where['plat_order_id'] : '';
+        $pay_status = $where['pay_status']??0;
         $withdrawlLog = $this->WithdrawalRepository->getWithdrawalInfoByCondition($where);
         if (!$withdrawlLog) {
             $this->_msg = "Can't find this order";
@@ -348,39 +349,48 @@ class WithdrawalService extends PayService
         DB::beginTransaction();
         try {
             $user = $this->UserRepository->findByIdUser($withdrawlLog->user_id);
+            if($pay_status == 1){
+                // 普通用户
+                if ($withdrawlLog->type == 0) {
+                    // 记录提现成功余额变动
+//                    $dq_balance = bcadd($user->balance, $user->freeze_money, 2);     // 当前余额 (总余额+冻结金额)
+//                    $wc_balance = bcsub($dq_balance, $money, 2);                   // 变动后余额
+//                    $this->UserRepository->addBalanceLog($user->id, $money, 3, "成功提现{$money};减少冻结金额{$money}", $dq_balance, $wc_balance);
+                    ##以上步骤重复了
 
-            // 普通用户
-            if ($withdrawlLog->type == 0) {
-                // 记录充值成功余额变动
-                $dq_balance = bcadd($user->balance, $user->freeze_money, 2);     // 当前余额 (总余额+冻结金额)
-                $wc_balance = bcsub($dq_balance, $money, 2);                   // 变动后余额
-                $this->UserRepository->addBalanceLog($user->id, $money, 3, "成功提现{$money};减少冻结金额{$money}", $dq_balance, $wc_balance);
+                    // 更新用户金额
+                    $user->freeze_money = bcsub($user->freeze_money, $money, 2); // 减掉冻结资金
+                    $user->cl_withdrawal = bcadd($user->cl_withdrawal, $money, 2); // 累计提现
+                    $user->save();
 
-                // 更新用户金额
-                $user->freeze_money = bcsub($user->freeze_money, $money, 2); // 减掉冻结资金
-                $user->cl_withdrawal = bcadd($user->cl_withdrawal, $money, 2); // 累计提现
-                $user->save();
+                    // 代理用户
+                } elseif ($withdrawlLog->type == 1) {
+                    // 记录充值成功余额变动
+                    $dq_commission = bcadd($user->commission, $user->freeze_agent_money, 2);     // 当前余额 (总佣金余额+冻结佣金金额)
+                    $wc_commission = bcsub($dq_commission, $money, 2);                            // 变动后余额
+                    $order_no = $withdrawlLog->order_no;
+                    $this->UserRepository->addCommissionLogs($user, $money, $dq_commission, $wc_commission, $order_no);
 
-                // 代理用户
-            } elseif ($withdrawlLog->type == 1) {
-                // 记录充值成功余额变动
-                $dq_commission = bcadd($user->commission, $user->freeze_agent_money, 2);     // 当前余额 (总佣金余额+冻结佣金金额)
-                $wc_commission = bcsub($dq_commission, $money, 2);                            // 变动后余额
-                $order_no = $withdrawlLog->order_no;
-                $this->UserRepository->addCommissionLogs($user, $money, $dq_commission, $wc_commission, $order_no);
+                    // 更新用户金额
+                    $user->freeze_agent_money = bcsub($user->freeze_agent_money, $money, 2); // 减掉代理冻结代理资金
+                    $user->cl_commission = bcadd($user->cl_commission, $money, 2);
+                    $user->save();
+                }
 
-                // 更新用户金额
-                $user->freeze_agent_money = bcsub($user->freeze_agent_money, $money, 2); // 减掉代理冻结代理资金
-                $user->cl_commission = bcadd($user->cl_commission, $money, 2);
-                $user->save();
+                // 更新提现成功记录
+                $withdrawlLog->pltf_order_no = $pltf_order_no;
+                $withdrawlLog->pay_status = 1;
+                $withdrawlLog->loan_time = time();
+                $withdrawlLog->payment = $payment;
+                $withdrawlLog->save();
+            }elseif($pay_status == 3){ ##提现失败
+                ##更新提现失败记录
+                $withdrawlLog->pltf_order_no = $pltf_order_no;
+                $withdrawlLog->pay_status = 3;
+                $withdrawlLog->loan_time = time();
+                $withdrawlLog->save();
             }
 
-            // 更新充值成功记录
-            $withdrawlLog->pltf_order_no = $pltf_order_no;
-            $withdrawlLog->pay_status = 1;
-            $withdrawlLog->loan_time = time();
-            $withdrawlLog->payment = $payment;
-            $withdrawlLog->save();
 
             DB::commit();
         } catch (\Exception $e) {

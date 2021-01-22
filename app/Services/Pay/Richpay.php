@@ -168,7 +168,15 @@ class Richpay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('richpay_withdrawalCallback',$request->input());
 
-        if ($request->status != 1) {
+        $pay_status = 0;
+        $status = $request->status;
+        if(in_array($status, [2,3])){
+            $pay_status = 3;
+        }
+        if($status == 1){
+            $pay_status = 1;
+        }
+        if ($pay_status == 0) {
             $this->_msg = 'richpay-withdrawal-交易未完成';
             return false;
         }
@@ -182,6 +190,7 @@ class Richpay extends PayStrategy
         $where = [
             'order_no' => $request->channleOid,
             'plat_order_id' => $request->oid,
+            'pay_status' => $pay_status
         ];
         return $where;
     }

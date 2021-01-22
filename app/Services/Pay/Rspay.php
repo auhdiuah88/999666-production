@@ -188,7 +188,15 @@ class Rspay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('rspay_withdrawalCallback',$request->post());
 
-        if ((string)($request->payStatus) != '11') {
+        $pay_status = 0;
+        $status = (string)($request->payStatus);
+        if($status == '11'){
+            $pay_status = 1;
+        }
+        if($status == '12'){
+            $pay_status = 3;
+        }
+        if ($pay_status == 0) {
             $this->_msg = 'rspay-withdrawal-交易未完成';
             return false;
         }
@@ -202,7 +210,8 @@ class Rspay extends PayStrategy
         }
         $where = [
             'order_no' => $request->outOrderNo,
-            'plat_order_id' => $request->transactionId
+            'plat_order_id' => $request->transactionId,
+            'pay_status' => $pay_status
         ];
         return $where;
     }

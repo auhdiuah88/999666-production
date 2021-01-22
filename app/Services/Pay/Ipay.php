@@ -190,6 +190,7 @@ class Ipay extends PayStrategy
          * "sign": "2463f17f8400c0416d0dd86c28208508"
          * }
          */
+        $pay_status = 1;
         if ($request->rtn_code <> 'success') {
             $this->_msg = '参数错误';
             return false;
@@ -206,6 +207,7 @@ class Ipay extends PayStrategy
         $where = [
             'order_no' => $request->out_trade_no,
 //            'pltf_order_no' => $request->pltf_order_id,
+            'pay_status' => $pay_status
         ];
         return $where;
     }

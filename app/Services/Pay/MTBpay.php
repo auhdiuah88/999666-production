@@ -188,7 +188,15 @@ class MTBpay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalCallback',$request->post());
 
-        if ($request->status != 'SUCCESS') {
+        $pay_status = 0;
+        $status = (string)($request->status);
+        if($status == 'SUCCESS'){
+            $pay_status= 1;
+        }
+        if($status == 'FAIL'){
+            $pay_status = 3;
+        }
+        if ($pay_status == 0) {
             $this->_msg = 'MTBpay-withdrawal-交易未完成';
             return false;
         }
@@ -202,7 +210,8 @@ class MTBpay extends PayStrategy
         }
         $where = [
             'order_no' => $request->mer_order_no,
-            'plat_order_id' => $request->order_no
+            'plat_order_id' => $request->order_no,
+            'pay_status' => $pay_status
         ];
         return $where;
     }

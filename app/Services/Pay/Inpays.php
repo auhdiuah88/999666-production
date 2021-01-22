@@ -170,7 +170,20 @@ class Inpays extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalCallback',$request->post());
 
-        if ((string)($request->status) != 'PAY_SUCCESS') {
+        $pay_status = 0;
+        $status = (string)($request->status);
+        switch($status){
+            case "PAY_SUCCESS":
+                $pay_status = 1;
+                break;
+            case "PAY_FAIL":
+                $pay_status = 3;
+                break;
+            default:
+                break;
+        }
+
+        if ($pay_status == 0) {
             $this->_msg = 'inpays-withdrawal-交易未完成';
             return false;
         }
@@ -184,7 +197,8 @@ class Inpays extends PayStrategy
         }
         $where = [
             'order_no' => $request->orderId,
-            'plat_order_id' => $request->platOrderId
+            'plat_order_id' => $request->platOrderId,
+            'pay_status' => $pay_status
         ];
         return $where;
     }

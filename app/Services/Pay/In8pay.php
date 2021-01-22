@@ -205,7 +205,14 @@ T0n4yTG/6UH9NhbxMwIDAQAB
             $this->_msg = 'in8pay-withdrawal-其他失败';
             return false;
         }
-        if ($request->status != 1) {
+        $pay_status = 0;
+        if($request->status == 2){
+            $pay_status = 3;
+        }
+        if($request->status == 1){
+            $pay_status = 1;
+        }
+        if ($request->status != 1 || $request->status != 2) {
             $this->_msg = 'in8pay-withdrawal-交易未完成';
             return false;
         }
@@ -222,6 +229,7 @@ T0n4yTG/6UH9NhbxMwIDAQAB
         $where = [
             'order_no' => $request->down_sn,
             'plat_order_id' => $request->settle_sn,
+            'pay_status' => $pay_status
         ];
         return $where;
     }
