@@ -26,25 +26,46 @@ class WithdrawalRepository extends BaseRepository
 
     public function findAll($offset, $limit, $status)
     {
-        return $this->Cx_Withdrawal_Record
-            ->with([
-                "user" => function ($query) {
-                    $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total","phone", "remarks", "is_withdrawal", "phone"]);
-                },
-                "bank"
-            ])
-            ->where("status", $status)
-            ->orderByDesc("create_time")
-            ->offset($offset)
-            ->limit($limit)
-            ->get()
-            ->append(['pay_status_json'])
-            ->toArray();
+        if($status > -1){
+            return $this->Cx_Withdrawal_Record
+                ->with([
+                    "user" => function ($query) {
+                        $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total","phone", "remarks", "is_withdrawal", "phone"]);
+                    },
+                    "bank"
+                ])
+                ->where("status", $status)
+                ->orderByDesc("create_time")
+                ->offset($offset)
+                ->limit($limit)
+                ->get()
+                ->append(['pay_status_json'])
+                ->toArray();
+        }else{
+            return $this->Cx_Withdrawal_Record
+                ->with([
+                    "user" => function ($query) {
+                        $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total","phone", "remarks", "is_withdrawal", "phone"]);
+                    },
+                    "bank"
+                ])
+                ->orderByDesc("create_time")
+                ->offset($offset)
+                ->limit($limit)
+                ->get()
+                ->append(['pay_status_json'])
+                ->toArray();
+        }
+
     }
 
     public function countAll($status)
     {
-        return $this->Cx_Withdrawal_Record->where("status", $status)->count("id");
+        if($status > -1){
+            return $this->Cx_Withdrawal_Record->where("status", $status)->count("id");
+        }else{
+            return $this->Cx_Withdrawal_Record->count("id");
+        }
     }
 
     public function findById($id)
@@ -88,6 +109,7 @@ class WithdrawalRepository extends BaseRepository
 
     public function searchRecord($data, $offset, $limit)
     {
+        if(isset($data['conditions']['status']) && $data['conditions']['status'] == -1)unset($data['conditions']['status']);
         return $this->whereCondition($data, $this->Cx_Withdrawal_Record->with(["user" => function ($query) {
             $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total", "is_withdrawal", "remarks", "phone"]);
         }, "bank"]))->orderByDesc("create_time")->offset($offset)->limit($limit)->get()->toArray();
@@ -95,6 +117,7 @@ class WithdrawalRepository extends BaseRepository
 
     public function countSearchRecord($data)
     {
+        if(isset($data['conditions']['status']) && $data['conditions']['status'] == -1)unset($data['conditions']['status']);
         return $this->whereCondition($data, $this->Cx_Withdrawal_Record)->count("id");
     }
 

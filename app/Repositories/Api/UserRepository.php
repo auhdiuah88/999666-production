@@ -345,6 +345,16 @@ class UserRepository
     }
 
     /**
+     * 查找ip是否存在
+     * @param $ip
+     * @return mixed
+     */
+    public function ipExist($ip)
+    {
+        return $this->Cx_User->where("ip", $ip)->count();
+    }
+
+    /**
      * @param $phone
      * @param $pwd
      * @return array

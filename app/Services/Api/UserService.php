@@ -183,6 +183,11 @@ class UserService
      */
     public function Register($data, $ip)
     {
+        if($this->UserRepository->ipExist($ip)){
+            $this->error_code = 402;
+            $this->error = 'IP already exists';
+            return false;
+        }
         $Count = $this->UserRepository->Count($data['phone']);
         if ($Count > 0) {
             $this->error_code = 402;
