@@ -120,8 +120,7 @@ class WithdrawalService extends BaseService
                 $this->changeAgencyCommission($record["id"]);
             } else {
 //                $this->addWithdrawalLogs($record["id"]);
-                if($record['is_post'] == 0)
-                    $this->addWithdrawQueue($record['id']);
+                $this->addWithdrawQueue($record['id']);
             }
         }
         if ($this->WithdrawalRepository->batchUpdateRecord($ids, 1)) {
