@@ -5,6 +5,7 @@ namespace App\Services\Api;
 
 
 use App\Common\Common;
+use App\Repositories\Api\SettingRepository;
 use App\Repositories\Api\UserRepository;
 use App\Services\Library\Auth;
 use App\Services\Library\Netease\IM;
@@ -20,7 +21,7 @@ use Ramsey\Uuid\Uuid;
 
 class UserService
 {
-    protected $UserRepository;
+    protected $UserRepository, $SettingRepository;
 
     // 注册redis键
     const REDIS_REGIST_CODE = "REGIST_CODE:";    // redis短信验证码key
@@ -50,9 +51,14 @@ class UserService
     private $Auth;
     private $sms;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct
+    (
+        UserRepository $userRepository,
+        SettingRepository $settingRepository
+    )
     {
         $this->UserRepository = $userRepository;
+        $this->SettingRepository = $settingRepository;
     }
 
     /**
@@ -183,7 +189,7 @@ class UserService
      */
     public function Register($data, $ip)
     {
-        if($this->UserRepository->ipExist($ip)){
+        if($this->SettingRepository->getIpSwitch() && $this->UserRepository->ipExist($ip)){
             $this->error_code = 402;
             $this->error = 'IP already exists';
             return false;

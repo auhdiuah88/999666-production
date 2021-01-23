@@ -29,6 +29,7 @@ abstract class BaseService
         if (!array_key_exists("conditions", $data)) {
             return $data;
         }
+        if(isset($data['conditions']['status']) && $data['conditions']['status'] == 0)unset($data['conditions']['status']);
         $conditions = $data["conditions"];
         $ops = $data["ops"];
         $ids = array_column($this->getConditions($data, new Cx_User())->get("id")->toArray(), "id");

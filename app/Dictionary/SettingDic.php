@@ -56,6 +56,10 @@ class SettingDic
             'title' => 'about-us->About Us',
             'key' => 'ABOUT_US'
         ],
+        'IP_SWITCH' => [
+            'title' => 'about-us->IP Switch',
+            'key' => 'IP_SWITCH'
+        ],
     ];
 
     public static function key($key)
