@@ -90,7 +90,7 @@ class WithdrawalRepository extends BaseRepository
 
     public function findAllByIds($ids)
     {
-        return $this->Cx_Withdrawal_Record->whereIn("id", $ids)->select(["id", "type"])->get()->toArray();
+        return $this->Cx_Withdrawal_Record->whereIn("id", $ids)->select(["id", "type", "is_post"])->get()->toArray();
     }
 
     public function batchUpdateRecord($ids, $status, $message = null)
