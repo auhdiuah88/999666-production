@@ -38,6 +38,7 @@ class Withdraw_Call implements ShouldQueue
         $this->PayContext = $payContext;
         $withdrawLog = $this->WithdrawalRepository->findById($this->id);
         if($withdrawLog->status != 1)return;
+        if($withdrawLog->is_post)return;
         $payProvide = $withdrawLog->with_type;
         $strategyClass = $this->PayContext->getStrategy($payProvide);  // 获取支付公司类
         if(!$strategyClass){
@@ -53,6 +54,7 @@ class Withdraw_Call implements ShouldQueue
         }
         if(isset($result['pltf_order_no'])){
             $withdrawLog->pltf_order_no = $result['pltf_order_no'];
+            $withdrawLog->is_post = 1;
             $withdrawLog->save();
         }
     }
