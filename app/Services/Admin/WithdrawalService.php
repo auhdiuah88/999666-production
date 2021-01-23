@@ -209,6 +209,7 @@ class WithdrawalService extends BaseService
 
     public function searchRecord($data)
     {
+        if(isset($data['conditions']['status']) && $data['conditions']['status'] == -1)unset($data['conditions']['status']);
         $data = $this->getUserIds($data, "user_id");
         $list = $this->WithdrawalRepository->searchRecord($data, ($data["page"] - 1) * $data["limit"], $data["limit"]);
         $total = $this->WithdrawalRepository->countSearchRecord($data);

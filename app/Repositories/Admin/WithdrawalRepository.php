@@ -109,7 +109,6 @@ class WithdrawalRepository extends BaseRepository
 
     public function searchRecord($data, $offset, $limit)
     {
-        if(isset($data['conditions']['status']) && $data['conditions']['status'] == -1)unset($data['conditions']['status']);
         return $this->whereCondition($data, $this->Cx_Withdrawal_Record->with(["user" => function ($query) {
             $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total", "is_withdrawal", "remarks", "phone"]);
         }, "bank"]))->orderByDesc("create_time")->offset($offset)->limit($limit)->get()->toArray();
