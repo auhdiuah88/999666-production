@@ -235,7 +235,7 @@ class WithdrawalService extends PayService
             $system = $this->systemRepository->getSystem();
             $fake_betting_money = isset($user->fake_betting_money)?$user->fake_betting_money:0;
 
-            if((float)$user->total_recharge <= 0){
+            if($this->SettingRepository->getIsCheckRecharge() && (float)$user->total_recharge <= 0){
                 $this->_msg = "Please complete one recharge first";
                 return false;
             }

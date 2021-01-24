@@ -60,6 +60,10 @@ class SettingDic
             'title' => 'about-us->IP Switch',
             'key' => 'IP_SWITCH'
         ],
+        'IS_CHECK_RECHARGE' => [
+            'title' => 'about-us->Is Check Recharge',
+            'key' => 'IS_CHECK_RECHARGE'
+        ],
     ];
 
     public static function key($key)

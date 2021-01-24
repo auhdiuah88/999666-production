@@ -50,6 +50,16 @@ class SettingRepository
     }
 
     /**
+     * 获取提现是否检测充值
+     * @return int
+     */
+    public function getIsCheckRecharge()
+    {
+        $value = $this->getSettingValueByKey(SettingDic::key('IS_CHECK_RECHARGE'));
+        return $value?(int)($value['is_check_recharge']):0;
+    }
+
+    /**
      * 获取setting_value
      * @param $key
      * @param bool $from_cache
