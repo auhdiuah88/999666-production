@@ -254,7 +254,7 @@ class GameRepository
     {
         sleep(1);
         $time = time();
-        $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<=", $time)->where('end_time', ">", $time)->first();
+        $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<=", $time)->where('end_time', ">", $time)->select(['b_money', 'end_time', 'game_id', 'id', 'is_status', 'number', 'start_time', 'type'])->first();
         if (!isset($bq_game->number)) {
             $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<", ($time + 2))->where('end_time', ">=", $time)->first();
         }
