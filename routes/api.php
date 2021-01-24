@@ -99,7 +99,7 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
     });
 
     Route::group(["prefix" => "withdrawal"], function () {
-        Route::get("/record", "WithdrawalController@getRecords");
+        Route::post("/record", "WithdrawalController@getRecords");
         Route::post("/extract", "WithdrawalController@addRecord");
         Route::post("/message", "WithdrawalController@getMessage");
         Route::post("/agent/extract", "WithdrawalController@agentWithdrawal");

@@ -43,7 +43,13 @@ class WithdrawalService extends PayService
     public function getRecords($token)
     {
         $userId = $this->getUserId($token);
-        $this->_data = $this->WithdrawalRepository->findRecordByUserId($userId);
+        $size = $this->sizeInput();
+        $status = $this->intInput('status');
+        $where = [
+            'user_id' => ['=', $userId],
+            'status' => ['=', $status]
+        ];
+        $this->_data = $this->WithdrawalRepository->findRecordByUserId($where, $size);
     }
 
     public function addRecord($data, $token)

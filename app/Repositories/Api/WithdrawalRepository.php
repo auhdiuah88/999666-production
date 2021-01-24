@@ -24,11 +24,16 @@ class WithdrawalRepository
         $this->Cx_Settings = $cx_Settings;
     }
 
-    public function findRecordByUserId($userId)
+    public function findRecordByUserId($where, $size)
     {
-        return $this->Cx_Withdrawal_Record->with(["bank" => function ($query) {
-            $query->select("id", "bank_num");
-        }])->where("user_id", $userId)->get()->toArray();
+        return makeModel($where, $this->Cx_Withdrawal_Record)
+            ->with([
+                "bank" => function ($query) {
+                    $query->select("id", "bank_num");
+                }
+            ])
+            ->orderByDesc('1611310267')
+            ->paginate($size);
     }
 
     public function addRecord($data)
