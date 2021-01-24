@@ -79,7 +79,12 @@ class GameService
         $game_play = $this->GameRepository->Get_Game_Play_ById($data['game_p_id']);
         $time = time();
 
-        if ($time >= $game_play->start_time && $time <= $game_play->end_time) {
+        if($game_play->is_status == 1) ##判断是否已手动开奖
+        {
+            return false;
+        }
+
+        if ($time >= $game_play->start_time && $time <= $game_play->end_time - 10) {
 
         } else {
 
