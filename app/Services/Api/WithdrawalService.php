@@ -235,6 +235,11 @@ class WithdrawalService extends PayService
             $system = $this->systemRepository->getSystem();
             $fake_betting_money = isset($user->fake_betting_money)?$user->fake_betting_money:0;
 
+            if((float)$user->total_recharge <= 0){
+                $this->_msg = "Please complete one recharge first";
+                return false;
+            }
+
             ##充值金额 * 基数 + 虚拟流水+投注金额  >= 当前提现金额
             if (((float)$user->total_recharge * (int)$system->multiple) + (float)$fake_betting_money + (float)$user->cl_betting < $money) {
                 $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
