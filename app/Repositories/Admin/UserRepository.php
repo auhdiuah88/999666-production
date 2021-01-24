@@ -181,4 +181,10 @@ class UserRepository extends BaseRepository
             ['is_customer_service', 1]
         ])->select(['id', 'nickname', 'phone'])->first();
     }
+
+    public function clearFakeBetting()
+    {
+        return $this->Cx_User->where("fake_betting_money", "<>", "0")->update(['fake_betting_money'=>0]);
+    }
+
 }

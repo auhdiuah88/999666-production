@@ -109,6 +109,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/up", "UserController@upperSeparation");
             Route::post("/down", "UserController@downSeparation");
             Route::post("/logs", "UserController@getBalanceLogs");
+            Route::post("/clearFakeBetting", "UserController@clearFakeBetting");
 
             Route::get("/findCustomerServiceByPhone", "UserController@findCustomerServiceByPhone");
             Route::post("/editFakeBettingMoney", "UserController@editFakeBettingMoney");

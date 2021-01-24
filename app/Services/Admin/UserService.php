@@ -297,4 +297,10 @@ class UserService extends BaseService
         $this->_msg = "操作成功";
         return true;
     }
+
+    public function clearFakeBetting()
+    {
+        $this->UserRepository->clearFakeBetting();
+    }
+
 }

@@ -209,4 +209,19 @@ class UserController extends Controller
         }
     }
 
+    public function clearFakeBetting()
+    {
+        try{
+            $this->UserService->clearFakeBetting();
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
 }
