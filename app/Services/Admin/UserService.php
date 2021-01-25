@@ -61,7 +61,13 @@ class UserService extends BaseService
         } elseif (!$data["nickname"]) {
             $data["nickname"] = "用户" . md5($data["phone"]);
         }
-        $data = $this->assembleData($data);
+//        $data = $this->assembleData($data);
+        $data = $this->initRelation($data);
+        if(!$data){
+            $this->_code = 402;
+            $this->_msg = "推荐人不存在";
+            return false;
+        }
         if ($this->UserRepository->addUser($data)) {
             $this->_msg = "添加成功";
             return true;
@@ -70,6 +76,20 @@ class UserService extends BaseService
             $this->_msg = "添加失败";
             return false;
         }
+    }
+
+    public function initRelation($data)
+    {
+        if (array_key_exists("two_recommend_id", $data) && $data["two_recommend_id"]) {
+            $two = $this->UserRepository->findById($data["two_recommend_id"]);
+            if(!$two)
+                return false;
+            $data['one_recommend_phone'] = $two->two_recommend_phone;
+            $data['one_recommend_id'] = $two->two_recommend_id;
+            $data["two_recommend_phone"] = $two->phone;
+            $data["invite_relation"] = '-' . trim($data["two_recommend_id"] . '-' . trim($two->invite_relation,'-'),'-') . '-';
+        }
+        return $data;
     }
 
     public function editUser($data)
@@ -82,13 +102,63 @@ class UserService extends BaseService
             $this->_code = 402;
             return;
         }
-        $data = $this->assembleData($data);
-        if ($this->UserRepository->editUser($data)) {
-            $this->_msg = "修改成功";
-        } else {
-            $this->_code = 402;
-            $this->_msg = "修改失败";
+//        $data = $this->assembleData($data);
+        $user = $this->UserRepository->findById($data['id']);
+        if($user->two_recommend_id != $data['two_recommend_id']){
+            ##判断新的上级是否是自己的下级
+            if(strpos($user->invite_relation,"-{$data['two_recommend_id']}-")){
+                $this->_msg = "新的推荐人不能为该用户的下级";
+                $this->_code = 402;
+                return;
+            }
+            $initRelation = true;
+            $old_two_recommend_id = $user->two_recommend_id;
+            $data = $this->initRelation($data);
+            if(!$data){
+                $this->_code = 402;
+                $this->_msg = "推荐人不存在";
+                return;
+            }
         }
+        DB::beginTransaction();
+        try{
+            if($initRelation){
+                ##更新所有的二级推荐人
+                $res = $this->updateGroupRelation($data, $old_two_recommend_id);
+                if(!$res)throw new \Exception('操作失败');
+            }
+            $res = $this->UserRepository->editUser($data);
+            if($res === false)throw new \Exception('用户修改失败');
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollBack();
+            $this->_msg = $e->getMessage();
+            $this->_code = 402;
+        }
+    }
+
+    public function updateGroupRelation($data, $old_two_recommend_id)
+    {
+        ##更新老二级推荐人的二级人数
+        $res = $this->UserRepository->subTwoNumber($old_two_recommend_id, 1);
+        if($res === false)return false;
+        $res = $this->UserRepository->addTwoNumber($data['two_recommend_id'], 1);
+        if($res === false)return false;
+        $num = $this->UserRepository->countOneRecomBumByTwo($data);
+        if($num > 0){
+            ##二级推荐人 - 一级推荐人数
+            $res = $this->UserRepository->subOneNumber($old_two_recommend_id, $num);
+            if($res === false)return false;
+            $res = $this->UserRepository->addOneNumber($data['two_recommend_id'], $num);
+            if($res === false)return false;
+            ##更新二级推荐人是改用的一级推荐人信息
+            $res = $this->UserRepository->updateOneRecomByTwo($data);
+            if($res === false)return false;
+        }
+        ##更新邀请关系
+        $res = $this->UserRepository->updateInviteRelation($data);
+        if($res === false)return false;
+        return true;
     }
 
 
@@ -301,6 +371,18 @@ class UserService extends BaseService
     public function clearFakeBetting()
     {
         $this->UserRepository->clearFakeBetting();
+    }
+
+    public function searchUserByPhoneLike()
+    {
+        $phoneLike = $this->strInput('phone');
+        if(!$phoneLike || strlen($phoneLike) < 5){
+            $this->_code = 402;
+            $this->_msg = '请至少输入五位手机号';
+            return false;
+        }
+        $this->_data = $this->UserRepository->searchUser(['phone'=>['like', "%{$phoneLike}%"]]);
+        return true;
     }
 
 }

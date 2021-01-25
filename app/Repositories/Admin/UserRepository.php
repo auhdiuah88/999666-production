@@ -187,4 +187,58 @@ class UserRepository extends BaseRepository
         return $this->Cx_User->where("fake_betting_money", "<>", "0")->update(['fake_betting_money'=>0]);
     }
 
+    public function searchUser($where)
+    {
+         return makeModel($where, $this->Cx_User)->select(['id', 'phone'])->get();
+    }
+
+    public function updateOneRecomByTwo($data)
+    {
+        return $this->Cx_User->where("two_recommend_id", "=", $data['id'])->update(['one_recommend_id'=>$data['two_recommend_id'], 'one_recommend_phone'=>$data['two_recommend_phone']]);
+    }
+
+    public function countOneRecomBumByTwo($data)
+    {
+        return $this->Cx_User->where("two_recommend_id", "=", $data['id'])->count();
+    }
+
+    public function subOneNumber($id, $num)
+    {
+        return $this->Cx_User->where("id", "=", $id)->decrement('one_number', $num);
+    }
+
+    public function addOneNumber($id, $num)
+    {
+        return $this->Cx_User->where("id", "=", $id)->increment('one_number', $num);
+    }
+
+    public function subTwoNumber($id, $num)
+    {
+        return $this->Cx_User->where("id", "=", $id)->decrement('two_number', $num);
+    }
+
+    public function addTwoNumber($id, $num)
+    {
+        return $this->Cx_User->where("id", "=", $id)->increment('two_number', $num);
+    }
+
+    public function updateInviteRelation($data)
+    {
+        $users = $this->Cx_User->where("invite_relation", "like", "%-{$data['id']}-%")->select(['id', 'invite_relation'])->get();
+        if($users->isEmpty())return true;
+        $users = $users->toArray();
+        foreach($users as $user){
+            if($user['invite_relation']){
+                $relation_arr = explode((string)($data['id']), $user['invite_relation']);
+                $new_relation = trim(trim($relation_arr[0],'-') . '-' . $data['id'] . '-' . trim($data['invite_relation'],'-'),'-');
+                $new_relation = $new_relation?'-' . $new_relation . '-' : "";
+            }else{
+                $new_relation = '-' . trim($data['id'] . '-' . trim($data['invite_relation'],'-'),'-') . '-';
+            }
+            $res = $this->Cx_User->where("id", "=", $user['id'])->update(['invite_relation'=>$new_relation]);
+            if($res === false)return false;
+        }
+        return true;
+    }
+
 }

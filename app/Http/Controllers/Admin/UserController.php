@@ -70,12 +70,17 @@ class UserController extends Controller
 
     public function editUser(Request $request)
     {
-        $this->UserService->editUser($request->post());
-        return $this->AppReturn(
-            $this->UserService->_code,
-            $this->UserService->_msg,
-            $this->UserService->_data
-        );
+        try{
+            $this->UserService->editUser($request->post());
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
     }
 
     public function delUser(Request $request)
@@ -213,6 +218,26 @@ class UserController extends Controller
     {
         try{
             $this->UserService->clearFakeBetting();
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
+    public function searchUserByPhoneLike()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'phone' => ['required', 'min:5']
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(402, $validator->errors()->first());
+            $this->UserService->searchUserByPhoneLike();
             return $this->AppReturn(
                 $this->UserService->_code,
                 $this->UserService->_msg,
