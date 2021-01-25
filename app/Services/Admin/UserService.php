@@ -140,15 +140,19 @@ class UserService extends BaseService
     public function updateGroupRelation($data, $old_two_recommend_id)
     {
         ##更新老二级推荐人的二级人数
-        $res = $this->UserRepository->subTwoNumber($old_two_recommend_id, 1);
-        if($res === false)return false;
+        if($old_two_recommend_id){
+            $res = $this->UserRepository->subTwoNumber($old_two_recommend_id, 1);
+            if($res === false)return false;
+        }
         $res = $this->UserRepository->addTwoNumber($data['two_recommend_id'], 1);
         if($res === false)return false;
         $num = $this->UserRepository->countOneRecomBumByTwo($data);
         if($num > 0){
             ##二级推荐人 - 一级推荐人数
-            $res = $this->UserRepository->subOneNumber($old_two_recommend_id, $num);
-            if($res === false)return false;
+            if($old_two_recommend_id){
+                $res = $this->UserRepository->subOneNumber($old_two_recommend_id, $num);
+                if($res === false)return false;
+            }
             $res = $this->UserRepository->addOneNumber($data['two_recommend_id'], $num);
             if($res === false)return false;
             ##更新二级推荐人是改用的一级推荐人信息
