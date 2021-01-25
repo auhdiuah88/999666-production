@@ -122,7 +122,7 @@ class UserService extends BaseService
         }
         DB::beginTransaction();
         try{
-            if($initRelation){
+            if(isset($initRelation) && $initRelation){
                 ##更新所有的二级推荐人
                 $res = $this->updateGroupRelation($data, $old_two_recommend_id);
                 if(!$res)throw new \Exception('操作失败');
