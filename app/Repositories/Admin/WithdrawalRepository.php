@@ -111,7 +111,7 @@ class WithdrawalRepository extends BaseRepository
     {
         return $this->whereCondition($data, $this->Cx_Withdrawal_Record->with(["user" => function ($query) {
             $query->select(["id", "balance", "cl_withdrawal", "cl_commission", "total_recharge", "cl_betting", "cl_betting_total", "is_withdrawal", "remarks", "phone"]);
-        }, "bank"]))->orderByDesc("create_time")->offset($offset)->limit($limit)->get()->toArray();
+        }, "bank"]))->orderByDesc("create_time")->offset($offset)->limit($limit)->get()->append(['pay_status_json'])->toArray();
     }
 
     public function countSearchRecord($data)
