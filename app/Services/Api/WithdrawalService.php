@@ -192,6 +192,11 @@ class WithdrawalService extends PayService
         $user_id = $this->getUserId($request->header("token"));
         $user = $this->UserRepository->findByIdUser($user_id);
 
+        if(!$user->is_withdrawal){
+            $this->_msg = 'Your withdrawal function has been disabled';
+            return false;
+        }
+
         $bank_id = $request->bank_id;
         $money = $request->money;
 
