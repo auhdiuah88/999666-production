@@ -163,7 +163,7 @@ class WithdrawalService extends PayService
             //变动后佣金
             $wc_commission = bcsub($user->commission, $money, 2);
             //累计提现佣金
-            $user->cl_commission = bcadd($this->cl_commission, $money, 2);
+            $user->cl_commission = bcadd($user->cl_commission, $money, 2);
             $user->commission = $wc_commission;
             $user->balance = $wc_balance;
             $user->save();
@@ -177,7 +177,8 @@ class WithdrawalService extends PayService
             ];
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->_msg = 'An unknown error occurred';
+//            $this->_msg = 'An unknown error occurred';
+            $this->_msg = $e->getMessage();
             return false;
         }
     }
