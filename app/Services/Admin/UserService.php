@@ -104,7 +104,7 @@ class UserService extends BaseService
         }
 //        $data = $this->assembleData($data);
         $user = $this->UserRepository->findById($data['id']);
-        if($user->two_recommend_id != $data['two_recommend_id']){
+        if($data['two_recommend_id'] && $user->two_recommend_id != $data['two_recommend_id']){
             ##判断新的上级是否是自己的下级
             if(strpos($user->invite_relation,"-{$data['two_recommend_id']}-")){
                 $this->_msg = "新的推荐人不能为该用户的下级";
