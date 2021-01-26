@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 class Ipay extends PayStrategy
 {
 
-    protected static $url = 'http://ipay-in.yynn.me';
+    protected static $url = 'http://pay1.yynn.me';
 
     // 测试环境
 //    protected static $merchantID = 10120;
@@ -67,7 +67,7 @@ class Ipay extends PayStrategy
             $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . $secretKey;
-        return md5($sign);
+        return strtolower(md5($sign));
     }
 
     /**
@@ -206,7 +206,7 @@ class Ipay extends PayStrategy
         }
         $where = [
             'order_no' => $request->out_trade_no,
-//            'pltf_order_no' => $request->pltf_order_id,
+            'plat_order_id' => $request->pltf_order_id,
             'pay_status' => $pay_status
         ];
         return $where;
