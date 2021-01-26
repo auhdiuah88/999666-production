@@ -117,7 +117,7 @@ class WithdrawalService extends BaseService
         $records = $this->WithdrawalRepository->findAllByIds($ids);
         $ids2 = [];
         foreach ($records as $record) {
-            if($record->status == 0){
+            if($record['status'] == 0){
                 if ($record["type"] == 1) {
                     $this->changeAgencyCommission($record["id"]);
                 } else {
