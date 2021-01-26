@@ -115,12 +115,16 @@ class WithdrawalService extends BaseService
     {
         $ids = array_column($data['ids'],'id');
         $records = $this->WithdrawalRepository->findAllByIds($ids);
+        $ids2 = [];
         foreach ($records as $record) {
-            if ($record["type"] == 1) {
-                $this->changeAgencyCommission($record["id"]);
-            } else {
+            if($record->status == 0){
+                if ($record["type"] == 1) {
+                    $this->changeAgencyCommission($record["id"]);
+                } else {
 //                $this->addWithdrawalLogs($record["id"]);
-                $this->addWithdrawQueue($record['id']);
+                    $this->addWithdrawQueue($record['id']);
+                }
+                $ids2[] = $record['id'];
             }
         }
         if ($this->WithdrawalRepository->batchUpdateRecord($ids, 1)) {
