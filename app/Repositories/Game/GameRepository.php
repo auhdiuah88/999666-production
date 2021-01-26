@@ -273,6 +273,16 @@ class GameRepository
                 }
             )
         )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->select(['*', 'id as betting_money'])->get();
+        if($lx_game->isEmpty()){
+            $lx_game = [];
+        }else{
+            $lx_game = $lx_game->toArray();
+            foreach ($lx_game as &$item){
+                if($item['game_play']['status'] == 0){
+                    $item['game_play']['prize_number'] = '?';
+                }
+            }
+        }
         $user_obj =$this->Cx_User->where('id',$user_id)->first();
         unset($sq_game->game_id, $sq_game->prize_time);
 
@@ -1024,7 +1034,7 @@ class GameRepository
     //投注列表.
     public function Betting_List($user, $game_id, $limit, $offset)
     {
-        return $this->Cx_Game_Betting->with(array(
+        $list = $this->Cx_Game_Betting->with(array(
                 'game_c_x' => function ($query) {
                     $query->select('id', 'name', 'name as name_india');
                 },
@@ -1038,6 +1048,17 @@ class GameRepository
                 }
             )
         )->where("user_id", $user)->where("game_id", $game_id)->offset($offset)->limit($limit)->select(['*', 'id as betting_money'])->orderBy('betting_time', 'desc')->get();
+        if($list->isEmpty()){
+            return  [];
+        }else{
+            $list = $list->toArray();
+            foreach($list as &$item){
+                if($item['game_play']['status'] == 0){
+                    $item['game_play']['prize_number'] = '?';
+                }
+            }
+            return $list;
+        }
 
     }
     //开奖列表
