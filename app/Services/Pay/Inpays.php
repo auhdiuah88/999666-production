@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 class Inpays extends PayStrategy
 {
 
-    protected static $url = 'https://www.inpays.in/';    // 网关
+    protected static $url = 'http://api.yvk.net/';    // 网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
@@ -49,7 +49,8 @@ class Inpays extends PayStrategy
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
+            if($value)
+                $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
         return strtolower(md5($sign));
@@ -62,39 +63,41 @@ class Inpays extends PayStrategy
     {
         $order_no = self::onlyosn();
         $params = [
-            'merchant' => $this->rechargeMerchantID,
-            'orderId' => $order_no,
-            'amount' => intval($money),
-            'customName' => 'Customer',
-            'customMobile' => '88888888',
-            'customEmail' => '88888888@in.com',
-//            'channelType' => 'QUICK_PAY',
-            'notifyUrl' => $this->recharge_callback_url,
-            'callbackUrl' => env('SHARE_URL',''),
+            'merchantid' => $this->rechargeMerchantID,
+            'out_trade_no' => $order_no,
+            'total_fee' => (string)$money,
+            'notify_url' => $this->recharge_callback_url,
+            'timestamp' => time(),
+            'customer_name' => 'Customer',
+            'customer_mobile' => '88888888',
+            'customer_email' => '88888888@in.com',
         ];
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder', [$params]);
         $res = $this->requestService->postFormData(self::$url . 'openApi/pay/createOrder' , $params,[
-            "content-type" => "application/x-www-form-urlencoded",
+//            "content-type" => "application/x-www-form-urlencoded",
+            "referrer" => "always"
         ]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder2', [$res]);
         if ($res['code'] != 200) {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder_return', $res);
             $this->_msg = $res['errorMessages'];
             return false;
         }
-        $native_url = $res['data']['url'];
+        $native_url = self::$url . 'openApi/pay/createOrder';
+        $is_post = 3;
         $resData = [
             'out_trade_no' => $order_no,
             'pay_type' => $pay_type,
             'order_no' => $order_no,
             'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
-            'pltf_order_id' => $res['data']['platOrderId'],
+            'pltf_order_id' => '',
             'verify_money' => '',
             'match_code' => '',
             'is_post' => isset($is_post)?$is_post:0,
-            'params' => []
+            'params' => $params
         ];
         return $resData;
     }
@@ -131,34 +134,34 @@ class Inpays extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
+        ## IMPS代付统一下单
         $money = $withdrawalRecord->payment;    // 打款金额
 //        $ip = $this->request->ip();
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'merchant' => $this->withdrawMerchantID,
-            'orderId' => $order_no,
-            'amount' => intval($money),
-            'customName' => $withdrawalRecord->account_holder,
-            'customMobile' => $withdrawalRecord->phone,
-            'customEmail' => $withdrawalRecord->email,
-            'mode' => 'IMPS',
-            'bankAccount' => $withdrawalRecord->bank_number,
-            'ifscCode' => $withdrawalRecord->ifsc_code,
-            'notifyUrl' => $this->withdrawal_callback_url,
+            'merchantid' => $this->withdrawMerchantID,
+            'out_trade_no' => $order_no,
+            'total_fee' => (string)$money,
+            'notify_url' => $this->withdrawal_callback_url,
+            'timestamp' => time(),
+            'payment_mode' => 'IMPS',
+            'account_number' => $withdrawalRecord->bank_number,
+            'ifsc' => $withdrawalRecord->ifsc_code,
+            'customer_name' => $withdrawalRecord->account_holder,
+            'customer_mobile' => $withdrawalRecord->phone,
+            'customer_email' => $withdrawalRecord->email,
         ];
         $params['sign'] = $this->generateSign($params,2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder',$params);
-        $res = $this->requestService->postFormData(self::$url . 'openApi/payout/createOrder', $params,[
-            "content-type" => "application/x-www-form-urlencoded",
-        ]);
+        $res = $this->requestService->postJsonData(self::$url . 'inpays/payout/unifiedorder', $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder2',$res);
-        if ($res['code'] != 200) {
-            $this->_msg = $res['errorMessages'];
+        if ($res['code'] != 0) {
+            $this->_msg = $res['message'];
             return false;
         }
         return  [
-            'pltf_order_no' => $res['data']['platOrderId'],
+            'pltf_order_no' => '',
             'order_no' => $order_no
         ];
     }
