@@ -65,7 +65,7 @@ class Inpays extends PayStrategy
         $params = [
             'merchantid' => $this->rechargeMerchantID,
             'out_trade_no' => $order_no,
-            'total_fee' => (string)$money,
+            'total_fee' => (string)number_format((float)$money,2),
             'notify_url' => $this->recharge_callback_url,
             'timestamp' => time(),
             'customer_name' => 'Customer',
@@ -75,7 +75,7 @@ class Inpays extends PayStrategy
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder', [$params]);
-        $res = $this->requestService->postFormData(self::$url . 'openApi/pay/createOrder' , $params);
+        $res = $this->requestService->postFormData(self::$url . 'inpays/payin/unifiedorder' , $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder2', ['res'=>$res]);
         if ($res['code'] != 200) {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder_return', $res);
