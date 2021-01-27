@@ -75,7 +75,7 @@ class Inpays extends PayStrategy
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder', [$params]);
-        $res = $this->requestService->postFormData(self::$url . 'inpays/payin/unifiedorder' , $params);
+        $res = $this->requestService->postJsonData(self::$url . 'inpays/payin/unifiedorder' , $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder2', ['res'=>$res]);
         if ($res['code'] != 200) {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder_return', $res);
@@ -139,20 +139,20 @@ class Inpays extends PayStrategy
         $params = [
             'merchantid' => $this->withdrawMerchantID,
             'out_trade_no' => $order_no,
-            'total_fee' => (string)$money,
+            'total_fee' => (string)number_format((float)$money,2),
             'notify_url' => $this->withdrawal_callback_url,
             'timestamp' => time(),
             'payment_mode' => 'IMPS',
             'account_number' => $withdrawalRecord->bank_number,
             'ifsc' => $withdrawalRecord->ifsc_code,
-            'customer_name' => $withdrawalRecord->account_holder,
+            'customer_name' => str_replace(' ','',$withdrawalRecord->account_holder),
             'customer_mobile' => $withdrawalRecord->phone,
             'customer_email' => $withdrawalRecord->email,
         ];
         $params['sign'] = $this->generateSign($params,2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$url . 'inpays/payout/unifiedorder', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder2',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder2',[$res]);
         if ($res['code'] != 0) {
             $this->_msg = $res['message'];
             return false;
@@ -173,10 +173,10 @@ class Inpays extends PayStrategy
         $pay_status = 0;
         $status = (string)($request->status);
         switch($status){
-            case "PAY_SUCCESS":
+            case "payout_success":
                 $pay_status = 1;
                 break;
-            case "PAY_FAIL":
+            case "payout_fail":
                 $pay_status = 3;
                 break;
             default:
@@ -196,8 +196,8 @@ class Inpays extends PayStrategy
             return false;
         }
         $where = [
-            'order_no' => $request->orderId,
-            'plat_order_id' => $request->platOrderId,
+            'order_no' => $request->out_trade_no,
+            'plat_order_id' => '',
             'pay_status' => $pay_status
         ];
         return $where;
