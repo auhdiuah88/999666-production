@@ -127,7 +127,7 @@ class WithdrawalService extends BaseService
                 $ids2[] = $record['id'];
             }
         }
-        if ($this->WithdrawalRepository->batchUpdateRecord($ids, 1)) {
+        if ($this->WithdrawalRepository->batchUpdateRecord($ids2, 1)) {
             $this->_msg = "审核成功";
         } else {
             $this->_code = 402;
