@@ -75,11 +75,8 @@ class Inpays extends PayStrategy
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder', [$params]);
-        $res = $this->requestService->postFormData(self::$url . 'openApi/pay/createOrder' , $params,[
-//            "content-type" => "application/x-www-form-urlencoded",
-            "referrer" => "always"
-        ]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder2', [$res]);
+        $res = $this->requestService->postFormData(self::$url . 'openApi/pay/createOrder' , $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder2', ['res'=>$res]);
         if ($res['code'] != 200) {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_rechargeOrder_return', $res);
             $this->_msg = $res['errorMessages'];
