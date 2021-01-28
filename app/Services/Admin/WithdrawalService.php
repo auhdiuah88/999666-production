@@ -43,6 +43,12 @@ class WithdrawalService extends BaseService
     {
         $data = $request->post();
         $withdrawalRecord = $this->WithdrawalRepository->findById($data["id"]);
+        if($withdrawalRecord->status != 0){
+            $this->_code = 414;
+            $this->_msg = '订单已审核';
+            return false;
+        }
+
         if ($data["status"] == 1) {
 //            if ($data["type"] == 1) {
 //                $this->changeAgencyCommission($data["id"]);

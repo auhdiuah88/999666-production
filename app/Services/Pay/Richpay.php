@@ -55,7 +55,7 @@ class Richpay extends PayStrategy
     {
         $order_no = self::onlyosn();
         $params = [
-            'amount' => (string)$money,
+            'amount' => (string)number_format((float)$money,2),
 //            'callbackUrl' => $this->recharge_callback_url,
             'channelId' => (string)($this->rechargeMerchantID),
             'channleOid' => (string)$order_no,
