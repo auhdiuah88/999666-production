@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 class MTBpay extends PayStrategy
 {
 
-//    protected static $url = 'http://lrznvm.fakgt.com/';    // 支付网关
     protected static $url = 'https://yquar.ldufs.com/';    // 支付网关
 
     protected static $url_cashout = 'https://mtawn.ldufs.com/'; // 提现网关
