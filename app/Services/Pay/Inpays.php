@@ -65,7 +65,8 @@ class Inpays extends PayStrategy
         $params = [
             'merchantid' => $this->rechargeMerchantID,
             'out_trade_no' => $order_no,
-            'total_fee' => (string)round((float)$money,2),
+//            'total_fee' => (string)round((float)$money,2),
+            'total_fee' => (string)sprintf("%01.2f", (float)$money),
             'notify_url' => $this->recharge_callback_url,
             'timestamp' => time(),
             'customer_name' => 'Customer',
@@ -139,7 +140,7 @@ class Inpays extends PayStrategy
         $params = [
             'merchantid' => $this->withdrawMerchantID,
             'out_trade_no' => $order_no,
-            'total_fee' => (string)round((float)$money,2),
+            'total_fee' => (string)sprintf("%01.2f", (float)$money),
             'notify_url' => $this->withdrawal_callback_url,
             'timestamp' => time(),
             'payment_mode' => 'IMPS',
