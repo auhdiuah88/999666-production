@@ -128,13 +128,16 @@ class WithdrawalService extends BaseService
                     $this->changeAgencyCommission($record["id"]);
                 } else {
 //                $this->addWithdrawalLogs($record["id"]);
-                    $this->addWithdrawQueue($record['id']);
+
                 }
                 $ids2[] = $record['id'];
-                sleep(2);
             }
         }
         if ($this->WithdrawalRepository->batchUpdateRecord($ids2, 1)) {
+            foreach($ids2 as $item){
+                $this->addWithdrawQueue($item);
+                sleep(2);
+            }
             $this->_msg = "审核成功";
         } else {
             $this->_code = 402;
