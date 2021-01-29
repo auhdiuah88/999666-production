@@ -136,7 +136,7 @@ class WithdrawalService extends BaseService
         if ($this->WithdrawalRepository->batchUpdateRecord($ids2, 1)) {
             foreach($ids2 as $item){
                 $this->addWithdrawQueue($item);
-                sleep(2);
+                sleep(3);
             }
             $this->_msg = "审核成功";
         } else {
