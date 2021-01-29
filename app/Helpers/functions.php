@@ -76,3 +76,10 @@ function redisHSetAll($key, $array)
         $data[$k] = \Illuminate\Support\Facades\Redis::hset($key, $k, $arr);
     }
 }
+
+function channels():array
+{
+    $withdraw = array_keys(config('pay.withdraw'));
+    $recharge = config('pay.recharge');
+    return array_unique(array_merge($withdraw, $recharge));
+}

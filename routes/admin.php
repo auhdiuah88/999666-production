@@ -262,6 +262,10 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/search", "UpDownController@searchUpAndDownLogs");
         });
 
+        Route::group(["prefix"=>"channel"], function(){
+            Route::post("/statistics","ChannelController@statistics");
+        });
+
         //代理=staff
         Route::group(["prefix" => "agent"], function(){
             Route::get("/home","agent\AgentDataController@index");
