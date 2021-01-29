@@ -131,6 +131,7 @@ class WithdrawalService extends BaseService
                     $this->addWithdrawQueue($record['id']);
                 }
                 $ids2[] = $record['id'];
+                sleep(2);
             }
         }
         if ($this->WithdrawalRepository->batchUpdateRecord($ids2, 1)) {
