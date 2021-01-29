@@ -154,7 +154,7 @@ class Inpays extends PayStrategy
         DB::table('php_logs')->insert(['msg'=>json_encode($params)]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$url . 'inpays/payout/unifiedorder', $params);
-        DB::table('php_logs')->insert(['msg'=>json_encode([$res])]);
+        DB::table('php_logs')->insert(['msg'=>json_encode(['res'=>$res])]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder2',[$res]);
         if ($res['code'] != 0) {
             $this->_msg = $res['message'];
