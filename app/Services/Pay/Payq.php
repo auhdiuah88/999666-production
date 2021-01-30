@@ -133,7 +133,7 @@ class Payq extends PayStrategy
 //        $ip = $this->request->ip();
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
-        $params = [
+        $signparam = [
             'acno' => $withdrawalRecord->bank_number,
             'amt' => (float)$money,
             'apiversion' => 2,
@@ -142,7 +142,7 @@ class Payq extends PayStrategy
             'publickey' => $this->publicKey,
             'type' => 'withdraw'
         ];
-        $params['sign'] = $this->generateSign($params);
+        $params['sign'] = $this->generateSign($signparam);
         $params['payeename'] = $withdrawalRecord->account_holder;
         $params['bankname'] = $withdrawalRecord->bank_name;
         $params['remarks'] = 'withdraw';
@@ -151,12 +151,23 @@ class Payq extends PayStrategy
         $params['cemail'] = $withdrawalRecord->email;
         $params['ifsc'] = $withdrawalRecord->ifsc_code;
 //        $params['bcode'] = $withdrawalRecord->ifsc_code;
-        $params['ip'] = "128.199.138.209'";
+        $params['ip'] = request()->ip();
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',$params);
-        $res = $this->requestService->postFormData(self::$url, $params, [
-            "content-type" => "application/x-www-form-urlencoded",
-        ]);
+        $options = array(
+            'http' => array(
+                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method'  => 'POST',
+                'content' => http_build_query($signparam).'&'.http_build_query($params)
+            )
+        );
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',$options);
+        $context  = stream_context_create($options);
+        $res = file_get_contents(self::$url,false, $context);
+
+
+//        $res = $this->requestService->postFormData(self::$url, $params, [
+//            "content-type" => "application/x-www-form-urlencoded",
+//        ]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder_rtn',[$res]);
         if ($res['status'] != 1) {
             $this->_msg = $res['msg'];
