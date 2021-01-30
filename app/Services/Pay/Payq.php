@@ -67,7 +67,8 @@ class Payq extends PayStrategy
         $data['sign'] = $this->generateSign($params);
         $data['callback'] = $this->recharge_callback_url;
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder', [$data]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder_data', [$data]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder_param', [$params]);
         $res = $this->requestService->postJsonData(self::$url, $data);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder', ['res'=>$res]);
         if ($res['status'] != 1) {
