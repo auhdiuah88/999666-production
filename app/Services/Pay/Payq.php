@@ -150,7 +150,7 @@ class Payq extends PayStrategy
         $params['cmobile'] = $withdrawalRecord->phone;
         $params['cemail'] = $withdrawalRecord->email;
         $params['ifsc'] = $withdrawalRecord->ifsc_code;
-        $params['bcode'] = 'ALHB';
+//        $params['bcode'] = 'ALHB';
         $params['ip'] = request()->ip();
 
 //        $options = array(
