@@ -61,6 +61,10 @@ class BalanceTypeDic
             'value' => 13,
             'name' => '打码量兑换余额'
         ],
+        '14' => [
+            'value' => 14,
+            'name' => '充值返彩金'
+        ],
     ];
 
     public static function data(int $type){

@@ -110,10 +110,10 @@ class Payq extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         unset($params['remark']);
-        if ($this->generateSign($params) <> $sign) {
-            $this->_msg = 'payq-签名错误';
-            return false;
-        }
+//        if ($this->generateSign($params) <> $sign) {
+//            $this->_msg = 'payq-签名错误';
+//            return false;
+//        }
 
         $where = [
             'order_no' => $params['eid'],

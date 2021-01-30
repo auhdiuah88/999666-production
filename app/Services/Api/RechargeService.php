@@ -4,6 +4,7 @@
 namespace App\Services\Api;
 
 use App\Common\Common;
+use App\Dictionary\SettingDic;
 use App\Repositories\Api\RechargeRepository;
 use App\Repositories\Api\SettingRepository;
 use App\Repositories\Api\UserRepository;
@@ -177,6 +178,10 @@ class RechargeService extends PayService
             }
             $rechargeLog->status = 2;
             $rechargeLog->save();
+
+            ##判断返利
+            $config = $this->SettingRepository->getSettingValueByKey(SettingDic::key('RECHARGE_REBATE'));
+            $this->userRepository->rebate($rechargeLog, $config);
 
             DB::commit();
         } catch (\Exception $e) {

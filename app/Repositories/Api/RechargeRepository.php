@@ -3,7 +3,6 @@
 
 namespace App\Repositories\Api;
 
-
 use App\Models\Cx_User_Recharge_Log;
 use App\Models\Cx_Withdrawal_Record;
 use App\Mongodb;
@@ -13,8 +12,6 @@ class RechargeRepository
 {
     protected $cx_User_Recharge_Log;
     protected $cx_Withdrawal_Record;
-
-
     public $_data = [];
 
     public function __construct(
