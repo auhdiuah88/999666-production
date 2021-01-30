@@ -153,25 +153,25 @@ class Payq extends PayStrategy
 //        $params['bcode'] = $withdrawalRecord->ifsc_code;
         $params['ip'] = request()->ip();
 
-        $options = array(
-            'http' => array(
-                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method'  => 'POST',
-                'content' => http_build_query($signparam).'&'.http_build_query($params)
-            )
-        );
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',$options);
-        $context  = stream_context_create($options);
-        $res = file_get_contents(self::$url,false, $context);
-        if(!$res){
-            $this->_msg = '代付申请失败';
-            return false;
-        }
-        $res = json_decode($res,true);
+//        $options = array(
+//            'http' => array(
+//                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+//                'method'  => 'POST',
+//                'content' => http_build_query($signparam).'&'.http_build_query($params)
+//            )
+//        );
+//        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',$options);
+//        $context  = stream_context_create($options);
+//        $res = file_get_contents(self::$url,false, $context);
+//        if(!$res){
+//            $this->_msg = '代付申请失败';
+//            return false;
+//        }
+//        $res = json_decode($res,true);
 
-//        $res = $this->requestService->postFormData(self::$url, $params, [
-//            "content-type" => "application/x-www-form-urlencoded",
-//        ]);
+        $res = $this->requestService->get(self::$url, array_merge($signparam,$params), [
+            "content-type" => "application/x-www-form-urlencoded",
+        ]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder_rtn',[$res]);
         if ($res['status'] != 1) {
             $this->_msg = $res['msg'];
