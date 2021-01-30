@@ -47,7 +47,6 @@ class Payq extends PayStrategy
      */
     public  function generateSign(array $params)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',['str'=>http_build_query($params)]);
         return hash_hmac('sha256',http_build_query($params), $this->privateKey);
     }
 
