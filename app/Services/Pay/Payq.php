@@ -225,6 +225,7 @@ class Payq extends PayStrategy
             'plat_order_id' => $params['eid'],
             'pay_status' => $pay_status
         ];
+        $this->_msg = 1;
         return $where;
     }
 
