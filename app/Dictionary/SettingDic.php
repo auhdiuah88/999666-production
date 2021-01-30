@@ -64,6 +64,10 @@ class SettingDic
             'title' => 'about-us->Is Check Recharge',
             'key' => 'IS_CHECK_RECHARGE'
         ],
+        'RECHARGE_REBATE' => [
+            'title' => 'recharge rebate',
+            'key' => 'RECHARGE_REBATE'
+        ],
     ];
 
     public static function key($key)

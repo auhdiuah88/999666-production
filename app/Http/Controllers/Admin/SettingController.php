@@ -448,4 +448,45 @@ class SettingController extends Controller
         }
     }
 
+    public function getRechargeRebate()
+    {
+        try{
+            $this->SettingService->getRechargeRebate();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function rechargeRebateSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'status' => 'required|integer|in:0,1',
+                'percent' => 'required|numeric|gte:0|lte:1',
+                'max_rebate' => 'required|integer|gte:0',
+                'min_recharge' => 'required|integer|gte:0',
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->rechargeRebateSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

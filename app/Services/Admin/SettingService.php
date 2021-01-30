@@ -523,4 +523,35 @@ class SettingService extends BaseService
         return $key;
     }
 
+    public function getRechargeRebate()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('RECHARGE_REBATE'));
+        if (!$data){
+            $data = [
+                'status' => 0,
+                'percent' => 0,
+                'min_recharge' => 0,
+                'max_rebate' => 0
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function rechargeRebateSave():bool
+    {
+        $status = $this->intInput('status');
+        $percent = $this->floatInput('percent');
+        $max_rebate = $this->intInput('max_rebate');
+        $min_recharge = $this->intInput('min_recharge');
+        $data = compact('status','percent','max_rebate','min_recharge');
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('RECHARGE_REBATE'), $data);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
 }

@@ -246,6 +246,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::get("/crisp","SettingController@getCrisp");
             Route::post("/app","SettingController@appSave");
             Route::get("/app","SettingController@getApp");
+            Route::post("/rechargeRebate","SettingController@rechargeRebateSave");
+            Route::get("/rechargeRebate","SettingController@getRechargeRebate");
             Route::post("/aboutUs","SettingController@aboutUsSave");
             Route::post("/getAboutUs","SettingController@getAboutUs");
         });
