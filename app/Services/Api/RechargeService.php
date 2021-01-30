@@ -180,8 +180,8 @@ class RechargeService extends PayService
             $rechargeLog->save();
 
             ##判断返利
-            $config = $this->SettingRepository->getSettingValueByKey(SettingDic::key('RECHARGE_REBATE'));
-            $this->userRepository->rebate($rechargeLog, $config);
+//            $config = $this->SettingRepository->getSettingValueByKey(SettingDic::key('RECHARGE_REBATE'));
+//            $this->userRepository->rebate($rechargeLog, $config);
 
             DB::commit();
         } catch (\Exception $e) {
