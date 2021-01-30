@@ -64,12 +64,11 @@ class Payq extends PayStrategy
             'publickey' => $this->publicKey,
             'type' => 'recharge',
         ];
-        $data['sign'] = $this->generateSign($params);
-        $data['callback'] = $this->recharge_callback_url;
+        $params['sign'] = $this->generateSign($params);
+        $params['callback'] = $this->recharge_callback_url;
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder_data', [$data]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder_param', [$params]);
-        $res = $this->requestService->postFormData(self::$url, $data, [
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder_data', [$params]);
+        $res = $this->requestService->postFormData(self::$url, $params, [
             "content-type" => "application/x-www-form-urlencoded",
         ]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder', ['res'=>$res]);
