@@ -97,24 +97,26 @@ class Payq extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeCallback',$request->input());
 
         if ($request->status != 1)  {
             $this->_msg = 'payq-recharge-交易未完成';
             return false;
         }
         // 验证签名
-        $params = $request->post();
+        $params = $request->input();
         $sign = $params['sign'];
+        $remark = $params['remark'];
         unset($params['sign']);
         unset($params['type']);
+        unset($params['remark']);
         if ($this->generateSign($params) <> $sign) {
             $this->_msg = 'payq-签名错误';
             return false;
         }
 
         $where = [
-            'order_no' => $request->eid,
+            'order_no' => $params['eid'],
             'pltf_order_id' => $params['uid']
         ];
         return $where;
@@ -139,20 +141,22 @@ class Payq extends PayStrategy
             'publickey' => $this->publicKey,
             'type' => 'withdraw'
         ];
-        $data['sign'] = $this->generateSign($params);
-        $data['payeename'] = $withdrawalRecord->account_holder;
-        $data['bankname'] = $withdrawalRecord->bank_name;
-        $data['remarks'] = 'withdraw';
-        $data['callback'] = $this->withdrawal_callback_url;
-        $data['cmobile'] = $withdrawalRecord->phone;
-        $data['cemail'] = $withdrawalRecord->email;
-        $data['ifsc'] = $withdrawalRecord->ifsc_code;
+        $params['sign'] = $this->generateSign($params);
+        $params['payeename'] = $withdrawalRecord->account_holder;
+        $params['bankname'] = $withdrawalRecord->bank_name;
+        $params['remarks'] = 'withdraw';
+        $params['callback'] = $this->withdrawal_callback_url;
+        $params['cmobile'] = $withdrawalRecord->phone;
+        $params['cemail'] = $withdrawalRecord->email;
+        $params['ifsc'] = $withdrawalRecord->ifsc_code;
 //        $params['bcode'] = $withdrawalRecord->ifsc_code;
-        $data['ip'] = request()->ip();
+        $params['ip'] = request()->ip();
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder',$data);
-        $res = $this->requestService->postJsonData(self::$url, $data);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('inpays_withdrawalOrder',[$res]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',$params);
+        $res = $this->requestService->postFormData(self::$url, $params, [
+            "content-type" => "application/x-www-form-urlencoded",
+        ]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',[$res]);
         if ($res['status'] != 1) {
             $this->_msg = $res['msg'];
             return false;
@@ -168,15 +172,15 @@ class Payq extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalCallback',$request->input());
 
         $pay_status = 0;
         $status = (int)($request->status);
         switch($status){
-            case "payout_success":
+            case 1:
                 $pay_status = 1;
                 break;
-            case "payout_fail":
+            case 2:
                 $pay_status = 3;
                 break;
             default:
@@ -188,16 +192,18 @@ class Payq extends PayStrategy
             return false;
         }
         // 验证签名
-        $params = $request->post();
+        $params = $request->input();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params,2) <> $sign) {
-            $this->_msg = 'inpays-签名错误';
+        unset($params['type']);
+        unset($params['remark']);
+        if ($this->generateSign($params) <> $sign) {
+            $this->_msg = 'payq-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->out_trade_no,
-            'plat_order_id' => '',
+            'order_no' => $params['eid'],
+            'plat_order_id' => $params['eid'],
             'pay_status' => $pay_status
         ];
         return $where;
