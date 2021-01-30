@@ -25,7 +25,8 @@ class PayContext
         Rspay $rspay,
         In8pay $in8pay,
         Richpay $richpay,
-        Inpays $inpays
+        Inpays $inpays,
+        Payq $payq
     )
     {
         // 每种api地址对应的支付公司
@@ -41,7 +42,8 @@ class PayContext
             'rspay' => $rspay,
             'in8pay' => $in8pay,
             'richpay' => $richpay,
-            'inpays' => $inpays
+            'inpays' => $inpays,
+            'payq' => $payq,
         ];
     }
     /**
