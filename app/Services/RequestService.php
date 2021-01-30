@@ -53,7 +53,6 @@ class RequestService
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $res = curl_exec($ch);
-        var_dump($res);
         curl_close($ch);
         return $res;
     }
