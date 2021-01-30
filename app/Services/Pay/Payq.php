@@ -69,7 +69,9 @@ class Payq extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder_data', [$data]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder_param', [$params]);
-        $res = $this->requestService->postJsonData(self::$url, $data);
+        $res = $this->requestService->postFormData(self::$url, $data, [
+            "content-type" => "application/x-www-form-urlencoded",
+        ]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder', ['res'=>$res]);
         if ($res['status'] != 1) {
             $this->_msg = $res['msg'];
