@@ -169,9 +169,11 @@ class Payq extends PayStrategy
 //        }
 //        $res = json_decode($res,true);
 
-        $res = $this->requestService->get(self::$url, array_merge($signparam,$params), [
-            "content-type" => "application/x-www-form-urlencoded",
-        ]);
+        $res = $this->requestService->postHttpBuildQuery(self::$url, array_merge($signparam,$params));
+        if(!$res){
+            $this->_msg = '代付申请失败';
+            return false;
+        }
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder_rtn',[$res]);
         if ($res['status'] != 1) {
             $this->_msg = $res['msg'];
