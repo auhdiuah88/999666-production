@@ -137,7 +137,7 @@ class RechargeService extends PayService
             unset($where['pltf_order_id']);
         }
         ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100
-        $money = isset($request->money) ? $request->money : (isset($request->pay_amount) ? $request->pay_amount : $request->amount);
+        $money = isset($request->money) ? $request->money : (isset($request->pay_amount) ? $request->pay_amount : isset($request->amt)?$request->amt:$request->amount);
         if($payProvide == 'in8pay'){ //返回的是分做单位的
             $money = $money / 100;
         }
@@ -180,8 +180,8 @@ class RechargeService extends PayService
             $rechargeLog->save();
 
             ##判断返利
-//            $config = $this->SettingRepository->getSettingValueByKey(SettingDic::key('RECHARGE_REBATE'));
-//            $this->userRepository->rebate($rechargeLog, $config);
+            $config = $this->SettingRepository->getSettingValueByKey(SettingDic::key('RECHARGE_REBATE'));
+            $this->userRepository->rebate($rechargeLog, $config);
 
             DB::commit();
         } catch (\Exception $e) {
