@@ -45,9 +45,12 @@ class RequestService
         return $response->body();
     }
 
-    public function postHttpBuildQuery($url, $params)
+    public function postHttpBuildQuery($url, $params, $header=[])
     {
         $ch = curl_init();
+        if($header){
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        }
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
