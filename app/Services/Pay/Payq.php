@@ -174,6 +174,7 @@ class Payq extends PayStrategy
             $this->_msg = '代付申请失败';
             return false;
         }
+        $res = json_decode($res,true);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder_rtn',[$res]);
         if ($res['status'] != 1) {
             $this->_msg = $res['msg'];
