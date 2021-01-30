@@ -47,6 +47,7 @@ class Payq extends PayStrategy
      */
     public  function generateSign(array $params)
     {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',['str'=>http_build_query($params)]);
         return hash_hmac('sha256',http_build_query($params), $this->privateKey);
     }
 
@@ -150,13 +151,13 @@ class Payq extends PayStrategy
         $params['cemail'] = $withdrawalRecord->email;
         $params['ifsc'] = $withdrawalRecord->ifsc_code;
 //        $params['bcode'] = $withdrawalRecord->ifsc_code;
-        $params['ip'] = request()->ip();
+        $params['ip'] = "128.199.138.209'";
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',$params);
         $res = $this->requestService->postFormData(self::$url, $params, [
             "content-type" => "application/x-www-form-urlencoded",
         ]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder',[$res]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_withdrawalOrder_rtn',[$res]);
         if ($res['status'] != 1) {
             $this->_msg = $res['msg'];
             return false;
