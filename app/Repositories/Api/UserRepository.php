@@ -138,6 +138,7 @@ class UserRepository
         if($config['min_recharge'] > $rechargeLog->money)return;
         $money = $rechargeLog->money;
         $rebate = bcmul($money, $config['percent'],2);
+        if($config['max_rebate'] > 0)$rebate = min($rebate, $config['max_rebate']);
         if($rebate <= 0)return;
         $user = $this->findByIdUser($rechargeLog->user_id);
         $this->updateBalance($user, $rebate, 14,"充值{$money},返利比例{$config['percent']}");
