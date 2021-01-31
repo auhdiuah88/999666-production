@@ -15,8 +15,8 @@ class Payq extends PayStrategy
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
 
-    private $publicKey;  //公钥
-    private $privateKey;  //私钥
+    private $publicKey='zGKqlQN8dj1ike4JsVUYwBO6xpmWHunPATXFrfb0';  //公钥
+    private $privateKey='7b7b4000a647d681ba195194b7fe3ceab4c7f7529a811acb112e9f92208247c384b732b5a8be6fbd04bc8f1de1bfb98d9cecabd87e9f8db08548af1c9726a5b02a7e0c2e056087a96315fddff645a2eae0665f361543dd4367f6d3e2a43d710f221a1aa9fa8dd82bfd8d319ba06de6a84bfe97e26eee6c5efc6fbb24dfb14c4dd4cfbf7b34314112795327b60cce5632dfce205e07cf612ad036d94135a49c66049f622db5016cef75c56d5624a71e15817d8d1a970285e617a6d93484f01ec2664b92671a3d48ed147e12ce5974dcf38ebb6b82bfeed7fbfd1d07eafb78377e34cf8221ddde2d62b740b740533f87d11b7df4517bcd59b5f64829a85c9025dc';  //私钥
 
     public $withdrawMerchantID;
     public $withdrawSecretkey;
@@ -38,8 +38,8 @@ class Payq extends PayStrategy
         $this->rechargeMerchantID = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['merchant_id']:"";
         $this->rechargeSecretkey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['secret_key']:"";
 
-        $this->publicKey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['public_key']:"";
-        $this->privateKey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['private_key']:"";
+//        $this->publicKey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['public_key']:"";
+//        $this->privateKey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['private_key']:"";
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
