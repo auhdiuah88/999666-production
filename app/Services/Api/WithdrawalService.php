@@ -222,7 +222,7 @@ class WithdrawalService extends PayService
             $this->_msg = 'The minimum withdrawal amount is ' . $withdraw_conf['limit']['min'];
             return false;
         }
-        if ($withdraw_type == 'MTBpay') {
+        if ($withdraw_type == 'MTBpay' || $withdraw_type == 'huizhong') {
             ##验证是否支持
             if (!$user_bank->mtbpy_code) {
                 $this->_msg = 'The bank card does not support this withdrawal method';
