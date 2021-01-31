@@ -71,5 +71,10 @@ class BalanceTypeDic
         return self::$type[$type];
     }
 
+    public static function lists():array
+    {
+        return self::$type;
+    }
+
 
 }

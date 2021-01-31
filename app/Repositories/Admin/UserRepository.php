@@ -24,16 +24,24 @@ class UserRepository extends BaseRepository
         return $this->Cx_User->where("is_customer_service", 0)->orderByDesc("last_time")->offset($offset)->limit($limit)->select(["*", "id as total_win_money"])->get()->setAppends(['online_status'])->toArray();
     }
 
-    public function getBalanceLogs($userId, $offset, $limit)
+    public function getBalanceLogs($userId, $offset, $limit, $type)
     {
-        return $this->Cx_User_Balance_Logs->with(["admin" => function ($query) {
+        $where = [
+            'user_id' => ['=', $userId]
+        ];
+        if($type > 0)$where['type'] = ['=', $type];
+        return makeModel($where, $this->Cx_User_Balance_Logs)->with(["admin" => function ($query) {
             $query->select(["id", "nickname"]);
-        }])->where("user_id", $userId)->offset($offset)->limit($limit)->orderByDesc("time")->select(["*", "type as type_map"])->get()->toArray();
+        }])->offset($offset)->limit($limit)->orderByDesc("time")->select(["*", "type as type_map"])->get()->toArray();
     }
 
-    public function countBalanceLogs($userId)
+    public function countBalanceLogs($userId, $type)
     {
-        return $this->Cx_User_Balance_Logs->where("user_id", $userId)->count("id");
+        $where = [
+            'user_id' => ['=', $userId]
+        ];
+        if($type > 0)$where['type'] = ['=', $type];
+        return makeModel($where, $this->Cx_User_Balance_Logs)->count("id");
     }
 
     public function getRecommenders()

@@ -69,6 +69,8 @@ class HomeService extends BaseService
         $item->subCommission = $this->HomeRepository->sumSubCommission($ids, $timeMap);
         // 赠金
         $item->giveMoney = $this->HomeRepository->sumGiveMoney($ids, $timeMap);
+        // 充值赠送彩金
+        $item->rechargeRebate = $this->HomeRepository->sumRechargeRebate($ids, $timeMap);
         // 购买签到礼包
         $item->payEnvelope = $this->HomeRepository->countPayEnvelope($ids, $timeMap);
         // 领取签到礼包

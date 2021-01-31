@@ -4,6 +4,7 @@
 namespace App\Services\Admin;
 
 
+use App\Dictionary\BalanceTypeDic;
 use App\Models\Cx_User;
 use App\Repositories\Admin\UserRepository as Repository;
 use App\Repositories\Api\UserRepository;
@@ -352,11 +353,16 @@ class UserService extends BaseService
         }
     }
 
-    public function getBalanceLogs($id, $page, $limit)
+    public function getBalanceLogs($id, $page, $limit, $type)
     {
-        $list = $this->UserRepository->getBalanceLogs($id, ($page - 1) * $limit, $limit);
-        $total = $this->UserRepository->countBalanceLogs($id);
+        $list = $this->UserRepository->getBalanceLogs($id, ($page - 1) * $limit, $limit, $type);
+        $total = $this->UserRepository->countBalanceLogs($id, $type);
         $this->_data = ["total" => $total, "list" => $list];
+    }
+
+    public function getBalanceType()
+    {
+        $this->_data = array_values(BalanceTypeDic::lists());
     }
 
     public function editFakeBettingMoney(){
