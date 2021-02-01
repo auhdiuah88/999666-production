@@ -9,6 +9,7 @@ use App\Repositories\Admin\UserRepository;
 use App\Repositories\Admin\WithdrawalRepository;
 use App\Services\BaseService;
 use App\Services\Pay\PayContext;
+use App\Services\Pay\PayStrategy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use function Symfony\Component\VarDumper\Dumper\esc;
@@ -121,6 +122,8 @@ class WithdrawalService extends BaseService
     {
         $data = request()->post();
         $withdrawalRecord = $this->WithdrawalRepository->findById($data["id"]);
+        $order_no = PayStrategy::onlyosn();
+        $withdrawalRecord->order_no = $order_no;
         if($withdrawalRecord->status != 1){
             $this->_code = 414;
             $this->_msg = '订单不支持重新提交代付操作';
@@ -147,6 +150,7 @@ class WithdrawalService extends BaseService
         }
         $update['id'] = $data["id"];
         $update['pltf_order_no'] = $result['pltf_order_no']??'';
+        $update['order_no'] = $order_no;
         $update["approval_time"] = time();
         if ($this->WithdrawalRepository->editRecord($update)) {
             $this->_msg = "重新提交成功";
