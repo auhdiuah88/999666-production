@@ -72,7 +72,7 @@ class UserController extends Controller
             $rules = [
                 "phone" => "required",
                 "password" => "required",
-//                "sms_code" => "required"
+                "sms_code" => "required"
             ];
 //        $massages = [
 //            "phone.required" => "用户名不能为空",
