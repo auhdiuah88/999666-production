@@ -152,6 +152,7 @@ class WithdrawalService extends BaseService
         $update['pltf_order_no'] = $result['pltf_order_no']??'';
         $update['order_no'] = $order_no;
         $update["approval_time"] = time();
+        $update["pay_status"] = 0;
         if ($this->WithdrawalRepository->editRecord($update)) {
             $this->_msg = "重新提交成功";
             return true;
