@@ -69,6 +69,7 @@ class Payq extends PayStrategy
         ];
         $params['sign'] = $this->generateSign($params);
         $params['callback'] = $this->recharge_callback_url;
+        $params['returnurl'] = env('SHARE_URL');
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('payq_rechargeOrder_data', [$params]);
         $res = $this->requestService->postFormData(self::$url, $params, [
