@@ -85,10 +85,8 @@ class GameController extends Controller
     public function Sd_Prize_Opening(Request $request)
     {
         $rules = [
-            "number" => "required|max:9|integer",
+            "number" => "required|lte:9|integer|gte:0",
             "game_play_id" => "required|integer",
-
-
         ];
         $massages = [
             "number.required" => "开奖号不能为空",
