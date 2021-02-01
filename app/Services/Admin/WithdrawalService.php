@@ -84,7 +84,7 @@ class WithdrawalService extends BaseService
                 $this->_msg = $strategyClass->_msg;
                 return false;
             }
-            $data['pltf_order_no'] = $request['pltf_order_no'];
+            $data['pltf_order_no'] = $result['pltf_order_no']??'';
 //            $data['order_no'] = $request['order_no'];
         } elseif ($data["status"] == 2) {  // 如果审核不通过，将冻结金额返还
             $user = $this->UserRepository->findById($withdrawalRecord->user_id);
@@ -113,6 +113,47 @@ class WithdrawalService extends BaseService
         } else {
             $this->_code = 402;
             $this->_msg = "审核失败";
+            return false;
+        }
+    }
+
+    public function retry()
+    {
+        $data = request()->post();
+        $withdrawalRecord = $this->WithdrawalRepository->findById($data["id"]);
+        if($withdrawalRecord->status != 1){
+            $this->_code = 414;
+            $this->_msg = '订单不支持重新提交代付操作';
+            return false;
+        }
+        if($withdrawalRecord->pay_status != 3){
+            $this->_code = 414;
+            $this->_msg = '订单不支持重新提交代付操作';
+            return false;
+        }
+
+        $payProvide = $withdrawalRecord->with_type;
+        $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付公司类
+        if(!$strategyClass){
+            $this->_code = 414;
+            $this->_msg = "Payment method not configured";
+            return false;
+        }
+        $result = $strategyClass->withdrawalOrder($withdrawalRecord);
+        if (!$result) {
+            $this->_code = 414;
+            $this->_msg = $strategyClass->_msg;
+            return false;
+        }
+        $update['id'] = $data["id"];
+        $update['pltf_order_no'] = $result['pltf_order_no']??'';
+        $update["approval_time"] = time();
+        if ($this->WithdrawalRepository->editRecord($update)) {
+            $this->_msg = "重新提交成功";
+            return true;
+        } else {
+            $this->_code = 402;
+            $this->_msg = "重新提交失败";
             return false;
         }
     }
