@@ -76,6 +76,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
         Route::group(["prefix" => "withdrawal"], function () {
             Route::get("/findAll", "WithdrawalController@findAll");
             Route::post("/audit", "WithdrawalController@auditRecord");
+            Route::post("/retry", "WithdrawalController@retry");
             Route::post("/search", "WithdrawalController@searchRecord");
             Route::post("/failure", "WithdrawalController@batchFailureRecord");
             Route::post("/pass", "WithdrawalController@batchPassRecord");

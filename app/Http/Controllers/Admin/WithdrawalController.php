@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Admin\WithdrawalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class WithdrawalController extends Controller
@@ -48,6 +49,24 @@ class WithdrawalController extends Controller
     public function auditRecord(Request $request)
     {
         $this->WithdrawalService->auditRecord($request);
+        return $this->AppReturn(
+            $this->WithdrawalService->_code,
+            $this->WithdrawalService->_msg,
+            $this->WithdrawalService->_data
+        );
+    }
+
+    public function retry()
+    {
+        $validator = Validator::make(request()->input(), [
+            'id' => 'required|integer|gte:1'
+        ]);
+        if($validator->fails())
+            return $this->AppReturn(
+                402,
+                $validator->errors()->first()
+            );
+        $this->WithdrawalService->retry();
         return $this->AppReturn(
             $this->WithdrawalService->_code,
             $this->WithdrawalService->_msg,
