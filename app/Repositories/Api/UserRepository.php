@@ -525,4 +525,11 @@ class UserRepository
         $log_id = $this->addBalanceLogGetId($user->id, $back_money,13,"打码量兑换余额{$back_money}", $dq_balance, $wc_balance);
         return $log_id;
     }
+
+    public function registerRebate($user, $config)
+    {
+        if(!$config)return;
+        if($config['status'] != 1 || $config['rebate'] <= 0)return;
+        $this->updateBalance($user, $config['rebate'], 15,"注册赠送彩金");
+    }
 }
