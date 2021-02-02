@@ -16,6 +16,7 @@ class AccountController extends Controller
 
     public function __construct(AccountService $accountService)
     {
+
         $this->AccountService = $accountService;
     }
 
