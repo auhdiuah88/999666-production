@@ -65,6 +65,11 @@ class HomeRepository extends BaseRepository
         return $this->Cx_User_Balance_Logs->where("type", 14)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
     }
 
+    public function sumRegisterRebate($ids, $timeMap)
+    {
+        return $this->Cx_User_Balance_Logs->where("type", 15)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+    }
+
     public function countNewMembers($timeMap, $ids)
     {
         return $this->Cx_User->whereIn("id", $ids)->whereBetween("reg_time", $timeMap)->count("id");
