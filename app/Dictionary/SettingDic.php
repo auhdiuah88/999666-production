@@ -68,6 +68,10 @@ class SettingDic
             'title' => 'recharge rebate',
             'key' => 'RECHARGE_REBATE'
         ],
+        'REGISTER' => [
+            'title' => 'register',
+            'key' => 'REGISTER'
+        ],
     ];
 
     public static function key($key)

@@ -5,6 +5,7 @@ namespace App\Services\Api;
 
 
 use App\Common\Common;
+use App\Dictionary\SettingDic;
 use App\Repositories\Api\SettingRepository;
 use App\Repositories\Api\UserRepository;
 use App\Services\Library\Auth;
@@ -273,6 +274,10 @@ class UserService
 
         $user_id = $this->UserRepository->createUser($data);
         $userObj = $this->UserRepository->findByIdUser($user_id);
+
+        ##注册返利
+        $config = $this->SettingRepository->getSettingValueByKey(SettingDic::key('REGISTER'));
+        $this->UserRepository->registerRebate($userObj, $config);
 
         $token = Crypt::encrypt($userObj->id . "+" . time());
         $userModifyData = [

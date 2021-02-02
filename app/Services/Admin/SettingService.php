@@ -570,4 +570,31 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function getRegister()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('REGISTER'));
+        if (!$data){
+            $data = [
+                'status' => 0,
+                'rebate' => 0
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function registerSave():bool
+    {
+        $status = $this->intInput('status');
+        $rebate = $this->intInput('rebate');
+        $data = compact('status','rebate');
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('REGISTER'), $data);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
 }

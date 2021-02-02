@@ -489,4 +489,43 @@ class SettingController extends Controller
         }
     }
 
+    public function registerSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'status' => 'required|integer|in:0,1',
+                'rebate' => 'required|integer|gte:0',
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->registerSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function getRegister()
+    {
+        try{
+            $this->SettingService->getRegister();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }
