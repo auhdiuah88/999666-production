@@ -4,6 +4,7 @@
 namespace App\Services\Pay;
 
 
+use App\Dictionary\BankCodeDic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -153,7 +154,7 @@ class Payq extends PayStrategy
         $params['cmobile'] = $withdrawalRecord->phone;
         $params['cemail'] = $withdrawalRecord->email;
         $params['ifsc'] = $withdrawalRecord->ifsc_code;
-//        $params['bcode'] = 'ALHB';
+        $params['bcode'] = BankCodeDic::$payq[$withdrawalRecord->bank_name];
         $params['ip'] = request()->ip();
 
 //        $options = array(

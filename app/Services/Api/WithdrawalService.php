@@ -4,6 +4,7 @@
 namespace App\Services\Api;
 
 
+use App\Dictionary\BankCodeDic;
 use App\Repositories\Api\SettingRepository;
 use App\Repositories\Api\SystemRepository;
 use App\Repositories\Api\UserRepository;
@@ -225,6 +226,14 @@ class WithdrawalService extends PayService
         if ($withdraw_type == 'MTBpay' || $withdraw_type == 'huizhong') {
             ##验证是否支持
             if (!$user_bank->mtbpy_code) {
+                $this->_msg = 'The bank card does not support this withdrawal method';
+                return false;
+            }
+        }
+
+        if($withdraw_type == 'payq'){
+            ##验证银行是否在可用银行内
+            if(!in_array($user_bank->bank_type_id,BankCodeDic::$payq)){
                 $this->_msg = 'The bank card does not support this withdrawal method';
                 return false;
             }
