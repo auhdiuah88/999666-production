@@ -121,7 +121,7 @@ class HuiZhong extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_rechargeCallback',$request->post());
 
         if ($request->status != 'SUCCESS')  {
             $this->_msg = 'MTB-recharge-交易未完成';
@@ -168,9 +168,9 @@ class HuiZhong extends PayStrategy
             'notifyUrl' => $this->withdrawal_callback_url
         ];
         $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleOrder', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalOrder',$res);
         if ($res['status'] != 'SUCCESS') {
             $this->_msg = $res['err_msg'];
             return false;
@@ -186,7 +186,7 @@ class HuiZhong extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalCallback',$request->post());
 
         $pay_status = 0;
         $status = (string)($request->status);
@@ -233,13 +233,13 @@ class HuiZhong extends PayStrategy
 
         $params = compact('request_no','request_time','mer_no','mer_order_no');
         $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Param',$params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawSingleQuery_Param',$params);
         $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
         if(!$res){
             return false;
         }
         if($res['query_status'] != 'SUCCESS'){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Err',$res);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawSingleQuery_Err',$res);
             return false;
         }
         return $res;
