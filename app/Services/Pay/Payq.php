@@ -226,7 +226,7 @@ class Payq extends PayStrategy
         }
         $where = [
             'order_no' => $params['eid'],
-            'plat_order_id' => $params['eid'],
+            'plat_order_id' => $params['uid'],
             'pay_status' => $pay_status
         ];
         $this->_msg = 1;
