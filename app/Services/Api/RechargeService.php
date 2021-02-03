@@ -136,7 +136,7 @@ class RechargeService extends PayService
             $pltf_order_id = $where['pltf_order_id'];
             unset($where['pltf_order_id']);
         }
-        $requestData = $request->input();
+        $requestData = $request->all();
         ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100
         $money = isset($requestData['money']) ? $requestData['money'] : (isset($requestData['pay_amount']) ? $requestData['pay_amount'] : isset($requestData['amt'])?$requestData['amt']:$requestData['amount']);
         if($payProvide == 'in8pay'){ //返回的是分做单位的
