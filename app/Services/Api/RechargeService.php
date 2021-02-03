@@ -133,6 +133,7 @@ class RechargeService extends PayService
             $this->_msg = $strategyClass->_msg;
             return false;
         }
+        var_dump($where);
         if(isset($where['pltf_order_id'])){
             $pltf_order_id = $where['pltf_order_id'];
             unset($where['pltf_order_id']);
