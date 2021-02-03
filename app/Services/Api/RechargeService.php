@@ -18,6 +18,7 @@ use App\Services\PayService;
 use App\Services\RequestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RechargeService extends PayService
 {
@@ -188,6 +189,7 @@ class RechargeService extends PayService
         } catch (\Exception $e) {
             DB::rollBack();
             $this->_msg = $e->getMessage();
+            Log::channel('mytest')->info('rechargeCallback_err', ['err'=>$e->getMessage(), 'line'=>$e->getLine()]);
             return false;
         }
         return true;
