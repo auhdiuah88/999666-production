@@ -132,10 +132,10 @@ class MTBpay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-        if ($this->generateSignRigorous($params,1) <> $sign) {
-            $this->_msg = 'MTB-签名错误';
-            return false;
-        }
+//        if ($this->generateSignRigorous($params,1) <> $sign) {
+//            $this->_msg = 'MTB-签名错误';
+//            return false;
+//        }
 
         $where = [
             'order_no' => $request->mer_order_no,
