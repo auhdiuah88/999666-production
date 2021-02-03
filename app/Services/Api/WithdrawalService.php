@@ -231,13 +231,13 @@ class WithdrawalService extends PayService
             }
         }
 
-        if($withdraw_type == 'payq'){
-            ##验证银行是否在可用银行内
-            if(!in_array($user_bank->bank_type_id,BankCodeDic::$payq)){
-                $this->_msg = 'The bank card does not support this withdrawal method';
-                return false;
-            }
-        }
+//        if($withdraw_type == 'payq'){
+//            ##验证银行是否在可用银行内
+//            if(!in_array($user_bank->bank_type_id,BankCodeDic::$payq)){
+//                $this->_msg = 'The bank card does not support this withdrawal method';
+//                return false;
+//            }
+//        }
 
         // 0:用户提现 余额提现
         if ($type == 0) {
