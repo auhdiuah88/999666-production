@@ -154,6 +154,12 @@ class RechargeService extends PayService
             return false;
         }
 
+        ##判断充值金额
+        if($rechargeLog->money > $money){
+            $this->_msg = '充值金额小于订单金额';
+            return false;
+        }
+
         DB::beginTransaction();
         try {
             $user = $this->userRepository->findByIdUser($rechargeLog->user_id);
