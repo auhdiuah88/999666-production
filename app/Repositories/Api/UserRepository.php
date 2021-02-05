@@ -129,14 +129,13 @@ class UserRepository
         return $this->updateBalance($user, $money, 2, "充值成功，充值金额{$money}");
     }
 
-    public function rebate($rechargeLog, $config)
+    public function rebate($rechargeLog, $config, $money)
     {
         if(!$config)return;
         if(!isset($config['status']) || !isset($config['percent']) || !isset($config['max_rebate']) || !isset($config['min_recharge']))return;
         if($config['status'] != 1)return;
         if($config['percent'] <= 0)return;
         if($config['min_recharge'] > $rechargeLog->money)return;
-        $money = $rechargeLog->money;
         $rebate = bcmul($money, $config['percent'],2);
         if($config['max_rebate'] > 0)$rebate = min($rebate, $config['max_rebate']);
         if($rebate <= 0)return;
