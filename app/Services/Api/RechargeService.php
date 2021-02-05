@@ -155,10 +155,10 @@ class RechargeService extends PayService
         }
 
         ##判断充值金额
-        if($rechargeLog->money > $money){
-            $this->_msg = '充值金额小于订单金额';
-            return false;
-        }
+//        if($rechargeLog->money > $money){
+//            $this->_msg = '充值金额小于订单金额';
+//            return false;
+//        }
 
         DB::beginTransaction();
         try {
