@@ -205,7 +205,9 @@ class RechargeService extends PayService
      */
     public function rechargeLog($request)
     {
-        return $this->rechargeRepository->getRechargeLogs($request->status, $request->limit, $request->page);
+        $userInfo = $request->get('userInfo');
+        $uid = $userInfo['id'];
+        return $this->rechargeRepository->getRechargeLogs($uid, $request->status, $request->limit, $request->page);
     }
 
     public function rechargeConfirm($request)

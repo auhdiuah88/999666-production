@@ -56,9 +56,9 @@ class RechargeRepository
     /**
      *  获取充值记录
      */
-    public function getRechargeLogs($status = 1, $limit = 10, $page = 1)
+    public function getRechargeLogs($uid, $status = 1, $limit = 10, $page = 1)
     {
-        return $this->cx_User_Recharge_Log->where('status', $status)->orderBy('time', 'desc')
+        return $this->cx_User_Recharge_Log->where("user_id", $uid)->where('status', $status)->orderBy('time', 'desc')
             ->select('order_no', 'time', 'money', 'status', 'native_url')
             ->paginate($limit, ['*'], 'page', $page)->getCollection();
     }
