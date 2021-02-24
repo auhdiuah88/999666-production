@@ -28,8 +28,8 @@ Route::post("/login", "Api\UserController@Login");
 Route::post("/register", "Api\UserController@Register");
 Route::get("/h5Alert", "Api\SystemController@h5Alert");
 Route::get("/serviceSetting", "Api\SystemController@serviceSetting");
-Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
-Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
+//Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
+//Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
 
 // 充值回调
 Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback");

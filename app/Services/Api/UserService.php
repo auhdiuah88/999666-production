@@ -320,6 +320,15 @@ class UserService
             $this->error = 'Please try again later';
             return false;
         }
+
+        $ip = \request()->ip();
+        $ipKey = $key . str_replace('.','_', $ip);
+        if (Redis::exists($ipKey)) {
+            $this->error_code = 414;
+            $this->error = 'Invalid ip, Please try again later';
+            return false;
+        }
+
         $result = $this->sendcode($phone);
         if ($result['code'] <> 200) {
             $this->error_code = 414;
@@ -328,6 +337,11 @@ class UserService
         }
         Redis::set($key . $phone, $result["obj"]);
         Redis::expire($key . $phone, self::REDIS_CODE_TTL);
+
+        ##存入IP请求
+
+        Redis::set($ipKey, date('Y-m-d H:i:s'));
+        Redis::expire($ipKey, self::REDIS_CODE_TTL);
 
 //        Log::channel('mytest')->info('发送短信验证码', $result);
 
