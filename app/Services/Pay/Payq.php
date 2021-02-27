@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class Payq extends PayStrategy
 {
 
-    protected static $url = 'https://payq.jinweiyule.com/api88779';    // 网关
+    protected static $url = 'http://q.paywbp.com/api88779';    // 网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
