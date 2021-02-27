@@ -7,6 +7,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\BettingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class BettingController extends Controller
@@ -57,6 +59,55 @@ class BettingController extends Controller
     public function statisticsBettingLogs()
     {
         $this->BettingService->statisticsBettingLogs();
+        return $this->AppReturn(
+            $this->BettingService->_code,
+            $this->BettingService->_msg,
+            $this->BettingService->_data
+        );
+    }
+
+    /**
+     * 投注提醒用户列表
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function noticeList()
+    {
+        $validator = Validator::make(request()->input(),
+            [
+                'page' => ['required', 'integer', 'gte:1'],
+                'size' => ['required', 'integer', 'gte:1', 'lte:30'],
+                'user_id' => ['integer', 'gte:0']
+            ]
+        );
+        if($validator->fails())
+            return $this->AppReturn(
+                403,
+                $validator->errors()->first()
+            );
+        $this->BettingService->noticeList();
+        return $this->AppReturn(
+            $this->BettingService->_code,
+            $this->BettingService->_msg,
+            $this->BettingService->_data
+        );
+    }
+
+    public function noticeBettingList()
+    {
+        $validator = Validator::make(request()->input(),
+            [
+                'page' => ['required', 'integer', 'gte:1'],
+                'size' => ['required', 'integer', 'gte:1', 'lte:30'],
+                'user_id' => ['required', 'integer', 'gte:0'],
+                'sort' => ['required', Rule::in(1,2)]
+            ]
+        );
+        if($validator->fails())
+            return $this->AppReturn(
+                403,
+                $validator->errors()->first()
+            );
+        $this->BettingService->noticeBettingList();
         return $this->AppReturn(
             $this->BettingService->_code,
             $this->BettingService->_msg,

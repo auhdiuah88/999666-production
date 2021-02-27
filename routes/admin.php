@@ -182,6 +182,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::get("/findAll", "BettingController@findAll");
             Route::post("/search", "BettingController@searchBettingLogs");
             Route::get("/statistics", "BettingController@statisticsBettingLogs");
+            Route::get("/noticeList", "BettingController@noticeList");
+            Route::get("/noticeBettingList", "BettingController@noticeBettingList");
         });
 
         // 会员当日利差

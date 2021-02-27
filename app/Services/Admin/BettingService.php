@@ -87,4 +87,37 @@ class BettingService extends BaseService
     {
         $this->_data = $this->BettingRepository->statistics($type);
     }
+
+    /**
+     * 下注提醒用户列表
+     */
+    public function noticeList()
+    {
+        $size = $this->sizeInput();
+        $user_id = $this->intInput('user_id');
+        $phone = $this->strInput('phone');
+        $where =
+            [
+                'is_betting_notice' => ['=', 1]
+            ];
+        if($user_id)
+            $where['id'] = ['=', $user_id];
+        if($phone)
+            $where['phone'] = ['=', $phone];
+        $this->_data = $this->BettingRepository->noticeList($where, $size);
+    }
+
+    public function noticeBettingList()
+    {
+        $size = $this->sizeInput();
+        $sort = $this->intInput('sort');
+        $user_id = $this->intInput('user_id');
+        $where =
+            [
+                'user_id' => ['=', $user_id]
+            ];
+        $this->_data = $this->BettingRepository->noticeBettingList($where, $sort, $size);
+//        $this->_data = $this->BettingRepository->noticeBettingList($sort, $size);
+    }
+
 }

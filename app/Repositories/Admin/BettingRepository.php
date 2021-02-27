@@ -152,4 +152,87 @@ class BettingRepository extends BaseRepository
         }
         return $where;
     }
+
+    /**
+     * 下注提醒用户列表
+     * @param $where
+     * @param $size
+     * @return mixed
+     */
+    public function noticeList($where, $size)
+    {
+        return makeModel($where, $this->Cx_User)
+            ->select(['id', 'phone', 'balance', 'cl_withdrawal', 'is_first_recharge', 'cl_betting', 'cl_betting_total'])
+            ->orderByDesc('cl_betting')
+            ->paginate($size);
+    }
+
+    /**
+     * 下厨提醒用户投注列表
+     * @param $sort
+     * @param $size
+     * @return mixed
+     */
+    public function noticeBettingList2($sort, $size)
+    {
+        $sortArr = [
+            1 => 'money',
+            2 => 'betting_time'
+        ];
+        $sub = $this->Cx_User->where(['is_betting_notice'=>['=', 1]])->select(['id']);
+        return $this->Cx_Game_Betting
+            ->joinSub($sub, 'user', function($join){
+                $join->on('game_betting.user_id', '=', 'user.id');
+            })
+            ->select(['user_id','betting_num', 'game_betting.id as betting_id', 'game_id', 'game_p_id', 'game_c_x_id', 'money', 'odds', 'win_money', 'betting_time', 'settlement_time', 'status', 'type', 'service_charge'])
+            ->with(
+                [
+                    'game_c_x' => function($query){
+                        $query->select(['id', 'name']);
+                    },
+                    'game_name' => function($query)
+                    {
+                        $query->select(['id', 'name']);
+                    },
+                    'game_play' => function($query){
+                        $query->select(['id', 'number', 'prize_number', 'is_status']);
+                    }
+                ]
+            )
+            ->orderByDesc($sortArr[$sort])
+            ->paginate($size);
+    }
+
+    /**
+     * 下厨提醒用户投注列表
+     * @param $where
+     * @param $sort
+     * @param $size
+     * @return mixed
+     */
+    public function noticeBettingList($where, $sort, $size)
+    {
+        $sortArr = [
+            1 => 'money',
+            2 => 'betting_time'
+        ];
+        return makeModel($where, $this->Cx_Game_Betting)
+            ->select(['user_id','betting_num', 'game_betting.id as betting_id', 'game_id', 'game_p_id', 'game_c_x_id', 'money', 'odds', 'win_money', 'betting_time', 'settlement_time', 'status', 'type', 'service_charge'])
+            ->with(
+                [
+                    'game_c_x' => function($query){
+                        $query->select(['id', 'name']);
+                    },
+                    'game_name' => function($query)
+                    {
+                        $query->select(['id', 'name']);
+                    },
+                    'game_play' => function($query){
+                        $query->select(['id', 'number', 'prize_number', 'is_status']);
+                    }
+                ]
+            )
+            ->orderByDesc($sortArr[$sort])
+            ->paginate($size);
+    }
 }
