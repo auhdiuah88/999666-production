@@ -395,4 +395,33 @@ class UserService extends BaseService
         return true;
     }
 
+    public function groupUpList(): bool
+    {
+        $user_id = $this->intInput('user_id');
+        $size = $this->sizeInput();
+        $user = $this->UserRepository->findById($user_id);
+        if(!$user){
+            $this->_code = 402;
+            $this->_msg = '用户不存在';
+            return false;
+        }
+        $relation = trim($user['invite_relation'],'-');
+        $relation = explode('-',$relation);
+        $where = [
+            'id' => ['in', $relation]
+        ];
+        $this->_data = $this->UserRepository->groupUpList($where, $size, $relation);
+        return true;
+    }
+
+    public function groupDownList()
+    {
+        $user_id = $this->intInput('user_id');
+        $size = $this->sizeInput();
+        $where = [
+            'invite_relation' => ['like', "%-{$user_id}-%"]
+        ];
+        $this->_data = $this->UserRepository->groupDownList($where, $size);
+    }
+
 }

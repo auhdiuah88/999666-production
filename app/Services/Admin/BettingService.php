@@ -112,10 +112,14 @@ class BettingService extends BaseService
         $size = $this->sizeInput();
         $sort = $this->intInput('sort');
         $user_id = $this->intInput('user_id');
+        $type = $this->intInput('type');
+
         $where =
             [
                 'user_id' => ['=', $user_id]
             ];
+        if($type)
+            $where['game_id'] = ['=', $type];
         $this->_data = $this->BettingRepository->noticeBettingList($where, $sort, $size);
 //        $this->_data = $this->BettingRepository->noticeBettingList($sort, $size);
     }

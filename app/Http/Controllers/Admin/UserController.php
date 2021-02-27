@@ -259,4 +259,48 @@ class UserController extends Controller
         }
     }
 
+    public function groupUpList()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'user_id' => ['required', 'gte:1', 'integer'],
+                'page' => ['required', 'gte:1', 'integer'],
+                'size' => ['required', 'gte:1', 'lte:30', 'integer'],
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(402, $validator->errors()->first());
+            $this->UserService->groupUpList();
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
+    public function groupDownList()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'user_id' => ['required', 'gte:1', 'integer'],
+                'page' => ['required', 'gte:1', 'integer'],
+                'size' => ['required', 'gte:1', 'lte:30', 'integer'],
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(402, $validator->errors()->first());
+            $this->UserService->groupDownList();
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
 }

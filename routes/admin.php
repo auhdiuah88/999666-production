@@ -114,6 +114,9 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/clearFakeBetting", "UserController@clearFakeBetting");
             Route::post("/searchUserByPhoneLike", "UserController@searchUserByPhoneLike");
 
+            Route::get("/groupUpList","UserController@groupUpList");
+            Route::get("/groupDownList","UserController@groupDownList");
+
             Route::get("/findCustomerServiceByPhone", "UserController@findCustomerServiceByPhone");
             Route::post("/editFakeBettingMoney", "UserController@editFakeBettingMoney");
             Route::group(["prefix" => "groupLeader"], function () {

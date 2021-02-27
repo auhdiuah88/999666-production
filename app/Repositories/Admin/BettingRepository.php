@@ -217,7 +217,7 @@ class BettingRepository extends BaseRepository
             2 => 'betting_time'
         ];
         return makeModel($where, $this->Cx_Game_Betting)
-            ->select(['user_id','betting_num', 'game_betting.id as betting_id', 'game_id', 'game_p_id', 'game_c_x_id', 'money', 'odds', 'win_money', 'betting_time', 'settlement_time', 'status', 'type', 'service_charge'])
+            ->select(['user_id','betting_num', 'game_betting.id as betting_id', 'game_id', 'game_p_id', 'game_c_x_id', 'money', 'odds', 'win_money', 'betting_time', 'settlement_time', 'status', 'type', 'service_charge', 'betting_time as betting_time_format', 'settlement_time as settlement_time_format'])
             ->with(
                 [
                     'game_c_x' => function($query){

@@ -249,4 +249,21 @@ class UserRepository extends BaseRepository
         return true;
     }
 
+    public function groupUpList($where, $size, $relation)
+    {
+        $relation = implode(',',$relation);
+        return makeModel($where, $this->Cx_User)
+            ->select(['id', 'phone', 'balance', 'cl_withdrawal', 'commission', 'total_recharge', 'cl_betting', 'cl_betting_total', 'is_group_leader', 'is_customer_service'])
+            ->orderByRaw("FIELD(id, " . $relation . ")")
+            ->paginate($size);
+    }
+
+    public function groupDownList($where, $size)
+    {
+        return makeModel($where, $this->Cx_User)
+            ->select(['id', 'phone', 'balance', 'cl_withdrawal', 'commission', 'total_recharge', 'cl_betting', 'cl_betting_total', 'is_group_leader', 'is_customer_service'])
+            ->orderBy('id', 'asc')
+            ->paginate($size);
+    }
+
 }

@@ -55,4 +55,14 @@ class Cx_Game_Betting extends Model
             return '';
         }
     }
+
+    public function getBettingTimeFormatAttribute()
+    {
+        return date('Y-m-d H:i:s', $this->betting_time);
+    }
+
+    public function getSettlementTimeFormatAttribute()
+    {
+        return date('Y-m-d H:i:s', $this->betting_time);
+    }
 }

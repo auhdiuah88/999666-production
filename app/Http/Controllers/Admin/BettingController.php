@@ -99,7 +99,7 @@ class BettingController extends Controller
                 'page' => ['required', 'integer', 'gte:1'],
                 'size' => ['required', 'integer', 'gte:1', 'lte:30'],
                 'user_id' => ['required', 'integer', 'gte:0'],
-                'sort' => ['required', Rule::in(1,2)]
+                'sort' => ['required', Rule::in(1,2)],
             ]
         );
         if($validator->fails())
