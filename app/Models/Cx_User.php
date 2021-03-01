@@ -137,4 +137,9 @@ class Cx_User extends Model
     {
         $query->where('is_group_leader', 1);
     }
+
+    public function admin()
+    {
+        return $this->belongsTo(Cx_Admin::class,'id','user_id');
+    }
 }
