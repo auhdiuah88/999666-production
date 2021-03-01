@@ -168,7 +168,21 @@ class UserRepository extends BaseRepository
     }
     public function findGroupLeaders($where, $offset, $limit)
     {
-        return $this->Cx_User->groupLeader()->where($where)->offset($offset)->limit($limit)->orderByDesc("last_time")->get()->toArray();
+        return $this->Cx_User
+            ->groupLeader()
+            ->where($where)
+            ->with(
+                [
+                    'admin' => function($query){
+                        $query->select(['id', 'user_id', 'username']);
+                    }
+                ]
+            )
+            ->offset($offset)
+            ->limit($limit)
+            ->orderByDesc("last_time")
+            ->get()
+            ->toArray();
     }
 
     public function countGroupLeaders($where)

@@ -20,7 +20,22 @@ class AccountRepository extends BaseRepository
 
     public function findAll($offset, $limit, $user_id)
     {
-        return $this->Cx_User->where("is_customer_service", 1)->where("is_group_leader", 2)->where("invite_relation", "like", "%-{$user_id}-%")->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link", "status"])->offset($offset)->limit($limit)->get()->toArray();
+        return $this->Cx_User
+            ->where("is_customer_service", 1)
+            ->where("is_group_leader", 2)
+            ->where("invite_relation", "like", "%-{$user_id}-%")
+            ->with(
+                [
+                    'admin' => function($query){
+                        $query->select(['id', 'user_id', 'username']);
+                    }
+                ]
+            )
+            ->select(["id", "phone", "nickname", "reg_time", "code", "whats_app_account", "whats_app_link", "status"])
+            ->offset($offset)
+            ->limit($limit)
+            ->get()
+            ->toArray();
     }
 
     public function countAll($user_id)
