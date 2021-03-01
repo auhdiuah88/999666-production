@@ -286,12 +286,15 @@ class GameRepository
         $user_obj =$this->Cx_User->where('id',$user_id)->first();
         unset($sq_game->game_id, $sq_game->prize_time);
 
+        $game_config = $this->Get_Game_Config($id);
+
         $row['sq'] = $sq_game;
         $row['bq'] = $bq_game;
         $row['lx'] = $lx_game;  //历史订单
         $row['pr'] = $pr_lx;
         $row['balance'] = $user_obj->balance;
         $row['count_down'] = ($bq_game->end_time - time());
+        $row['lock_time'] = $game_config->lock_time ?? 10;
         return $row;
     }
     //投注接口
