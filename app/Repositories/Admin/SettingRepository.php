@@ -88,7 +88,7 @@ class SettingRepository extends BaseRepository
      */
     public function gameRule()
     {
-        return $this->Cx_Game->select(['id', 'name', 'open_type', 'date_kill', 'one_kill'])->get();
+        return $this->Cx_Game->select(['id', 'name', 'open_type', 'date_kill', 'one_kill', 'lock_time'])->get();
     }
 
     /**

@@ -84,7 +84,10 @@ class GameService
 //            return false;
 //        }
 
-        if ($time >= $game_play->start_time && $time <= $game_play->end_time - 10) {
+        $game = $this->GameRepository->Get_Game_Config($game_id);
+        $lock_time = $game->lock_time ?? 10;
+
+        if ($time >= $game_play->start_time && $time <= $game_play->end_time - $lock_time) {
 
         } else {
 

@@ -95,7 +95,8 @@ class SettingController extends Controller
                 'id' => ['required', 'integer', 'gt:0'],
                 'open_type' => ['required', Rule::in([1, 2, 3])],
                 'date_kill' => ['required', 'gt:0', 'lte:1'],
-                'one_kill' => ['required', 'gt:0', 'lte:1']
+                'one_kill' => ['required', 'gt:0', 'lte:1'],
+                'lock_time' => ['required', 'integer', 'gte:10', 'lte:300']
             ]);
             if($validator->fails())
                 return $this->AppReturn(

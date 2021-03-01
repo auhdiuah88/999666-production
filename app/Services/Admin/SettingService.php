@@ -75,7 +75,8 @@ class SettingService extends BaseService
         $open_type = $this->intInput('open_type');
         $date_kill = $this->floatInput('date_kill');
         $one_kill = $this->floatInput('one_kill');
-        $data = compact('open_type','date_kill','one_kill');
+        $lock_time = $this->intInput('lock_time');
+        $data = compact('open_type','date_kill','one_kill','lock_time');
         $res = $this->SettingRepository->setGameRule($id, $data);
         if($res === false){
             $this->_code = 403;

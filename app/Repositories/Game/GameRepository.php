@@ -352,6 +352,7 @@ class GameRepository
     {
         return $this->Cx_Game_Play->where("id", $game_p_id)->first();
     }
+
     //获取投注对应的游戏id
     public function getGameIdByGameCXId($c_x_id){
         return $this->Cx_Game_Config->where('id', $c_x_id)->value('game_id');
