@@ -60,6 +60,17 @@ class SystemService extends Service
         $this->_data = compact('login_alert','logout_alert');
     }
 
+    public function activity()
+    {
+        $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key('ACTIVITY'));
+        if(!$data){
+            $data = [
+                'give_away_red_envelopes' => 1
+            ];
+        }
+        $this->_data = $data;
+    }
+
     public function serviceSetting()
     {
         $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key('SERVICE'));
