@@ -35,6 +35,7 @@ class SystemService extends Service
         $logout_value = $this->SystemRepository->getSettingValueByKey("logout_alert");
         if($login_value){
             $login_value['content'] = getHtml($login_value['content']);
+            $login_value['status'] = $login_value['status'] ?? 1;
         }else{
             $login_value = [
                 'content' => '',
@@ -52,6 +53,7 @@ class SystemService extends Service
         }
         if($logout_value){
             $logout_value['content'] = getHtml($logout_value['content']);
+            $logout_value['status'] = $logout_value['status'] ?? 1;
         }
         $login_alert = $login_value;
         $logout_alert = $logout_value;

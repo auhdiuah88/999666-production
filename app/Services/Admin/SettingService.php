@@ -11,6 +11,7 @@ use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class SettingService extends BaseService
 {
@@ -294,6 +295,7 @@ class SettingService extends BaseService
         $logoutAlertValue = $this->SettingRepository->getSettingValueByKey("logout_alert");
         if($loginAlertValue){
             $loginAlertValue['content'] = getHtml($loginAlertValue['content']);
+            $loginAlertValue['status'] = $loginAlertValue['status']?? 1;
         }else{
             $loginAlertValue = [
                 'content' => '',
@@ -307,10 +309,12 @@ class SettingService extends BaseService
                         'link' => ''
                     ],
                 ],
+                'status' => 1
             ];
         }
         if($logoutAlertValue){
             $logoutAlertValue['content'] = getHtml($loginAlertValue['content']);
+            $logoutAlertValue['status'] = $logoutAlertValue['status'] ?? 1;
         }
         $this->_data = compact('loginAlertValue','logoutAlertValue');
     }
@@ -319,6 +323,7 @@ class SettingService extends BaseService
     {
         $type = $this->intInput('type',1);
         $content = $this->htmlInput('content');
+        $status = $this->intInput('status',1);
         $key = "";
         switch ($type){
             case 1:
@@ -327,6 +332,7 @@ class SettingService extends BaseService
                     'right.text' => ['required', 'between:2,20', 'alpha_dash'],
                     'left.link' => ['required', 'url'],
                     'right.link' => ['required', 'url'],
+                    'status' => ['required', 'integer', Rule::in(0,1)]
                 ]);
                 if($validator->fails()){
                     $this->_code = 403;
@@ -344,12 +350,13 @@ class SettingService extends BaseService
                             'text' => $this->strInput('right.text'),
                             'link' => $this->strInput('right.link')
                         ]
-                    ]
+                    ],
+                    'status' => $status
                 ];
                 $key = "login_alert";
                 break;
             case 2:
-                $data = compact('content');
+                $data = compact('content','status');
                 $key = "logout_alert";
                 break;
             default:
@@ -538,6 +545,32 @@ class SettingService extends BaseService
                 break;
         }
         return $key;
+    }
+
+    public function getActivity()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('ACTIVITY'));
+        if (!$data){
+            $data = [
+                'give_away_red_envelopes_status' => 1,
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function activitySave(): bool
+    {
+        $give_away_red_envelopes_status = $this->intInput('give_away_red_envelopes_status',1);
+        $data = compact('give_away_red_envelopes_status');
+        $key = 'ACTIVITY';
+        $res = $this->SettingRepository->saveSetting(SettingDic::key($key), $data);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
     }
 
     public function getRechargeRebate()

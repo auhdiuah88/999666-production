@@ -72,6 +72,10 @@ class SettingDic
             'title' => 'register',
             'key' => 'REGISTER'
         ],
+        'ACTIVITY' => [
+            'title' => 'activity',
+            'key' => 'ACTIVITY'
+        ],
     ];
 
     public static function key($key)

@@ -259,6 +259,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::get("/register","SettingController@getRegister");
             Route::post("/aboutUs","SettingController@aboutUsSave");
             Route::post("/getAboutUs","SettingController@getAboutUs");
+            Route::post("/activity","SettingController@activitySave");
+            Route::get("/activity","SettingController@getActivity");
         });
 
         // 后台赠金记录列表

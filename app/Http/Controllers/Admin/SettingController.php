@@ -449,6 +449,44 @@ class SettingController extends Controller
         }
     }
 
+    public function getActivity()
+    {
+        try{
+            $this->SettingService->getActivity();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function activitySave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'give_away_red_envelopes_status' => 'required|integer|in:0,1'
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->activitySave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
     public function getRechargeRebate()
     {
         try{
