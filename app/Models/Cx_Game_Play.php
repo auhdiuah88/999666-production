@@ -24,6 +24,11 @@ class Cx_Game_Play extends Model
         return $this->hasOne('App\Models\Cx_Game', "id", "game_id");
     }
 
+    public function game()
+    {
+        return $this->belongsTo(Cx_Game::class,'game_id','id');
+    }
+
     /**
      * 是否可以sd开奖
      * @return bool

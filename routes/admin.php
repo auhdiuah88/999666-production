@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 // 登录退出接口
 Route::any('/admin_login', 'Admin\AdminController@Login')->middleware(['admin_handle']);
 Route::post("/admin_out", 'Admin\AdminController@Out')->middleware(['admin_handle']);
-
+Route::get("/period/exportTask", "Admin\PeriodController@exportTask");
 
 // 实时更新最新数据
 Route::get("/period/newests", "Admin\PeriodController@syncInRealtime");
@@ -178,6 +178,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::get("/findAll", "PeriodController@findAll");
             Route::get("/findById", "PeriodController@findById");
             Route::post("/search", "PeriodController@searchPeriod");
+            Route::get("/planTaskList", "PeriodController@planTaskList");
         });
 
         // 订单列表

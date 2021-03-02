@@ -46,4 +46,43 @@ class PeriodService extends BaseService
     {
         $this->_data = $this->PeriodRepository->findById($id);
     }
+
+    public function planTaskList()
+    {
+        $size = $this->sizeInput();
+        $game_id = $this->intInput('game_id');
+        $where = [
+            'is_status' => ['=', 1],
+            'end_time' => ['<', time() - 5 * 60],
+            'is_queue' => ['=', 0]
+        ];
+        if($game_id)
+            $where['game_id'] = ['=', $game_id];
+        $this->_data = $this->PeriodRepository->planTaskList($where, $size);
+    }
+
+    public function exportTask()
+    {
+        $size = $this->sizeInput();
+        $page = $this->pageInput();
+        $game_id = $this->intInput('game_id');
+        $where = [
+            'is_status' => ['=', 1],
+            'end_time' => ['<', time() - 5 * 60],
+            'is_queue' => ['=', 0]
+        ];
+        if($game_id)
+            $where['game_id'] = ['=', $game_id];
+        $data = $this->PeriodRepository->exportTask($where, $size, $page);
+        $result = array_merge([[
+            '期数ID',
+            '期数',
+            '开始时间',
+            '开奖时间',
+            '本期结果',
+            '游戏类型',
+        ]], $data);
+        $this->_data = $result;
+    }
+
 }

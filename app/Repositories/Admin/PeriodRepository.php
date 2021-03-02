@@ -96,6 +96,11 @@ class PeriodRepository extends BaseRepository
     {
         if($data['conditions']['game_id'] == 0)unset($data['conditions']['game_id']);
         if(isset($data['conditions']['status']) && $data['conditions']['status'] == 0){
+            if(isset($data['conditions']['prize_time']) && $data['conditions']['prize_time']){
+                $data['conditions']['end_time'] = $data['conditions']['prize_time'];
+                unset($data['conditions']['prize_time']);
+                $data['ops']['end_time'] = 'between';
+            }
             return $this->whereCondition($data, $this->Cx_Game_Play)
                 ->with([
                     'game_name_p' => function($query){
@@ -130,7 +135,13 @@ class PeriodRepository extends BaseRepository
 
     public function countSearchPeriod($data)
     {
+        if($data['conditions']['game_id'] == 0)unset($data['conditions']['game_id']);
         if(isset($data['conditions']['status']) && $data['conditions']['status'] == 0){
+            if(isset($data['conditions']['prize_time']) && $data['conditions']['prize_time']){
+                $data['conditions']['end_time'] = $data['conditions']['prize_time'];
+                unset($data['conditions']['prize_time']);
+                $data['ops']['end_time'] = 'between';
+            }
             return $this->whereCondition($data, $this->Cx_Game_Play)->count("id");
         }else{
             return $this->whereCondition($data, $this->Cx_Game_Play)->where("status", 1)->count("id");
@@ -140,5 +151,52 @@ class PeriodRepository extends BaseRepository
     public function findById($id)
     {
         return $this->Cx_Game_Play->where("id", $id)->first();
+    }
+
+    public function planTaskList($where, $size)
+    {
+        $data = makeModel($where, $this->Cx_Game_Play)
+            ->select(['id', 'number', 'start_time', 'end_time', 'prize_number', 'game_id'])
+            ->with(
+                [
+                    'game' => function($query){
+                        $query->select(['id', 'name']);
+                    }
+                ]
+            )
+            ->orderBy('end_time', 'asc')
+            ->paginate($size);
+        foreach($data as &$item){
+            $item->start_time = date('Y-m-d H:i:s', $item->start_time);
+            $item->end_time = date('Y-m-d H:i:s', $item->end_time);
+        }
+        return $data;
+    }
+
+    public function exportTask($where, $size, $page)
+    {
+        $data = makeModel($where, $this->Cx_Game_Play)
+            ->select(['id', 'number', 'start_time', 'end_time', 'prize_number', 'game_id'])
+            ->with(
+                [
+                    'game' => function($query){
+                        $query->select(['id', 'name']);
+                    }
+                ]
+            )
+            ->offset(($page - 1) * $size)
+            ->limit($size)
+            ->orderBy('end_time', 'asc')
+            ->get();
+        if($data->isEmpty())return [];
+        $data = $data->toArray();
+        foreach($data as &$item){
+            $item['number'] = "'" . (string)$item['number'];
+            $item['start_time'] = date('Y-m-d H:i:s', $item['start_time']);
+            $item['end_time'] = date('Y-m-d H:i:s', $item['end_time']);
+            $item['game'] = $item['game']['name'];
+            unset($item['game_id']);
+        }
+        return $data;
     }
 }
