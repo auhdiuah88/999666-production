@@ -12,6 +12,7 @@ use App\Services\Library\Auth;
 use App\Services\Library\Netease\IM;
 use App\Services\Library\Netease\SMS;
 use App\Services\Library\Upload;
+use App\Services\Message\MessageContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,8 @@ use Ramsey\Uuid\Uuid;
 class UserService
 {
     protected $UserRepository, $SettingRepository;
+
+    protected $messageContext;
 
     // 注册redis键
     const REDIS_REGIST_CODE = "REGIST_CODE:";    // redis短信验证码key
@@ -55,11 +58,13 @@ class UserService
     public function __construct
     (
         UserRepository $userRepository,
-        SettingRepository $settingRepository
+        SettingRepository $settingRepository,
+        MessageContext $messageContext
     )
     {
         $this->UserRepository = $userRepository;
         $this->SettingRepository = $settingRepository;
+        $this->messageContext = $messageContext;
     }
 
     /**
@@ -323,11 +328,11 @@ class UserService
 
         $ip = \request()->ip();
         $ipKey = $key . str_replace('.','_', $ip);
-        if (Redis::exists($ipKey)) {
-            $this->error_code = 414;
-            $this->error = 'Invalid ip, Please try again later';
-            return false;
-        }
+//        if (Redis::exists($ipKey)) {
+//            $this->error_code = 414;
+//            $this->error = 'Invalid ip, Please try again later';
+//            return false;
+//        }
 
         $result = $this->sendcode($phone);
         if ($result['code'] <> 200) {
@@ -351,7 +356,7 @@ class UserService
         return true;
     }
 
-    public function sendCode($phone)
+    public function sendCodeOld($phone)
     {
         $url = "http://sms.skylinelabs.cc:20003/sendsmsV2";
         $phone = "91" . $phone;
@@ -373,6 +378,16 @@ class UserService
         }
 
         return ["code" => 402];
+    }
+
+    public function sendCode($phone): array
+    {
+        $country = env('COUNTRY','india');
+        $messageObj = $this->messageContext->getStrategy($country);
+        if(!$messageObj){
+            return ['code' => 414];
+        }
+        return $messageObj->sendRegisterCode($phone);
     }
 
     /**

@@ -64,7 +64,7 @@ class Cx_User extends Model
     {
         $total_betting = DB::table('game_betting')->where("user_id","=", $this->id)->sum('money');
         $total_win = DB::table('game_betting')->where("user_id","=", $this->id)->sum('win_money');
-        return $total_win - $total_betting;
+        return bcsub($total_win,$total_betting,2);
     }
 
     public function getTotalInviteAttribute()
