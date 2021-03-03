@@ -27,7 +27,8 @@ class PayContext
         Richpay $richpay,
         Inpays $inpays,
         Payq $payq,
-        HuiZhong $huiZhong
+        HuiZhong $huiZhong,
+        VNMTBpay $VNMTBpay
     )
     {
         // 每种api地址对应的支付公司
@@ -45,7 +46,8 @@ class PayContext
             'richpay' => $richpay,
             'inpays' => $inpays,
             'payq' => $payq,
-            'huizhong' => $huiZhong,
+            'huizhong' => $huiZhong,  //mtb
+            'vnpay' => $VNMTBpay,  //越南mtb
         ];
     }
     /**

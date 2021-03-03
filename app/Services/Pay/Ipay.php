@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 class Ipay extends PayStrategy
 {
 
-    protected static $url = 'http://ipay-in.yynn.me';
+    protected static $url = 'http://pay1.yynn.me';
 
     // 测试环境
 //    protected static $merchantID = 10120;
