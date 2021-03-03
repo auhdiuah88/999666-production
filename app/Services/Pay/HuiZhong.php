@@ -162,7 +162,7 @@ class HuiZhong extends PayStrategy
             'acc_name' => $withdrawalRecord->account_holder,
             'ccy_no' => 'INR',
             'order_amount' => intval($money),
-            'bank_code' => $withdrawalRecord->mtb_code,
+            'bank_code' => 'IDPT0001',
             'summary' => 'Balance Withdrawal',
             'province' => $withdrawalRecord->ifsc_code,
             'notifyUrl' => $this->withdrawal_callback_url
