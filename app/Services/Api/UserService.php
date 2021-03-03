@@ -484,4 +484,23 @@ class UserService
         return (float)($this->UserRepository->balance($id));
     }
 
+    public function bankList()
+    {
+        $county = env('COUNTRY','india');
+        $where = [
+            'status' => ['=', 1]
+        ];
+        $type = 0;
+        switch($county){
+            case 'india':
+                $type = 1;
+                break;
+            case 'vn':
+                $type = 2;
+                break;
+        }
+        $where['type'] = ['=', $type];
+        return $this->UserRepository->bankList($where);
+    }
+
 }

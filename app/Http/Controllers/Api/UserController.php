@@ -349,4 +349,11 @@ class UserController extends Controller
         $data = $this->UserService->Withdrawal_List($request->input("limit"), $request->input("page"));
         return $this->AppReturn(200, 'ok', $data);
     }
+
+    public function bankList()
+    {
+        $data = $this->UserService->bankList();
+        return $this->AppReturn(200, 'ok', $data);
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Repositories\Api;
 
 
 use App\Libs\Aes;
+use App\Models\Cx_Banks;
 use App\Models\Cx_Charge_Logs;
 use App\Models\Cx_System;
 use App\Models\Cx_User;
@@ -18,18 +19,20 @@ use Illuminate\Support\Facades\Log;
 
 class UserRepository
 {
-    protected $Cx_User, $Cx_System, $Cx_Charge_Logs, $Cx_User_Balance_Logs;
+    protected $Cx_User, $Cx_System, $Cx_Charge_Logs, $Cx_User_Balance_Logs, $Cx_Banks;
     private $cx_User_Bank;
     private $cx_User_Commission_Logs;
 
     public $_data = [];
 
-    public function __construct(Cx_User $cx_User,
-                                Cx_System $cx_System,
-                                Cx_Charge_Logs $charge_Logs,
-                                Cx_User_Balance_Logs $Cx_User_Balance_Logs,
-                                Cx_User_Bank $cx_User_Bank,
-                                Cx_User_Commission_Logs $cx_User_Commission_Logs
+    public function __construct(
+        Cx_User $cx_User,
+        Cx_System $cx_System,
+        Cx_Charge_Logs $charge_Logs,
+        Cx_User_Balance_Logs $Cx_User_Balance_Logs,
+        Cx_User_Bank $cx_User_Bank,
+        Cx_User_Commission_Logs $cx_User_Commission_Logs,
+        Cx_Banks $cx_Banks
     )
     {
         $this->Cx_User = $cx_User;
@@ -39,6 +42,7 @@ class UserRepository
 
         $this->cx_User_Bank = $cx_User_Bank;
         $this->cx_User_Commission_Logs = $cx_User_Commission_Logs;
+        $this->Cx_Banks = $cx_Banks;
     }
 
     public function getcode()
@@ -530,5 +534,12 @@ class UserRepository
         if(!$config)return;
         if($config['status'] != 1 || $config['rebate'] <= 0)return;
         $this->updateBalance($user, $config['rebate'], 15,"注册赠送彩金");
+    }
+
+    public function bankList($where)
+    {
+        return makeModel($where, $this->Cx_Banks)
+            ->select(['bank_name as label', 'busi_code as value'])
+            ->get();
     }
 }

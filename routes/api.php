@@ -89,6 +89,8 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/add", "InfoController@addBank"); // 添加用户银行卡
         Route::post("/edit", "InfoController@editBank");// 编辑用户银行卡
         Route::post("/del", "InfoController@delBank"); // 删除用户银行卡
+
+        Route::get("/lists", "UserController@bankList"); // 删除用户银行卡
     });
 
     Route::group(["prefix" => "address"], function () {
