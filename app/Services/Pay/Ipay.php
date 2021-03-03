@@ -67,8 +67,7 @@ class Ipay extends PayStrategy
             $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . $secretKey;
-//        return strtolower(md5($sign));
-        return md5($sign);
+        return strtolower(md5($sign));
     }
 
     /**
