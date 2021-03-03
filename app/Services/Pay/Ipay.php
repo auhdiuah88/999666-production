@@ -66,7 +66,6 @@ class Ipay extends PayStrategy
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_withdrawalOrder_secret',[$secretKey]);
         $sign = (implode('&', $string)) . $secretKey;
         return strtolower(md5($sign));
     }
