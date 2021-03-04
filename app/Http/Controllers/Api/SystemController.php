@@ -98,7 +98,38 @@ class SystemController extends Controller
 
     public function language()
     {
-
+        $lang = [
+            [
+                'text' => 'English',
+                'color' => 'blue',
+                'fontSize' => 28,
+                'language' => 'en'
+            ],
+        ];
+        $country = env('COUNTRY','india');
+        switch($country){
+            case 'india':
+                $lang[] = [
+                    'text' => 'हिंदी',
+                    'color' => 'blue',
+                    'fontSize' => 28,
+                    'language' => 'fr'
+                ];
+                break;
+            case 'vn':
+                $lang[] = [
+                    'text' => 'ViệtName',
+                    'color' => 'blue',
+                    'fontSize' => 28,
+                    'language' => 'vn'
+                ];
+                break;
+        }
+        return $this->AppReturn(
+            200,
+            'ok',
+            $lang
+        );
     }
 
 }

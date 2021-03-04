@@ -80,6 +80,8 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/withdrawalbyupi", "WithdrawalController@withdrawalByUpiID");  //  申请paytm-upi_id提现-请求出金订单
         Route::post("/extension", "AgentController@getExtensionUser");    // 促销记录
 
+        Route::get("/language", "SystemController@language");    // 语言
+
         Route::post("/recharge_confirm", "RechargeController@rechargeConfirm");        //  充值金额主动确认
 
     });
