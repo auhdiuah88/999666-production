@@ -61,7 +61,7 @@ class VNMTBpay extends PayStrategy
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
-            if($value)
+            if($value != '')
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
@@ -205,6 +205,7 @@ class VNMTBpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
+        unset($params['type']);
         if ($this->generateSignRigorous($params,2) <> $sign) {
             $this->_msg = 'VNMTBpay-签名错误';
             return false;
