@@ -58,7 +58,11 @@ class WithdrawalService extends BaseService
 //            else {
 //                $this->addWithdrawalLogs($data["id"]);
 //            }
-
+            if($withdrawalRecord->message){
+                $this->_code = 414;
+                $this->_msg = $withdrawalRecord->message;
+                return false;
+            }
             $host = $request->getHost();    // 根据api接口host判断是来源于哪个客户；用什么支付方式 //  $host = "api.999666.in"; 变成 999666.in
             if (count(explode('.', $host)) == 3) {
                 $host = substr(strstr($host, '.'), 1);
@@ -83,6 +87,7 @@ class WithdrawalService extends BaseService
             if (!$result) {
                 $this->_code = 414;
                 $this->_msg = $strategyClass->_msg;
+                $this->WithdrawalRepository->editRecord(['id'=>$data["id"], 'message'=>$strategyClass->_msg]);
                 return false;
             }
             $data['pltf_order_no'] = $result['pltf_order_no']??'';
