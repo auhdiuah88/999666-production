@@ -205,6 +205,7 @@ class MTBpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
+        unset($params['type']);
         if ($this->generateSignRigorous($params,2) <> $sign) {
             $this->_msg = 'MTBpay-签名错误';
             return false;

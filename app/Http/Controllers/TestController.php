@@ -102,14 +102,18 @@ class TestController extends Controller
         $params = request()->post();
         $sign = $params['sign'];
         unset($params['sign']);
+        unset($params['type']);
         ksort($params);
 //        print_r($params);die;
         $string = [];
         foreach ($params as $key => $value) {
-//            if($value)
+            if($value != '')
                 $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . '&key=' .  '0936D7E86164C2D53C8FF8AD06ED6D09';
+
+//        $sign = (implode('&', $string)) . '&key=' .  'BDF2D59DB37596D5254B555437E73C37';
+//        $sign = (implode('&', $string)) . '&key=' .  '8441A2291411B9D82AC889CFE3148147';
+//        echo $sign;die;
         echo md5($sign);
     }
 
