@@ -96,4 +96,9 @@ class SystemController extends Controller
         );
     }
 
+    public function language()
+    {
+
+    }
+
 }

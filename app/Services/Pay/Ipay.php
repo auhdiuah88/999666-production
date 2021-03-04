@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\DB;
 class Ipay extends PayStrategy
 {
 
-    protected static $url = 'http://pay1.yynn.me';
+    protected static $rechargeUrl = 'http://ipay-in.yynn.me';
+
+    protected static $withdrawUrl = 'http://pay1.yynn.me';
 
     // 测试环境
 //    protected static $merchantID = 10120;
@@ -90,7 +92,7 @@ class Ipay extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_rechargeOrder', $params);
 
-        $res = $this->requestService->postJsonData(self::$url . '/pay', $params);
+        $res = $this->requestService->postJsonData(self::$rechargeUrl . '/pay', $params);
         if ($res['rtn_code'] <> 1000) {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_rechargeOrder_return', $res);
             $this->_msg = $res['rtn_msg'];
@@ -137,7 +139,7 @@ class Ipay extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('ipay_withdrawalOrder',$params);
 
-        $res = $this->requestService->postJsonData(self::$url . '/withdrawal', $params);
+        $res = $this->requestService->postJsonData(self::$withdrawUrl . '/withdrawal', $params);
         if ($res['rtn_code'] <> 1000) {
             $this->_msg = $res['rtn_msg'];
             return false;
