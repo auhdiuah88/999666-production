@@ -323,7 +323,7 @@ class UserController extends Controller
         try{
             $validator = Validator::make(request()->input(), [
                 'page' => ['required', 'integer', 'gte:1'],
-                'size' => ['required', 'integer', Rule::in(30,50,100,200)],
+                'size' => ['required', 'integer', Rule::in(30,50,100,200,2000)],
                 'sort' => [Rule::in('total_recharge','balance','cl_betting')],
                 'direction' => [Rule::in('asc','desc')]
             ]);
@@ -346,7 +346,7 @@ class UserController extends Controller
         try{
             $validator = Validator::make(request()->input(), [
                 'page' => ['required', 'integer', 'gte:1'],
-                'size' => ['required', 'integer', Rule::in(30,50,100,200)],
+                'size' => ['required', 'integer', Rule::in(30,50,100,200,2000)],
                 'sort' => [Rule::in('reg_time','balance','cl_betting')],
                 'direction' => [Rule::in('asc','desc')]
             ]);
