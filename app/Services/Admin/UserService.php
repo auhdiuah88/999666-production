@@ -429,4 +429,21 @@ class UserService extends BaseService
         $this->_data = $this->UserRepository->groupDownList($where, $size);
     }
 
+    public function exportUserList()
+    {
+        $size = $this->sizeInput();
+        $customer_service_id = $this->intInput('customer_service_id');
+        $start_time = $this->intInput('start_time');
+        $end_time = $this->intInput('end_time');
+        $where = [
+            'is_customer_service' => ['=', 0],
+            'reg_source_id' => ['=', 0]
+        ];
+        if($start_time && $end_time)
+        {
+            $where['reg_time'] = ['BETWEEN', [$start_time, $end_time]];
+        }
+        $this->_data = $this->UserRepository->exportUserList($where, $size);
+    }
+
 }

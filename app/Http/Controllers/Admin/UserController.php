@@ -322,8 +322,16 @@ class UserController extends Controller
             $validator = Validator::make(request()->input(), [
                 'page' => ['required', 'integer', 'gte:1'],
                 'size' => ['required', 'integer', Rule::in(30,50,100,200)],
-                'agent_id' => ['required']
+                'customer_service_id' => ['required', 'integer', 'gte:1']
             ]);
+            if($validator->fails())
+                return $this->AppReturn(402, $validator->errors()->first());
+            $this->UserService->exportUserList();
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
         }catch(\Exception $e){
             $this->logError('adminErr', $e);
             return $this->AppReturn(402, $e->getMessage());

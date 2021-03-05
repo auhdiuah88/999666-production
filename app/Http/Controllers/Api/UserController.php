@@ -86,9 +86,9 @@ class UserController extends Controller
             if (!$this->UserService->Register($data, $request->ip())) {
                 return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
             }
-            return $this->AppReturn(200, '成功', $this->UserService->data);
+            return $this->AppReturn(200, 'success', $this->UserService->data);
         }catch(\Exception $e){
-            Log::channel('kidebug')->debug('register_err',json_decode(json_encode($e),true));
+            Log::channel('kidebug')->debug('register_err',['error'=>$e->getMessage(), 'file'=>$e->getFile(), 'line'=>$e->getLine()]);
             return $this->AppReturn(414, "register failed");
         }
     }
