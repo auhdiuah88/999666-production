@@ -40,10 +40,10 @@ class GiftRepository extends BaseRepository
     {
         return $this->Cx_User_Balance_Logs->with([
             "user" => function ($query) {
-                $query->select(["id", "phone"]);
+                $query->select(["id", "phone"])->withTrashed();
             },
             "admin" => function ($query) {
-                $query->select(["id", "nickname"]);
+                $query->select(["id", "nickname"])->withTrashed();
             }
         ])->where("type", 8);
     }
