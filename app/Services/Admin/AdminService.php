@@ -181,7 +181,8 @@ class AdminService
         $staff = $this->SettingRepository->getStaff();
         $leader = $this->SettingRepository->getLeader();
         $role_type = ($staff->setting_value['role_id'] == $admin->role_id || $leader->setting_value['role_id'] == $admin->role_id) ? 2 : 1;
-        return compact('menu','role_type');
+        $role = $staff->setting_value['role_id'] == $admin->role_id ? 3 : ($leader->setting_value['role_id'] == $admin->role_id ? 2 : 1);
+        return compact('menu','role_type','role');
     }
 
     public function updateCustomerStatus($token, $status)
