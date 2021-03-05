@@ -258,10 +258,14 @@ class WithdrawalService extends PayService
 
             ##充值金额 * 基数 + 虚拟流水+投注金额  >= 当前提现金额
             if($system->multiple > 0){
-                if (((float)$user->total_recharge * (int)$system->multiple) + (float)$fake_betting_money + (float)$user->cl_betting < $money) {
+                if ((float)$system->multiple * (float)$user->cl_betting + (float)$fake_betting_money < $money) {
                     $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
                     return false;
                 }
+//                if (((float)$user->total_recharge * (int)$system->multiple) + (float)$fake_betting_money + (float)$user->cl_betting < $money) {
+//                    $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
+//                    return false;
+//                }
             }
 
 //            if (((float)$user->cl_betting - $user->cl_withdrawal + (float)$fake_betting_money) < $money * (int)$system->multiple) {
