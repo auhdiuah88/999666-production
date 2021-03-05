@@ -431,7 +431,7 @@ class UserService extends BaseService
 
     public function exportUserList()
     {
-        $size = $this->sizeInput();
+        $size = $this->intInput('size',30);
         $sort = $this->strInput('sort');
         $direction = $this->strInput('direction');
         $this->_data = $this->UserRepository->exportUserList($this->setExportWhere(), $size, $sort, $direction);
@@ -439,7 +439,7 @@ class UserService extends BaseService
 
     public function exportUser()
     {
-        $size = $this->sizeInput();
+        $size = $this->intInput('size',30);
         $page = $this->pageInput();
         $sort = $this->strInput('sort');
         $direction = $this->strInput('direction');
