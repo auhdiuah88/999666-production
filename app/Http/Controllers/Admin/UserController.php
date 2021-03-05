@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Admin\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -300,6 +301,18 @@ class UserController extends Controller
         }catch(\Exception $e){
             $this->logError('adminErr', $e);
             return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
+    public function export()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'page' => ['required', 'integer', 'gte:1'],
+                'size' => ['required', 'integer', Rule::in(30,50,100,200)]
+            ]);
+        }catch(\Exception $e){
+
         }
     }
 

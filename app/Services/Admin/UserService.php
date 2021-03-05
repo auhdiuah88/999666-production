@@ -183,6 +183,11 @@ class UserService extends BaseService
     {
         $page = $data["page"];
         $limit = $data["limit"];
+        if($data['conditions']['customer_service_id']){
+            $data['conditions']['invite_relation'] = '-' . $data['conditions']['customer_service_id'] . '-';
+            unset($data['conditions']['customer_service_id']);
+            $data['ops']['invite_relation'] = 'like';
+        }
         $list = $this->UserRepository->getUserByConditions($data, ($page - 1) * $limit, $limit);
         $total = $this->UserRepository->countUserByConditions($data);
         $this->_data = ["total" => $total, "list" => $list];

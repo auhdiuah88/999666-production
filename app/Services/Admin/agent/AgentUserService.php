@@ -51,7 +51,7 @@ class AgentUserService extends BaseAgentService
         $user_id = $this->intInput('user_id');
         if($user_id > 0)
             $where['id'] = ['=', $user_id];
-        $phone = $this->searchInput("mobile");
+        $phone = $this->searchInput("phone");
         if($phone)
             $where['phone'] = ['=', $phone];
         $ip = $this->searchInput("ip");

@@ -36,6 +36,8 @@ Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback");
 // 提款回调
 Route::any('/withdrawal_callback', "Api\WithdrawalController@withdrawalCallback");
 
+Route::get("/user/language", "Api\SystemController@language");    // 语言
+
 Route::group(["namespace" => "Api"], function () {
     Route::post("/sendCode", "UserController@sendMessage");
     Route::post("/resetPass", "UserController@resetPass");
@@ -79,8 +81,6 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function ()
         Route::post("/withdrawal", "WithdrawalController@withdrawalBydai");        //  申请代付提现-请求出金订单
         Route::post("/withdrawalbyupi", "WithdrawalController@withdrawalByUpiID");  //  申请paytm-upi_id提现-请求出金订单
         Route::post("/extension", "AgentController@getExtensionUser");    // 促销记录
-
-        Route::get("/language", "SystemController@language");    // 语言
 
         Route::post("/recharge_confirm", "RechargeController@rechargeConfirm");        //  充值金额主动确认
 
