@@ -280,11 +280,13 @@ class UserRepository extends BaseRepository
             ->paginate($size);
     }
 
-    public function exportUserList($where, $size, $order)
+    public function exportUserList($where, $size, $order='id', $direction='desc')
     {
-//        return makeModel($where, $this->Cx_User)
-//            ->select(['id', 'phone', 'balance', 'cl_withdrawal', 'reg_time', 'total_recharge', 'cl_betting', 'status'])
-//            ->orderBy
+
+        return makeModel($where, $this->Cx_User)
+            ->select(['id', 'phone', 'balance', 'cl_withdrawal', 'reg_time', 'total_recharge', 'cl_betting', 'status'])
+            ->orderBy($order, $direction)
+            ->paginate($size);
     }
 
 }

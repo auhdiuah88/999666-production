@@ -432,6 +432,17 @@ class UserService extends BaseService
     public function exportUserList()
     {
         $size = $this->sizeInput();
+        $this->_data = $this->UserRepository->exportUserList($this->setExportWhere(), $size);
+    }
+
+    public function exportUser()
+    {
+        $size = $this->sizeInput();
+        $this->_data = $this->UserRepository->exportUser($this->setExportWhere(), $size);
+    }
+
+    protected function setExportWhere(): array
+    {
         $customer_service_id = $this->intInput('customer_service_id');
         $start_time = $this->intInput('start_time');
         $end_time = $this->intInput('end_time');
@@ -443,7 +454,11 @@ class UserService extends BaseService
         {
             $where['reg_time'] = ['BETWEEN', [$start_time, $end_time]];
         }
-        $this->_data = $this->UserRepository->exportUserList($where, $size);
+        if($customer_service_id)
+        {
+            $where['invite_relation'] = ['like', "%-{$customer_service_id}-%"];
+        }
+        return $where;
     }
 
 }

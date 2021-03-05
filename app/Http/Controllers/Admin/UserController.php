@@ -322,11 +322,35 @@ class UserController extends Controller
             $validator = Validator::make(request()->input(), [
                 'page' => ['required', 'integer', 'gte:1'],
                 'size' => ['required', 'integer', Rule::in(30,50,100,200)],
-                'customer_service_id' => ['required', 'integer', 'gte:1']
+                'customer_service_id' => ['required', 'integer', 'gte:1'],
+                'sort' => [Rule::in('reg_time','balance','cl_betting')]
             ]);
             if($validator->fails())
                 return $this->AppReturn(402, $validator->errors()->first());
             $this->UserService->exportUserList();
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
+    public function exportUser()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'page' => ['required', 'integer', 'gte:1'],
+                'size' => ['required', 'integer', Rule::in(30,50,100,200)],
+                'customer_service_id' => ['required', 'integer', 'gte:1'],
+                'sort' => [Rule::in('reg_time','balance','cl_betting')]
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(402, $validator->errors()->first());
+            $this->UserService->exportUser();
             return $this->AppReturn(
                 $this->UserService->_code,
                 $this->UserService->_msg,
