@@ -183,7 +183,7 @@ class UserService extends BaseService
     {
         $page = $data["page"];
         $limit = $data["limit"];
-        if($data['conditions']['customer_service_id']){
+        if(isset($data['conditions']) && isset($data['conditions']['customer_service_id']) && $data['conditions']['customer_service_id']){
             $data['conditions']['invite_relation'] = '-' . $data['conditions']['customer_service_id'] . '-';
             unset($data['conditions']['customer_service_id']);
             $data['ops']['invite_relation'] = 'like';

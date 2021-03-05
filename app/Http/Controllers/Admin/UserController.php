@@ -316,4 +316,18 @@ class UserController extends Controller
         }
     }
 
+    public function exportUserList()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'page' => ['required', 'integer', 'gte:1'],
+                'size' => ['required', 'integer', Rule::in(30,50,100,200)],
+                'agent_id' => ['required']
+            ]);
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
 }
