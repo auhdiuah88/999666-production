@@ -4,11 +4,13 @@
 namespace App\Http\Controllers\Admin;
 
 
+use App\Exports\PlanTaskExport;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -322,8 +324,8 @@ class UserController extends Controller
             $validator = Validator::make(request()->input(), [
                 'page' => ['required', 'integer', 'gte:1'],
                 'size' => ['required', 'integer', Rule::in(30,50,100,200)],
-                'customer_service_id' => ['required', 'integer', 'gte:1'],
-                'sort' => [Rule::in('reg_time','balance','cl_betting')]
+                'sort' => [Rule::in('total_recharge','balance','cl_betting')],
+                'direction' => [Rule::in('asc','desc')]
             ]);
             if($validator->fails())
                 return $this->AppReturn(402, $validator->errors()->first());
@@ -345,17 +347,13 @@ class UserController extends Controller
             $validator = Validator::make(request()->input(), [
                 'page' => ['required', 'integer', 'gte:1'],
                 'size' => ['required', 'integer', Rule::in(30,50,100,200)],
-                'customer_service_id' => ['required', 'integer', 'gte:1'],
-                'sort' => [Rule::in('reg_time','balance','cl_betting')]
+                'sort' => [Rule::in('reg_time','balance','cl_betting')],
+                'direction' => [Rule::in('asc','desc')]
             ]);
             if($validator->fails())
                 return $this->AppReturn(402, $validator->errors()->first());
             $this->UserService->exportUser();
-            return $this->AppReturn(
-                $this->UserService->_code,
-                $this->UserService->_msg,
-                $this->UserService->_data
-            );
+            return Excel::download(new PlanTaskExport($this->UserService->_data), '用户数据-'. date('YmdHis') .'.xlsx');
         }catch(\Exception $e){
             $this->logError('adminErr', $e);
             return $this->AppReturn(402, $e->getMessage());

@@ -229,6 +229,11 @@ class UserService
             unset($data["code"]);
 
             ##增加邀请关系
+            if(!$list["user"]){
+                $this->error_code = 414;
+                $this->error = 'Invitation user does not exist.';
+                return false;
+            }
             $data["invite_relation"] = makeInviteRelation($list["user"]->invite_relation, $list["user"]->id);
 
             if ($list["user"]->is_customer_service == 1) {

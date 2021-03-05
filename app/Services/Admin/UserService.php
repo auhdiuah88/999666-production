@@ -432,13 +432,28 @@ class UserService extends BaseService
     public function exportUserList()
     {
         $size = $this->sizeInput();
-        $this->_data = $this->UserRepository->exportUserList($this->setExportWhere(), $size);
+        $sort = $this->strInput('sort');
+        $direction = $this->strInput('direction');
+        $this->_data = $this->UserRepository->exportUserList($this->setExportWhere(), $size, $sort, $direction);
     }
 
     public function exportUser()
     {
         $size = $this->sizeInput();
-        $this->_data = $this->UserRepository->exportUser($this->setExportWhere(), $size);
+        $page = $this->pageInput();
+        $sort = $this->strInput('sort');
+        $direction = $this->strInput('direction');
+        $data = $this->UserRepository->exportUser($this->setExportWhere(), $size, $page, $sort, $direction);
+        $this->_data = array_merge([[
+            '用户ID',
+            '手机号',
+            '余额',
+            '总提现金额',
+            '注册时间',
+            '总充值金额',
+            '总投注金额',
+            '用户状态',
+        ]], $data);
     }
 
     protected function setExportWhere(): array

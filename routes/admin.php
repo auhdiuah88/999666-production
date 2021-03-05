@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::any('/admin_login', 'Admin\AdminController@Login')->middleware(['admin_handle']);
 Route::post("/admin_out", 'Admin\AdminController@Out')->middleware(['admin_handle']);
 Route::get("/period/exportTask", "Admin\PeriodController@exportTask");
+Route::get("/user/exportUser", "Admin\UserController@exportUser");
 
 // 实时更新最新数据
 Route::get("/period/newests", "Admin\PeriodController@syncInRealtime");
@@ -114,8 +115,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/clearFakeBetting", "UserController@clearFakeBetting");
             Route::post("/searchUserByPhoneLike", "UserController@searchUserByPhoneLike");
 
-            Route::post("/exportUserList", "UserController@exportUserList");
-            Route::post("/exportUser", "UserController@exportUser");
+            Route::get("/exportUserList", "UserController@exportUserList");
 
             Route::get("/groupUpList","UserController@groupUpList");
             Route::get("/groupDownList","UserController@groupDownList");

@@ -283,10 +283,32 @@ class UserRepository extends BaseRepository
     public function exportUserList($where, $size, $order='id', $direction='desc')
     {
 
-        return makeModel($where, $this->Cx_User)
+        $data = makeModel($where, $this->Cx_User)
             ->select(['id', 'phone', 'balance', 'cl_withdrawal', 'reg_time', 'total_recharge', 'cl_betting', 'status'])
             ->orderBy($order, $direction)
             ->paginate($size);
+        foreach($data as &$item)
+        {
+            $item->reg_time = date('Y-m-d H:i:s', $item->reg_time);
+        }
+        return $data;
+    }
+
+    public function exportUser($where, $size, $page, $order='id', $direction='desc'): array
+    {
+         $data = makeModel($where, $this->Cx_User)
+            ->select(['id', 'phone', 'balance', 'cl_withdrawal', 'reg_time', 'total_recharge', 'cl_betting', 'status'])
+            ->orderBy($order, $direction)
+            ->limit($size)
+            ->offset(($page-1) * $size)
+            ->get($size);
+         if($data->isEmpty())return [];
+        foreach($data as &$item)
+        {
+            $item->status = $item->status == 1 ? '封禁' : '正常';
+            $item->reg_time = date('Y-m-d H:i:s', $item->reg_time);
+        }
+        return $data->toArray();
     }
 
 }
