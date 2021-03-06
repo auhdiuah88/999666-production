@@ -1,4 +1,5 @@
 #!/bin/bash
+. /etc/profile
 step=1 #间隔的秒数
 
 for (( i = 0; i < 60; i=(i+step) )); do
