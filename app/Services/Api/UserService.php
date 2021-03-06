@@ -238,7 +238,6 @@ class UserService
 
             if ($list["user"]->is_customer_service == 1) {
                 $data["customer_service_id"] = $list["user"]->id;
-                print_r($data);die;
             } else {
                 $agent = $list["agent"];
                 if (isset($agent["one_id"])) {
