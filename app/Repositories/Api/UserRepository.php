@@ -536,6 +536,7 @@ class UserRepository
         if(isset($config['is_leader_limit']) && $config['is_leader_limit']){ ##限制指定组长直邀的用户才返利
             if(!$user->customer_service_id)return;
             $invite_user = $this->findByPhone($user->customer_service_id);
+            print_r($invite_user);die;
             if(!$invite_user || !$invite_user->is_betting_notice)return;
         }
         $this->updateBalance($user, $config['rebate'], 15,"注册赠送彩金");
