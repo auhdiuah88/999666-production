@@ -66,6 +66,11 @@ Route::group(["namespace" => "Api", "prefix" => "banner"], function (){
     Route::get("/find", "BannerController@banners");
 });
 
+//setting
+Route::group(["namespace" => "Api", "prefix" => "setting"], function (){
+    Route::get("/basic", "SystemController@basicSetting");
+});
+
 Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function () {
 
     Route::group(["prefix" => "user"], function () {

@@ -132,4 +132,19 @@ class SystemController extends Controller
         );
     }
 
+    public function basicSetting()
+    {
+        $currency_arr = [
+            'india' => '₹',
+            'vn' => '₫'
+        ];
+        $country = env('COUNTRY','india');
+        $currency = $currency_arr[$country];
+        return $this->AppReturn(
+            200,
+            'ok',
+            compact('currency')
+        );
+    }
+
 }
