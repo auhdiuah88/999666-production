@@ -209,4 +209,14 @@ class GroupUserService extends UserService
         return true;
     }
 
+    public function switchIsRecommendRebate()
+    {
+        $user_id = $this->intInput('user_id');
+        $user = $this->UserRepository->findById($user_id);
+        $is_recommend_rebate = ($user->is_recommend_rebate + 1) % 2;
+        $user->is_recommend_rebate = $is_recommend_rebate;
+        $user->save();
+        $this->_data = $is_recommend_rebate;
+    }
+
 }

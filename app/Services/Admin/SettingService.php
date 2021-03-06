@@ -613,6 +613,7 @@ class SettingService extends BaseService
                 'rebate' => 0
             ];
         }
+        if(!isset($data['is_leader_limit']))$data['is_leader_limit'] = 0;
         $this->_data = $data;
     }
 
@@ -620,7 +621,8 @@ class SettingService extends BaseService
     {
         $status = $this->intInput('status');
         $rebate = $this->intInput('rebate');
-        $data = compact('status','rebate');
+        $is_leader_limit = $this->intInput('is_leader_limit');
+        $data = compact('status','rebate','is_leader_limit');
         $res = $this->SettingRepository->saveSetting(SettingDic::key('REGISTER'), $data);
         if($res === false){
             $this->_code = 403;

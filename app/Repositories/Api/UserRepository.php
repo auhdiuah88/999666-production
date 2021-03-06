@@ -533,6 +533,11 @@ class UserRepository
     {
         if(!$config)return;
         if($config['status'] != 1 || $config['rebate'] <= 0)return;
+        if(isset($config['is_leader_limit']) && $config['is_leader_limit']){ ##限制指定组长直邀的用户才返利
+            if(!$user->two_recommend_id)return;
+            $invite_user = $this->findByIdUser($user->two_recommend_id);
+            if(!$invite_user || !$invite_user->is_betting_notice)return;
+        }
         $this->updateBalance($user, $config['rebate'], 15,"注册赠送彩金");
     }
 

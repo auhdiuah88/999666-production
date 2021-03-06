@@ -129,6 +129,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post("/edit", "LeaderController@edit");
                 Route::get("/searchAccount", "LeaderController@searchAccount");
                 Route::post("/bindAccount", "LeaderController@bindAccount");
+                Route::post("/switchIsRecommendRebate", "LeaderController@switchIsRecommendRebate");
             });
         });
 

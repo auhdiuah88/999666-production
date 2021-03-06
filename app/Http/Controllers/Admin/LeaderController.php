@@ -115,4 +115,25 @@ class LeaderController extends UserController
             return $this->AppReturn(402,$e->getMessage());
         }
     }
+
+    public function switchIsRecommendRebate()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'user_id' => ['required', 'integer', 'gte:1']
+            ]);
+            if($validator->fails()){
+                return $this->AppReturn(402,$validator->errors()->first());
+            }
+            $this->groupUserService->switchIsRecommendRebate();
+            return $this->AppReturn(
+                $this->groupUserService->_code,
+                $this->groupUserService->_msg,
+                $this->groupUserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
 }
