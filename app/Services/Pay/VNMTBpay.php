@@ -41,6 +41,11 @@ class VNMTBpay extends PayStrategy
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
     }
 
+    protected $rechargeTypeList = [
+        '1' => '100103',
+        '2' => 'MoMoPay'
+    ];
+
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
@@ -83,7 +88,7 @@ class VNMTBpay extends PayStrategy
             'order_amount' => intval($money),
             'countryCode' => 'VNM',
             'ccy_no' => 'VND',
-            'busi_code' => 'MoMoPay',
+            'busi_code' => $this->rechargeTypeList[$this->rechargeType],
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')

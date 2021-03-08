@@ -19,6 +19,8 @@ abstract class PayStrategy
     protected $request;
     protected $userRepository;
 
+    public $rechargeType;  //充值方式--目前只有越南支付使用
+
     protected static $url_callback  = '';    // 回调地址 (充值或提现)
 
     public function __construct (
