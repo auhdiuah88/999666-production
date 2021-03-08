@@ -84,12 +84,12 @@ class VNMTBpay extends PayStrategy
             'countryCode' => 'VNM',
             'ccy_no' => 'VND',
             'busi_code' => '00103',
-            'bankCode' => '123asd',
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')
         ];
-        $params['sign'] = $this->generateSignRigorous($params,1);
+//        $params['sign'] = $this->generateSignRigorous($params,1);
+        $params['sign'] = '1232131';
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder', [$params]);
 
