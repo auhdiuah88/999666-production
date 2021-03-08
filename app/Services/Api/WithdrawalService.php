@@ -296,7 +296,7 @@ class WithdrawalService extends PayService
         $account_holder = $user_bank->account_holder;
         $bank_name = $user_bank->bank_type_id;
         $bank_number = $user_bank->bank_num;
-        $ifsc_code = $user_bank->ifsc_code;
+        $ifsc_code = $user_bank->ifsc_code?:'';
         $phone = $user_bank->phone;
         $email = $user_bank->mail;
         $mtb_code = $user_bank->mtbpy_code ?: "";
