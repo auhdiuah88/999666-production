@@ -83,7 +83,7 @@ class VNMTBpay extends PayStrategy
             'order_amount' => intval($money),
             'countryCode' => 'VNM',
             'ccy_no' => 'VND',
-            'busi_code' => '00103',
+            'busi_code' => '100103',
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')
