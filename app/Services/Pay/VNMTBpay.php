@@ -21,7 +21,7 @@ class VNMTBpay extends PayStrategy
     public $withdrawSecretkey;
     public $rechargeMerchantID;
     public $rechargeSecretkey;
-    public $company = 'VNMTBpay';   // 支付公司名
+    public $company = 'vnpay';   // 支付公司名
 
     public function _initialize()
     {
@@ -92,9 +92,7 @@ class VNMTBpay extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder', [$params]);
 
-        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params, [
-            "content-type" => "application/x-www-form-urlencoded",
-        ]);
+        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
         if ($res['status'] != 'SUCCESS') {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
