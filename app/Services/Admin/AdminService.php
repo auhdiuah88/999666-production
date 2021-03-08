@@ -56,7 +56,8 @@ class AdminService
                         'msg' => '登录成功',
                         'token' => $token,
                         'data' => $data,
-                        "role" => $this->AdminRepository->Get_Role($data->role_id)
+                        "role" => $this->AdminRepository->Get_Role($data->role_id),
+                        'country' => env('COUNTRY','india')
                     ], JSON_UNESCAPED_UNICODE);
 
                     // 将登陆用户信息存入Redis中

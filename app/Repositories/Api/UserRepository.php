@@ -534,9 +534,14 @@ class UserRepository
         if(!$config)return;
         if($config['status'] != 1 || $config['rebate'] <= 0)return;
         if(isset($config['is_leader_limit']) && $config['is_leader_limit']){ ##限制指定组长直邀的用户才返利
-            if(!$user->customer_service_id)return;
-            $invite_user = $this->findByPhone($user->customer_service_id);
-            if(!$invite_user || !$invite_user->is_recommend_rebate)return;
+            if(!$user->invite_relation)return;
+            $relation = trim($user->invite_relation,'-');
+            $relation = explode('-',$relation);
+            if(!$relation[0])return;
+            $leader_id = $relation[count($relation)-1];
+            $invite_user = $this->findByIdUser($leader_id);
+            if(!$invite_user)return;
+            if($invite_user->is_group_leader != 1 || !$invite_user->is_recommend_rebate)return;
         }
         $this->updateBalance($user, $config['rebate'], 15,"注册赠送彩金");
     }
