@@ -114,7 +114,9 @@ class WithdrawalService extends PayService
             return false;
         }
 //        $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
-        $onlydata["payment"] = $this->countServiceCharge($data["money"]);
+        $pay_money = $this->countServiceCharge($data["money"]);
+        $onlydata["payment"] = $pay_money['amount'];
+        $onlydata["service_charge"] = $pay_money['service_charge'];
         $data = array_merge($data, $onlydata);
         $this->WithdrawalRepository->addRecord($data);
 
@@ -132,12 +134,19 @@ class WithdrawalService extends PayService
      */
     public function countServiceCharge($amount)
     {
-        $service_charge = 45;
-        if($amount >= 1500){
+        $country = env('COUNTRY','india');
+        if($country == 'india'){
+            $service_charge = 45;  //卢比
+            $limit = 1500;
+        }else{
+            $service_charge = 14160;  //盾
+            $limit = 472000;
+        }
+        if($amount >= $limit){
             $service_charge = bcmul($amount,0.03);
         }
         $amount = bcsub($amount, $service_charge);
-        return $amount;
+        return compact('amount','service_charge');
     }
 
     /**
