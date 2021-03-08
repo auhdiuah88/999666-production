@@ -88,12 +88,13 @@ class VNMTBpay extends PayStrategy
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')
         ];
-//        $params['sign'] = $this->generateSignRigorous($params,1);
-        $params['sign'] = '1232131';
+        $params['sign'] = $this->generateSignRigorous($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder', [$params]);
 
-        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
+        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params, [
+            "content-type" => "application/x-www-form-urlencoded",
+        ]);
         if ($res['status'] != 'SUCCESS') {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
