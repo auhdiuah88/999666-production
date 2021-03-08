@@ -84,6 +84,7 @@ class VNMTBpay extends PayStrategy
             'countryCode' => 'VNM',
             'ccy_no' => 'VND',
             'busi_code' => '00103',
+            'bankCode' => '123asd',
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')
