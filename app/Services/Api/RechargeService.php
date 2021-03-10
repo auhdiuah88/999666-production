@@ -120,8 +120,10 @@ class RechargeService extends PayService
      */
     public function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', $request->all());
-        $payProvide = $request->input('type', '');
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', $request->input());
+        $payProvide = $request->input('backup_type', '');
+        if(!$payProvide)
+            $payProvide = $request->input('type', '');
         if (!$payProvide) {
             $this->_msg = 'can not find pay Provide';
             return false;

@@ -37,8 +37,8 @@ class Sevenpay extends PayStrategy
         $this->rechargeMerchantID = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['merchant_id']:"";
         $this->rechargeSecretkey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['secret_key']:"";
 
-        $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
-        $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
+        $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company.'&backup_type=' . $this->company;
+        $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company.'&backup_type=' . $this->company;
     }
 
     protected $rechargeTypeList = [
@@ -114,7 +114,7 @@ class Sevenpay extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_pay_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_pay_rechargeCallback',$request->input());
 
         if ($request->ispay != 1)  {
             $this->_msg = 'seven_pay-recharge-交易未完成';
