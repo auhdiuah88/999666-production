@@ -67,6 +67,12 @@ class Sevenpay extends PayStrategy
         return strtolower(md5($string));
     }
 
+    public function generateSignRigorous2(array $params, $type=1){
+        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
+        $string = $secretKey . $params['orderid'] . (string)$params['payamount'];
+        return strtolower(md5($string));
+    }
+
 
 
     /**
@@ -125,7 +131,7 @@ class Sevenpay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-        if ($this->generateSignRigorous($params,1) <> $sign) {
+        if ($this->generateSignRigorous2($params,1) <> $sign) {
             $this->_msg = 'seven_pay-签名错误';
             return false;
         }
