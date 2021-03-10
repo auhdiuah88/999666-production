@@ -66,7 +66,7 @@ class RechargeService extends PayService
             $this->_msg = 'can not find pay mode';
             return false;
         }
-        if($payProvide == 'vnpay'){
+        if(in_array($payProvide, $strategyClass->vnPayArray)){
             $strategyClass->rechargeType = $request->charge_type;
         }
         $result = $strategyClass->rechargeOrder($pay_type, $money);

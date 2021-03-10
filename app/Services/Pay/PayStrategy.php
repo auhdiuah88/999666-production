@@ -23,6 +23,11 @@ abstract class PayStrategy
 
     protected static $url_callback  = '';    // 回调地址 (充值或提现)
 
+    public $vnPayArray = [
+        'vnpay',
+        '777pay'
+    ];
+
     public function __construct (
         RequestService $requestService,
         Request $request,
