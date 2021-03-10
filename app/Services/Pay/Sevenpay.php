@@ -73,6 +73,12 @@ class Sevenpay extends PayStrategy
         return strtolower(md5($string));
     }
 
+    public function generateSignRigorous3(array $params, $type=1){
+        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
+        $string = $secretKey . $params['orderid'] . (string)$params['qrurl'];
+        return strtolower(md5($string));
+    }
+
 
 
     /**
@@ -121,7 +127,15 @@ class Sevenpay extends PayStrategy
     function rechargeCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_pay_rechargeCallback',$request->input());
-
+        if (isset($request->qrurl)){
+            $params = $request->input();
+            $sign = $params['sign'];
+            if ($this->generateSignRigorous3($params,1) <> $sign) {
+                $this->_msg = 'seven_pay-签名错误';
+                return false;
+            }
+            return true;
+        }
         if ($request->ispay != 1)  {
             $this->_msg = 'seven_pay-recharge-交易未完成';
             return false;
