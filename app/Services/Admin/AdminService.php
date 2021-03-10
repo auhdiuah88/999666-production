@@ -130,6 +130,8 @@ class AdminService
 
         if (!empty($data["password"]) && $data["password"] !== Crypt::decrypt($admin->password)) {
             $data["password"] = Crypt::encrypt($data["password"]);
+        }else{
+            unset($data["password"]);
         }
         return $this->AdminRepository->Edit_Admin($data);
     }

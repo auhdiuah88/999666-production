@@ -14,4 +14,10 @@ class Cx_Sign_Product extends Model
 
     public $timestamps = false;
 
+    public function setDailyRebateAttribute($value)
+    {
+        $this->attributes['receive_amount'] = bcmul($value, $this->attributes['payback_cycle']);
+        $this->attributes['profit'] = bcsub($this->attributes['receive_amount'], $this->attributes['amount']);
+    }
+
 }

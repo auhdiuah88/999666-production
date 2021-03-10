@@ -80,6 +80,10 @@ class SettingDic
             'title' => 'invite friends',
             'key' => 'INVITE_FRIENDS'
         ],
+        'SIGN_SETTING' => [
+            'title' => 'sign setting',
+            'key' => 'SIGN_SETTING'
+        ],
     ];
 
     public static function key($key)

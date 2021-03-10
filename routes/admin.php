@@ -269,6 +269,10 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
 
             Route::post("/activity/inviteFriends","ActivityController@inviteFriendsSave");
             Route::get("/activity/inviteFriends","ActivityController@inviteFriends");
+            Route::post("/activity/signSetting","ActivityController@signSettingSave");
+            Route::get("/activity/signSetting","ActivityController@signSetting");
+            Route::post("/activity/signProduct","ActivityController@signProductEdit");
+            Route::get("/activity/signProduct","ActivityController@signProduct");
         });
 
         // 后台赠金记录列表
