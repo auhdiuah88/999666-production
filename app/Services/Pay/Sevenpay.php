@@ -43,7 +43,7 @@ class Sevenpay extends PayStrategy
 
     protected $rechargeTypeList = [
         '1' => 'vietcombank',
-        '2' => 'MoMoPay'
+        '2' => 'momo'
     ];
 
     /**
