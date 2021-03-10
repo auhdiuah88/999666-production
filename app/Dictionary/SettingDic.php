@@ -76,6 +76,10 @@ class SettingDic
             'title' => 'activity',
             'key' => 'ACTIVITY'
         ],
+        'INVITE_FRIENDS' => [
+            'title' => 'invite friends',
+            'key' => 'INVITE_FRIENDS'
+        ],
     ];
 
     public static function key($key)

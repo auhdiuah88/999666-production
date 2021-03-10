@@ -7,6 +7,7 @@ namespace App\Services\Admin;
 use App\Dictionary\GameDic;
 use App\Dictionary\SettingDic;
 use App\Repositories\Admin\SettingRepository;
+use App\Repositories\Admin\UploadsRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -16,14 +17,16 @@ use Illuminate\Validation\Rule;
 class SettingService extends BaseService
 {
 
-    private $SettingRepository;
+    private $SettingRepository, $UploadsRepository;
 
     public function __construct
     (
-        SettingRepository $settingRepository
+        SettingRepository $settingRepository,
+        UploadsRepository $uploadsRepository
     )
     {
         $this->SettingRepository = $settingRepository;
+        $this->UploadsRepository = $uploadsRepository;
     }
 
     /**
@@ -624,6 +627,36 @@ class SettingService extends BaseService
         $is_leader_limit = $this->intInput('is_leader_limit');
         $data = compact('status','rebate','is_leader_limit');
         $res = $this->SettingRepository->saveSetting(SettingDic::key('REGISTER'), $data);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
+    public function getInviteFriends()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('INVITE_FRIENDS'));
+        if (!$data){
+            $data = [
+                'image_id' => 0,
+                'image_url' => '',
+                'status' => 0
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function inviteFriendsSave(): bool
+    {
+        $status = $this->intInput('status');
+        $image_id = $this->intInput('image_id');
+        $image = $this->UploadsRepository->getImage($image_id);
+        $image_url = $image['path_url'];
+        $data = compact('status','image_id','image_url');
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('INVITE_FRIENDS'), $data);
         if($res === false){
             $this->_code = 403;
             $this->_msg = '修改失败';
