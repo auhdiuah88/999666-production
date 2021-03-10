@@ -12,7 +12,7 @@ class Sevenpay extends PayStrategy
 
     protected static $url = 'https://api.zf77777.org/';    // 支付网关
 
-    protected static $url_cashout = 'http://wrysc.orfeyt.com/'; // 提现网关
+    protected static $url_cashout = 'https://api.zf77777.org/'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
@@ -101,7 +101,7 @@ class Sevenpay extends PayStrategy
             'order_no' => $order_no,
             'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
-            'pltf_order_id' => '',
+            'pltf_order_id' => $res['ticket'],
             'verify_money' => '',
             'match_code' => '',
             'is_post' => $is_post ?? 0,
@@ -116,8 +116,8 @@ class Sevenpay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_pay_rechargeCallback',$request->post());
 
-        if ($request->success != 1)  {
-            $this->_msg = 'VNMTB-recharge-交易未完成';
+        if ($request->ispay != 1)  {
+            $this->_msg = 'seven_pay-recharge-交易未完成';
             return false;
         }
         // 验证签名
@@ -126,7 +126,7 @@ class Sevenpay extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,1) <> $sign) {
-            $this->_msg = 'VNMTB-签名错误';
+            $this->_msg = 'seven_pay-签名错误';
             return false;
         }
 
@@ -149,27 +149,33 @@ class Sevenpay extends PayStrategy
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'mer_no' => $this->withdrawMerchantID,
-            'mer_order_no' => $order_no,
-            'acc_no' => $withdrawalRecord->bank_number,
-            'acc_name' => $withdrawalRecord->account_holder,
-            'ccy_no' => 'VND',
-            'order_amount' => intval($money),
-            'bank_code' => 'IDPT0001',
-            'summary' => 'Balance Withdrawal',
-//            'province' => $withdrawalRecord->ifsc_code,
-            'notifyUrl' => $this->withdrawal_callback_url
+            'userid' => $this->withdrawMerchantID,
+            'orderid' => $order_no,
+            'type' => 'bank',
+            'amount' => intval($money),
+            'notifyurl' => $this->recharge_callback_url,
+            'returnurl' => env('SHARE_URL',''),
+            'note' => 'recharge balance',
         ];
+
+        $payload = [
+            'cardname' => $withdrawalRecord->account_holder,
+            'cardno' => $withdrawalRecord->bank_number,
+            'bankid' => '10000',
+            'bankname' => 'Others Bank'
+        ];
+        $params['payload'] = json_encode($payload);
+
         $params['sign'] = $this->generateSignRigorous($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalOrder',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleOrder', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalOrder',$res);
-        if ($res['status'] != 'SUCCESS') {
-            $this->_msg = $res['err_msg'];
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_pay_withdrawalOrder',$params);
+        $res = $this->requestService->postJsonData(self::$url_cashout . 'api/withdrawal', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_pay_withdrawalOrder',$res);
+        if ($res['success'] != 1) {
+            $this->_msg = $res['message'];
             return false;
         }
         return  [
-            'pltf_order_no' => $res['order_no'],
+            'pltf_order_no' => $res['ticket'],
             'order_no' => $order_no
         ];
     }
@@ -179,64 +185,38 @@ class Sevenpay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_pay_withdrawalCallback',$request->input());
 
         $pay_status = 0;
-        $status = (string)($request->status);
-        if($status == 'SUCCESS'){
-            $pay_status= 1;
+        if(isset($request->ispay)){
+            if($request->ispay == 1){
+                $pay_status= 1;
+            }
         }
-        if($status == 'FAIL'){
-            $pay_status = 3;
+        if(isset($request->iscancel)){
+            if($request->iscancel == 1){
+                $pay_status= 3;
+            }
         }
         if ($pay_status == 0) {
-            $this->_msg = 'VNMTBpay-withdrawal-交易未完成';
+            $this->_msg = 'seven_pay-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
-        $params = $request->post();
+        $params = $request->input();
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,2) <> $sign) {
-            $this->_msg = 'VNMTBpay-签名错误';
+            $this->_msg = 'seven_pay-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->mer_order_no,
-            'plat_order_id' => $request->order_no,
+            'order_no' => $request->orderid,
+            'plat_order_id' => $request->ticket,
             'pay_status' => $pay_status
         ];
         return $where;
-    }
-
-    protected function makeRequestNo($withdraw_id){
-        return date('YmdDis') . $withdraw_id;
-    }
-
-    /**
-     * 请求待付状态
-     * @param $withdrawalRecord
-     * @return array|false|mixed|string
-     */
-    public function callWithdrawBack($withdrawalRecord){
-        $request_no = $this->makeRequestNo($withdrawalRecord->id);
-        $request_time = date("YmdHis");
-        $mer_no = $this->merchantID;
-        $mer_order_no = $withdrawalRecord->order_no;
-
-        $params = compact('request_no','request_time','mer_no','mer_order_no');
-        $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Param',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
-        if(!$res){
-            return false;
-        }
-        if($res['query_status'] != 'SUCCESS'){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Err',$res);
-            return false;
-        }
-        return $res;
     }
 
 }
