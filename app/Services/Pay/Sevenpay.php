@@ -42,8 +42,13 @@ class Sevenpay extends PayStrategy
     }
 
     protected $rechargeTypeList = [
-        '1' => 'vietcombank',
-        '2' => 'momo'
+        '1' => 'zalo',
+        '2' => 'momo',
+        '3' => 'vietcombank',
+        '4' => 'vietinbankipay',
+        '5' => 'vtpay',
+        '6' => 'tpbank',
+        '7' => 'acbbank',
     ];
 
     /**
