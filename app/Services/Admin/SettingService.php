@@ -642,8 +642,7 @@ class SettingService extends BaseService
         if (!$data){
             $data = [
                 'image_id' => 0,
-                'image_url' => '',
-                'status' => 0
+                'image_url' => ''
             ];
         }
         $this->_data = $data;
@@ -651,11 +650,10 @@ class SettingService extends BaseService
 
     public function inviteFriendsSave(): bool
     {
-        $status = $this->intInput('status');
         $image_id = $this->intInput('image_id');
         $image = $this->UploadsRepository->getImage($image_id);
         $image_url = $image['path_url'];
-        $data = compact('status','image_id','image_url');
+        $data = compact('image_id','image_url');
         $res = $this->SettingRepository->saveSetting(SettingDic::key('INVITE_FRIENDS'), $data);
         if($res === false){
             $this->_code = 403;
@@ -681,12 +679,35 @@ class SettingService extends BaseService
 
     public function signSettingSave(): bool
     {
+        return $this->editActivity(SettingDic::key('SIGN_SETTING'));
+    }
+
+    public function redEnvelopeTask()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('RED_ENVELOPE_TASK'));
+        if (!$data){
+            $data = [
+                'image_id' => 0,
+                'image_url' => '',
+                'status' => 0
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function redEnvelopeTaskSave(): bool
+    {
+        return $this->editActivity(SettingDic::key('RED_ENVELOPE_TASK'));
+    }
+
+    public function editActivity($key): bool
+    {
         $status = $this->intInput('status');
         $image_id = $this->intInput('image_id');
         $image = $this->UploadsRepository->getImage($image_id);
         $image_url = $image['path_url'];
         $data = compact('status','image_id','image_url');
-        $res = $this->SettingRepository->saveSetting(SettingDic::key('SIGN_SETTING'), $data);
+        $res = $this->SettingRepository->saveSetting($key, $data);
         if($res === false){
             $this->_code = 403;
             $this->_msg = '修改失败';

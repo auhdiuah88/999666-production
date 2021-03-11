@@ -273,6 +273,10 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::get("/activity/signSetting","ActivityController@signSetting");
             Route::post("/activity/signProduct","ActivityController@signProductEdit");
             Route::get("/activity/signProduct","ActivityController@signProduct");
+            Route::post("/activity/redEnvelopeTask","ActivityController@redEnvelopeTaskSave");
+            Route::get("/activity/redEnvelopeTask","ActivityController@redEnvelopeTask");
+            Route::post("/activity/redEnvelopeTaskEdit","ActivityController@redEnvelopeTaskEdit");
+            Route::get("/activity/redEnvelopeTaskList","ActivityController@redEnvelopeTaskList");
         });
 
         // 后台赠金记录列表

@@ -12,7 +12,7 @@ class Cx_Banner extends Model
             'id' => 1,
             'name' => "首页",
         ],
-        [
+        2 => [
             'id' => 2,
             'name' => "活动",
         ],
@@ -22,11 +22,11 @@ class Cx_Banner extends Model
             'id' => 1,
             'name' => "不跳转",
         ],
-        [
+        2 => [
             'id' => 2,
             'name' => "内链",
         ],
-        [
+        3 => [
             'id' => 3,
             'name' => "外链",
         ],

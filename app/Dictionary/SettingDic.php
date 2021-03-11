@@ -84,9 +84,13 @@ class SettingDic
             'title' => 'sign setting',
             'key' => 'SIGN_SETTING'
         ],
+        'RED_ENVELOPE_TASK' => [
+            'title' => 'red envelope task',
+            'key' => 'RED_ENVELOPE_TASK'
+        ],
     ];
 
-    public static function key($key)
+    public static function key($key): string
     {
         return self::$settingKeys[$key]['key'];
     }

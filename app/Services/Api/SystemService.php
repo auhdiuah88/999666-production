@@ -4,19 +4,23 @@
 namespace App\Services\Api;
 
 use App\Dictionary\SettingDic;
+use App\Models\Cx_Banner;
+use App\Repositories\Api\BannerRepository;
 use App\Repositories\Api\SystemRepository;
 use App\Services\BaseService as Service;
 
 class SystemService extends Service
 {
-    private $SystemRepository;
+    private $SystemRepository, $BannerRepository;
 
     public function __construct
     (
-        SystemRepository $repository
+        SystemRepository $repository,
+        BannerRepository $bannerRepository
     )
     {
         $this->SystemRepository = $repository;
+        $this->BannerRepository = $bannerRepository;
     }
 
     public function getGroupUrl()
@@ -62,13 +66,34 @@ class SystemService extends Service
 
     public function activity()
     {
-        $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key('ACTIVITY'));
-        if(!$data){
-            $data = [
-                'give_away_red_envelopes' => 1
+        $banners = $this->BannerRepository->bannersByLocation(Cx_Banner::LOCATION_LIST[2]['id']);
+
+        $inviteSetting = $this->SystemRepository->getSettingValueByKey(SettingDic::key('INVITE_FRIENDS'));
+        if(!$inviteSetting)
+        {
+            $inviteSetting = [
+                'image_id' => 0,
+                'image_url' => ''
             ];
         }
-        $this->_data = $data;
+        $signSetting = $this->SystemRepository->getSettingValueByKey(SettingDic::key('SIGN_SETTING'));
+        if (!$signSetting){
+            $signSetting = [
+                'image_id' => 0,
+                'image_url' => '',
+                'status' => 0
+            ];
+        }
+        $taskSetting = $this->SystemRepository->getSettingValueByKey(SettingDic::key('RED_ENVELOPE_TASK'));
+        if (!$taskSetting){
+            $taskSetting = [
+                'image_id' => 0,
+                'image_url' => '',
+                'status' => 0
+            ];
+        }
+
+        $this->_data = compact('banners','inviteSetting','signSetting','taskSetting');
     }
 
     public function serviceSetting()

@@ -32,12 +32,36 @@ class ActivityService extends BaseService
             'name' => $this->strInput('name'),
             'status' => $this->intInput('status'),
             'amount' => $this->floatInput('amount'),
-            'daily_rebate' => $this->floatInput('amount'),
+            'daily_rebate' => $this->floatInput('daily_rebate'),
             'payback_cycle' => $this->intInput('payback_cycle'),
             'rebate_ratio' => $this->floatInput('rebate_ratio'),
             'stock' => $this->intInput('stock'),
         ];
         $res = $this->ActivityRepository->signProductEdit($data);
+        if($res === false){
+            $this->_code = 302;
+            $this->_msg = '操作失败';
+            return false;
+        }
+        return true;
+    }
+
+    public function getRedEnvelopeTask()
+    {
+        $this->_data = $this->ActivityRepository->getRedEnvelopeTask();
+    }
+
+    public function redEnvelopeTaskEdit(): bool
+    {
+        $data = [
+            'id' => $this->intInput('id'),
+            'name' => $this->strInput('name'),
+            'status' => $this->intInput('status'),
+            'value' => $this->intInput('value'),
+            'reward' => $this->floatInput('reward'),
+            'expire' => strtotime($this->strInput('expire')),
+        ];
+        $res = $this->ActivityRepository->redEnvelopeTaskEdit($data);
         if($res === false){
             $this->_code = 302;
             $this->_msg = '操作失败';
