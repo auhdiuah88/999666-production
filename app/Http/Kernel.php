@@ -62,6 +62,9 @@ class Kernel extends HttpKernel
         "admin_handle" => [
             \App\Http\Middleware\AdminHandleLogMiddleware::class, //记录请求日志
         ],
+        "api_listen" => [
+            \App\Http\Middleware\IpListenMiddleware::class, //api请求记录
+        ]
     ];
 
     /**

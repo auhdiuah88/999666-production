@@ -122,6 +122,12 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/admin/' . date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
             'level' => 'debug',
+        ],
+
+        'apidebug' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/apidebug/' . date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
+            'level' => 'debug',
         ]
     ],
 
