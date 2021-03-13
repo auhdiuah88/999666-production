@@ -282,7 +282,7 @@ class GameRepository
                 $item['game_play']['prize_number'] = '?';
             }
         }
-        $user_obj =$this->Cx_User->where('id',$user_id)->slelect(['balance'])->first();
+        $user_obj =$this->Cx_User->where('id',$user_id)->select(['balance'])->first();
         unset($sq_game->game_id, $sq_game->prize_time);
 
         $game_config = $this->Get_Game_Config($id);
