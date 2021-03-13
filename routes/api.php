@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get("/test", "TestController@test2");
 Route::get("/testRedis", "TestController@testRedis");
 Route::get("/test2", "TestController@test");
+Route::post("/myDecrypt", "TestController@aesDecrypt");
 Route::post("/upload", "TestController@upload");
 Route::get("/testGame", "TestController@openGame");
 Route::get("/openBetting", "TestController@openGameBetting");
@@ -24,10 +25,10 @@ Route::post("/makeSign", "TestController@makeSign");
 Route::post("/initInviteRelation", "TestController@initInviteRelation");
 
 
-Route::post("/login", "Api\UserController@Login");
-Route::post("/register", "Api\UserController@Register");
-Route::get("/h5Alert", "Api\SystemController@h5Alert");
-Route::get("/serviceSetting", "Api\SystemController@serviceSetting");
+Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
+Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);
+Route::get("/h5Alert", "Api\SystemController@h5Alert")->middleware(['params_decrypt']);
+Route::get("/serviceSetting", "Api\SystemController@serviceSetting")->middleware(['params_decrypt']);
 //Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
 //Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
 
@@ -36,9 +37,9 @@ Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback");
 // 提款回调
 Route::any('/withdrawal_callback', "Api\WithdrawalController@withdrawalCallback");
 
-Route::get("/user/language", "Api\SystemController@language");    // 语言
+Route::get("/user/language", "Api\SystemController@language")->middleware(['params_decrypt']);    // 语言
 
-Route::group(["namespace" => "Api"], function () {
+Route::group(["namespace" => "Api", 'middleware'=>['params_decrypt']], function () {
     Route::post("/sendCode", "UserController@sendMessage");
     Route::post("/resetPass", "UserController@resetPass");
     Route::post("/groupUrl", "SystemController@getWhatsAppGroupUrl"); // 获取群组URL，首页的客服按钮
@@ -48,7 +49,7 @@ Route::group(["namespace" => "Api"], function () {
     Route::get("/activity", "SystemController@activity"); // 获取活动页配置
 });
 
-Route::group(['middleware' => ['user_token']], function () {
+Route::group(['middleware' => ['user_token', 'params_decrypt']], function () {
     Route::post('/game_start', "Game\GameController@Game_Start");
     Route::post('/betting', "Game\GameController@Betting");
     Route::post('/betting_list', "Game\GameController@Betting_List");
@@ -56,22 +57,22 @@ Route::group(['middleware' => ['user_token']], function () {
 
 });
 
-Route::group(["namespace" => "Api", "prefix" => "goods"], function (){
+Route::group(["namespace" => "Api", "prefix" => "goods", 'middleware'=>['params_decrypt']], function (){
     Route::get("/", "ProductController@lists");
     Route::get("/detail", "ProductController@detail");
 });
 
 //banner管理
-Route::group(["namespace" => "Api", "prefix" => "banner"], function (){
+Route::group(["namespace" => "Api", "prefix" => "banner", 'middleware'=>['params_decrypt']], function (){
     Route::get("/find", "BannerController@banners");
 });
 
 //setting
-Route::group(["namespace" => "Api", "prefix" => "setting"], function (){
+Route::group(["namespace" => "Api", "prefix" => "setting", 'middleware'=>['params_decrypt']], function (){
     Route::get("/basic", "SystemController@basicSetting");
 });
 
-Route::group(["namespace" => "Api", 'middleware' => ['user_token']], function () {
+Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'params_decrypt']], function () {
 
     Route::group(["prefix" => "user"], function () {
         Route::get("/info", "InfoController@getInfo"); // 查询用户基本信息

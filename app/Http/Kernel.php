@@ -64,7 +64,10 @@ class Kernel extends HttpKernel
         ],
         "api_listen" => [
             \App\Http\Middleware\IpListenMiddleware::class, //api请求记录
-        ]
+        ],
+        "params_decrypt" => [
+            \App\Http\Middleware\ParamsDecryptMiddleware::class
+        ],
     ];
 
     /**

@@ -632,4 +632,11 @@ class TestController extends Controller
         print_r($select_ids);
 
     }
+
+    public function aesDecrypt()
+    {
+        $string = request()->input('str');
+        print_r(json_decode(aesDecrypt($string),true));
+    }
+
 }
