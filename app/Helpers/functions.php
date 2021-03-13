@@ -86,7 +86,7 @@ function channels():array
 
 function aesEncrypt($data)
 {
-    $hash = md5(env('AES_KEY','goshop6aes'));
+    $hash = md5(env('VUE_AES_KEY','goshop6aes'));
     $salt = openssl_random_pseudo_bytes(8);
     $salted = '';
     $dx = '';
@@ -103,7 +103,7 @@ function aesEncrypt($data)
 function aesDecrypt($data)
 {
     $data = base64_decode($data);
-    $hash = md5(env('AES_KEY','goshop6aes'));
+    $hash = md5(env('VUE_AES_KEY','goshop6aes'));
     $cipherText = substr($data, 16);
     $salt = substr($data, 8, 8);
     $rounds = 3;
