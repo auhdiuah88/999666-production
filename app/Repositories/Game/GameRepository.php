@@ -1099,8 +1099,14 @@ class GameRepository
         $sq_game = Redis::get("PRE_GAME_PLAY_{$id}");
         if(!$sq_game){
             $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('id', '<', $game_play->id)->orderByDesc('id')->first();
-            if($sq_game){
+            if($sq_game && $sq_game->prize_number){
                 Redis::setex("PRE_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($sq_game));
+            }else{
+                sleep(1);
+                $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('id', '<', $game_play->id)->orderByDesc('id')->first();
+                if($sq_game){
+                    Redis::setex("PRE_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($sq_game));
+                }
             }
         }else{
             $sq_game = json_decode($sq_game);
