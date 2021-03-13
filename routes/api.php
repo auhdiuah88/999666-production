@@ -17,6 +17,7 @@ Route::get("/test", "TestController@test2");
 Route::get("/testRedis", "TestController@testRedis");
 Route::get("/test2", "TestController@test");
 Route::post("/myDecrypt", "TestController@aesDecrypt");
+Route::get("/test3", "TestController@test3");
 Route::post("/upload", "TestController@upload");
 Route::get("/testGame", "TestController@openGame");
 Route::get("/openBetting", "TestController@openGameBetting");

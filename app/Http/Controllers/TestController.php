@@ -639,4 +639,9 @@ class TestController extends Controller
         print_r(json_decode(aesDecrypt($string),true));
     }
 
+    public function test3(){
+        sleep(10);
+        echo 1;
+    }
+
 }

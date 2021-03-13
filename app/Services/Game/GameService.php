@@ -52,7 +52,7 @@ class GameService
     public function Game_Start($request)
     {
         $token = $request->header("token");
-        $data = $request->all();
+//        $data = $request->all();
         $token = urldecode($token);
         $user = explode("+", Crypt::decrypt($token));
         $user_id = $user[0];
