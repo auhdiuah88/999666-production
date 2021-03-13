@@ -11,6 +11,7 @@ class ParamsDecryptMiddleware
 
     protected $msg = '';
     protected $params = [];
+    protected $code = 0;
 
     /**
      * Handle an incoming request.
@@ -29,7 +30,7 @@ class ParamsDecryptMiddleware
                 "code" => 403,
                 "msg" => $this->msg
             ];
-            if($i_c){
+            if($i_c && $this->code != 101){
                 $rtn = aesEncrypt(json_encode($rtn));
             }
             return response()->json($rtn);
@@ -59,7 +60,8 @@ class ParamsDecryptMiddleware
             $data = aesDecrypt($params);
             if(!$data)
             {
-                $this->msg = 'params wrong.';
+                $this->msg = 'Please refresh the page and try again.';
+                $this->code = 101;
                 return false;
             }
         }else{
