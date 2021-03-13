@@ -28,41 +28,60 @@ class CheckUserTokenMiddleware
     {
 
         $token = $request->header("token");
-
-
-        if (empty($token)) {
-            return response()->json([
-                "code" => 401,
+        $i_c = env('IS_CRYPT',false);
+        $rtn = [
+            "code" => 401,
 //                "msg" => "缺少token令牌"
-                "msg" => "Please login again"
-            ]);
+            "msg" => "Please login again"
+        ];
+        if (empty($token)) {
+            if($i_c){
+                $rtn = aesEncrypt(json_encode($rtn));
+            }
+            return response()->json($rtn);
         }
 
         $token1 = $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
         if(count($data) < 1){
-            return response()->json([
-                "code" => 401,
-//                "msg" => "token验证失败"
-                "msg" => "Please login again"
-            ]);
+            if($i_c){
+                $rtn = aesEncrypt(json_encode($rtn));
+            }
+            return response()->json($rtn);
+//            return response()->json([
+//                "code" => 401,
+////                "msg" => "token验证失败"
+//                "msg" => "Please login again"
+//            ]);
         }
 
         $user_id = $data[0];
         $cache_token = cache()->get(md5('usertoken'.$user_id));
         if(!env('IS_DEV',false) && (!$cache_token || $cache_token != $token1)){
-            return response()->json([
+            $rtn = [
                 "code" => 401,
                 "msg" => "Login failed. Please login again"
-            ]);
+            ];
+            if($i_c){
+                $rtn = aesEncrypt(json_encode($rtn));
+            }
+            return response()->json($rtn);
         }
 
         if (!$user = $this->UserRepository->cacheUser($user_id)) {
-            return response()->json([
+            $rtn = [
                 "code" => 401,
-//                "msg" => "token验证失败"
                 "msg" => "Please login again"
-            ]);
+            ];
+            if($i_c){
+                $rtn = aesEncrypt(json_encode($rtn));
+            }
+            return response()->json($rtn);
+//            return response()->json([
+//                "code" => 401,
+////                "msg" => "token验证失败"
+//                "msg" => "Please login again"
+//            ]);
         }
 
 
