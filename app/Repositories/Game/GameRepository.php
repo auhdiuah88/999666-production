@@ -254,33 +254,32 @@ class GameRepository
     {
         sleep(1);
         $time = time();
-        $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<=", $time)->where('end_time', ">", $time)->select(['b_money', 'end_time', 'game_id', 'id', 'is_status', 'number', 'start_time', 'type'])->first();
+//        $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<=", $time)->where('end_time', ">", $time)->select(['b_money', 'end_time', 'game_id', 'id', 'is_status', 'number', 'start_time', 'type'])->first();
+        $bq_game = $this->getCurGamePlay($id, $time);
         if (!isset($bq_game->number)) {
             $bq_game = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<", ($time + 2))->where('end_time', ">=", $time)->first();
         }
 //        $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('number', ($bq_game->number - 1))->first();
-        $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('id', '<', $bq_game->id)->orderByDesc('id')->first();
+//        $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('id', '<', $bq_game->id)->orderByDesc('id')->first();
+        $sq_game = $this->getPreGamePlay($bq_game, $id, $time);
 //        $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("number", "<",$bq_game->number)->orderBy('start_time', 'desc')->limit(10)->get();
-        $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("id", "<",$bq_game->id)->orderBy('start_time', 'desc')->limit(10)->get();
-        $lx_game = $this->Cx_Game_Betting->with(array(
-                'game_play' => function ($query) {
-                    $query->select('id', 'number', 'prize_number', 'game_id', 'status')->with(['game_name_p'=>function($query){
-                        $query->select('id', 'name');
-                    }]);
-                },
-                'game_c_x' => function($query){
-                    $query->select('id', 'name', 'name as name_india');
-                }
-            )
-        )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->select(['*', 'id as betting_money'])->get();
-        if($lx_game->isEmpty()){
-            $lx_game = [];
-        }else{
-            $lx_game = $lx_game->toArray();
-            foreach ($lx_game as &$item){
-                if($item['game_play']['status'] == 0){
-                    $item['game_play']['prize_number'] = '?';
-                }
+//        $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("id", "<",$bq_game->id)->orderBy('start_time', 'desc')->limit(10)->get();
+        $pr_lx = $this->getPrLx($bq_game, $id, $time);
+//        $lx_game = $this->Cx_Game_Betting->with(array(
+//                'game_play' => function ($query) {
+//                    $query->select('id', 'number', 'prize_number', 'game_id', 'status')->with(['game_name_p'=>function($query){
+//                        $query->select('id', 'name');
+//                    }]);
+//                },
+//                'game_c_x' => function($query){
+//                    $query->select('id', 'name', 'name as name_india');
+//                }
+//            )
+//        )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->select(['*', 'id as betting_money'])->get();
+        $lx_game = $this->getLxGame($bq_game, $id, $time, $user_id);
+        foreach ($lx_game as &$item){
+            if($item['game_play']['status'] == 0){
+                $item['game_play']['prize_number'] = '?';
             }
         }
         $user_obj =$this->Cx_User->where('id',$user_id)->first();
@@ -1079,5 +1078,72 @@ class GameRepository
     public function getEndTime($playId)
     {
         return $this->Cx_Game_Play->where('id', $playId)->value('end_time') ?? 0;
+    }
+
+    public function getCurGamePlay($id, $time)
+    {
+        $game_play =  Redis::get("CUR_GAME_PLAY_{$id}");
+        if(!$game_play){
+            $game_play = $this->Cx_Game_Play->where("game_id", $id)->where('start_time', "<=", $time)->where('end_time', ">", $time)->select(['b_money', 'end_time', 'game_id', 'id', 'is_status', 'number', 'start_time', 'type'])->first();
+            if($game_play){
+                Redis::setex("CUR_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($game_play));
+            }
+        }else{
+            $game_play = json_decode($game_play);
+        }
+        return $game_play;
+    }
+
+    public function getPreGamePlay($game_play, $id, $time)
+    {
+        $sq_game = Redis::get("PRE_GAME_PLAY_{$id}");
+        if(!$sq_game){
+            $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('id', '<', $game_play->id)->orderByDesc('id')->first();
+            if($sq_game){
+                Redis::setex("PRE_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($sq_game));
+            }
+        }else{
+            $sq_game = json_decode($sq_game);
+        }
+        return $sq_game;
+    }
+
+    public function getPrLx($game_play, $id, $time)
+    {
+        $pr_lx = Redis::get("PR_LX_GAME_PLAY_{$id}");
+        if(!$pr_lx){
+            $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("id", "<",$game_play->id)->orderBy('start_time', 'desc')->limit(10)->get();
+            if(!$pr_lx->isEmpty()){
+                Redis::setex("PR_LX_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($pr_lx));
+            }
+        }else{
+            $pr_lx = json_decode($pr_lx);
+        }
+        return $pr_lx;
+    }
+
+    public function getLxGame($game_play, $id, $time, $user_id)
+    {
+        $lx = Redis::get("LX_GAME_PLAY_{$id}");
+        if(!$lx){
+            $lx = $this->Cx_Game_Betting->with(array(
+                    'game_play' => function ($query) {
+                        $query->select('id', 'number', 'prize_number', 'game_id', 'status')->with(['game_name_p'=>function($query){
+                            $query->select('id', 'name');
+                        }]);
+                    },
+                    'game_c_x' => function($query){
+                        $query->select('id', 'name', 'name as name_india');
+                    }
+                )
+            )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->select(['*', 'id as betting_money'])->get();
+            if(!$lx->isEmpty()){
+                Redis::setex("LX_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($lx));
+                $lx = $lx->toArray();
+            }
+        }else{
+            $lx = json_decode($lx,true);
+        }
+        return $lx;
     }
 }
