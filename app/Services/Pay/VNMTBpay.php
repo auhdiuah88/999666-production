@@ -43,7 +43,9 @@ class VNMTBpay extends PayStrategy
 
     protected $rechargeTypeList = [
         '1' => '100103',
-        '2' => 'MoMoPay'
+        '2' => 'MoMoPay',
+        '3' => 'ZaloPay',
+        '4' => '100104'
     ];
 
     /**
