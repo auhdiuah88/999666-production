@@ -142,8 +142,8 @@ class Sepropay extends PayStrategy
         $params['sign'] = $this->generateSign($params,2);
         $params['sign_type'] = 'MD5';
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$params);
-        $res = $this->requestService->postJsonData(self::$withdrawUrl . 'pay/transfer', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$res);
+        $res = $this->requestService->postFormData(self::$withdrawUrl . 'pay/transfer', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder_rtn',$res);
         if($res['respCode'] != 'SUCCESS'){
             $this->_msg = $res['errorMsg'];
             return false;
