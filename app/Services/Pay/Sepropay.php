@@ -89,27 +89,31 @@ class Sepropay extends PayStrategy
             'order_date' => date("Y-m-d H:i:s"),
             'goods_name' => 'balance recharge',
         ];
+        if(!$params['page_url'])unset($params['page_url']);
         $params['sign'] = $this->generateSign($params,1);
+        $params['sign_type'] = 'MD5';
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder', $params);
 
-        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'sepro/pay/web', $params);
-        if ($res['rtn_code'] <> 1000) {
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder_return', $res);
-            $this->_msg = $res['rtn_msg'];
-//            $this->_data = $res;
-            return false;
-        }
+//        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'sepro/pay/web', $params);
+//        if ($res['rtn_code'] <> 1000) {
+//            \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder_return', $res);
+//            $this->_msg = $res['rtn_msg'];
+////            $this->_data = $res;
+//            return false;
+//        }
         $resData = [
             'out_trade_no' => $order_no,
             'shop_id' => $this->rechargeMerchantID,
             'pay_company' => $this->company,
             'pay_type' => $pay_type,
-            'native_url' => $res['native_url'],
-            'pltf_order_id' => $res['pltf_order_id'],
-            'verify_money' => $res['verify_money'],
-            'match_code' => $res['match_code'],
-            'notify_url' => $this->recharge_callback_url ,
+            'native_url' => self::$rechargeUrl . 'sepro/pay/web',
+            'pltf_order_id' => '',
+            'verify_money' => $params['trade_amount'],
+            'match_code' => '',
+            'notify_url' => $this->recharge_callback_url,
+            'params' => $params,
+            'is_post' => 2,
         ];
         return $resData;
     }
