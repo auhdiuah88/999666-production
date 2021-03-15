@@ -63,7 +63,7 @@ class Sepropay extends PayStrategy
     /**
      * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
      */
-    public function generateSign(array $params, $type=1, $isLower=1)
+    public function generateSign(array $params, $type=1)
     {
         $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         ksort($params);
@@ -73,9 +73,6 @@ class Sepropay extends PayStrategy
         }
         $string[] = 'key=' . $secretKey;
         $sign = (implode('&', $string));
-        if(!$isLower){
-            return md5($sign);
-        }
         return strtolower(md5($sign));
     }
 
@@ -136,13 +133,13 @@ class Sepropay extends PayStrategy
             'mch_transferId' => $order_no,
             'transfer_amount' => intval($money),
             'apply_date' => date('Y-m-d H:i:s'),
-            'bank_code' => $withdrawalRecord->mtb_code,
+            'bank_code' => 'IDPT0001',
             'receive_name' => $withdrawalRecord->account_holder,
             'receive_account' => $withdrawalRecord->bank_number,
             'remark' => $withdrawalRecord->ifsc_code,
             'back_url' => $this->withdrawal_callback_url,
         ];
-        $params['sign'] = $this->generateSign($params,2,0);
+        $params['sign'] = $this->generateSign($params,2);
         $params['sign_type'] = 'MD5';
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$withdrawUrl . 'pay/transfer', $params);
@@ -209,7 +206,7 @@ class Sepropay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['signType']);
-        if ($this->generateSign($params,2,0) <> $sign) {
+        if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'sepro_签名错误';
             return false;
         }
