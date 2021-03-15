@@ -199,7 +199,7 @@ class UserService
         if(env('IS_LIMIT_IP',false) && !ipCheck($ip))
         {
             $this->error_code = 402;
-            $this->error = 'IP is not in the valid area';
+            $this->error = "IP[{$ip}] is not in the valid area";
             return false;
         }
 
