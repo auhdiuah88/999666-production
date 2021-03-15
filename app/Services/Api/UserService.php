@@ -195,6 +195,14 @@ class UserService
      */
     public function Register($data, $ip)
     {
+        ##检查ip区域
+        if(env('IS_LIMIT_IP',false) && !ipCheck($ip))
+        {
+            $this->error_code = 402;
+            $this->error = 'IP is not in the valid area';
+            return false;
+        }
+
         if($this->SettingRepository->getIpSwitch() && $this->UserRepository->ipExist($ip)){
             $this->error_code = 402;
             $this->error = 'IP already exists';

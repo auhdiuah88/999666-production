@@ -644,4 +644,11 @@ class TestController extends Controller
         echo 1;
     }
 
+    public function ipTest(): bool
+    {
+        dd(ipCheck(request()->input('ip')));
+    }
+
+
+
 }

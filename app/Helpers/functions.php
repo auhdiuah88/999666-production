@@ -118,3 +118,30 @@ function aesDecrypt($data)
     $iv = substr($result, 32, 16);
     return openssl_decrypt($cipherText, 'aes-256-cbc', $key, true, $iv);
 }
+
+/**
+ * @param $ip
+ * @return bool
+ * 检查ip是否在指定范围内
+ */
+function ipCheck($ip): bool
+{
+    $ip=myIp2long($ip);
+    $ips = config('site.ips',[]);
+    foreach($ips as $item)
+    {
+        $ban_range_low=myIp2long(trim($item[0])); //ip段首
+        $ban_range_up=myIp2long(trim($item[1]));//ip段尾
+        if ($ip>$ban_range_low && $ip<=$ban_range_up)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+function myIp2long($ip){
+    $ip_arr = explode('.',$ip);
+    $iplong = (16777216 * intval($ip_arr[0])) + (65536 * intval($ip_arr[1])) + (256 * intval($ip_arr[2])) + intval($ip_arr[3]);
+    return $iplong;
+}
