@@ -273,7 +273,7 @@ class Sevenpay extends PayStrategy
             'orderid' => $order_no,
             'type' => 'bank',
             'amount' => intval($money),
-            'notifyurl' => $this->recharge_callback_url,
+            'notifyurl' => $this->withdrawal_callback_url,
             'returnurl' => env('SHARE_URL',''),
             'note' => 'recharge balance',
         ];
