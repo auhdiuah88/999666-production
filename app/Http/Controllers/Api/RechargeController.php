@@ -95,6 +95,9 @@ class RechargeController extends Controller
     {
         try{
             if ($this->rechargeService->rechargeCallback($request)) {
+                if($this->rechargeService->rtn){
+                    return $this->rechargeService->rtn;
+                }
                 $payProvide = $request->input('type', '');
                 if($payProvide == 'rspay')
                     return 'OK';

@@ -435,7 +435,7 @@ class WithdrawalService extends PayService
                 $withdrawlLog->loan_time = time();
                 $withdrawlLog->save();
             }
-
+            $this->_msg = $strategyClass->withdrawRtn;
 
             DB::commit();
         } catch (\Exception $e) {

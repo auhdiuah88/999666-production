@@ -28,6 +28,9 @@ abstract class PayStrategy
         '777pay'
     ];
 
+    public $rechargeRtn = '';
+    public $withdrawRtn = '';
+
     public function __construct (
         RequestService $requestService,
         Request $request,

@@ -16,7 +16,7 @@ class Sepropay extends PayStrategy
 
     protected static $rechargeUrl = 'https://pay.sepropay.com/';
 
-    protected static $withdrawUrl = 'http://pay1.yynn.me';
+    protected static $withdrawUrl = 'https://pay.sepropay.com/';
 
     // 测试环境
 //    protected static $merchantID = 10120;
@@ -32,6 +32,9 @@ class Sepropay extends PayStrategy
     public $rechargeMerchantID;
     public $rechargeSecretkey;
     public $company = 'sepro';   // 支付公司名
+
+    public $rechargeRtn='success'; //支付成功的返回
+    public $withdrawRtn='success'; //提现成功的返回
 
     public function _initialize()
     {
@@ -60,7 +63,7 @@ class Sepropay extends PayStrategy
     /**
      * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
      */
-    public function generateSign(array $params, $type=1)
+    public function generateSign(array $params, $type=1, $isLower=1)
     {
         $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         ksort($params);
@@ -70,6 +73,9 @@ class Sepropay extends PayStrategy
         }
         $string[] = 'key=' . $secretKey;
         $sign = (implode('&', $string));
+        if(!$isLower){
+            return md5($sign);
+        }
         return strtolower(md5($sign));
     }
 
@@ -121,50 +127,46 @@ class Sepropay extends PayStrategy
 
     function withdrawalOrder(object $withdrawalRecord)
     {
-        $account_holder = $withdrawalRecord->account_holder;
-        $bank_name = $withdrawalRecord->bank_name;
-        $bank_number = $withdrawalRecord->bank_number;
-        $ifsc_code = $withdrawalRecord->ifsc_code;
-        $upi_id = 'xxxx';
-        $money = $withdrawalRecord->payment;    // 打款金额;
-
-//        $order_no = $this->onlyosn();
+        $money = $withdrawalRecord->payment;    // 打款金额
+//        $ip = $this->request->ip();
+//        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'account_holder' => $account_holder, // 银行账户人实名。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'bank_name' => $bank_name, // 银行名称。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'bank_number' => $bank_number, // 银行卡号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'ifsc_code' => $ifsc_code, // IFSC编号。2、银行卡方式收款，该字段填写真实信息。upi_id字段填"xxxx"。
-            'money' => $money,
-            'notify_url' => $this->withdrawal_callback_url , // 回调url，用来接收订单支付结果
-            'out_trade_no' => $order_no,
-            'shop_id' => $this->withdrawMerchantID,
-            'upi_id' => $upi_id, // UPI帐号。1、UPI方式收款，该字段填写真实信息。account_holder、bank_number、bank_name、ifsc_code 这四个字段填"xxxx"。
+            'mch_id' => $this->withdrawMerchantID,
+            'mch_transferId' => $order_no,
+            'transfer_amount' => intval($money),
+            'apply_date' => date('Y-m-d H:i:s'),
+            'bank_code' => $withdrawalRecord->mtb_code,
+            'receive_name' => $withdrawalRecord->account_holder,
+            'receive_account' => $withdrawalRecord->bank_number,
+            'remark' => $withdrawalRecord->ifsc_code,
+            'back_url' => $this->withdrawal_callback_url,
         ];
-        $params['sign'] = $this->generateSign($params,2);
-
+        $params['sign'] = $this->generateSign($params,2,0);
+        $params['sign_type'] = 'MD5';
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$params);
-
-        $res = $this->requestService->postJsonData(self::$withdrawUrl . '/withdrawal', $params);
-        if ($res['rtn_code'] <> 1000) {
-            $this->_msg = $res['rtn_msg'];
+        $res = $this->requestService->postJsonData(self::$withdrawUrl . 'pay/transfer', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$res);
+        if($res['respCode'] != 'SUCCESS'){
+            $this->_msg = $res['errorMsg'];
             return false;
         }
-        return [
-            'pltf_order_no' => $res['pltf_order_no'],
-            'order_no' => $order_no,
-            'notify_url' => $this->withdrawal_callback_url,
+        if($res['tradeResult'] == '3' || $res['tradeResult'] == '2'){
+            $this->_msg = '代付订单被拒绝';
+            return false;
+        }
+        return  [
+            'pltf_order_no' => '',
+            'order_no' => $order_no
         ];
     }
 
     function rechargeCallback(Request $request)
     {
-        // 验证参数
-        if ($request->shop_id <> $this->rechargeMerchantID
-            || $request->api_name <> 'quickpay.all.native.callback'
-            || $request->pay_result <> 'success'
-        ) {
-            $this->_msg = '参数错误';
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeCallback',$request->post());
+
+        if ($request->tradeResult != '1')  {
+            $this->_msg = 'sepro-recharge-交易未完成';
             return false;
         }
 
@@ -172,15 +174,15 @@ class Sepropay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
+        unset($params['signType']);
         if ($this->generateSign($params,1) <> $sign){
             $this->_msg = '签名错误';
             return false;
         }
 
         $where = [
-            'order_no' => $request->out_trade_no,
-            'pltf_order_id' => $request->pltf_order_id,
-//            'money' => $money
+            'order_no' => $request->mchOrderNo,
+            'pltf_order_id' => $request->orderNo,
         ];
 
         return $where;
@@ -189,32 +191,31 @@ class Sepropay extends PayStrategy
     function withdrawalCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalCallback',$request->post());
-        /**
-         * {
-         * "money": "54.36",
-         * "out_trade_no": "202011281743443450333436",
-         * "pltf_order_id": "2559202011281743444014",
-         * "rtn_code": "success",
-         * "sign": "2463f17f8400c0416d0dd86c28208508"
-         * }
-         */
-        $pay_status = 1;
-        if ($request->rtn_code <> 'success') {
-            $this->_msg = '参数错误';
+
+        $pay_status = 0;
+        $status = (string)($request->tradeResult);
+        if($status == '1'){
+            $pay_status= 1;
+        }
+        if($status == '2' || $status == '3'){
+            $pay_status = 3;
+        }
+        if ($pay_status == 0) {
+            $this->_msg = 'sepro_withdrawal-交易未完成';
             return false;
         }
-
         // 验证签名
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSign($params,2) <> $sign) {
-            $this->_msg = '签名错误';
+        unset($params['signType']);
+        if ($this->generateSign($params,2,0) <> $sign) {
+            $this->_msg = 'sepro_签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->out_trade_no,
-            'plat_order_id' => $request->pltf_order_id,
+            'order_no' => $request->merTransferId,
+            'plat_order_id' => $request->tradeNo,
             'pay_status' => $pay_status
         ];
         return $where;

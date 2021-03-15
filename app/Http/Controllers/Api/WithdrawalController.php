@@ -218,7 +218,7 @@ class WithdrawalController extends Controller
     {
         try{
             if ($this->WithdrawalService->withdrawalCallback($request)) {
-                return $this->WithdrawalService->_msg;
+                return $this->WithdrawalService->_msg ? : 'success';
             }
             return $this->WithdrawalService->_msg;
         }catch(\Exception $e){

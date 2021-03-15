@@ -42,6 +42,8 @@ class RechargeService extends PayService
         $this->SettingRepository = $settingRepository;
     }
 
+    public $rtn = '';
+
     /***
      * 充值下单接口-JSON封装请求
      * GET方式  返回支付URL链接
@@ -137,6 +139,7 @@ class RechargeService extends PayService
             $this->_msg = $strategyClass->_msg;
             return false;
         }
+        $this->rtn = $strategyClass->rechargeRtn;
         if(!is_array($where)){
             return true;
         }
