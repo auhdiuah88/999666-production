@@ -206,11 +206,12 @@ class UserService
             $this->error = 'This account already exists';
             return false;
         }
-//        if ($data["sms_code"] != Redis::get(self::REDIS_REGIST_CODE . $data["phone"])) {
-//            $this->error_code = 402;
-//            $this->error = "The phone verification code is incorrect";
-//            return false;
-//        }
+        $is_check_sms_code = env('IS_CHECK_SMS_CODE',true);
+        if ($is_check_sms_code && $data["sms_code"] != Redis::get(self::REDIS_REGIST_CODE . $data["phone"])) {
+            $this->error_code = 402;
+            $this->error = "The phone verification code is incorrect";
+            return false;
+        }
         unset($data["sms_code"]);
         if (isset($data["code"])) {
             if ($data["code"] == "" || empty($data["code"])) {

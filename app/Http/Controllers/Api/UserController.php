@@ -69,11 +69,15 @@ class UserController extends Controller
         try{
             // 参数验证
             $data = $request->post();
+            $is_check_sms_code = env('IS_CHECK_SMS_CODE',true);
             $rules = [
                 "phone" => "required",
-                "password" => "required",
-//                "sms_code" => "required"
+                "password" => "required"
             ];
+            if($is_check_sms_code)
+            {
+                $rules['sms_code'] = "required";
+            }
 //        $massages = [
 //            "phone.required" => "用户名不能为空",
 //            "password.required" => "密码不能为空",

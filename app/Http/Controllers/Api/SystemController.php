@@ -140,10 +140,12 @@ class SystemController extends Controller
         ];
         $country = env('COUNTRY','india');
         $currency = $currency_arr[$country];
+
+        $is_check_sms_code = env('IS_CHECK_SMS_CODE',true);
         return $this->AppReturn(
             200,
             'ok',
-            compact('currency')
+            compact('currency','is_check_sms_code')
         );
     }
 
