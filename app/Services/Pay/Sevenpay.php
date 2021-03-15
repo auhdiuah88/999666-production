@@ -51,6 +51,101 @@ class Sevenpay extends PayStrategy
         '7' => 'acbbank',
     ];
 
+    protected $banks = [
+        'VIB' => [
+            'bankId' => 115,
+            'bankName' => 'VIB'
+        ],
+        'VPBank' => [
+            'bankId' => 128,
+            'bankName' => 'VP'
+        ],
+        'BIDV' => [
+            'bankId' => 121,
+            'bankName' => 'BIDV'
+        ],
+        'VietinBank' => [
+            'bankId' => 121,
+            'bankName' => 'VTB'
+        ],
+        'SHB' => [
+            'bankId' => 133,
+            'bankName' => 'SHB'
+        ],
+        'ABBANK' => [
+            'bankId' => 137,
+            'bankName' => 'ABBank'
+        ],
+        'AGRIBANK' => [
+            'bankId' => 131,
+            'bankName' => 'AGRI'
+        ],
+        'Vietcombank' => [
+            'bankId' => 117,
+            'bankName' => 'VCB'
+        ],
+        'Techcom' => [
+            'bankId' => 115,
+            'bankName' => 'TCB'
+        ],
+        'ACB' => [
+            'bankId' => 118,
+            'bankName' => 'ACB'
+        ],
+        'SCB' => [
+            'bankId' => 147,
+            'bankName' => 'SCB'
+        ],
+        'MBBANK' => [
+            'bankId' => 129,
+            'bankName' => 'MB'
+        ],
+        'EIB' => [
+            'bankId' => 122,
+            'bankName' => 'EIB'
+        ],
+        'STB' => [
+            'bankId' => 10000,
+            'bankName' => 'OTHERS'
+        ],
+        'DongABank' => [
+            'bankId' => 145,
+            'bankName' => 'OCB'
+        ],
+        'GPBank' => [
+            'bankId' => 970408,
+            'bankName' => 'GPB'
+        ],
+        'Saigonbank' => [
+            'bankId' => 148,
+            'bankName' => 'SGB'
+        ],
+        'PGBank' => [
+            'bankId' => 152,
+            'bankName' => 'PGBank'
+        ],
+        'Oceanbank' => [
+            'bankId' => 970414,
+            'bankName' => 'OJB'
+        ],
+        'NamABank' => [
+            'bankId' => 142,
+            'bankName' => 'NAMABA'
+        ],
+        'TPB' => [
+            'bankId' => 130,
+            'bankName' => 'TPB'
+        ],
+        'HDB' => [
+            'bankId' => 144,
+            'bankName' => 'HDB'
+        ],
+        'VAB' => [
+            'bankId' => 149,
+            'bankName' => 'VAB'
+        ],
+    ];
+
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
@@ -182,12 +277,17 @@ class Sevenpay extends PayStrategy
             'returnurl' => env('SHARE_URL',''),
             'note' => 'recharge balance',
         ];
-
+        $bank = $this->banks[$withdrawalRecord->bank_name] ?? '';
+        if(!$bank)
+        {
+            $this->_msg = '该银行卡不支持提现,请换一张银行卡';
+            return false;
+        }
         $payload = [
             'cardname' => $withdrawalRecord->account_holder,
             'cardno' => $withdrawalRecord->bank_number,
-            'bankid' => '10000',
-            'bankname' => 'Others Bank'
+            'bankid' => $bank['bankId'],
+            'bankname' => $bank['bankName']
         ];
         $params['payload'] = json_encode($payload);
 
