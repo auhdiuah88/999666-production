@@ -195,6 +195,7 @@ class UserService
      */
     public function Register($data, $ip)
     {
+        $ip = getIp();
         ##检查ip区域
         if(env('IS_LIMIT_IP',false) && !ipCheck($ip))
         {
