@@ -29,7 +29,8 @@ class PayContext
         Payq $payq,
         HuiZhong $huiZhong,
         VNMTBpay $VNMTBpay,
-        Sevenpay $sevenpay
+        Sevenpay $sevenpay,
+        Sepropay $sepropay
     )
     {
         // 每种api地址对应的支付公司
@@ -50,6 +51,7 @@ class PayContext
             'huizhong' => $huiZhong,  //mtb
             'vnpay' => $VNMTBpay,  //越南mtb
             '777pay' => $sevenpay,  //777pay 越南
+            'sepro' => $sepropay,  //
         ];
     }
     /**

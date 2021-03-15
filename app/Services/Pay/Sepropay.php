@@ -31,7 +31,7 @@ class Sepropay extends PayStrategy
     public $withdrawSecretkey;
     public $rechargeMerchantID;
     public $rechargeSecretkey;
-    public $company = 'ipay';   // 支付公司名
+    public $company = 'sepro';   // 支付公司名
 
     public function _initialize()
     {
