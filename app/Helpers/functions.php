@@ -145,3 +145,23 @@ function myIp2long($ip){
     $iplong = (16777216 * intval($ip_arr[0])) + (65536 * intval($ip_arr[1])) + (256 * intval($ip_arr[2])) + intval($ip_arr[3]);
     return $iplong;
 }
+
+function getIp(){
+    $ip='0.0.0.0';
+    if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+        return is_ip($_SERVER['HTTP_CLIENT_IP'])?$_SERVER['HTTP_CLIENT_IP']:$ip;
+    }elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+        return is_ip($_SERVER['HTTP_X_FORWARDED_FOR'])?$_SERVER['HTTP_X_FORWARDED_FOR']:$ip;
+    }else{
+        return is_ip($_SERVER['REMOTE_ADDR'])?$_SERVER['REMOTE_ADDR']:$ip;
+    }
+}
+function is_ip($str){
+    $ip=explode('.',$str);
+    for($i=0;$i<count($ip);$i++){
+        if($ip[$i]>255){
+            return false;
+        }
+    }
+    return preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/',$str);
+}

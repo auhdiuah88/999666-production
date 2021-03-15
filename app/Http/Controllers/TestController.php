@@ -646,7 +646,10 @@ class TestController extends Controller
 
     public function ipTest(): bool
     {
-        dd(ipCheck(request()->input('ip')));
+        $ip = getIp();
+//        $ip = request()->ip();
+        dd($ip);
+        dd(ipCheck($ip));
     }
 
 
