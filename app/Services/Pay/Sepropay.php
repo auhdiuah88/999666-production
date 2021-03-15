@@ -68,7 +68,8 @@ class Sepropay extends PayStrategy
         foreach ($params as $key => $value) {
             $string[] = $key . '=' . $value;
         }
-        $sign = (implode('&', $string)) . $secretKey;
+        $string[] = 'key=' . $secretKey;
+        $sign = (implode('&', $string));
         return strtolower(md5($sign));
     }
 
