@@ -132,7 +132,7 @@ class UserService extends BaseService
             if($res === false)throw new \Exception('用户修改失败');
             DB::commit();
             ##清除用户缓存
-            Cache::forget(Cx_User::CACHE_USER_PROFILE . $data['id']);
+            Cache::forget(Cx_User::CACHE_USER_PROFILE . $user->id);
         }catch(\Exception $e){
             DB::rollBack();
             $this->_msg = $e->getMessage();
