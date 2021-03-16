@@ -277,7 +277,8 @@ class UserService extends BaseService
                 "money" => $money,
                 "admin_id" => $adminId
             ];
-            $this->UserRepository->addLogs($data);
+            $res = $this->UserRepository->addLogs($data);
+            if($res === false)throw new \Exception('赠送失败',402);
             $update = ["id" => $id, "balance" => bcadd($user->balance, $money, 2)];
             if ($this->UserRepository->editUser($update)) {
                 $this->_msg = "赠送成功";

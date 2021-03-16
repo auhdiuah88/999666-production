@@ -92,6 +92,8 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'params_decry
 
         Route::post("/recharge_confirm", "RechargeController@rechargeConfirm");        //  充值金额主动确认
 
+        Route::get("/personalService", "UserController@personalService");
+
     });
     Route::group(["prefix" => "bank"], function () {
         Route::get("/findAll", "InfoController@getBanks"); // 查询用户银行卡

@@ -360,4 +360,10 @@ class UserController extends Controller
         return $this->AppReturn(200, 'ok', $data);
     }
 
+    public function personalService()
+    {
+        $data = $this->UserService->getPersonalService();
+        return $this->AppReturn(200, 'ok', $data);
+    }
+
 }

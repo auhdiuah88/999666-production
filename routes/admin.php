@@ -302,6 +302,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
                 Route::post("/search","agent\AgentUserController@index");
                 Route::post("/firstRecharge","agent\AgentUserController@firstRechargeList");
                 Route::post("/orderInfo","agent\AgentUserController@orderInfo");
+                Route::post("/edit", "agent\AgentUserController@editUser");
             });
             Route::get("/backCards","agent\AgentBankCardController@backCardList");
             //财务信息

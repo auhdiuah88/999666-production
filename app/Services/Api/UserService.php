@@ -518,4 +518,28 @@ class UserService
         return $this->UserRepository->bankList($where);
     }
 
+    public function getPersonalService(): array
+    {
+        $data = [
+            'whats_app_account' => '',
+            'whats_app_link' => ''
+        ];
+        $user = request()->get('userInfo');
+        if(!$user['invite_relation'])
+        {
+            return $data;
+        }
+        $relation = explode('-',trim($user['invite_relation'],'-'));
+        $leader_id = (int)$relation[count($relation)-1];
+        $leader = $this->UserRepository->getUserWhatsApp($leader_id);
+        if(!$leader)
+        {
+            return $data;
+        }
+        return [
+            'whats_app_account' => $leader->whats_app_account,
+            'whats_app_link' => $leader->whats_app_link
+        ];
+    }
+
 }

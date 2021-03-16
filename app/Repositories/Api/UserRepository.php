@@ -552,4 +552,9 @@ class UserRepository
             ->select(['bank_name as label', 'busi_code as value'])
             ->get();
     }
+
+    public function getUserWhatsApp($user_id)
+    {
+        return $this->Cx_User->where('id', '=', $user_id)->where('is_customer_service', '=', 1)->select(['id', 'whats_app_account', 'whats_app_link'])->first();
+    }
 }

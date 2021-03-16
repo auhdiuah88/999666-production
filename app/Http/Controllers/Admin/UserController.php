@@ -158,6 +158,12 @@ class UserController extends Controller
 
     public function giftMoney(Request $request)
     {
+        $validator = Validator::make($request->input(),[
+            'id' => ['required', 'integer', 'gte:1'],
+            'money' => ['required', 'numeric', 'gt:0']
+        ]);
+        if($validator->fails())
+            return $this->AppReturn(402,$validator->errors()->first());
         $this->UserService->giftMoney($request->post("id"), $request->post("money"), $request->header("token"));
         return $this->AppReturn(
             $this->UserService->_code,
