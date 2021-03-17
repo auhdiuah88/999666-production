@@ -118,7 +118,7 @@ class Matthew extends PayStrategy
             'match_code' => '',
             'notify_url' => $this->recharge_callback_url,
             'params' => [],
-            'is_post' => 2,
+            'is_post' => 0,
         ];
         return $resData;
     }
