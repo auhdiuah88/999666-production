@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
@@ -640,8 +641,15 @@ class TestController extends Controller
     }
 
     public function test3(){
-        sleep(10);
-        echo 1;
+        $data = Cache::rememberForever('test',function(){
+            return 12;
+        });
+        var_dump($data);
+        $data3 = Cache::get('test');
+        var_dump($data3);
+        Cache::forget('test');
+        $data1 = Cache::get('test');
+        var_dump($data1);
     }
 
     public function ipTest(): bool

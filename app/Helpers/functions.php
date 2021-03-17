@@ -146,6 +146,10 @@ function myIp2long($ip){
     return $iplong;
 }
 
+/**
+ * 获取真实IP
+ * @return mixed|string
+ */
 function getIp(){
     $ip='0.0.0.0';
     if(!empty($_SERVER['HTTP_CLIENT_IP'])){
@@ -164,4 +168,40 @@ function is_ip($str){
         }
     }
     return preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/',$str);
+}
+
+/**
+ * 返回字符串的毫秒数时间戳
+ * @return mixed|string
+ */
+function get_total_millisecond()
+{
+    $time = explode(" ", microtime() );
+    $time = $time[1] . ($time[0] * 1000);
+    $time2 = explode( ".", $time );
+    $time = $time2[0];
+    return $time;
+}
+
+/**
+ * 生成几位的随机数
+ * @param int $n
+ * @return int
+ */
+function randomStr(int $n): int
+{
+    if($n < 1)return 0;
+    $a = $n;
+    $str = '';
+    $rootStr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    for($i=$a;$i>=1;$i--)
+    {
+        shuffle($rootStr);
+        $res = $rootStr[mt_rand(mt_rand(0,9))];
+        if($a == $i && $res == '0'){
+            $res = '9';
+        }
+        $str .= $res;
+    }
+    return (int)$str;
 }

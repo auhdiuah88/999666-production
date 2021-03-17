@@ -3,6 +3,7 @@
 
 namespace App\Services\Pay;
 
+use App\Libs\Aes;
 use App\Repositories\Api\UserRepository;
 use App\Services\RequestService;
 use Illuminate\Http\Request;
@@ -14,18 +15,14 @@ use Illuminate\Support\Facades\DB;
 class Matthew extends PayStrategy
 {
 
-    protected static $rechargeUrl = 'https://pay.sepropay.com/';
+    protected static $rechargeUrl = 'https://payapitest.soon-ex.com/';
 
-    protected static $withdrawUrl = 'https://pay.sepropay.com/';
+    protected static $withdrawUrl = 'https://payapitest.soon-ex.com/';
 
-    // 测试环境
-//    protected static $merchantID = 10120;
-//    protected static $secretkey = 'j3phc11lg986dx3tkai120ngpxy7a2sw';
+    protected static $nativeUrl = 'http://paytest.soon-ex.com/#/?orderId=';
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
-
-    //public static $company = 'seproPay';   // 支付公司名
 
     public $withdrawMerchantID;
     public $withdrawSecretkey;
@@ -33,22 +30,18 @@ class Matthew extends PayStrategy
     public $rechargeSecretkey;
     public $company = 'matthew';   // 支付公司名
 
+    protected $iv = '!WFNZFU_{H%M(S|a';
+
     public $rechargeRtn='success'; //支付成功的返回
     public $withdrawRtn='success'; //提现成功的返回
 
     public function _initialize()
     {
-//        self::$merchantID = config('pay.company.'.$this->company.'.merchant_id');
-//        self::$secretkey = config('pay.company.'.$this->company.'.secret_key');
-//        if (empty(self::$merchantID) || empty(self::$secretkey)) {
-//            die('请设置 ipay 支付商户号和密钥');
-//        }
         $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
         $rechargeConfig = DB::table('settings')->where('setting_key','recharge')->value('setting_value');
         $withdrawConfig && $withdrawConfig = json_decode($withdrawConfig,true);
         $rechargeConfig && $rechargeConfig = json_decode($rechargeConfig,true);
-//        $this->merchantID = config('pay.company.'.$this->company.'.merchant_id');
-//        $this->secretkey = config('pay.company.'.$this->company.'.secret_key');
+
         $this->withdrawMerchantID = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['merchant_id']:"";
         $this->withdrawSecretkey = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['secret_key']:"";
 
@@ -63,17 +56,14 @@ class Matthew extends PayStrategy
     /**
      * 生成签名   sign = Md5(key1=vaIue1&key2=vaIue2…商户密钥);
      */
-    public function generateSign(array $params, $type=1)
+    public function generateSign(array $params)
     {
-        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
-        ksort($params);
-        $string = [];
+        sort($params,SORT_LOCALE_STRING);
+        $string = '';
         foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
+            $string .= $value;
         }
-        $string[] = 'key=' . $secretKey;
-        $sign = (implode('&', $string));
-        return strtolower(md5($sign));
+        return strtolower(sha1($string));
     }
 
     /**
@@ -82,41 +72,52 @@ class Matthew extends PayStrategy
     function rechargeOrder($pay_type,$money)
     {
         $order_no = self::onlyosn();
-//        $pay_type = 'qrcode';
-        $params = [
-            'mch_id' => $this->rechargeMerchantID,
-            'notify_url' => $this->recharge_callback_url,
-            'page_url' => env('SHARE_URL',''),
-            'mch_order_no' => $order_no,
-            'pay_type' => '102',
-            'trade_amount' => (string)intval($money),
-            'order_date' => date("Y-m-d H:i:s"),
-            'goods_name' => 'balance recharge',
+
+        $en = [
+            'amount' => (string)$money,
+            'thirdOrderNumber' => $order_no,//商家自己平台的订单号
+            'thirdUserId' => $this->getUserId(),//商家自己平台的会员ID，如果没有可以用上面的订单号
         ];
-        if(!$params['page_url'])unset($params['page_url']);
-        $params['sign'] = $this->generateSign($params,1);
-        $params['sign_type'] = 'MD5';
+        $Aes = new Aes();
+        $key = substr($this->rechargeSecretkey, 0,16);
+        $encryptedData = $Aes->encryptWithOpenssl($key, $en, $this->iv);
+        $data = [
+            'encryptedData' => $encryptedData,   //openssl_encrypt进行aes对称加密
+            'signaturePo' => [
+                'apiId' => $this->rechargeMerchantID,  //商家ID
+                'nonce' => (string)randomStr(10),
+                'signature' => '',
+                'timestamp' => get_total_millisecond()
+            ],
+        ];
+        $signature = $this->generateSign([   //调用签名函数进行数据签名
+            $data['signaturePo']['timestamp'].'',
+            $data['signaturePo']['nonce'].'',
+            $data['signaturePo']['apiId'],
+            $this->rechargeSecretkey,
+            json_encode($en),  //将数组转json格式的数据
+        ]);
+        $data['signaturePo']['signature'] = $signature;
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder', $data);
 
-//        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'sepro/pay/web', $params);
-//        if ($res['rtn_code'] <> 1000) {
-//            \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder_return', $res);
-//            $this->_msg = $res['rtn_msg'];
-////            $this->_data = $res;
-//            return false;
-//        }
+        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'otc/api/recharge', $data);
+        if ($res['code'] <> 0) {
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder_return', $res);
+            $this->_msg = $res['message'];
+            return false;
+        }
         $resData = [
             'out_trade_no' => $order_no,
             'shop_id' => $this->rechargeMerchantID,
             'pay_company' => $this->company,
             'pay_type' => $pay_type,
-            'native_url' => self::$rechargeUrl . 'sepro/pay/web',
+            'native_url' => self::$nativeUrl . $res['data']['orderNumber'],
             'pltf_order_id' => '',
-            'verify_money' => $params['trade_amount'],
+            'verify_money' => $en['amount'],
             'match_code' => '',
             'notify_url' => $this->recharge_callback_url,
-            'params' => $params,
+            'params' => [],
             'is_post' => 2,
         ];
         return $resData;

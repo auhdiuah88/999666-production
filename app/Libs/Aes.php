@@ -23,4 +23,15 @@ class Aes{
         return openssl_decrypt($encrypted, 'aes-128-ecb', base64_decode($this->key), OPENSSL_RAW_DATA);
     }
 
+    public function encryptWithOpenssl($key, $data = '', $iv='')
+    {
+        return base64_encode(openssl_encrypt(json_encode($data), "AES-128-CBC", $key, OPENSSL_RAW_DATA,$iv));
+    }
+
+    public function decryptWithOpenssl($key, $data = '', $iv='')
+    {
+
+        return openssl_decrypt(base64_decode($data), "AES-128-CBC", $key, OPENSSL_RAW_DATA,$iv);
+    }
+
 }
