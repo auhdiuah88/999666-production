@@ -197,7 +197,7 @@ function randomStr(int $n): int
     for($i=$a;$i>=1;$i--)
     {
         shuffle($rootStr);
-        $res = $rootStr[mt_rand(mt_rand(0,9))];
+        $res = $rootStr[mt_rand(0,9)];
         if($a == $i && $res == '0'){
             $res = '9';
         }
