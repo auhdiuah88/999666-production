@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 
+use App\Libs\Token;
 use App\Repositories\Admin\AdminRepository;
 use App\Repositories\Admin\SettingRepository;
 use Illuminate\Support\Facades\Cookie;
@@ -24,7 +25,7 @@ class AdminService
     {
         if ($request->input("username") != "unicasinonet") {
             $isLimitHost = config('site.is_limit_host');
-            if ($isLimitHost && !$this->AdminRepository->getIp($request->ip())) {
+            if ($isLimitHost && !$this->AdminRepository->getIp(getIp())) {
                 return response()->json([
                     "code" => 402,
                     "msg" => "您的ip不在本站IP白名单中，请联系管理员添加IP"
@@ -35,7 +36,7 @@ class AdminService
         if ($data) {
             if (Crypt::decrypt($data->password) == $request->input("password")) {
                 //token 用户id+当前时间戳
-                $token = Crypt::encrypt($data->id . "+" . time());
+                $token = Token::updateAdminToken($data->id);
                 $this->AdminRepository->Set_Token($data->id, $token);
                 $expiration_date = $this->AdminRepository->Redis_Get_Admin($data->id, $this->time);
 //                $expiration_date = time() - 1000;
@@ -61,7 +62,7 @@ class AdminService
                     ], JSON_UNESCAPED_UNICODE);
 
                     // 将登陆用户信息存入Redis中
-                    $this->AdminRepository->Redis_Set_Admin_User(json_encode($data, JSON_UNESCAPED_UNICODE), $data->id);
+//                    $this->AdminRepository->Redis_Set_Admin_User(json_encode($data, JSON_UNESCAPED_UNICODE), $data->id);
                     $this->AdminRepository->Update_Status($data->id, 1);
 
                     return $admin_user;

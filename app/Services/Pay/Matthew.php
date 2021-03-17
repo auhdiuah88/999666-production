@@ -126,31 +126,46 @@ class Matthew extends PayStrategy
     function withdrawalOrder(object $withdrawalRecord)
     {
         $money = $withdrawalRecord->payment;    // 打款金额
-//        $ip = $this->request->ip();
-//        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
-        $params = [
-            'mch_id' => $this->withdrawMerchantID,
-            'mch_transferId' => $order_no,
-            'transfer_amount' => intval($money),
-            'apply_date' => date('Y-m-d H:i:s'),
-            'bank_code' => 'IDPT0001',
-            'receive_name' => $withdrawalRecord->account_holder,
-            'receive_account' => $withdrawalRecord->bank_number,
-            'remark' => $withdrawalRecord->ifsc_code,
-            'back_url' => $this->withdrawal_callback_url,
+
+        $en = [
+            'amount' => (string)$money,
+            'thirdOrderNumber' => $order_no,//uniqid(),商家自己平台的提现订单号
+            'thirdUserId' => $this->getUserId(), //商家自己平台的会员ID，如果没有可以用上面的订单号
+            'issuePayPo'=>[
+                'accountName' => $withdrawalRecord->bank_number,  //提现用户收款的账户
+                'ifscCode'=> $withdrawalRecord->ifsc_code, //提现用户的IFS code
+                'bankName' => $withdrawalRecord->bank_name,  //银行名
+                'name' => $withdrawalRecord->account_holder,  //提现用户姓名
+                'paymentId'=>'11' //收款方式ID这里以IMPS为例
+            ]
         ];
-        $params['sign'] = $this->generateSign($params,2);
-        $params['sign_type'] = 'MD5';
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$params);
-        $res = $this->requestService->postFormData(self::$withdrawUrl . 'pay/transfer', $params);
+        $Aes = new Aes();
+        $key = substr($this->rechargeSecretkey, 0,16);
+        $data = [
+            'encryptedData' => $Aes->encryptWithOpenssl($key, $en, $this->iv),   //提现数据加密
+            'signaturePo' => [
+                'apiId' => $this->withdrawMerchantID,
+                'nonce' => (string)randomStr(10).'',
+                "apisecret" => $this->withdrawSecretkey,
+                'signature' => '',
+                'timestamp' => get_total_millisecond()
+            ],
+        ];
+        $signature = $this->generateSign([   //调用签名函数进行数据签名
+            $data['signaturePo']['timestamp'].'',
+            $data['signaturePo']['nonce'].'',
+            $data['signaturePo']['apiId'],
+            $this->withdrawSecretkey,
+            json_encode($en), //将数组转json格式的数据
+        ]);
+        $data['signaturePo']['signature'] = $signature;
+
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$data);
+        $res = $this->requestService->postFormData(self::$withdrawUrl . 'otc/api/withdrawal', $data);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder_rtn',$res);
-        if($res['respCode'] != 'SUCCESS'){
-            $this->_msg = $res['errorMsg'];
-            return false;
-        }
-        if($res['tradeResult'] == '3' || $res['tradeResult'] == '2'){
-            $this->_msg = '代付订单被拒绝';
+        if($res['code'] != 0){
+            $this->_msg = $res['message'];
             return false;
         }
         return  [

@@ -6,6 +6,7 @@ namespace App\Services\Admin;
 
 use App\Repositories\Admin\WhiteListRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\Redis;
 
 class WhiteListService extends BaseService
 {
@@ -32,6 +33,7 @@ class WhiteListService extends BaseService
     {
         $data["create_time"] = time();
         if ($this->WhiteListRepository->addIp($data)) {
+            $this->updateCacheIps();
             $this->_msg = "添加成功";
         } else {
             $this->_code = 402;
@@ -42,6 +44,7 @@ class WhiteListService extends BaseService
     public function editIp($data)
     {
         if ($this->WhiteListRepository->editIp($data)) {
+            $this->updateCacheIps();
             $this->_msg = "编辑成功";
         } else {
             $this->_code = 402;
@@ -52,10 +55,21 @@ class WhiteListService extends BaseService
     public function delIp($id)
     {
         if ($this->WhiteListRepository->delIp($id)) {
+            $this->updateCacheIps();
             $this->_msg = "删除成功";
         } else {
             $this->_code = 402;
             $this->_msg = "删除失败";
+        }
+    }
+
+    public function updateCacheIps()
+    {
+        Redis::del('WHITE_IPS');
+        $ips = $this->WhiteListRepository->ips();
+        foreach($ips as $ip)
+        {
+            Redis::sadd('WHITE_IPS', $ip);
         }
     }
 }

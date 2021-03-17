@@ -123,7 +123,7 @@ class AdminRepository
 
     public function Redis_Set_Admin_User($data, $userId)
     {
-        Redis::set($this->user . $userId, $data);
+        Redis::setex($this->user . $userId, 60*60*2, $data);
     }
 
     public function Redis_Get_Admin_User($userId)

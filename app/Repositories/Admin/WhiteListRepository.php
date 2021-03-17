@@ -45,4 +45,9 @@ class WhiteListRepository extends BaseRepository
     {
         return $this->Cx_White_List->where("id", $id)->delete();
     }
+
+    public function ips()
+    {
+        return $this->Cx_White_List->pluck('ip');
+    }
 }

@@ -25,7 +25,7 @@ class AdminHandleLogMiddleware
             'request_params' => serialize($params),
             'admin_id' => $admin_id,
             'method' => $method,
-            'ip' => $request->getClientIp() ?? "",
+            'ip' => getIp(),
             'c_time' => time(),
             'path' => $request->path()
         ];
