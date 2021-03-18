@@ -88,6 +88,10 @@ class SettingDic
             'title' => 'red envelope task',
             'key' => 'RED_ENVELOPE_TASK'
         ],
+        'WITHDRAW_SAFE' => [
+            'title' => 'withdraw safe',
+            'key' => 'WITHDRAW_SAFE'
+        ],
     ];
 
     public static function key($key): string

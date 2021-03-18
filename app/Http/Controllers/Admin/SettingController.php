@@ -567,4 +567,42 @@ class SettingController extends Controller
         }
     }
 
+    public function getWithdrawSafe()
+    {
+        try{
+            $this->SettingService->getWithdrawSafe();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function withdrawSafeSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'limit' => 'required|numeric|gte:0',
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->withdrawSafeSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

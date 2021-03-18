@@ -4,37 +4,49 @@
 namespace App\Services\Admin;
 
 
+use App\Dictionary\SettingDic;
 use App\Jobs\Withdraw_Call;
+use App\Repositories\Admin\SettingRepository;
 use App\Repositories\Admin\UserRepository;
 use App\Repositories\Admin\WithdrawalRepository;
 use App\Services\BaseService;
 use App\Services\Pay\PayContext;
 use App\Services\Pay\PayStrategy;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use function Symfony\Component\VarDumper\Dumper\esc;
 
 class WithdrawalService extends BaseService
 {
-    private $WithdrawalRepository, $UserRepository;
+    private $WithdrawalRepository, $UserRepository, $SettingRepository;
     private $payContext;
 
-    public function __construct(WithdrawalRepository $withdrawalRepository,
-                                UserRepository $userRepository,
-                                PayContext $payContext
+    public function __construct
+    (
+        WithdrawalRepository $withdrawalRepository,
+        UserRepository $userRepository,
+        PayContext $payContext,
+        SettingRepository $settingRepository
     )
     {
         $this->WithdrawalRepository = $withdrawalRepository;
         $this->UserRepository = $userRepository;
         $this->payContext = $payContext;
-
+        $this->SettingRepository = $settingRepository;
     }
 
     public function findAll($page, $limit, $status)
     {
         $list = $this->WithdrawalRepository->findAll(($page - 1) * $limit, $limit, $status);
         $total = $this->WithdrawalRepository->countAll($status);
-        $this->_data = ["total" => $total, "list" => $list];
+        ##提现风险配置
+        $config = $this->SettingRepository->getSettingValueByKey(SettingDic::key('WITHDRAW_SAFE'));
+        $limit = 0;
+        if($config){
+            $limit = $config['limit'] ?? 0;
+        }
+        $this->_data = ["total" => $total, "list" => $list, 'limit'=>$limit];
     }
 
     /**
@@ -51,6 +63,12 @@ class WithdrawalService extends BaseService
         }
 
         if ($data["status"] == 1) {
+
+            if(!$this->withdrawSafeCheck($withdrawalRecord->money))
+            {
+                return false;
+            }
+
 //            if ($data["type"] == 1) {
 //                $this->changeAgencyCommission($data["id"]);
 //                unset($data["type"]);
@@ -140,6 +158,11 @@ class WithdrawalService extends BaseService
             return false;
         }
 
+        if(!$this->withdrawSafeCheck($withdrawalRecord->money))
+        {
+            return false;
+        }
+
         $payProvide = $withdrawalRecord->with_type;
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付公司类
         if(!$strategyClass){
@@ -175,6 +198,10 @@ class WithdrawalService extends BaseService
         $ids2 = [];
         foreach ($records as $record) {
             if($record['status'] == 0){
+                if(!$this->withdrawSafeCheck($record['money']))
+                {
+                    continue;
+                }
                 if ($record["type"] == 1) {
                     $this->changeAgencyCommission($record["id"]);
                 } else {
@@ -347,4 +374,25 @@ class WithdrawalService extends BaseService
 
 
     }
+
+    public function withdrawSafeCheck($money): bool
+    {
+        ##审核风险检测
+        $conf = $this->SettingRepository->getSettingValueByKey(SettingDic::key('WITHDRAW_SAFE'));
+        if($conf && isset($conf['limit']) && $conf['limit'] > 0)
+        {
+            if($money >= $conf['limit'])
+            {
+                $password = $data['password'] ?? '';
+                if(Crypt::decrypt($conf['password']) != $password)
+                {
+                    $this->_code = 414;
+                    $this->_msg = '提现金额达到风险提现金额,请输入提现密码或者联系超管审核';
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }

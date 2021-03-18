@@ -9,6 +9,7 @@ use App\Dictionary\SettingDic;
 use App\Repositories\Admin\SettingRepository;
 use App\Repositories\Admin\UploadsRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
@@ -598,6 +599,59 @@ class SettingService extends BaseService
         $min_recharge = $this->intInput('min_recharge');
         $data = compact('status','percent','max_rebate','min_recharge');
         $res = $this->SettingRepository->saveSetting(SettingDic::key('RECHARGE_REBATE'), $data);
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
+    public function getWithdrawSafe()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('WITHDRAW_SAFE'));
+        if (!$data){
+            $data = [
+                'limit' => 0,
+                'password' => 'eyJpdiI6IkxGdS9RNXN6T0xtbGJNdkVSTXVrWlE9PSIsInZhbHVlIjoiNEd2S3JFNnpLdW1tUFBUU2pWNmZxQT09IiwibWFjIjoiZTg3MGY5ZTBjOTRjYWJlMDIwNjg0ZmRmZmMxYTYwZDg0MDIwMjU1NGU0NjNmNDUxMWM2YTRiNzlmNTcxYTRmNSJ9'
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function withdrawSafeSave():bool
+    {
+        $limit = $this->floatInput('limit');
+        $this->getWithdrawSafe();
+        $conf = $this->_data;
+        $old_password = $this->strInput('old_password');
+        $password = $this->strInput('password');
+        if($old_password)
+        {
+            if(Crypt::decrypt($conf['password']) != $old_password)
+            {
+                $this->_code = 401;
+                $this->_msg = '原密码错误';
+                return false;
+            }
+            if($old_password == $password)
+            {
+                $this->_code = 401;
+                $this->_msg = '新密码不能与旧密码相同';
+                return false;
+            }
+            if(!$password || strlen($password) < 6)
+            {
+                $this->_code = 401;
+                $this->_msg = '新密码至少6位数';
+                return false;
+            }
+            $conf['password'] = Crypt::encrypt($password);
+        }
+        $conf['limit'] = $limit;
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('WITHDRAW_SAFE'), $conf);
+        $this->_data = [];
         if($res === false){
             $this->_code = 403;
             $this->_msg = '修改失败';

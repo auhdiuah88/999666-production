@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Route;
 
 
 // 登录退出接口
-Route::any('/admin_login', 'Admin\AdminController@Login')->middleware(['admin_handle']);
-Route::post("/admin_out", 'Admin\AdminController@Out')->middleware(['admin_handle']);
+Route::any('/admin_login', 'Admin\AdminController@Login')->middleware(['admin_handle', 'params_decrypt']);
+Route::post("/admin_out", 'Admin\AdminController@Out')->middleware(['admin_handle', 'params_decrypt']);
 Route::get("/period/exportTask", "Admin\PeriodController@exportTask");
 Route::get("/user/exportUser", "Admin\UserController@exportUser");
 
@@ -38,7 +38,7 @@ Route::group(['middleware' => ['token', "auth"]], function () {
     Route::post("/upload", "Admin\UploadController@upload");
 });
 
-Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
+Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"]], function () {
     //操作日志查询
     Route::get("/log/adminList", "Admin\AdminLogController@list");
 
@@ -266,6 +266,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle']], function () {
             Route::post("/getAboutUs","SettingController@getAboutUs");
             Route::post("/activity","SettingController@activitySave");
             Route::get("/activity","SettingController@getActivity");
+            Route::post("/withdrawSafe","SettingController@withdrawSafeSave");
+            Route::get("/withdrawSafe","SettingController@getWithdrawSafe");
 
             Route::post("/activity/inviteFriends","ActivityController@inviteFriendsSave");
             Route::get("/activity/inviteFriends","ActivityController@inviteFriends");
