@@ -45,7 +45,9 @@ class VNMTBpay extends PayStrategy
         '1' => '100103',
         '2' => 'MoMoPay',
         '3' => 'ZaloPay',
-        '4' => '100104'
+        '4' => '100104',
+        '5' => '100101',
+        '6' => '100102',
     ];
 
     protected $banks = [

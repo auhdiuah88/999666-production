@@ -78,12 +78,12 @@ class AdminService
                     if ($this->Check_Redis_Admin($data->id, $this->AdminRepository->Redis_Get_Admin($data->id, $this->frequency))) {
                         return json_encode([
                             'code' => '402',
-                            'msg' => '密码错误',
+                            'msg' => '账号或密码错误',
                         ], JSON_UNESCAPED_UNICODE);
                     } else {
                         return json_encode([
                             'code' => '301',
-                            'msg' => '密码错误次数过多，请10分钟之后再尝试',
+                            'msg' => '登录失败次数过多，请10分钟之后再尝试',
                         ], JSON_UNESCAPED_UNICODE);
                     }
                 } else {
@@ -91,14 +91,14 @@ class AdminService
                     $this->AdminRepository->Redis_Set_Admin($data->id, $redis_data);
                     return json_encode([
                         'code' => '402',
-                        'msg' => '密码错误',
+                        'msg' => '账号或密码错误',
                     ], JSON_UNESCAPED_UNICODE);
                 }
             }
         } else {
             return json_encode([
                 'code' => '402',
-                'msg' => '用户名不存在',
+                'msg' => '账号或密码错误',
             ], JSON_UNESCAPED_UNICODE);
         }
     }
