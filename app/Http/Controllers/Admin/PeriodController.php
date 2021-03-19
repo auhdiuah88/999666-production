@@ -50,7 +50,7 @@ class PeriodController extends Controller
 
     public function searchPeriod(Request $request)
     {
-        $this->PeriodService->searchPeriod($request->post());
+        $this->PeriodService->searchPeriod($request->input());
         return $this->AppReturn(
             $this->PeriodService->_code,
             $this->PeriodService->_msg,
