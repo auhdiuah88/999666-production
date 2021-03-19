@@ -26,38 +26,39 @@ class CheckTokenMiddleware
      */
     public function handle($request, Closure $next)
     {
+        $i_c = env('IS_CRYPT',false);
         if(config('site.is_limit_host','false'))
         {
             if(!Redis::sismember('WHITE_IPS', getIp()))
             {
-                return response()->json([
+                return response()->json($this->makeRtn([
                     "code" => 403,
                     "msg" => "非法访问"
-                ]);
+                ], $i_c));
             }
         }
         $token = $request->header("token");
         if (empty($token)) {
-            return response()->json([
+            return response()->json($this->makeRtn([
                 "code" => 1001,
                 "msg" => "缺少token令牌"
-            ]);
+            ], $i_c));
         }
         $token = urldecode($token);
         $oldToken = $token;
         $data = explode("+", Crypt::decrypt($token));
         if (!env('IS_DEV',false)) {
             if(!$admin = $this->repository->Redis_Get_Admin_User($data[0])){
-                return response()->json([
+                return response()->json($this->makeRtn([
                     "code" => 1001,
                     "msg" => "token验证失败"
-                ]);
+                ], $i_c));
             }
             if($oldToken != $admin['token']){
-                return response()->json([
+                return response()->json($this->makeRtn([
                     "code" => 1001,
                     "msg" => "token验证失败."
-                ]);
+                ], $i_c));
             }
         }
         $request->attributes->add(['admin_id'=>$data[0]]);
@@ -72,4 +73,13 @@ class CheckTokenMiddleware
 //        $response->setContent(json_encode($content));
         return $response;
     }
+
+    protected function makeRtn($rtn, $i_c)
+    {
+        if($i_c){
+            $rtn = aesEncrypt(json_encode($rtn));
+        }
+        return $rtn;
+    }
+
 }
