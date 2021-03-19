@@ -151,7 +151,7 @@ function myIp2long($ip){
  * @return mixed|string
  */
 function getIp(){
-    $ip='0.0.0.0';
+    $ip=request()->ip();
     if(!empty($_SERVER['HTTP_CLIENT_IP'])){
         return is_ip($_SERVER['HTTP_CLIENT_IP'])?$_SERVER['HTTP_CLIENT_IP']:$ip;
     }elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
