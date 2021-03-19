@@ -51,7 +51,7 @@ class ParamsDecryptMiddleware
 
     public function checkData($params, $i_c)
     {
-        \Illuminate\Support\Facades\Log::channel('apidebug')->info('crypt_test', [$params]);
+//        \Illuminate\Support\Facades\Log::channel('apidebug')->info('crypt_test', [$params]);
         if(!$params)
         {
             $this->msg = 'params wrong';
@@ -75,7 +75,7 @@ class ParamsDecryptMiddleware
             $this->msg = 'miss param';
             return false;
         }
-        if($data['t'] < time()-10)
+        if($data['t'] < time()-config('site.api_expire_time',10))
         {
             $this->msg = 'bad request';
             return false;
