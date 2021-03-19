@@ -335,6 +335,10 @@ class UserService extends BaseService
         DB::beginTransaction();
         try {
             $user = $this->UserRepository->findById($id);
+            if($user->balance < $money)
+            {
+                throw new \Exception('用户余额不足',402);
+            }
             $data = [
                 "user_id" => $id,
                 "type" => 10,
@@ -350,7 +354,7 @@ class UserService extends BaseService
             if ($this->UserRepository->editUser($update)) {
                 $this->_msg = "下分成功";
             } else {
-                $this->_code = 200;
+                $this->_code = 402;
                 $this->_msg = "下分失败";
             }
             DB::commit();

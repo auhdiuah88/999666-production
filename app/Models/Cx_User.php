@@ -4,6 +4,7 @@
 namespace App\Models;
 
 
+use App\Libs\DRedis;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -43,9 +44,24 @@ class Cx_User extends Model
 
     public function getOnlineStatusAttribute()
     {
-        $redisConfig = config('database.redis.default');
-        $redis = new Client($redisConfig);
+//        $redisConfig = config('database.redis.default');
+//        $redis = new Client($redisConfig);
+        $redis = DRedis::getInstance();
         return $redis->sismember('swoft:ONLINE_USER_ID',(string)$this->id);
+    }
+
+    public function getGroupLeaderAttribute()
+    {
+        if(isset($this->invite_relation)){
+            if(!$this->invite_relation)return '';
+            $relation = trim($this->invite_relation,'-');
+            $relation = explode('-',$relation);
+            if(!$relation[0])return '';
+            $leader_id = $relation[count($relation)-1];
+            return $this->where('id', '=', $leader_id)->where('is_customer_service', '=', 1)->value('phone');
+        }else{
+            return '';
+        }
     }
 
     public function getPhoneHideAttribute($value){

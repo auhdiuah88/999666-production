@@ -4,6 +4,7 @@
 namespace App\Repositories\Admin;
 
 
+use App\Libs\DRedis;
 use App\Models\Cx_Charge_Logs;
 use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Sign_Order;
@@ -239,8 +240,9 @@ class HomeRepository extends BaseRepository
 
     public function sumOnlineNum()
     {
-        $redisConfig = config('database.redis.default');
-        $redis = new Client($redisConfig);
+//        $redisConfig = config('database.redis.default');
+//        $redis = new Client($redisConfig);
+        $redis = DRedis::getInstance();
         $num = $redis->scard('swoft:ONLINE_USER_ID');
         return $num;
     }

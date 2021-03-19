@@ -21,7 +21,7 @@ class UserRepository extends BaseRepository
 
     public function findAll($offset, $limit)
     {
-        return $this->Cx_User->where("is_customer_service", 0)->orderByDesc("last_time")->offset($offset)->limit($limit)->select(["*", "id as total_win_money"])->get()->setAppends(['online_status'])->toArray();
+        return $this->Cx_User->where("is_customer_service", 0)->orderByDesc("last_time")->offset($offset)->limit($limit)->select(["*", "id as total_win_money"])->get()->setAppends(['online_status', 'group_leader'])->toArray();
     }
 
     public function getBalanceLogs($userId, $offset, $limit, $type)
@@ -76,7 +76,7 @@ class UserRepository extends BaseRepository
 
     public function getUserByConditions($data, $offset, $limit)
     {
-        return $this->whereCondition($data, $this->Cx_User)->offset($offset)->limit($limit)->orderByDesc("last_time")->select(['*', 'id as total_win_money'])->get()->setAppends(['online_status'])->toArray();
+        return $this->whereCondition($data, $this->Cx_User)->offset($offset)->limit($limit)->orderByDesc("last_time")->select(['*', 'id as total_win_money'])->get()->setAppends(['online_status', 'group_leader'])->toArray();
     }
 
     public function countUserByConditions($data)
