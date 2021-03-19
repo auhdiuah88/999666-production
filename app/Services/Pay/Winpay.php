@@ -11,14 +11,12 @@ use Illuminate\Support\Facades\DB;
  */
 class Winpay extends PayStrategy
 {
-    protected static $url = 'https://www.winpays.in';    // 支付网关
+    protected static $url = 'https://www.goldpays.in';    // 支付网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
 
     private $compalateUrl = 'page';  // 支付完成返回地址
-
-    //public static $company = 'winpay';   // 支付公司名
 
     public $withdrawMerchantID;
     public $withdrawSecretkey;
@@ -53,7 +51,8 @@ class Winpay extends PayStrategy
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
+            if($value != '')
+                $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' . $secretKey;
 //        dump(self::$merchantID);
@@ -80,14 +79,15 @@ class Winpay extends PayStrategy
             'customEmail' => '123@gmail.com',
 //            'channelType' => $pay_type,   // UPI   QUICK_PAY
             'notifyUrl' => $this->recharge_callback_url,
-            'callbackUrl' => $this->compalateUrl,
+            'callbackUrl' => env('SHARE_URL',''),
         ];
         $params['sign'] = $this->generateSign($params,1);
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_rechargeOrder', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_rechargeOrder', [$params]);
 
         $res = $this->requestService->postFormData(self::$url . '/openApi/pay/createOrder', $params);
-        if ($res['success'] === false) {
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_rechargeOrder_rtn', [$res]);
+        if ($res['success'] !== true) {
             $this->_msg = $res['errorMessages'];
             return false;
         }
@@ -148,7 +148,8 @@ class Winpay extends PayStrategy
             'customName' => $account_holder,
             'customMobile' => $phone,
             'customEmail' => $email,
-//            'bankCode' => time(),
+            'mode' => 'IMPS',
+            'bankCode' => 'ALHB',
             'bankAccount' =>$bank_number,
             'ifscCode' => $ifsc_code,
             'notifyUrl' => $this->withdrawal_callback_url,
@@ -184,6 +185,7 @@ class Winpay extends PayStrategy
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
+        unset($params['type']);
         if ($this->generateSign($params,1) <> $sign) {
             $this->_msg = 'winpay-签名错误';
             return false;
@@ -202,14 +204,23 @@ class Winpay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_withdrawalCallback', $request->post());
 
-        if ($request->status != 'PAY_SUCCESS') {
-            $this->_msg = 'winpay-withdrawal-交易未完成';
+        $pay_status = 0;
+        if($request->status == 'PAY_SUCCESS'){
+            $pay_status= 1;
+        }
+        if($request->status == 'PAY_FAIL'){
+            $pay_status= 3;
+        }
+        if ($pay_status == 0) {
+            $this->_msg = 'seven_pay-withdrawal-交易未完成';
             return false;
         }
+
         // 验证签名
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
+        unset($params['type']);
         if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'winpay-签名错误';
             return false;
@@ -217,7 +228,8 @@ class Winpay extends PayStrategy
         \Illuminate\Support\Facades\Log::channel('mytest')->info('winpay_withdrawalCallback', $params);
         $where = [
             'order_no' => $params['orderId'],
-            'plat_order_id' => $params['platOrderId']
+            'plat_order_id' => $params['platOrderId'],
+            'pay_status' => $pay_status
         ];
         return $where;
     }
