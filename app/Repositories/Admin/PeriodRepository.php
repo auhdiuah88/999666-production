@@ -138,6 +138,7 @@ class PeriodRepository extends BaseRepository
     {
         if($data['conditions']['game_id'] == 0)unset($data['conditions']['game_id']);
         DB::connection()->enableQueryLog();
+        if($data['conditions']['status'] == '')$data['conditions']['status'] = -1;
         if(isset($data['conditions']['status']) && $data['conditions']['status'] == 0){
             if(isset($data['conditions']['prize_time']) && $data['conditions']['prize_time']){
                 $data['conditions']['end_time'] = $data['conditions']['prize_time'];

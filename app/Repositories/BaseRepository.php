@@ -26,24 +26,27 @@ abstract class BaseRepository
         $this->list = $data["conditions"];
         $ops = $data["ops"];
         foreach ($ops as $index => $op) {
-            switch ($op) {
-                case "between":
-                    $model = $model->where($this->betweenCondition($index));
-                    break;
-                case "like":
-                    $model = $model->where($this->likeCondition($index));
-                    break;
-                case ">":
-                    $model = $model->where($this->greaterCondition($index));
-                    break;
-                case "<":
-                    $model = $model->where($this->lessCondition($index));
-                    break;
-                case "in":
-                    $model = $model->where($this->inCondition($index));
-                    break;
-                default:
-                    $model = $model->where($this->equalCondition($index));
+            if($this->list[$index] !== '')
+            {
+                switch ($op) {
+                    case "between":
+                        $model = $model->where($this->betweenCondition($index));
+                        break;
+                    case "like":
+                        $model = $model->where($this->likeCondition($index));
+                        break;
+                    case ">":
+                        $model = $model->where($this->greaterCondition($index));
+                        break;
+                    case "<":
+                        $model = $model->where($this->lessCondition($index));
+                        break;
+                    case "in":
+                        $model = $model->where($this->inCondition($index));
+                        break;
+                    default:
+                        $model = $model->where($this->equalCondition($index));
+                }
             }
         }
         return $model;
