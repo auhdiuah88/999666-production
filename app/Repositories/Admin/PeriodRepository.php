@@ -6,6 +6,7 @@ namespace App\Repositories\Admin;
 
 use App\Models\Cx_Game_Play;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\DB;
 
 class PeriodRepository extends BaseRepository
 {
@@ -136,16 +137,19 @@ class PeriodRepository extends BaseRepository
     public function countSearchPeriod($data)
     {
         if($data['conditions']['game_id'] == 0)unset($data['conditions']['game_id']);
+        DB::connection()->enableQueryLog();
         if(isset($data['conditions']['status']) && $data['conditions']['status'] == 0){
             if(isset($data['conditions']['prize_time']) && $data['conditions']['prize_time']){
                 $data['conditions']['end_time'] = $data['conditions']['prize_time'];
                 unset($data['conditions']['prize_time']);
                 $data['ops']['end_time'] = 'between';
             }
-            return $this->whereCondition($data, $this->Cx_Game_Play)->count("id");
+            $count = $this->whereCondition($data, $this->Cx_Game_Play)->count("id");
         }else{
-            return $this->whereCondition($data, $this->Cx_Game_Play)->where("status", 1)->count("id");
+            $count = $this->whereCondition($data, $this->Cx_Game_Play)->where("status", 1)->count("id");
         }
+        print_r(DB::getQueryLog());
+        return $count;
     }
 
     public function findById($id)
