@@ -51,6 +51,7 @@ class ParamsDecryptMiddleware
 
     public function checkData($params, $i_c)
     {
+        \Illuminate\Support\Facades\Log::channel('apidebug')->info('crypt_test', [$params]);
         if(!$params)
         {
             $this->msg = 'params wrong';
