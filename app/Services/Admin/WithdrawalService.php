@@ -157,11 +157,11 @@ class WithdrawalService extends BaseService
             $this->_msg = '订单不支持重新提交代付操作';
             return false;
         }
-        $password = $data['password'] ?? '';
-        if(!$this->withdrawSafeCheck($withdrawalRecord->money, $password))
-        {
-            return false;
-        }
+//        $password = $data['password'] ?? '';
+//        if(!$this->withdrawSafeCheck($withdrawalRecord->money, $password))
+//        {
+//            return false;
+//        }
 
         $payProvide = $withdrawalRecord->with_type;
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付公司类
