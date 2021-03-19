@@ -26,7 +26,7 @@ abstract class BaseRepository
         $this->list = $data["conditions"];
         $ops = $data["ops"];
         foreach ($ops as $index => $op) {
-            if($this->list[$index] !== '')
+            if(isset($this->list[$index]) && $this->list[$index] !== '')
             {
                 switch ($op) {
                     case "between":
