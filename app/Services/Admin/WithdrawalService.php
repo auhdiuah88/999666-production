@@ -63,8 +63,8 @@ class WithdrawalService extends BaseService
         }
 
         if ($data["status"] == 1) {
-
-            if(!$this->withdrawSafeCheck($withdrawalRecord->money))
+            $password = $data['password'] ?? '';
+            if(!$this->withdrawSafeCheck($withdrawalRecord->money, $password))
             {
                 return false;
             }
@@ -157,8 +157,8 @@ class WithdrawalService extends BaseService
             $this->_msg = '订单不支持重新提交代付操作';
             return false;
         }
-
-        if(!$this->withdrawSafeCheck($withdrawalRecord->money))
+        $password = $data['password'] ?? '';
+        if(!$this->withdrawSafeCheck($withdrawalRecord->money, $password))
         {
             return false;
         }
@@ -198,7 +198,7 @@ class WithdrawalService extends BaseService
         $ids2 = [];
         foreach ($records as $record) {
             if($record['status'] == 0){
-                if(!$this->withdrawSafeCheck($record['money']))
+                if(!$this->withdrawSafeCheck($record['money'],''))
                 {
                     continue;
                 }
@@ -375,7 +375,7 @@ class WithdrawalService extends BaseService
 
     }
 
-    public function withdrawSafeCheck($money): bool
+    public function withdrawSafeCheck($money, $password): bool
     {
         ##审核风险检测
         $conf = $this->SettingRepository->getSettingValueByKey(SettingDic::key('WITHDRAW_SAFE'));
@@ -383,7 +383,6 @@ class WithdrawalService extends BaseService
         {
             if($money >= $conf['limit'])
             {
-                $password = $data['password'] ?? '';
                 if(Crypt::decrypt($conf['password']) != $password)
                 {
                     $this->_code = 414;
