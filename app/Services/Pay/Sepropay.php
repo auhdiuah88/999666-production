@@ -74,7 +74,7 @@ class Sepropay extends PayStrategy
         $string[] = 'key=' . $secretKey;
         $sign = (implode('&', $string));
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder_sign', [$sign]);
-        return md5($sign);
+        return strtolower(md5($sign));
     }
 
     /**
@@ -83,7 +83,6 @@ class Sepropay extends PayStrategy
     function rechargeOrder($pay_type,$money)
     {
         $order_no = self::onlyosn();
-//        $pay_type = 'qrcode';
         $params = [
             'mch_id' => $this->rechargeMerchantID,
             'notify_url' => $this->recharge_callback_url,

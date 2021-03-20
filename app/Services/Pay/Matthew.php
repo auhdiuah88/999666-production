@@ -141,7 +141,7 @@ class Matthew extends PayStrategy
             ]
         ];
         $Aes = new Aes();
-        $key = substr($this->rechargeSecretkey, 0,16);
+        $key = substr($this->withdrawSecretkey, 0,16);
         $data = [
             'encryptedData' => $Aes->encryptWithOpenssl($key, $en, $this->iv),   //提现数据加密
             'signaturePo' => [
@@ -178,6 +178,13 @@ class Matthew extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeCallback',$request->post());
 
+        if(!isset($request->encryptedData)){
+            $this->_msg = 'sepro-recharge-交易未完成.';
+            return false;
+        }
+        $Aes = new Aes();
+        $key = substr($this->rechargeSecretkey, 0,16);
+        $data = $Aes->encryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
         if ($request->tradeResult != '1')  {
             $this->_msg = 'sepro-recharge-交易未完成';
             return false;
