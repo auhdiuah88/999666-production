@@ -75,7 +75,6 @@ xzjS64SbNYDVd6HK/F1zxhawR4=
         $this->rechargeSecretkey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['secret_key']:"";
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
-        $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback';
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
     }
 
