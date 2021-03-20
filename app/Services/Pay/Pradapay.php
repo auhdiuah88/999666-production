@@ -232,7 +232,9 @@ xzjS64SbNYDVd6HK/F1zxhawR4=
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('prada_rechargeOrder', [$params]);
 
-        $res = $this->requestService->postFormData(self::$url . 'pay' , $params);
+        $res = $this->requestService->postFormData(self::$url . 'pay' , $params, [
+            "content-type" => "application/x-www-form-urlencoded",
+        ]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('prada_rechargeOrder_return', [$res]);
         if ($res['code'] != 1) {
             $this->_msg = $res['msg'];
