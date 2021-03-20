@@ -73,6 +73,7 @@ class Sepropay extends PayStrategy
         }
         $string[] = 'key=' . $secretKey;
         $sign = (implode('&', $string));
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder_sign', [$sign]);
         return md5($sign);
     }
 
