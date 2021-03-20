@@ -149,7 +149,12 @@ class RechargeService extends PayService
         }
         $requestData = $request->all();
         ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100  sevenpay=>payamount
-        $money = isset($requestData['money']) ? $requestData['money'] : (isset($requestData['pay_amount']) ? $requestData['pay_amount'] : (isset($requestData['amt'])?$requestData['amt']: (isset($requestData['payamount'])?$requestData['payamount']:$requestData['amount'])));
+        if(!empty($strategyClass->amountFiled)){
+            $money = $requestData[$strategyClass->amountFiled];
+        }else{
+            $money = isset($requestData['money']) ? $requestData['money'] : (isset($requestData['pay_amount']) ? $requestData['pay_amount'] : (isset($requestData['amt'])?$requestData['amt']: (isset($requestData['payamount'])?$requestData['payamount']:$requestData['amount'])));
+        }
+
         if($payProvide == 'in8pay'){ //返回的是分做单位的
             $money = $money / 100;
         }

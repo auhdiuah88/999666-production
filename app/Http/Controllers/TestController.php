@@ -11,6 +11,7 @@ use App\Repositories\Game\GameRepository;
 use App\Services\Game\Ssc_FourService;
 use App\Services\Game\Ssc_TwoService;
 use App\Services\Game\SscService;
+use App\Services\Pay\Pradapay;
 use App\Services\Pay\Winpay;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -660,6 +661,10 @@ class TestController extends Controller
         dd(ipCheck($ip));
     }
 
-
+    public function testRsa(Pradapay $pradapay)
+    {
+        $sign = $pradapay->rsaEncrypt('C538EA76DB54421FCA9A10ED1D5F507C');
+        dd($sign);
+    }
 
 }

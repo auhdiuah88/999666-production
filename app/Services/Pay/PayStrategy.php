@@ -31,6 +31,8 @@ abstract class PayStrategy
     public $rechargeRtn = '';
     public $withdrawRtn = '';
 
+    public $amountFiled = '';
+
     public function __construct (
         RequestService $requestService,
         Request $request,

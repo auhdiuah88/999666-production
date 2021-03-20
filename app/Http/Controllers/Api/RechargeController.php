@@ -4,9 +4,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Libs\Aes;
 use App\Services\Api\RechargeService;
 use App\Services\Api\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -138,4 +140,27 @@ class RechargeController extends Controller
         }
         return $this->AppReturn(200, 'success', $this->rechargeService->rechargeConfirm($request));
     }
+
+    public function matthewCallback()
+    {
+        $validator = Validator::make(request()->input(), [
+            'encryptedData' => ['required'],
+            'type' => ['required']
+        ]);
+        if($validator->fails())
+            return $validator->errors()->first();
+        $type = request()->input('type');
+        $rechargeConfig = DB::table('settings')->where('setting_key','recharge')->value('setting_value');
+        $rechargeConfig && $rechargeConfig = json_decode($rechargeConfig,true);
+        $rechargeMerchantID = isset($rechargeConfig[$type])?$rechargeConfig[$type]['merchant_id']:"";
+        $rechargeSecretKey = isset($rechargeConfig[$type])?$rechargeConfig[$type]['secret_key']:"";
+        $Aes = new Aes();
+        $key = substr($rechargeSecretKey, 0,16);
+        $encryptedData = request()->input('encryptedData');
+        $data = $Aes->decryptWithOpenssl($key, $encryptedData, '!WFNZFU_{H%M(S|a');   //提现数据加密
+        if(!$data){
+            return '解密失败';
+        }
+    }
+
 }
