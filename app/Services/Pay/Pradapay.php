@@ -12,7 +12,7 @@ class Pradapay extends PayStrategy
 
     protected static $url = 'http://gateway.pradapay.com/';    // 支付网关
 
-    protected static $url_cashout = 'http://wrysc.orfeyt.com/'; // 提现网关
+    protected static $url_cashout = 'http://gateway.pradapay.com/'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
@@ -204,6 +204,7 @@ xzjS64SbNYDVd6HK/F1zxhawR4=
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('prada_rechargeOrder_signStr', [$sign]);
         $md5Str =  strtoupper(md5($sign));
         return $md5Str;
     }
