@@ -73,7 +73,7 @@ class Sepropay extends PayStrategy
         }
         $string[] = 'key=' . $secretKey;
         $sign = (implode('&', $string));
-        return strtolower(md5($sign));
+        return md5($sign);
     }
 
     /**
