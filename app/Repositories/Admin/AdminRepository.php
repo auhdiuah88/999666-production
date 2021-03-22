@@ -279,4 +279,9 @@ class AdminRepository
     {
         return $this->Cx_Admin->create($admin_data);
     }
+
+    public function editAdminUser($id, $data)
+    {
+        return $this->Cx_Admin->where("id", "=", $id)->update($data);
+    }
 }

@@ -312,4 +312,37 @@ class AccountService extends BaseService
         }
     }
 
+    public function editAdminUser()
+    {
+        $user_id = $this->intInput('user_id');
+        $admin_id = $this->intInput('admin_id');
+        $user_data = [
+            'whats_app_account' => $this->strInput('whats_app_account'),
+            'whats_app_link' => $this->strInput('whats_app_link'),
+        ];
+        $admin_data = [
+            'username' => $this->strInput('username'),
+        ];
+        $password = $this->strInput('password');
+        if($password)
+            $admin_data['password'] = Crypt::encrypt($password);
+        DB::beginTransaction();
+        try{
+            ##修改用户what_app
+            $res = $this->AccountRepository->editAdminUser($user_id, $user_data);
+            if($res === false)throw new \Exception("修改员工h5账号失败");
+            ##修改用户admin账号
+            $res = $this->AdminRepository->editAdminUser($admin_id, $admin_data);
+            if($res === false)throw new \Exception("修改员工管理员账号失败");
+            DB::commit();
+            $this->_msg = "操作成功";
+            return true;
+        }catch(\Exception $e){
+            DB::rollBack();
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+            return false;
+        }
+    }
+
 }

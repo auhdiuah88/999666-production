@@ -219,6 +219,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::post("/showData", "AccountController@showData");
             Route::post("/frozen", "AccountController@frozenAccount");
             Route::post("/disFrozen", "AccountController@disFrozenAccount");
+            Route::post("/editAdminUser", "AccountController@editAdminUser");
         });
 
         // ip白名单管理

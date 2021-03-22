@@ -184,4 +184,29 @@ class AccountController extends Controller
         }
     }
 
+    function editAdminUser(Request $request)
+    {
+        try{
+            $validator = Validator::make($request->input(), [
+                'user_id' => ['required', 'integer', 'gte:1'],
+                'username' => ['required', 'min:5', 'max:20'],
+                'password' => ['min:6', 'max:20', 'alpha_dash'],
+                'whats_app_account' => ['active_url'],
+                'whats_app_link' => ['active_url'],
+            ]);
+            if($validator->fails()){
+                return $this->AppReturn(402,$validator->errors()->first());
+            }
+            $this->AccountService->editAdminUser();
+            return $this->AppReturn(
+                $this->AccountService->_code,
+                $this->AccountService->_msg,
+                $this->AccountService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

@@ -193,4 +193,15 @@ class AccountRepository extends BaseRepository
             $this->Cx_User->where("id", $item['id'])->update(['invite_relation'=>$new_relation]);
         }
     }
+
+    /**
+     * 修改用户信息
+     * @param $id
+     * @param $data
+     * @return mixed
+     */
+    public function editAdminUser($id, $data)
+    {
+        return $this->Cx_User->where("id", "=", $id)->update($data);
+    }
 }
