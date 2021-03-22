@@ -122,6 +122,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
 
             Route::get("/findCustomerServiceByPhone", "UserController@findCustomerServiceByPhone");
             Route::post("/editFakeBettingMoney", "UserController@editFakeBettingMoney");
+            Route::get("/verifyCodeSearch", "UserController@verifyCodeSearch");
             Route::group(["prefix" => "groupLeader"], function () {
                 Route::post("/add", "LeaderController@add");
                 Route::get("/list", "LeaderController@list");

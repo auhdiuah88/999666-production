@@ -12,6 +12,7 @@ use App\Services\BaseService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class UserService extends BaseService
 {
@@ -481,6 +482,18 @@ class UserService extends BaseService
             $where['invite_relation'] = ['like', "%-{$customer_service_id}-%"];
         }
         return $where;
+    }
+
+    public function verifyCodeSearch()
+    {
+        $phone = $this->strInput("phone");
+        $verify = Redis::get("REGIST_CODE:" . $phone);
+        if(!$verify){
+            $this->_code = 402;
+            $this->_msg = "用户未生成验证码或验证码已失效";
+        }else{
+            $this->_data = $verify;
+        }
     }
 
 }

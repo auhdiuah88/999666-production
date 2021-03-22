@@ -372,4 +372,24 @@ class UserController extends Controller
         }
     }
 
+    public function verifyCodeSearch()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'phone' => ['required', 'min:8']
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(402, $validator->errors()->first());
+            $this->UserService->verifyCodeSearch();
+            return $this->AppReturn(
+                $this->UserService->_code,
+                $this->UserService->_msg,
+                $this->UserService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminErr', $e);
+            return $this->AppReturn(402, $e->getMessage());
+        }
+    }
+
 }
