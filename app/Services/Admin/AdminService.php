@@ -62,7 +62,7 @@ class AdminService
                     ], JSON_UNESCAPED_UNICODE);
 
                     // 将登陆用户信息存入Redis中
-//                    $this->AdminRepository->Redis_Set_Admin_User(json_encode($data, JSON_UNESCAPED_UNICODE), $data->id);
+                    $this->AdminRepository->Redis_Set_Admin_User(json_encode($data, JSON_UNESCAPED_UNICODE), $data->id);
                     $this->AdminRepository->Update_Status($data->id, 1);
 
                     return $admin_user;
