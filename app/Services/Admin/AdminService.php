@@ -61,7 +61,8 @@ class AdminService
                         'country' => env('COUNTRY','india')
                     ], JSON_UNESCAPED_UNICODE);
 
-                    $redisData = array_merge($data,compact('token'));
+                    $redisData = $data;
+                    $redisData->token = $token;
                     // 将登陆用户信息存入Redis中
                     $this->AdminRepository->Redis_Set_Admin_User(json_encode($redisData, JSON_UNESCAPED_UNICODE), $data->id);
                     $this->AdminRepository->Update_Status($data->id, 1);
