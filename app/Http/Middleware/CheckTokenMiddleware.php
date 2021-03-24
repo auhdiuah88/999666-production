@@ -64,13 +64,6 @@ class CheckTokenMiddleware
         $request->attributes->add(['admin_id'=>$data[0]]);
         $response = $next($request);
 
-//        $content = $response->getContent()?? [];
-//        if($content){
-//            $content = json_decode($content,true);
-//        }
-//        $newToken = Token::updateAdminToken($data[0]);
-//        $content['token'] = $newToken;
-//        $response->setContent(json_encode($content));
         return $response;
     }
 
