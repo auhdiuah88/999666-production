@@ -78,6 +78,11 @@ class UserController extends Controller
             {
                 $rules['sms_code'] = "required";
             }
+            $register_must_invite = config('site.register_must_invite',false);
+            if($register_must_invite)
+            {
+                $rules['code'] = "required";
+            }
 //        $massages = [
 //            "phone.required" => "用户名不能为空",
 //            "password.required" => "密码不能为空",
