@@ -65,7 +65,7 @@ class VNMTBpay extends PayStrategy
         ],
         'VietinBank' => [
             'bankId' => 121,
-            'bankName' => 'VTB'
+            'bankName' => 'CTG'
         ],
         'SHB' => [
             'bankId' => 133,
