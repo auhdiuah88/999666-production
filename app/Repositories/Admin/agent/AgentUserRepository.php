@@ -41,7 +41,7 @@ class AgentUserRepository
             ->with(
                 [
                     'user' => function($query){
-                        $query->select(['id', 'nickname', 'phone as phone_hide', 'total_recharge', 'cl_withdrawal', 'commission', 'one_recommend_phone as one_recommend_phone_hide', 'two_recommend_phone as two_recommend_phone_hide', 'balance']);
+                        $query->select(['id', 'nickname', 'phone', 'total_recharge', 'cl_withdrawal', 'commission', 'one_recommend_phone', 'two_recommend_phone', 'balance']);
                     }
                 ]
             )
@@ -55,7 +55,7 @@ class AgentUserRepository
     public function orderInfoList($where, $size){
         $model = makeModel($where, $this->Cx_User);
         return $model
-            ->select(['id', 'nickname', 'phone as phone_hide', 'total_recharge', 'cl_withdrawal', 'balance', 'commission', 'status', 'cl_betting', 'cl_betting_total'])
+            ->select(['id', 'nickname', 'phone', 'total_recharge', 'cl_withdrawal', 'balance', 'commission', 'status', 'cl_betting', 'cl_betting_total'])
             ->with(
                 [
                     'recharge' => function($query){

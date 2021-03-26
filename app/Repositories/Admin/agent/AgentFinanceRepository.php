@@ -46,10 +46,11 @@ class AgentFinanceRepository
             ->with(
                 [
                     'user' => function($query){
-                        $query->select(['id', 'phone as phone_hide', 'nickname', 'balance', 'reg_time', 'code']);
+                        $query->select(['id', 'nickname', 'balance', 'reg_time', 'code']);
                     }
                 ]
             )
+            ->select(["*", "phone as phone_hide"])
             ->orderByDesc('time')
             ->paginate($size);
     }
@@ -67,7 +68,7 @@ class AgentFinanceRepository
             ->with(
                 [
                     'user' => function($query){
-                        $query->select(['id', 'nickname', 'total_recharge', 'cl_withdrawal', 'commission', 'cl_betting', 'cl_betting_total', 'phone as phone_hide']);
+                        $query->select(['id', 'nickname', 'total_recharge', 'cl_withdrawal', 'commission', 'cl_betting', 'cl_betting_total']);
                     }
                 ]
             )
@@ -87,7 +88,7 @@ class AgentFinanceRepository
             ->with(
                 [
                     'charge_user' => function($query){
-                        $query->select(['id', 'phone as phone_hide', 'nickname']);
+                        $query->select(['id', 'nickname']);
                     }
                 ]
             )
@@ -107,7 +108,7 @@ class AgentFinanceRepository
             ->with(
                 [
                     'user' => function($query){
-                        $query->select(['id', 'rec_ok_count', 'nickname', 'phone as phone_hide']);
+                        $query->select(['id', 'rec_ok_count', 'nickname']);
                     }
                 ]
             )
@@ -125,7 +126,7 @@ class AgentFinanceRepository
     public function signInList($where, $size){
         $model = makeModel($where, $this->Cx_Sign_Order);
         return $model
-            ->select(['id', 'phone as phone_hide', 'nickname', 'user_id', 'amount', 'daily_rebate', 'start_time', 'end_time', 'yet_receive_count', 'yet_receive_amount'])
+            ->select(['id', 'phone', 'nickname', 'user_id', 'amount', 'daily_rebate', 'start_time', 'end_time', 'yet_receive_count', 'yet_receive_amount'])
             ->orderByDesc('start_time')
             ->paginate($size);
     }
@@ -142,7 +143,7 @@ class AgentFinanceRepository
             ->with(
                 [
                     'user' => function($query){
-                        $query->select(['id', 'nickname', 'phone as phone_hide']);
+                        $query->select(['id', 'nickname', 'phone']);
                     },
                     'admin' => function($query){
                         $query->select(['id', 'username', 'nickname']);
@@ -167,7 +168,7 @@ class AgentFinanceRepository
             ->with(
                 [
                     'user' => function($query){
-                        $query->select(['id', 'nickname', 'phone as phone_hide']);
+                        $query->select(['id', 'nickname', 'phone']);
                     },
                     'admin' => function($query){
                         $query->select(['id', 'username', 'nickname']);

@@ -19,7 +19,7 @@ class AgentBankCardRepository
         return $this->Cx_User_Bank
             ->with([
                 'user' => function($query){
-                    $query->select(['id', 'phone as phone_hide']);
+                    $query->select(['id', 'phone']);
                 }
             ])
             ->whereIn("user_id",$where)
