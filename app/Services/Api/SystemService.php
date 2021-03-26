@@ -138,6 +138,10 @@ class SystemService extends Service
                 'link' => ''
             ];
         }
+        if(!isset($data['image_id'])){
+            $data['image_id'] = 0;
+            $data['image_url'] = "";
+        }
         $this->_data = $data;
     }
 

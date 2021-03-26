@@ -384,6 +384,7 @@ class SettingController extends Controller
             $validator = Validator::make(request()->input(), [
                 'status' => 'required|integer|in:0,1',
                 'link' => 'required|url',
+                'image_id' => 'required|integer|gte:1'
             ]);
             if($validator->fails())
                 return $this->AppReturn(

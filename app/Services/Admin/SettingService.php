@@ -479,6 +479,10 @@ class SettingService extends BaseService
                 'link' => ''
             ];
         }
+        if(!isset($data['image_id'])){
+            $data['image_id'] = 0;
+            $data['image_url'] = "";
+        }
         $this->_data = $data;
     }
 
@@ -486,9 +490,13 @@ class SettingService extends BaseService
     {
         $status = request()->post('status');
         $link = request()->post('link', '');
+        $image_id = request()->post('image_id',0);
+        $image_url = $this->UploadsRepository->getImage($image_id);
         $app = [
             'status' => $status,
             'link' => $link,
+            'image_id' => $image_id,
+            'image_url' => $image_url
         ];
         $res = $this->SettingRepository->saveSetting(SettingDic::key('DOWNLOAD_APP'), $app);
         if($res === false){
