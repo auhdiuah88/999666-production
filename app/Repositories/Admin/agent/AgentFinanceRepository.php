@@ -50,7 +50,6 @@ class AgentFinanceRepository
                     }
                 ]
             )
-            ->select(["*", "phone as phone_hide"])
             ->orderByDesc('time')
             ->paginate($size);
     }
