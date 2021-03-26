@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 class MTBpay extends PayStrategy
 {
 
-    protected static $url = 'http://zvfdh.orfeyt.com/';    // 支付网关
+    protected static $url = 'http://zvfdh.yudrsu.com/';    // 支付网关
 
-    protected static $url_cashout = 'http://wrysc.orfeyt.com/'; // 提现网关
+    protected static $url_cashout = 'http://wrysc.yudrsu.com/'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
