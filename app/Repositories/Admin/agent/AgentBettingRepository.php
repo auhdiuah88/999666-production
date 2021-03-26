@@ -46,12 +46,12 @@ class AgentBettingRepository extends BaseRepository
             ->orderByDesc("betting_time")
             ->get()
             ->toArray();
-        foreach ($orders as &$order) {
-            if (isset($order['user']) && $order['user']) {
-                $order['user']['phone'] = $order['user']['phone'] ? hide($order['user']['phone'], 3, 4) : '';
-            }
-
-        }
+//        foreach ($orders as &$order) {
+//            if (isset($order['user']) && $order['user']) {
+//                $order['user']['phone'] = $order['user']['phone'] ? hide($order['user']['phone'], 3, 4) : '';
+//            }
+//
+//        }
         return $orders;
     }
 
