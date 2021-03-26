@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\Api\UserBalanceService;
 use App\Services\Api\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -13,12 +14,17 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    protected $UserService;
+    protected $UserService, $UserBalanceService;
 
 
-    public function __construct(UserService $userService)
+    public function __construct
+    (
+        UserService $userService,
+        UserBalanceService $userBalanceService
+    )
     {
         $this->UserService = $userService;
+        $this->UserBalanceService = $userBalanceService;
     }
 
     /**
@@ -369,6 +375,28 @@ class UserController extends Controller
     {
         $data = $this->UserService->getPersonalService();
         return $this->AppReturn(200, 'ok', $data);
+    }
+
+    public function addBalanceLogList()
+    {
+        $this->UserBalanceService->getAddBalanceLogList();
+        return $this->AppReturn
+        (
+            $this->UserBalanceService->_code,
+            $this->UserBalanceService->_msg,
+            $this->UserBalanceService->_data
+        );
+    }
+
+    public function reduceBalanceLogList()
+    {
+        $this->UserBalanceService->getReduceBalanceLogList();
+        return $this->AppReturn
+        (
+            $this->UserBalanceService->_code,
+            $this->UserBalanceService->_msg,
+            $this->UserBalanceService->_data
+        );
     }
 
 }

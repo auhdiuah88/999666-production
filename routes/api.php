@@ -95,6 +95,9 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'params_decry
 
         Route::get("/personalService", "UserController@personalService");
 
+        Route::get("addBalanceLog","UserController@addBalanceLogList");
+        Route::get("reduceBalanceLog","UserController@reduceBalanceLogList");
+
     });
     Route::group(["prefix" => "bank"], function () {
         Route::get("/findAll", "InfoController@getBanks"); // 查询用户银行卡
