@@ -24,6 +24,11 @@ class Cx_Direct_Recharge_logs extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
+    public function setExamTimeAttribute($value)
+    {
+        return $value?date("Y-m-d H:i:s",$value):"-";
+    }
+
     public function image()
     {
         return $this->belongsTo('App\Models\Cx_Uploads','image_id','image_id');
