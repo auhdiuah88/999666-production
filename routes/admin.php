@@ -84,6 +84,11 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::post("/cancel", "WithdrawalController@cancellationRefund");
         });
 
+        Route::group(["prefix" => "requestRecharge"], function(){
+            Route::post("/list", "RequestRechargeController@lists");
+            Route::post("/exam", "RequestRechargeController@exam");
+        });
+
         // 银行卡管理
         Route::group(["prefix" => "bank"], function () {
             Route::get("/findAll", "BankController@findAll");
@@ -350,6 +355,14 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::get("/detail","ProductController@detail");
             Route::post("/delete","ProductController@del");
             Route::get("/orders","ProductController@orders");
+        });
+
+        //平台银行卡
+        Route::group(["prefix" => "platformBankCards"], function(){
+            Route::get("/","BankCardsController@lists");
+            Route::post("/add","BankCardsController@add");
+            Route::post("/edit","BankCardsController@edit");
+            Route::post("/delete","BankCardsController@delete");
         });
     });
 });

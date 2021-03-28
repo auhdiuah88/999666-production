@@ -158,6 +158,11 @@ class HomeRepository extends BaseRepository
         return $this->Cx_User_Recharge_Logs->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->where("status", 2)->sum("arrive_money");
     }
 
+    public function sumBankCardRechargeMoney($ids, $timeMap)
+    {
+        return $this->Cx_User_Balance_Logs->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->where("type", 16)->sum("money");
+    }
+
     public function sumWithdrawalMoney($ids, $timeMap)
     {
         return $this->Cx_Withdrawal_Record->whereIn("user_id", $ids)->whereBetween("approval_time", $timeMap)->where("status", 1)->sum("payment");

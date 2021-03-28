@@ -69,6 +69,10 @@ class BalanceTypeDic
             'value' => 15,
             'name' => '注册送彩金'
         ],
+        '16' => [
+            'value' => 16,
+            'name' => '银行卡充值'
+        ],
     ];
 
     public static function data(int $type){

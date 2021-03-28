@@ -133,6 +133,16 @@ class UserRepository
         return $this->updateBalance($user, $money, 2, "充值成功，充值金额{$money}");
     }
 
+    /**
+     * 只更新用户成功充值余额
+     */
+    public function updateRechargeBalance2(object $user, $money)
+    {
+        $user->is_first_recharge = (int)$user->is_first_recharge + 1;  // 累计充值次数
+        $user->total_recharge = bcadd($user->total_recharge, $money, 2);  // 累计充值金额
+        return $this->updateBalance($user, $money, 16, "银行卡直接充值余额，充值金额{$money}");
+    }
+
     public function rebate($rechargeLog, $config, $money)
     {
         if(!$config)return;

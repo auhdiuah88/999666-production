@@ -45,6 +45,8 @@ class AgentDataService extends BaseAgentService
         #出入金额汇总
         ##充值金额
         $recharge_money = $this->AgentDataRepository->getRechargeMoney();
+        ##线下银行卡充值金额
+        $bankcard_recharge_money = $this->AgentDataRepository->getBankCardRechargeMoney();
         ##已提现金额
         $success_withdraw_money = $this->AgentDataRepository->getSuccessWithDrawMoney();
         ##待审核提现金额
@@ -59,7 +61,7 @@ class AgentDataService extends BaseAgentService
         $receive_sign_money = $this->AgentDataRepository->getReceiveSIgnMoney();
         ##赠金
         $giveMoney = $this->AgentDataRepository->getGiveMoney();
-        $money_data = compact('recharge_money','success_withdraw_money','wait_withdraw_money','balance_commission','commission_money','sign_money','receive_sign_money','giveMoney');
+        $money_data = compact('recharge_money','success_withdraw_money','wait_withdraw_money','balance_commission','commission_money','sign_money','receive_sign_money','giveMoney','bankcard_recharge_money');
 
         #订单汇总
         ##订单数

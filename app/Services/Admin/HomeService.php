@@ -61,6 +61,8 @@ class HomeService extends BaseService
         $item->agentFirstChargeNumber = $this->HomeRepository->countAgentFirstChargeNumber($timeMap, $ids);
         // 充值金额
         $item->rechargeMoney = $this->HomeRepository->sumRechargeMoney($ids, $timeMap);
+        // 线下银行卡充值金额
+        $item->bankCardRechargeMoney = $this->HomeRepository->sumBankCardRechargeMoney($ids, $timeMap);
         // 提现金额
         $item->withdrawalMoney = $this->HomeRepository->sumWithdrawalMoney($ids, $timeMap);
         // 待提现金额

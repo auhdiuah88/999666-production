@@ -3,6 +3,7 @@
 
 namespace App\Repositories\Api;
 
+use App\Models\Cx_Direct_Recharge_logs;
 use App\Models\Cx_User_Recharge_Log;
 use App\Models\Cx_Withdrawal_Record;
 use App\Mongodb;
@@ -12,15 +13,18 @@ class RechargeRepository
 {
     protected $cx_User_Recharge_Log;
     protected $cx_Withdrawal_Record;
+    protected $cx_Direct_Recharge_logs;
     public $_data = [];
 
     public function __construct(
         Cx_User_Recharge_Log $cx_User_Recharge_Log,
-        Cx_Withdrawal_Record $cx_Withdrawal_Record
+        Cx_Withdrawal_Record $cx_Withdrawal_Record,
+        Cx_Direct_Recharge_logs $cx_Direct_Recharge_logs
     )
     {
         $this->cx_User_Recharge_Log = $cx_User_Recharge_Log;
         $this->cx_Withdrawal_Record = $cx_Withdrawal_Record;
+        $this->cx_Direct_Recharge_logs = $cx_Direct_Recharge_logs;
     }
 
     /**
@@ -97,6 +101,30 @@ class RechargeRepository
             $rechargeLog->status = 2;
             $rechargeLog->save();
         }
+    }
 
+    /**
+     * 新增用户直接充值申请上分记录
+     * @param $data
+     * @return mixed
+     */
+    public function requestDirectRecharge($data)
+    {
+        if(empty($data['remark']))unset($data['remark']);
+        $data['order_no'] = date('YmdHis') . rand(10000000, 99999999);
+        return $this->cx_Direct_Recharge_logs->create($data);
+    }
+
+    public function requestDirectRechargeNum($where)
+    {
+        return makeModel($where, $this->cx_Direct_Recharge_logs)->count();
+    }
+
+    public function requestDirectRechargeLogs($where, $size)
+    {
+        return makeModel($where, $this->cx_Direct_Recharge_logs)
+            ->select(['id', 'order_no', 'money', 'real_money', 'created_at', 'remark', 'message', 'status'])
+            ->orderByDesc('created_at')
+            ->paginate($size);
     }
 }

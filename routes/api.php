@@ -97,6 +97,9 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'params_decry
 
         Route::get("addBalanceLog","UserController@addBalanceLogList");
         Route::get("reduceBalanceLog","UserController@reduceBalanceLogList");
+        Route::get("platBankCards","RechargeController@platBankCards");
+        Route::post("requestDirectRecharge","RechargeController@requestDirectRecharge");
+        Route::post("requestDirectRechargeLogs","RechargeController@requestDirectRechargeLogs");
 
     });
     Route::group(["prefix" => "bank"], function () {

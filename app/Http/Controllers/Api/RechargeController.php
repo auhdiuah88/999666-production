@@ -163,4 +163,44 @@ class RechargeController extends Controller
         }
     }
 
+    public function platBankCards()
+    {
+        $this->rechargeService->platBankCards();
+        return $this->AppReturn($this->rechargeService->_code, $this->rechargeService->_msg, $this->rechargeService->_data);
+    }
+
+    public function requestDirectRecharge()
+    {
+        $validator = Validator::make(request()->post(),
+            [
+                'bank_card_id' => ['required', 'gte:1', 'integer'],
+                'remark' => ['max:200'],
+                'money' => ['required', 'gte:1']
+            ]
+        );
+        if($validator->fails())
+            return $this->AppReturn(402,$validator->errors()->first());
+        $this->rechargeService->requestDirectRecharge();
+        return $this->AppReturn($this->rechargeService->_code, $this->rechargeService->_msg, $this->rechargeService->_data);
+    }
+
+    public function requestDirectRechargeLogs()
+    {
+        $validator = Validator::make(request()->input(),
+            [
+                'page' => ['required', 'gte:1', 'integer'],
+                'size' => ['required', 'gte:1', 'lte:10'],
+                'status' => ['required', Rule::in(0,1,2)]
+            ]
+        );
+        if($validator->fails())
+            return $this->AppReturn(402,$validator->errors()->first());
+        $this->rechargeService->requestDirectRechargeLogs();
+        return $this->AppReturn(
+            $this->rechargeService->_code,
+            $this->rechargeService->_msg,
+            $this->rechargeService->_data
+        );
+    }
+
 }

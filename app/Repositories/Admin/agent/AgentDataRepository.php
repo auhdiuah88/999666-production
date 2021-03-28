@@ -81,6 +81,17 @@ class AgentDataRepository
         return makeModel($where,$this->Cx_User_Recharge_logs)->sum('money');
     }
 
+    public function getBankCardRechargeMoney()
+    {
+        $where = [
+            'user_id' => ['in', $this->user_ids],
+            'type'=> ['=', 16]
+        ];
+        if($this->time_map)
+            $where['time'] = ['BETWEEN', $this->time_map];
+        return makeModel($where,$this->Cx_User_Balance_Logs)->sum('money');
+    }
+
     public function getSuccessWithDrawMoney(){
         return $this->getWithdrawMoney(1);
     }

@@ -5,6 +5,7 @@ namespace App\Services\Api;
 
 use App\Common\Common;
 use App\Dictionary\SettingDic;
+use App\Repositories\Api\PlatformBankCardsRepository;
 use App\Repositories\Api\RechargeRepository;
 use App\Repositories\Api\SettingRepository;
 use App\Repositories\Api\UserRepository;
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\Log;
 
 class RechargeService extends PayService
 {
-    private $userRepository, $rechargeRepository, $withdrawalRepository, $requestService, $payContext, $SettingRepository;
+    private $userRepository, $rechargeRepository, $withdrawalRepository, $requestService, $payContext, $SettingRepository, $PlatformBankCardsRepository;
 
     public function __construct
     (
@@ -31,7 +32,8 @@ class RechargeService extends PayService
         WithdrawalRepository $withdrawalRepository,
         RequestService $requestService,
         PayContext $payContext,
-        SettingRepository $settingRepository
+        SettingRepository $settingRepository,
+        PlatformBankCardsRepository $platformBankCardsRepository
     )
     {
         $this->userRepository = $userRepository;
@@ -40,6 +42,7 @@ class RechargeService extends PayService
         $this->requestService = $requestService;
         $this->payContext = $payContext;
         $this->SettingRepository = $settingRepository;
+        $this->PlatformBankCardsRepository = $platformBankCardsRepository;
     }
 
     public $rtn = '';
@@ -265,5 +268,44 @@ class RechargeService extends PayService
         }
         $this->_data = $config;
     }
+
+    public function platBankCards()
+    {
+        $data = $this->PlatformBankCardsRepository->lists();
+        if($data->isEmpty()){
+            $this->_code = 403;
+            $this->_msg = 'No bank card information';
+        }else{
+            $this->_data = $data;
+        }
+    }
+
+    public function requestDirectRecharge()
+    {
+        ##检查用户未审核的申请
+        if($this->rechargeRepository->requestDirectRechargeNum(['user_id'=>['=', request()->get('userInfo')['id']], 'status'=>0]) >= 5)
+        {
+            $this->_code = 402;
+            $this->_msg = 'There are currently 5 pending applications, Please try again later';
+            return;
+        }
+        if($this->rechargeRepository->requestDirectRecharge(array_merge(request()->only(['bank_card_id', 'money', 'remark']), ['user_id' => request()->get('userInfo')['id']])) === false)
+        {
+            $this->_code = 402;
+            $this->_msg = 'Submit fail';
+        }else{
+            $this->_msg = 'Submit success';
+        }
+    }
+
+    public function requestDirectRechargeLogs()
+    {
+        $where = [
+            'user_id' => ['=', request()->get('userInfo')['id']],
+            'status' => ['=', $this->intInput('status')]
+        ];
+        $this->_data = $this->rechargeRepository->requestDirectRechargeLogs($where, $this->sizeInput());
+    }
+
 }
 
