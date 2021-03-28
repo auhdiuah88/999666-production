@@ -26,7 +26,7 @@ class Cx_Direct_Recharge_logs extends Model
 
     public function setExamTimeAttribute($value)
     {
-        return $value?date("Y-m-d H:i:s",$value):"-";
+        $this->attributes['exam_time'] = $value?date("Y-m-d H:i:s",$value):"-";
     }
 
     public function image()
