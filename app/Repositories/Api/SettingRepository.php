@@ -31,6 +31,26 @@ class SettingRepository
     }
 
     /**
+     * 获取提现手续费配置
+     * @return mixed
+     */
+    public function getWithdrawServiceCharge(): array
+    {
+        $data =  $this->Cx_Settings->where("setting_key", SettingDic::key('WITHDRAW_SERVICE_CHARGE'))->value('setting_value');
+        if (!$data){
+            $data = [
+                'standard' => 1500,
+                'charge' => 45,
+                'percent' => 0.03,
+                'status' => 1,
+                'free_status' => 0,
+                'free_times' => 0
+            ];
+        }
+        return $data;
+    }
+
+    /**
      * 获取充值配置
      * @return mixed
      */

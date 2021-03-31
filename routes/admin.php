@@ -275,6 +275,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::get("/activity","SettingController@getActivity");
             Route::post("/withdrawSafe","SettingController@withdrawSafeSave");
             Route::get("/withdrawSafe","SettingController@getWithdrawSafe");
+            Route::post("/withdrawService","SettingController@withdrawServiceChargeSave");
+            Route::get("/withdrawService","SettingController@getWithdrawServiceCharge");
 
             Route::post("/activity/inviteFriends","ActivityController@inviteFriendsSave");
             Route::get("/activity/inviteFriends","ActivityController@inviteFriends");

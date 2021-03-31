@@ -114,7 +114,7 @@ class WithdrawalService extends PayService
             return false;
         }
 //        $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
-        $pay_money = $this->countServiceCharge($data["money"]);
+        $pay_money = $this->countServiceCharge($data);
         $onlydata["payment"] = $pay_money['amount'];
         $onlydata["service_charge"] = $pay_money['service_charge'];
         $data = array_merge($data, $onlydata);
@@ -129,24 +129,48 @@ class WithdrawalService extends PayService
 
     /**
      * 计算提现服务费
-     * @param $amount
+     * @param $data
      * @return array
      */
-    public function countServiceCharge($amount)
+    public function countServiceCharge($data)
     {
-        $country = env('COUNTRY','india');
-        if($country == 'india'){
-            $service_charge = 45;  //卢比
-            $limit = 1500;
-        }else{
-            $service_charge = 14160;  //盾
-            $limit = 472000;
-        }
-        if($amount >= $limit){
-            $service_charge = bcmul($amount,0.03);
+        $service_charge = 0;
+        $amount = $data['money'];
+        $conf = $this->SettingRepository->getWithdrawServiceCharge();
+        if(isset($conf['status']) &&  $conf['status']== 1){ //手续费开启
+//            $country = env('COUNTRY','india');
+//            if($country == 'india'){
+//                $service_charge = 45;  //卢比
+//                $limit = 1500;
+//            }else{
+//                $service_charge = 14160;  //盾
+//                $limit = 472000;
+//            }
+//            if($amount >= $limit){
+//                $service_charge = bcmul($amount,0.03);
+//            }
+            if(isset($conf['free_status']) && $conf['free_status'] == 1){  //开启了次数免费
+                $count = $this->WithdrawalRepository->countUserWithdraw($data['user_id']);
+                $free_times = $conf['free_times']??0;
+                if($count >= $free_times){ //收取手续费
+                    $service_charge = $this->calcCharge($conf, $amount);
+                }
+            }else{
+                $service_charge = $this->calcCharge($conf, $amount);
+            }
         }
         $amount = bcsub($amount, $service_charge);
         return compact('amount','service_charge');
+    }
+
+    protected function calcCharge($config, $amount): float
+    {
+        if($amount <= $config['standard']) {
+            $service_charge = $config['charge'];
+        }else{
+            $service_charge = bcmul($amount,$config['percent'],2);
+        }
+        return $service_charge;
     }
 
     /**
@@ -484,4 +508,10 @@ class WithdrawalService extends PayService
         }
         $this->_data = $config;
     }
+
+    public function withdrawFee()
+    {
+        $this->_data = $this->SettingRepository->getWithdrawServiceCharge();
+    }
+
 }

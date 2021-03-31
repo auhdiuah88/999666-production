@@ -129,6 +129,7 @@ Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'params_decry
         Route::post("/agent/reward", "WithdrawalController@getAgentRewardRecord");
         Route::get("/type", "WithdrawalController@withdrawType");
         Route::post("apply", "WithdrawalController@agentApplyBalance");//佣金直接提现到余额
+        Route::get("/fee", "WithdrawalController@withdrawFee");//提现手续费
     });
 
     // 活动

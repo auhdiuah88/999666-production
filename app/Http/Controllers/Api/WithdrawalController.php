@@ -246,5 +246,21 @@ class WithdrawalController extends Controller
             return $this->AppReturn(400, 'Withdrawal method request failed');
         }
     }
+
+    public function withdrawFee()
+    {
+        try{
+            $this->WithdrawalService->withdrawFee();
+            return $this->AppReturn(
+                200,
+                '',
+                $this->WithdrawalService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(400, 'withdrawFee method request failed');
+        }
+    }
+
 }
 

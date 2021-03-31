@@ -616,6 +616,49 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function getWithdrawServiceCharge()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('WITHDRAW_SERVICE_CHARGE'));
+        if (!$data){
+            $data = [
+                'standard' => 1500,
+                'charge' => 45,
+                'percent' => 0.03,
+                'status' => 1,
+                'free_status' => 0,
+                'free_times' => 0
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function withdrawServiceChargeSave():bool
+    {
+        $standard = $this->floatInput('standard');
+        $charge = $this->floatInput('charge');
+        $percent = $this->floatInput('percent');
+        $status = $this->intInput('status');
+        $free_status = $this->intInput('free_status');
+        $free_times = $this->intInput('free_times');
+        if($status == 1){
+            if($standard <= $charge)
+            {
+                $this->_code = 403;
+                $this->_msg = '控制金额必须大于固定手续费';
+                return false;
+            }
+        }
+
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('WITHDRAW_SERVICE_CHARGE'), compact('standard','charge','percent','status','free_status','free_times'));
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
     public function getWithdrawSafe()
     {
         $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('WITHDRAW_SAFE'));

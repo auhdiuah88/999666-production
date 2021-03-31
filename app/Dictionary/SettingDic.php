@@ -92,6 +92,10 @@ class SettingDic
             'title' => 'withdraw safe',
             'key' => 'WITHDRAW_SAFE'
         ],
+        'WITHDRAW_SERVICE_CHARGE' => [
+            'title' => 'withdraw service charge',
+            'key' => 'WITHDRAW_SERVICE_CHARGE'
+        ],
     ];
 
     public static function key($key): string

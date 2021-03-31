@@ -606,4 +606,47 @@ class SettingController extends Controller
         }
     }
 
+    public function getWithdrawServiceCharge()
+    {
+        try{
+            $this->SettingService->getWithdrawServiceCharge();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function withdrawServiceChargeSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'status' => ['required', Rule::in(0,1)],
+                'standard' => ['required', 'gte:0', 'numeric'],
+                'charge' => ['required', 'gte:0', 'numeric'],
+                'percent' => ['required', 'gte:0', 'lt:1', 'numeric'],
+                'free_status' => ['required', Rule::in(0,1)],
+                'free_times' => ['required', 'gte:0', 'numeric']
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->withdrawServiceChargeSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }
