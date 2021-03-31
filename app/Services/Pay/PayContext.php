@@ -32,7 +32,8 @@ class PayContext
         Sevenpay $sevenpay,
         Sepropay $sepropay,
         Matthew $matthew,
-        Pradapay $pradapay
+        Pradapay $pradapay,
+        YJpay $YJpay
     )
     {
         // 每种api地址对应的支付公司
@@ -55,7 +56,8 @@ class PayContext
             '777pay' => $sevenpay,  //777pay 越南
             'sepro' => $sepropay,
             'matthew' => $matthew, //coo7
-            'pradapay' => $pradapay
+            'pradapay' => $pradapay,
+            'YJpay' => $YJpay
         ];
     }
     /**
