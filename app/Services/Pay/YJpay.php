@@ -24,6 +24,8 @@ class YJpay extends PayStrategy
     public $company = 'YJpay';   // 支付公司名
 
     public $rechargeRtn = "SUCCESS";
+    public $withdrawRtn = "SUCCESS";
+    public $amountFiled = "amount";
 
     public function _initialize()
     {
@@ -44,18 +46,6 @@ class YJpay extends PayStrategy
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
-    public  function generateSign(array $params, $type=1)
-    {
-        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
-        ksort($params);
-        $string = [];
-        foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
-        }
-        $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-        return md5($sign);
-    }
-
     public function generateSignRigorous(array $params, $type=1){
         $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         ksort($params);
@@ -146,27 +136,30 @@ class YJpay extends PayStrategy
         $money = $withdrawalRecord->payment;    // 打款金额
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'mer_no' => $this->withdrawMerchantID,
-            'mer_order_no' => $order_no,
-            'acc_no' => $withdrawalRecord->bank_number,
-            'acc_name' => $withdrawalRecord->account_holder,
-            'ccy_no' => 'INR',
-            'order_amount' => intval($money),
-            'bank_code' => 'IDPT0001',
-            'summary' => 'Balance Withdrawal',
-            'province' => $withdrawalRecord->ifsc_code,
-            'notifyUrl' => $this->withdrawal_callback_url
+            'merchantId' => $this->withdrawMerchantID,
+            'tradeNo' => $order_no,
+            'type' => 1,
+            'name' => $withdrawalRecord->account_holder,
+            'account' => $withdrawalRecord->bank_number,
+            'bankCode' => "IDPT0001",
+            'branchCode' => $withdrawalRecord->ifsc_code,
+            'email' => $withdrawalRecord->mail,
+            'mobile' => $withdrawalRecord->phone,
+            'amount' => intval($money * 100),
+            'currency' => "INR",
+            'version' => "v1.0",
+            'notify' => $this->withdrawal_callback_url,
         ];
-        $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleOrder', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalOrder',$res);
-        if ($res['status'] != 'SUCCESS') {
-            $this->_msg = $res['err_msg'];
+        $params['sign'] = $this->generateSignRigorous($params,2);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_withdrawalOrder',$params);
+        $res = $this->requestService->postFormData(self::$url_cashout, $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_withdrawalOrder',$res);
+        if ($res['code'] != 0) {
+            $this->_msg = $res['msg'];
             return false;
         }
         return  [
-            'pltf_order_no' => $res['order_no'],
+            'pltf_order_no' => $res['data']['orderNo'],
             'order_no' => $order_no
         ];
     }
@@ -176,32 +169,33 @@ class YJpay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJpay_withdrawalCallback',$request->post());
 
         $pay_status = 0;
-        $status = (string)($request->status);
-        if($status == 'SUCCESS'){
+        $status = (string)($request->code);
+        if($status == 0){
             $pay_status= 1;
         }
-        if($status == 'FAIL'){
+        if($status == -1){
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'MTBpay-withdrawal-交易未完成';
+            $this->_msg = 'YJpay-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
-        $params = $request->post();
+        $data = $request->post();
+        $params = $data['data'];
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,2) <> $sign) {
-            $this->_msg = 'MTBpay-签名错误';
+            $this->_msg = 'YJpay-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->mer_order_no,
-            'plat_order_id' => $request->order_no,
+            'order_no' => $params['tradeNo'],
+            'plat_order_id' => $params['orderNo'],
             'pay_status' => $pay_status
         ];
         return $where;

@@ -158,7 +158,7 @@ class RechargeService extends PayService
             $money = isset($requestData['money']) ? $requestData['money'] : (isset($requestData['pay_amount']) ? $requestData['pay_amount'] : (isset($requestData['amt'])?$requestData['amt']: (isset($requestData['payamount'])?$requestData['payamount']:$requestData['amount'])));
         }
 
-        if($payProvide == 'in8pay'){ //返回的是分做单位的
+        if($payProvide == 'in8pay' || $payProvide == 'YJpay'){ //返回的是分做单位的
             $money = $money / 100;
         }
         // 下面的方法相同
