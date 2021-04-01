@@ -108,35 +108,28 @@ class YJpay extends PayStrategy
         try{
             \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',$request->post());
             $data = $request->post();
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误2_YJ_rechargeCallback',[$data]);
             if ((int)$data['code'] != 0)  {
-                \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误222_YJ_rechargeCallback',[$data]);
                 $this->_msg = 'YJ-recharge-交易未完成';
                 return false;
             }
-            var_dump($data);
             // 验证签名
             $params = $data['data'];
-            $sign = $params['sign'];
             if(!is_array($params))$params = json_decode($params,true);
-            var_dump($params);
+            $sign = $params['sign'];
             unset($params['sign']);
             unset($params['type']);
             if ($this->generateSignRigorous($params,1) <> $sign) {
-                \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误111_YJ_rechargeCallback',$request->post());
                 $this->_msg = 'YJ-签名错误';
                 return false;
             }
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('after_YJ_rechargeCallback',$request->post());
             $where = [
                 'order_no' => $params['tradeNo'],
             ];
             return $where;
         }catch(\Exception $e){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('err_YJ_rechargeCallback',[$e->getMessage(), $e->getLine()]);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('err_YJ_rechargeCallback',[$request->post(), $e->getMessage(), $e->getLine()]);
             return [];
         }
-
     }
 
     /**
