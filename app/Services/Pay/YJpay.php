@@ -106,13 +106,12 @@ class YJpay extends PayStrategy
     function rechargeCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',$request->post());
-
-        if ($request->code != 0)  {
+        $data = $request->post();
+        if ($data['code'] != 0)  {
             $this->_msg = 'YJ-recharge-交易未完成';
             return false;
         }
         // 验证签名
-        $data = $request->post();
         $params = $data['data'];
         $sign = $params['sign'];
         unset($params['sign']);
@@ -171,9 +170,9 @@ class YJpay extends PayStrategy
     function withdrawalCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('YJpay_withdrawalCallback',$request->post());
-
+        $data = $request->post();
         $pay_status = 0;
-        $status = (string)($request->code);
+        $status = $data['code'];
         if($status == 0){
             $pay_status= 1;
         }
@@ -185,7 +184,7 @@ class YJpay extends PayStrategy
             return false;
         }
         // 验证签名
-        $data = $request->post();
+
         $params = $data['data'];
         $sign = $params['sign'];
         unset($params['sign']);
