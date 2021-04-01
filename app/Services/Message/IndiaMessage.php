@@ -18,7 +18,7 @@ class IndiaMessage extends MessageStrategy
         $account = "cs_aheln9";
         $sign = md5($account . "u2AGYncI" . date("YmdHis"));
         $code = mt_rand(100000, 999999);
-        $context = urlencode("【sky-shop】Your verification code is " . $code);
+        $context = urlencode("[sky-shop] SMS verification code is{$code}, valid for 5 minutes, please don't tell others.");
         $params = [
             "account" => $account,
             "sign" => $sign,
