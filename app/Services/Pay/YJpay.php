@@ -118,6 +118,7 @@ class YJpay extends PayStrategy
             $params = $data['data'];
             $sign = $params['sign'];
             if(!is_array($params))$params = json_decode($params,true);
+            var_dump($data);
             unset($params['sign']);
             unset($params['type']);
             if ($this->generateSignRigorous($params,1) <> $sign) {
