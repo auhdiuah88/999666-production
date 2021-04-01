@@ -106,8 +106,8 @@ class YJpay extends PayStrategy
     function rechargeCallback(Request $request)
     {
         try{
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',$request->post());
-            $data = $request->post();
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',$request->input());
+            $data = $request->input();
             if ((int)$data['code'] != 0)  {
                 $this->_msg = 'YJ-recharge-交易未完成';
                 return false;
@@ -127,7 +127,7 @@ class YJpay extends PayStrategy
             ];
             return $where;
         }catch(\Exception $e){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('err_YJ_rechargeCallback',[$request->post(), $e->getMessage(), $e->getLine()]);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('err_YJ_rechargeCallback',[$request->input(), $e->getMessage(), $e->getLine()]);
             return [];
         }
     }
