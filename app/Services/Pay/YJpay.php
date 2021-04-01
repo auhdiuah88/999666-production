@@ -116,7 +116,7 @@ class YJpay extends PayStrategy
             $params = $data['data'];
             if(!is_array($params))$params = json_decode($params,true);
             $sign = $params['sign'];
-//            unset($params['sign']);
+            unset($params['sign']);
             unset($params['type']);
             $params['amount'] = intval($params['amount']);
             $params['fee'] = intval($params['fee']);
