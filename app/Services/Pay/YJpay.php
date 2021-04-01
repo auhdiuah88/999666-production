@@ -117,6 +117,7 @@ class YJpay extends PayStrategy
             // 验证签名
             $params = $data['data'];
             $sign = $params['sign'];
+            if(!is_array($params))$params = json_decode($params,true);
             unset($params['sign']);
             unset($params['type']);
             if ($this->generateSignRigorous($params,1) <> $sign) {
