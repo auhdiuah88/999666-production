@@ -56,6 +56,7 @@ class YJpay extends PayStrategy
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
         \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',[$sign]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',[strtoupper(md5($sign))]);
         return strtoupper(md5($sign));
     }
 
