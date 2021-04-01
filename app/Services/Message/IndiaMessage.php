@@ -27,13 +27,11 @@ class IndiaMessage extends MessageStrategy
             "content" => $context,
             "datetime" => date("YmdHis")
         ];
-        Log::channel('kidebug')->info('印度短信',[$params]);
         $result = Http::post($url, $params)->json();
-        Log::channel('kidebug')->info('印度短信rtn',[$result]);
         if ($result["status"] == 0) {
             return ["code" => 200, "obj" => $code];
         }
-
+        Log::channel('kidebug')->info('印度短信rtn',[$result]);
         return ["code" => 402];
     }
 }
