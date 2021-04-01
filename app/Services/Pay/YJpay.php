@@ -118,8 +118,6 @@ class YJpay extends PayStrategy
             $sign = $params['sign'];
 //            unset($params['sign']);
             unset($params['type']);
-            $params['code'] = $data['code'];
-            $params['msg'] = $data['msg'];
             if ($this->generateSignRigorous($params,1) <> $sign) {
                 $this->_msg = 'YJ-签名错误';
                 return false;
