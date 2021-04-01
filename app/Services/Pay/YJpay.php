@@ -118,6 +118,7 @@ class YJpay extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,1) <> $sign) {
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误_YJ_rechargeCallback',$request->post());
             $this->_msg = 'YJ-签名错误';
             return false;
         }
