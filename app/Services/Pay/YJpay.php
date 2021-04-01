@@ -121,7 +121,7 @@ class YJpay extends PayStrategy
             $this->_msg = 'YJ-签名错误';
             return false;
         }
-
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('after_YJ_rechargeCallback',$request->post());
         $where = [
             'order_no' => $params['tradeNo'],
         ];
