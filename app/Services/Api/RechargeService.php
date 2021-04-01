@@ -152,9 +152,12 @@ class RechargeService extends PayService
         }
         $requestData = $request->all();
         ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100  sevenpay=>payamount
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', [$requestData]);
         if(!empty($strategyClass->amountFiled)){
-            $money = $requestData[$strategyClass->amountFiled];
+            if($payProvide == 'YJpay'){
+                $money = $requestData['data'][$strategyClass->amountFiled];
+            }else{
+                $money = $requestData[$strategyClass->amountFiled];
+            }
         }else{
             $money = isset($requestData['money']) ? $requestData['money'] : (isset($requestData['pay_amount']) ? $requestData['pay_amount'] : (isset($requestData['amt'])?$requestData['amt']: (isset($requestData['payamount'])?$requestData['payamount']:$requestData['amount'])));
         }
