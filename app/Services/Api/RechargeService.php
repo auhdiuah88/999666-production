@@ -152,6 +152,7 @@ class RechargeService extends PayService
         }
         $requestData = $request->all();
         ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100  sevenpay=>payamount
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('rechargeCallback', [$requestData]);
         if(!empty($strategyClass->amountFiled)){
             $money = $requestData[$strategyClass->amountFiled];
         }else{
