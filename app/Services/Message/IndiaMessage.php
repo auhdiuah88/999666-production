@@ -5,6 +5,7 @@ namespace App\Services\Message;
 
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class IndiaMessage extends MessageStrategy
 {
@@ -26,6 +27,7 @@ class IndiaMessage extends MessageStrategy
             "content" => $context,
             "datetime" => date("YmdHis")
         ];
+        Log::channel('kidebug')->info('越南短信',[$params]);
         $result = Http::post($url, $params)->json();
         if ($result["status"] == 0) {
             return ["code" => 200, "obj" => $code];
