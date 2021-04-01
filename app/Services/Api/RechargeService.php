@@ -184,7 +184,7 @@ class RechargeService extends PayService
             $user = $this->userRepository->findByIdUser($rechargeLog->user_id);
 
             // 是否第一次充值
-            if ((int)$user->is_first_recharge == 0 && $money >= 200) {
+            if ((int)$user->is_first_recharge == 0 && $money >= config('site.invite_recharge_valid_money',200)) {
 //                $user->is_first_recharge = 1;
                 $referrensUser = $this->userRepository->findByIdUser($user->two_recommend_id);  // 给推荐我注册的人，推荐充值数加1
                 if ($referrensUser) {
