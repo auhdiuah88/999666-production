@@ -55,8 +55,6 @@ class YJpay extends PayStrategy
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',[$sign]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',[strtoupper(md5($sign))]);
         return strtoupper(md5($sign));
     }
 
@@ -139,7 +137,7 @@ class YJpay extends PayStrategy
             unset($params['type']);
 //            $params['amount'] = intval($params['amount']);
 //            $params['fee'] = intval($params['fee']);
-            if ($this->generateSignRigorous2($params,1) <> $sign) {
+            if ($this->generateSignRigorous($params,1) <> $sign) {
                 $this->_msg = 'YJ-签名错误';
                 return false;
             }
