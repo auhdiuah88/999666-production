@@ -107,8 +107,9 @@ class YJpay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',$request->post());
         $data = $request->post();
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误_YJ_rechargeCallback',[$data]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误2_YJ_rechargeCallback',[$data]);
         if ((int)$data['code'] != 0)  {
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误222_YJ_rechargeCallback',[$data]);
             $this->_msg = 'YJ-recharge-交易未完成';
             return false;
         }
@@ -118,7 +119,7 @@ class YJpay extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,1) <> $sign) {
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误_YJ_rechargeCallback',$request->post());
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误111_YJ_rechargeCallback',$request->post());
             $this->_msg = 'YJ-签名错误';
             return false;
         }
