@@ -108,7 +108,7 @@ class YJpay extends PayStrategy
         \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',$request->post());
         $data = $request->post();
         \Illuminate\Support\Facades\Log::channel('mytest')->info('签名错误_YJ_rechargeCallback',[$data]);
-        if ($data['code'] != 0)  {
+        if ((int)$data['code'] != 0)  {
             $this->_msg = 'YJ-recharge-交易未完成';
             return false;
         }
@@ -173,7 +173,7 @@ class YJpay extends PayStrategy
         \Illuminate\Support\Facades\Log::channel('mytest')->info('YJpay_withdrawalCallback',$request->post());
         $data = $request->post();
         $pay_status = 0;
-        $status = $data['code'];
+        $status = (int)$data['code'];
         if($status == 0){
             $pay_status= 1;
         }
