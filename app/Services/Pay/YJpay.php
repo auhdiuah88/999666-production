@@ -147,6 +147,7 @@ class YJpay extends PayStrategy
             $where = [
                 'order_no' => $params['tradeNo'],
             ];
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',[$where]);
             return $where;
         }catch(\Exception $e){
             \Illuminate\Support\Facades\Log::channel('mytest')->info('err_YJ_rechargeCallback',[$request->input(), $e->getMessage(), $e->getLine()]);
