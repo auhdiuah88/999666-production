@@ -23,7 +23,8 @@ abstract class MessageStrategy
         $this->requestService = $requestService;
     }
 
-    protected $registerMessage = "【sky-shop】Your verification code is %s";
+    protected $registerMessage = "[sky-shop] SMS verification code is%s, valid for 5 minutes, please don't tell others. ";
+//    protected $registerMessage = "【sky-shop】Your verification code is %s";
 
     abstract function sendRegisterCode($phone);
 
