@@ -114,11 +114,12 @@ class YJpay extends PayStrategy
                 $this->_msg = 'YJ-recharge-交易未完成';
                 return false;
             }
+            var_dump($data);
             // 验证签名
             $params = $data['data'];
             $sign = $params['sign'];
             if(!is_array($params))$params = json_decode($params,true);
-            var_dump($data);
+
             unset($params['sign']);
             unset($params['type']);
             if ($this->generateSignRigorous($params,1) <> $sign) {
