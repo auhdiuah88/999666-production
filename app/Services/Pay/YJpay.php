@@ -61,6 +61,23 @@ class YJpay extends PayStrategy
     }
 
     /**
+     * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
+     */
+    public function generateSignRigorous2(array $params, $type=1){
+        $secretKey = "bb8df40c64b34d1481b3a65b0742b1a1";
+        ksort($params);
+        $string = [];
+        foreach ($params as $key => $value) {
+            if(!empty($value))
+                $string[] = $key . '=' . $value;
+        }
+        $sign = (implode('&', $string)) . '&key=' .  $secretKey;
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',[$sign]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',[strtoupper(md5($sign))]);
+        return strtoupper(md5($sign));
+    }
+
+    /**
      * 充值下单接口
      */
     public function rechargeOrder($pay_type, $money)
@@ -123,7 +140,7 @@ class YJpay extends PayStrategy
 //            $params['amount'] = intval($params['amount']);
 //            $params['fee'] = intval($params['fee']);
             \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeCallback',[$params]);
-            if ($this->generateSignRigorous($params,1) <> $sign) {
+            if ($this->generateSignRigorous2($params,1) <> $sign) {
                 $this->_msg = 'YJ-签名错误';
                 return false;
             }
