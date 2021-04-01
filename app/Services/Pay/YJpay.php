@@ -130,7 +130,7 @@ class YJpay extends PayStrategy
             ];
             return $where;
         }catch(\Exception $e){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('err_YJ_rechargeCallback',[$e->getMessage()]);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('err_YJ_rechargeCallback',[$e->getMessage(), $e->getLine()]);
             return [];
         }
 
