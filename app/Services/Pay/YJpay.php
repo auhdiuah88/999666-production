@@ -172,7 +172,7 @@ class YJpay extends PayStrategy
             'account' => $withdrawalRecord->bank_number,
             'bankCode' => "IDPT0001",
             'branchCode' => $withdrawalRecord->ifsc_code,
-            'email' => $withdrawalRecord->mail,
+            'email' => $withdrawalRecord->email,
             'mobile' => $withdrawalRecord->phone,
             'amount' => intval($money * 100),
             'currency' => "INR",
