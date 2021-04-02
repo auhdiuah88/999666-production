@@ -209,18 +209,16 @@ class Yeahpay extends PayStrategy
             'payType' => 'card',
             'payoutId' => $order_no,
             'callBackUrl' => $this->withdrawal_callback_url,
-            'details' => [
-                '0' => [
-                    'amount' => (string)$money,
-                    'phone' => $withdrawalRecord->phone,
-                    'email' => $withdrawalRecord->mail,
-                    'payeeAccount' => $withdrawalRecord->bank_number,
-                    'payeeName' => $withdrawalRecord->account_holder,
-                    'ifsc' => $withdrawalRecord->ifsc_code,
-                    'walletId' => "",
-                    'walletOwnName' => "",
-                ]
-            ],
+            'details' => array([
+                'amount' => (string)$money,
+                'phone' => $withdrawalRecord->phone,
+                'email' => $withdrawalRecord->mail,
+                'payeeAccount' => $withdrawalRecord->bank_number,
+                'payeeName' => $withdrawalRecord->account_holder,
+                'ifsc' => $withdrawalRecord->ifsc_code,
+                'walletId' => "",
+                'walletOwnName' => "",
+            ]),
         ];
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_withdrawalOrder',$params);
