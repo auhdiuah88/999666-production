@@ -43,6 +43,12 @@ class YJpay extends PayStrategy
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
     }
 
+    protected $rechargeTypeList = [
+        '1' => 3,
+        '2' => 2,
+        '3' => 1,
+    ];
+
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
@@ -84,7 +90,7 @@ class YJpay extends PayStrategy
         $params = [
             'merchantId' => $this->rechargeMerchantID,
             'tradeNo' => $order_no,
-            'paymentType' => 1,
+            'paymentType' => $this->rechargeTypeList[$this->rechargeType],
             'amount' => intval($money * 100),
             'currency' => "INR",
             'callback' => env('SHARE_URL',''),
