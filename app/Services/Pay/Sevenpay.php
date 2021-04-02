@@ -144,6 +144,10 @@ class Sevenpay extends PayStrategy
             'bankId' => 149,
             'bankName' => 'VAB'
         ],
+        'Sacombank' => [
+            'bankId' => 116,
+            'bankName' => 'SACOM'
+        ],
     ];
 
     /**
