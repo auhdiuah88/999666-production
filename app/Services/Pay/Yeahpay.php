@@ -15,7 +15,7 @@ class Yeahpay extends PayStrategy
 
     protected static $url = 'http://testapi.yeahpay.in/core/api/payment/prepay';    // 支付网关
 
-    protected static $url_cashout = 'https://usdt1788.in/center/api/payout.do'; // 提现网关
+    protected static $url_cashout = 'http://testapi.yeahpay.in/core/api/payment/payout'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
@@ -91,7 +91,7 @@ class Yeahpay extends PayStrategy
         $res = $this->requestService->postFormData(self::$url_oauth,$params, [
             'Authorization' => "Basic " . $accessToken
         ]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeOrder', [$res]);
+//        \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeOrder', [$res]);
         if($res && isset($res['access_token'])){
             Redis::set($key, json_encode($res,JSON_UNESCAPED_UNICODE));
             Redis::expire($key, $res['expires_in'] - 600);
@@ -138,9 +138,9 @@ class Yeahpay extends PayStrategy
         $res = $this->requestService->postJsonData(self::$url, $params, [
             'Authorization' => "Bearer " . $access_token
         ]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeOrder_return', $res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeOrder_return', [$res]);
         if ($res['errorCode'] != 1000) {
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeOrder_return', $res);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeOrder_return', [$res]);
             $this->_msg = "prepay failed";
             return false;
         }
@@ -200,33 +200,38 @@ class Yeahpay extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
+        $access_token = $this->auth(2);
         $money = $withdrawalRecord->payment;    // 打款金额
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'merchantId' => $this->withdrawMerchantID,
-            'tradeNo' => $order_no,
-            'type' => 1,
-            'name' => $withdrawalRecord->account_holder,
-            'account' => $withdrawalRecord->bank_number,
-            'bankCode' => "IDPT0001",
-            'branchCode' => $withdrawalRecord->ifsc_code,
-            'email' => $withdrawalRecord->mail,
-            'mobile' => $withdrawalRecord->phone,
-            'amount' => intval($money * 100),
-            'currency' => "INR",
-            'version' => "v1.0",
-            'notify' => $this->withdrawal_callback_url,
+            'countryCode' => 'IN',
+            'currency' => 'INR',
+            'payType' => 'card',
+            'payoutId' => $order_no,
+            'callBackUrl' => $this->withdrawal_callback_url,
+            'details' => [
+                'amount' => (string)$money,
+                'phone' => $withdrawalRecord->phone,
+                'email' => $withdrawalRecord->mail,
+                'payeeAccount' => $withdrawalRecord->bank_number,
+                'payeeName' => $withdrawalRecord->account_holder,
+                'ifsc' => $withdrawalRecord->ifsc_code,
+                'walletId' => "",
+                'walletOwnName' => "",
+            ],
         ];
-        $params['sign'] = $this->generateSignRigorous($params,2);
+
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_withdrawalOrder',$params);
-        $res = $this->requestService->postFormData(self::$url_cashout, $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_withdrawalOrder',$res);
-        if ($res['code'] != 0) {
-            $this->_msg = $res['msg'];
+        $res = $this->requestService->postJsonData(self::$url_cashout, $params, [
+            'Authorization' => 'Bearer ' . $access_token
+        ]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_withdrawalOrder',[$res]);
+        if ($res['code'] != 1000) {
+            $this->_msg = $res['info'];
             return false;
         }
         return  [
-            'pltf_order_no' => $res['data']['orderNo'],
+            'pltf_order_no' => $res['result']['merchantPayoutId'],
             'order_no' => $order_no
         ];
     }
@@ -239,11 +244,11 @@ class Yeahpay extends PayStrategy
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeahpay_withdrawalCallback',$request->post());
         $data = $request->post();
         $pay_status = 0;
-        $status = (int)$data['code'];
-        if($status == 0){
+        $status = (int)$data['status'];
+        if($status == 1){
             $pay_status= 1;
         }
-        if($status == -1){
+        if($status == 2){
             $pay_status = 3;
         }
         if ($pay_status == 0) {
@@ -252,18 +257,19 @@ class Yeahpay extends PayStrategy
         }
         // 验证签名
 
-        $params = $data['data'];
-        if(!is_array($params))$params = json_decode($params,true);
+        $params = $data;
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
+        $params['singleCharge'] = sprintf("%.4f",$params['singleCharge']);
+        $params['amount'] = sprintf("%.4f",$params['amount']);
         if ($this->generateSignRigorous($params,2) <> $sign) {
             $this->_msg = 'Yeahpay-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $params['tradeNo'],
-            'plat_order_id' => $params['orderNo'],
+            'order_no' => $params['merchantPayoutId'],
+            'plat_order_id' => $params['payoutId'],
             'pay_status' => $pay_status
         ];
         return $where;

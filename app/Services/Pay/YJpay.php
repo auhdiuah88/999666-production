@@ -102,9 +102,9 @@ class YJpay extends PayStrategy
         \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeOrder', [$params]);
 
         $res = $this->requestService->postFormData(self::$url, $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeOrder_return', $res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeOrder_return', [$res]);
         if ($res['code'] != 0) {
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeOrder_return', $res);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_rechargeOrder_return', [$res]);
             $this->_msg = $res['msg'];
             return false;
         }
@@ -182,7 +182,7 @@ class YJpay extends PayStrategy
         $params['sign'] = $this->generateSignRigorous($params,2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_withdrawalOrder',$params);
         $res = $this->requestService->postFormData(self::$url_cashout, $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_withdrawalOrder',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('YJ_withdrawalOrder',[$res]);
         if ($res['code'] != 0) {
             $this->_msg = $res['msg'];
             return false;
