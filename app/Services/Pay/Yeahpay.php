@@ -227,6 +227,7 @@ class Yeahpay extends PayStrategy
         $res = $this->requestService->postJsonData(self::$url_cashout, $params, [
             'Authorization' => 'Bearer ' . $access_token
         ]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_withdrawalOrder',[$this->requestService->getHeader()]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_withdrawalOrder',[$res]);
         if ($res['code'] != 1000) {
             $this->_msg = $res['info'];
