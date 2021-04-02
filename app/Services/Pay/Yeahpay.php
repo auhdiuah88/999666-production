@@ -213,7 +213,7 @@ class Yeahpay extends PayStrategy
                 [
                     'amount' => (string)$money,
                     'phone' => $withdrawalRecord->phone,
-                    'email' => $withdrawalRecord->mail,
+                    'email' => $withdrawalRecord->email,
                     'payeeAccount' => $withdrawalRecord->bank_number,
                     'payeeName' => $withdrawalRecord->account_holder,
                     'ifsc' => $withdrawalRecord->ifsc_code,
