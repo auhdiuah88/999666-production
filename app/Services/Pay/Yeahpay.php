@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Redis;
 class Yeahpay extends PayStrategy
 {
 
-//    protected static $url_oauth = 'http://api.payhub888.com/gpauth/oauth/token';    // access_token网关
-    protected static $url_oauth = 'http://testapi.yeahpay.in/gpauth/oauth/token';    // access_token网关
+    protected static $url_oauth = 'http://api.payhub888.com/gpauth/oauth/token';    // access_token网关
+//    protected static $url_oauth = 'http://testapi.yeahpay.in/gpauth/oauth/token';    // access_token网关
 
-//    protected static $url = 'http://api.payhub888.com/core/api/payment/prepay';    // 支付网关
-    protected static $url = 'http://testapi.yeahpay.in/core/api/payment/prepay';    // 支付网关
+    protected static $url = 'http://api.payhub888.com/core/api/payment/prepay';    // 支付网关
+//    protected static $url = 'http://testapi.yeahpay.in/core/api/payment/prepay';    // 支付网关
 
-//    protected static $url_cashout = 'http://api.payhub888.com/core/api/payment/payout'; // 提现网关
-    protected static $url_cashout = 'http://testapi.yeahpay.in/core/api/payment/payout'; // 提现网关
+    protected static $url_cashout = 'http://api.payhub888.com/core/api/payment/payout'; // 提现网关
+//    protected static $url_cashout = 'http://testapi.yeahpay.in/core/api/payment/payout'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
