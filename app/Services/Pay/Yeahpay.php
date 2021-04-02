@@ -67,7 +67,7 @@ class Yeahpay extends PayStrategy
             $str = $str . $k;
         }
         $str = $str . $secretKey;
-
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_sign_rechargeOrder', [$str]);
         $hash = hash_hmac('sha256', $str, $secretKey);
         return strtoupper($hash);
     }
@@ -98,15 +98,6 @@ class Yeahpay extends PayStrategy
             return $res['access_token'];
         }
         return false;
-    }
-
-    protected function getSign($params, $access_token,$flag=1)
-    {
-        $data = [
-            'key' => $flag == 1? $this->rechargeSecretkey : $this->withdrawSecretkey,
-            'params' => $params,
-            ''
-        ];
     }
 
     /**
