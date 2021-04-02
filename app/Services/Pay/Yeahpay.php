@@ -153,19 +153,19 @@ class Yeahpay extends PayStrategy
             $this->_msg = "prepay failed";
             return false;
         }
-        if(!!$res['orderPaymentLoad']['hadCheckPage']){
+        if(!$res['orderPaymentLoad']['payOrder']['hadCheckPage']){
             $this->_msg = "empty checkPageUrl";
             return false;
         }
-        $native_url = $res['orderPaymentLoad']['checkPageUrl'];
+        $native_url = $res['orderPaymentLoad']['payOrder']['checkPageUrl'];
         $resData = [
             'out_trade_no' => $order_no,
             'pay_type' => $pay_type,
             'order_no' => $order_no,
             'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
-            'pltf_order_id' => $res['orderPaymentLoad']['channelOrderId'],
-            'verify_money' => $res['orderPaymentLoad']['amount'],
+            'pltf_order_id' => $res['orderPaymentLoad']['payOrder']['payorder']['channelOrderId'],
+            'verify_money' => $res['orderPaymentLoad']['payOrder']['payorder']['amount'],
             'match_code' => '',
             'is_post' => isset($is_post)?$is_post:0
         ];
