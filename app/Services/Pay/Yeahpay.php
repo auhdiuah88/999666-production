@@ -180,6 +180,7 @@ class Yeahpay extends PayStrategy
             $sign = $params['sign'];
             unset($params['sign']);
             unset($params['type']);
+            $params['amount'] = sprintf("%.4f",$params['amount']);
             if ($this->generateSignRigorous($params,1) <> $sign) {
                 $this->_msg = 'Yeah-签名错误';
                 return false;
