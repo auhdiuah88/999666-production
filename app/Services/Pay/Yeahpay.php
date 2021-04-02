@@ -89,7 +89,7 @@ class Yeahpay extends PayStrategy
         ];
         $accessToken = base64_encode($app_id . ":" . $app_key);
         $res = $this->requestService->postFormData(self::$url_oauth,$params, [
-            'Authorization: Basic' => $accessToken
+            'Authorization' => "Basic " . $accessToken
         ]);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeOrder', [$res]);
         if($res && isset($res['access_token'])){
