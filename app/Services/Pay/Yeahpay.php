@@ -210,7 +210,7 @@ class Yeahpay extends PayStrategy
             'payoutId' => $order_no,
             'callBackUrl' => $this->withdrawal_callback_url,
             'details' => [
-                [
+                '0' => [
                     'amount' => (string)$money,
                     'phone' => $withdrawalRecord->phone,
                     'email' => $withdrawalRecord->mail,
