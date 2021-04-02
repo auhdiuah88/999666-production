@@ -210,14 +210,16 @@ class Yeahpay extends PayStrategy
             'payoutId' => $order_no,
             'callBackUrl' => $this->withdrawal_callback_url,
             'details' => [
-                'amount' => (string)$money,
-                'phone' => $withdrawalRecord->phone,
-                'email' => $withdrawalRecord->mail,
-                'payeeAccount' => $withdrawalRecord->bank_number,
-                'payeeName' => $withdrawalRecord->account_holder,
-                'ifsc' => $withdrawalRecord->ifsc_code,
-                'walletId' => "",
-                'walletOwnName' => "",
+                [
+                    'amount' => (string)$money,
+                    'phone' => $withdrawalRecord->phone,
+                    'email' => $withdrawalRecord->mail,
+                    'payeeAccount' => $withdrawalRecord->bank_number,
+                    'payeeName' => $withdrawalRecord->account_holder,
+                    'ifsc' => $withdrawalRecord->ifsc_code,
+                    'walletId' => "",
+                    'walletOwnName' => "",
+                ]
             ],
         ];
 
