@@ -22,8 +22,10 @@ class Yeahpay extends PayStrategy
 
     public $withdrawMerchantID;
     public $withdrawSecretkey;
+    public $withdrawAppId;
     public $rechargeMerchantID;
     public $rechargeSecretkey;
+    public $rechargeAppId;
     public $company = 'Yeahpay';   // 支付公司名
 
     public $rechargeRtn = "SUCCESS";
@@ -38,9 +40,11 @@ class Yeahpay extends PayStrategy
         $rechargeConfig && $rechargeConfig = json_decode($rechargeConfig,true);
         $this->withdrawMerchantID = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['merchant_id']:"";
         $this->withdrawSecretkey = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['secret_key']:"";
+        $this->withdrawAppId = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['public_key']:"";
 
         $this->rechargeMerchantID = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['merchant_id']:"";
         $this->rechargeSecretkey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['secret_key']:"";
+        $this->rechargeAppId = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['public_key']:"";
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
@@ -77,7 +81,7 @@ class Yeahpay extends PayStrategy
             return $data['access_token'];
         }
 
-        $app_id = $flag == 1? $this->rechargeMerchantID : $this->withdrawMerchantID;
+        $app_id = $flag == 1? $this->rechargeAppId : $this->withdrawAppId;
         $app_key = $flag == 1? $this->rechargeSecretkey : $this->withdrawSecretkey;
 
         $params = [
