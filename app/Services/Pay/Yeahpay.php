@@ -178,30 +178,27 @@ class Yeahpay extends PayStrategy
     function rechargeCallback(Request $request)
     {
         try{
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeCallback',$request->input());
-            $data = $request->input();
-            if ((int)$data['code'] != 0)  {
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('Yeah_rechargeCallback',$request->post());
+            $data = $request->post();
+            if ((int)$data['status'] != 1)  {
                 $this->_msg = 'Yeah-recharge-交易未完成';
                 return false;
             }
             // 验证签名
-            $params = $data['data'];
-            if(!is_array($params))$params = json_decode($params,true);
+            $params = $data;
             $sign = $params['sign'];
             unset($params['sign']);
             unset($params['type']);
-//            $params['amount'] = intval($params['amount']);
-//            $params['fee'] = intval($params['fee']);
             if ($this->generateSignRigorous($params,1) <> $sign) {
                 $this->_msg = 'Yeah-签名错误';
                 return false;
             }
             $where = [
-                'order_no' => $params['tradeNo'],
+                'order_no' => $params['merchantOrderId'],
             ];
             return $where;
         }catch(\Exception $e){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('err_Yeah_rechargeCallback',[$request->input(), $e->getMessage(), $e->getLine()]);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('err_Yeah_rechargeCallback',[$request->all(), $e->getMessage(), $e->getLine()]);
             return [];
         }
     }
