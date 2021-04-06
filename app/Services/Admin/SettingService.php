@@ -680,21 +680,21 @@ class SettingService extends BaseService
         $conf = $this->_data;
         $old_password = $this->strInput('old_password');
         $password = $this->strInput('password');
-        if($old_password)
+        if(Crypt::decrypt($conf['password']) != $old_password)
         {
-            if(Crypt::decrypt($conf['password']) != $old_password)
-            {
-                $this->_code = 401;
-                $this->_msg = '原密码错误';
-                return false;
-            }
+            $this->_code = 401;
+            $this->_msg = '原密码错误';
+            return false;
+        }
+        if($password)
+        {
             if($old_password == $password)
             {
                 $this->_code = 401;
                 $this->_msg = '新密码不能与旧密码相同';
                 return false;
             }
-            if(!$password || strlen($password) < 6)
+            if(strlen($password) < 6)
             {
                 $this->_code = 401;
                 $this->_msg = '新密码至少6位数';

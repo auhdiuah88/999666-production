@@ -588,6 +588,7 @@ class SettingController extends Controller
         try{
             $validator = Validator::make(request()->input(), [
                 'limit' => 'required|numeric|gte:0',
+                'old_password' => 'required|max:30'
             ]);
             if($validator->fails())
                 return $this->AppReturn(
