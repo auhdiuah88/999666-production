@@ -667,4 +667,11 @@ class TestController extends Controller
         dd($sign);
     }
 
+    public function gameRule()
+    {
+        $system = $this->GameRepository->Get_Game_Config(1);
+        $open_type = intval($system->open_type->value);
+        dd($open_type);
+    }
+
 }
