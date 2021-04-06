@@ -128,6 +128,12 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/apidebug/' . date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
             'level' => 'debug',
+        ],
+
+        'game_debug' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/game-debug/' . date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
+            'level' => 'debug',
         ]
     ],
 
