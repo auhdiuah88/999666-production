@@ -42,13 +42,11 @@ class SevenIndiaPay extends PayStrategy
     }
 
     protected $rechargeTypeList = [
-        '1' => 'zalo',
-        '2' => 'momo',
-        '3' => 'vietcombank',
-        '4' => 'vietinbankipay',
-        '5' => 'vtpay',
-        '6' => 'tpbank',
-        '7' => 'acbbank',
+        '1' => 'upi',
+        '2' => 'sbi',
+        '3' => 'icici',
+        '4' => 'razorpay',
+        '5' => 'instamojo',
     ];
 
     public function generateSignRigorous(array $params, $type=1){
