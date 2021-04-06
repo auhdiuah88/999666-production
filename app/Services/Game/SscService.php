@@ -248,6 +248,7 @@ class SscService
             $pt_money = $lostmoney;
             ##结算
             $this->Ki_Executive_Prize($calc['result'],$play_id, $calc['win_money'], $lostmoney, $type, $pt_money, $cur_betting_money);
+            Log::channel('game_debug')->info("开奖成功debug",[$system]);
             return true;
         }catch (\Exception $e){
             $system=$this->GameRepository->Get_Game_Config($this->game_id);
