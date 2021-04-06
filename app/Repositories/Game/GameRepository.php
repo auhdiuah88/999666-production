@@ -983,6 +983,7 @@ class GameRepository
         }else{
             $data = $this->Cx_Game->where("id", "=", $id)->first();
             Redis::set($key, json_encode($data,JSON_UNESCAPED_UNICODE));
+            $data = json_decode(json_encode($data,JSON_UNESCAPED_UNICODE));
         }
         return $data;
     }
