@@ -686,7 +686,7 @@ class SettingService extends BaseService
             $this->_msg = '原密码错误';
             return false;
         }
-        if($password)
+        if($password && strlen($password) > 0)
         {
             if($old_password == $password)
             {
