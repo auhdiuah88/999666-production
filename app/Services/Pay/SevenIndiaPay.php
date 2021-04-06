@@ -23,6 +23,8 @@ class SevenIndiaPay extends PayStrategy
     public $rechargeSecretkey;
     public $company = '77pay';   // 支付公司名
 
+    public $amountFiled = 'payamount';
+
     public function _initialize()
     {
         $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
@@ -149,12 +151,7 @@ class SevenIndiaPay extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
-
-        // 1 银行卡 2 Paytm 3代付
-//        $pay_type = 3;
         $money = $withdrawalRecord->payment;    // 打款金额
-//        $ip = $this->request->ip();
-//        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
             'userid' => $this->withdrawMerchantID,
