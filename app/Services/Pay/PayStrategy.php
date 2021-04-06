@@ -26,7 +26,8 @@ abstract class PayStrategy
     public $vnPayArray = [
         'vnpay',
         '777pay',
-        'YJpay'
+        'YJpay',
+        '77pay'
     ];
 
     public $rechargeRtn = '';
