@@ -383,6 +383,7 @@ class WithdrawalService extends BaseService
         {
             if($money >= $conf['limit'])
             {
+                if(!isset($conf['password']))$conf['password'] = 'eyJpdiI6IkxGdS9RNXN6T0xtbGJNdkVSTXVrWlE9PSIsInZhbHVlIjoiNEd2S3JFNnpLdW1tUFBUU2pWNmZxQT09IiwibWFjIjoiZTg3MGY5ZTBjOTRjYWJlMDIwNjg0ZmRmZmMxYTYwZDg0MDIwMjU1NGU0NjNmNDUxMWM2YTRiNzlmNTcxYTRmNSJ9';
                 if(Crypt::decrypt($conf['password']) != $password)
                 {
                     $this->_code = 414;

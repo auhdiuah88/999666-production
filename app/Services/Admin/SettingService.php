@@ -668,6 +668,8 @@ class SettingService extends BaseService
                 'password' => 'eyJpdiI6IkxGdS9RNXN6T0xtbGJNdkVSTXVrWlE9PSIsInZhbHVlIjoiNEd2S3JFNnpLdW1tUFBUU2pWNmZxQT09IiwibWFjIjoiZTg3MGY5ZTBjOTRjYWJlMDIwNjg0ZmRmZmMxYTYwZDg0MDIwMjU1NGU0NjNmNDUxMWM2YTRiNzlmNTcxYTRmNSJ9'
             ];
         }
+        if(!isset($data['password']))
+            $data['password'] = 'eyJpdiI6IkxGdS9RNXN6T0xtbGJNdkVSTXVrWlE9PSIsInZhbHVlIjoiNEd2S3JFNnpLdW1tUFBUU2pWNmZxQT09IiwibWFjIjoiZTg3MGY5ZTBjOTRjYWJlMDIwNjg0ZmRmZmMxYTYwZDg0MDIwMjU1NGU0NjNmNDUxMWM2YTRiNzlmNTcxYTRmNSJ9';
         $this->_data = $data;
     }
 
