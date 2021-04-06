@@ -162,24 +162,18 @@ class SevenIndiaPay extends PayStrategy
             'returnurl' => env('SHARE_URL',''),
             'note' => 'recharge balance',
         ];
-        $bank = $this->banks[$withdrawalRecord->bank_name] ?? '';
-        if(!$bank)
-        {
-            $this->_msg = '该银行卡不支持提现,请换一张银行卡';
-            return false;
-        }
         $payload = [
             'cardname' => $withdrawalRecord->account_holder,
             'cardno' => $withdrawalRecord->bank_number,
-            'bankid' => $bank['bankId'],
-            'bankname' => $bank['bankName']
+            'bankid' => 10000,
+            'bankname' => $withdrawalRecord->bank_name
         ];
         $params['payload'] = json_encode($payload);
 
         $params['sign'] = $this->generateSignRigorous($params,2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_india_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$url_cashout . 'api/withdrawal', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_india_withdrawalOrder',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('seven_india_withdrawalOrder', [$res]);
         if ($res['success'] != 1) {
             $this->_msg = $res['message'];
             return false;
