@@ -68,7 +68,7 @@ class WithdrawalService extends BaseService
             {
                 return false;
             }
-
+            unset($data['password']);
 //            if ($data["type"] == 1) {
 //                $this->changeAgencyCommission($data["id"]);
 //                unset($data["type"]);
