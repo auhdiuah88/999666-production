@@ -58,6 +58,12 @@ class Ssc_FourService
         //单局杀率判定
 //        $system=$this->GameRepository->Get_System();
         $system=$this->GameRepository->Get_Game_Config($this->game_id);
+        if(!isset($system->open_type)){
+            Log::channel('game_debug')->info("开奖失败debug-44",[$system]);
+        }
+        if(!isset($system->open_type->value)){
+            Log::channel('game_debug')->info("开奖失败debug-4444",[$system]);
+        }
         $open_type = intval($system->open_type->value);
         switch ($open_type){
             case 1: //天杀
