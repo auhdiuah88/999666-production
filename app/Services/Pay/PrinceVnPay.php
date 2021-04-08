@@ -224,7 +224,7 @@ class PrinceVnPay extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         $params['result'] = json_encode($params['result'],JSON_UNESCAPED_UNICODE);
-        if ($this->generateSignRigorous($params,1) <> $sign) {
+        if ($this->generateSign($params,1) <> $sign) {
             $this->_msg = 'Prince-签名错误';
             return false;
         }
@@ -303,7 +303,7 @@ class PrinceVnPay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-        if ($this->generateSignRigorous($params,2) <> $sign) {
+        if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'Princepay-签名错误';
             return false;
         }
@@ -313,35 +313,6 @@ class PrinceVnPay extends PayStrategy
             'pay_status' => $pay_status
         ];
         return $where;
-    }
-
-    protected function makeRequestNo($withdraw_id){
-        return date('YmdDis') . $withdraw_id;
-    }
-
-    /**
-     * 请求待付状态
-     * @param $withdrawalRecord
-     * @return array|false|mixed|string
-     */
-    public function callWithdrawBack($withdrawalRecord){
-        $request_no = $this->makeRequestNo($withdrawalRecord->id);
-        $request_time = date("YmdHis");
-        $mer_no = $this->merchantID;
-        $mer_order_no = $withdrawalRecord->order_no;
-
-        $params = compact('request_no','request_time','mer_no','mer_order_no');
-        $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Princepay_withdrawSingleQuery_Param',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
-        if(!$res){
-            return false;
-        }
-        if($res['query_status'] != 'SUCCESS'){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('Princepay_withdrawSingleQuery_Err',$res);
-            return false;
-        }
-        return $res;
     }
 
 }
