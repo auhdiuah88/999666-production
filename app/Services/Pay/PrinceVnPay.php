@@ -159,6 +159,7 @@ class PrinceVnPay extends PayStrategy
             $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('Prince_rechargeOrder_signstr', [$sign]);
         return strtoupper(md5($sign));
     }
 
