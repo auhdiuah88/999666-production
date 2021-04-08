@@ -191,7 +191,7 @@ class PrinceVnPay extends PayStrategy
             $this->_msg = "Recharge request failed, status code {$res['status']}";
             return false;
         }
-        $native_url = $res['result']['payur'];
+        $native_url = $res['result']['payurl'];
 
         $resData = [
             'out_trade_no' => $order_no,
