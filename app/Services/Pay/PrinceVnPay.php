@@ -169,7 +169,7 @@ class PrinceVnPay extends PayStrategy
     {
         $order_no = self::onlyosn();
         $params = [
-            'uid ' => $this->rechargeMerchantID,
+            'uid' => $this->rechargeMerchantID,
             'orderid' => $order_no,
             'channel' => $this->rechargeTypeList[$this->rechargeType],
             'notify_url' => $this->recharge_callback_url,
