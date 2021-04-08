@@ -1136,26 +1136,29 @@ class GameRepository
 
     public function getLxGame($game_play, $id, $time, $user_id)
     {
-        $lx = Redis::get("LX_GAME_PLAY_{$id}");
-        if(!$lx){
-            $lx = $this->Cx_Game_Betting->with(array(
-                    'game_play' => function ($query) {
-                        $query->select('id', 'number', 'prize_number', 'game_id', 'status')->with(['game_name_p'=>function($query){
-                            $query->select('id', 'name');
-                        }]);
-                    },
-                    'game_c_x' => function($query){
-                        $query->select('id', 'name', 'name as name_india');
-                    }
-                )
-            )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->select(['*', 'id as betting_money'])->get();
-            if(!$lx->isEmpty()){
-                Redis::setex("LX_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($lx));
-                $lx = $lx->toArray();
-            }
-        }else{
-            $lx = json_decode($lx,true);
+//        $lx = Redis::get("LX_GAME_PLAY_{$id}");
+//        if(!$lx){
+//
+//        }else{
+//            $lx = json_decode($lx,true);
+//        }
+
+        $lx = $this->Cx_Game_Betting->with(array(
+                'game_play' => function ($query) {
+                    $query->select('id', 'number', 'prize_number', 'game_id', 'status')->with(['game_name_p'=>function($query){
+                        $query->select('id', 'name');
+                    }]);
+                },
+                'game_c_x' => function($query){
+                    $query->select('id', 'name', 'name as name_india');
+                }
+            )
+        )->where("user_id", $user_id)->where("game_id", $id)->where('betting_time', "<",$time)->orderBy('betting_time', 'desc')->limit(4)->select(['*', 'id as betting_money'])->get();
+        if(!$lx->isEmpty()){
+            Redis::setex("LX_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($lx));
+            $lx = $lx->toArray();
         }
+
         return $lx;
     }
 }
