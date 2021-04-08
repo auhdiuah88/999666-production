@@ -27,13 +27,16 @@ abstract class PayStrategy
         'vnpay',
         '777pay',
         'YJpay',
-        '77pay'
+        '77pay',
+        'princepay'
     ];
 
     public $rechargeRtn = '';
     public $withdrawRtn = '';
 
     public $amountFiled = '';
+
+    public $amount = 0;
 
     public function __construct (
         RequestService $requestService,
