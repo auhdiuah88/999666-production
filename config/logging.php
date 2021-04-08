@@ -102,13 +102,13 @@ return [
 
         'mytest' => [
             'driver' => 'single',
-            'path' => storage_path('logs/test-'. date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
+            'path' => storage_path('logs/test/'. date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
             'level' => 'debug',
         ],
 
         'kidebug' => [
             'driver' => 'single',
-            'path' => storage_path('logs/debug-'. date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
+            'path' => storage_path('logs/debug/'. date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
             'level' => 'debug',
         ],
 
