@@ -23,6 +23,9 @@ class PrinceVnPay extends PayStrategy
     public $rechargeSecretkey;
     public $company = 'princepay';   // 支付公司名
 
+    public $rechargeRtn = 'success';
+    public $withdrawRtn = 'success';
+
     public function _initialize()
     {
         $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
@@ -159,7 +162,6 @@ class PrinceVnPay extends PayStrategy
             $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('Prince_rechargeOrder_signstr', [$sign]);
         return strtoupper(md5($sign));
     }
 
@@ -187,7 +189,6 @@ class PrinceVnPay extends PayStrategy
         $res = $this->requestService->postFormData(self::$url, $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Prince_rechargeOrder_return', [$res]);
         if ($res['status'] != 10000) {
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('Prince_rechargeOrder_return', [$res]);
             $this->_msg = "Recharge request failed, status code {$res['status']}";
             return false;
         }
@@ -286,7 +287,6 @@ class PrinceVnPay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Princepay_withdrawalCallback',$request->post());
 
-        $pay_status = 0;
         $status = (string)($request->status);
         if($status == 10000){
             $pay_status= 1;
