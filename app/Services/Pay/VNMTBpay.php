@@ -23,6 +23,9 @@ class VNMTBpay extends PayStrategy
     public $rechargeSecretkey;
     public $company = 'vnpay';   // 支付公司名
 
+    public $withdrawRtn = "SUCCESS";
+    public $rechargeRtn = "SUCCESS";
+
     public function _initialize()
     {
         $withdrawConfig = DB::table('settings')->where('setting_key','withdraw')->value('setting_value');
