@@ -223,7 +223,7 @@ class PrinceVnPay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-        $params['result'] = json_encode($params['result'],JSON_UNESCAPED_UNICODE);
+//        $params['result'] = json_encode($params['result'],JSON_UNESCAPED_UNICODE);
         if ($this->generateSign($params,1) <> $sign) {
             $this->_msg = 'Prince-签名错误';
             return false;
