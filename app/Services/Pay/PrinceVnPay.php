@@ -248,7 +248,7 @@ class PrinceVnPay extends PayStrategy
             $this->_msg = '该银行卡不支持提现,请换一张银行卡';
             return false;
         }
-        $userIp = DB::table("user")->where('id','=', $withdrawalRecord->user_id)->value("ip");
+        $userIp = DB::table("users")->where('id','=', $withdrawalRecord->user_id)->value("ip");
         $params = [
             'uid' => $this->withdrawMerchantID,
             'orderid' => substr($order_no,-20),
