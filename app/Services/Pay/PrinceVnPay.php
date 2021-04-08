@@ -223,7 +223,6 @@ class PrinceVnPay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-//        $params['result'] = json_encode($params['result'],JSON_UNESCAPED_UNICODE);
         if ($this->generateSign($params,1) <> $sign) {
             $this->_msg = 'Prince-签名错误';
             return false;
@@ -251,13 +250,13 @@ class PrinceVnPay extends PayStrategy
         }
         $params = [
             'uid' => $this->withdrawMerchantID,
-            'orderid' => $order_no,
+            'orderid' => substr($order_no,-20),
             'channel' => 712,
             'notify_url' => $this->withdrawal_callback_url,
             'amount' => intval($money),
             'userip' => "",
             'timestamp' => time(),
-            'custom' => "",
+            'custom' => $order_no,
             'bank_account' => $withdrawalRecord->account_holder,
             'bank_no' => $withdrawalRecord->bank_number,
             'bank_id' => $bank['bankId'],
@@ -288,10 +287,9 @@ class PrinceVnPay extends PayStrategy
 
         $pay_status = 0;
         $status = (string)($request->status);
-        if($status == 'SUCCESS'){
+        if($status == 10000){
             $pay_status= 1;
-        }
-        if($status == 'FAIL'){
+        }else{
             $pay_status = 3;
         }
         if ($pay_status == 0) {
@@ -307,9 +305,10 @@ class PrinceVnPay extends PayStrategy
             $this->_msg = 'Princepay-签名错误';
             return false;
         }
+        $params['result'] = json_decode($params['result'],true);
         $where = [
-            'order_no' => $request->mer_order_no,
-            'plat_order_id' => $request->order_no,
+            'order_no' => $params['result']['custom'],
+            'plat_order_id' => $params['result']['transactionid'],
             'pay_status' => $pay_status
         ];
         return $where;
