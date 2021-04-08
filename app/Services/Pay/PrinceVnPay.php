@@ -248,13 +248,14 @@ class PrinceVnPay extends PayStrategy
             $this->_msg = '该银行卡不支持提现,请换一张银行卡';
             return false;
         }
+        $userIp = DB::table("user")->where('id','=', $withdrawalRecord->user_id)->value("ip");
         $params = [
             'uid' => $this->withdrawMerchantID,
             'orderid' => substr($order_no,-20),
             'channel' => 712,
             'notify_url' => $this->withdrawal_callback_url,
             'amount' => intval($money),
-            'userip' => "",
+            'userip' => $userIp ?: getIp(),
             'timestamp' => time(),
             'custom' => $order_no,
             'bank_account' => $withdrawalRecord->account_holder,
@@ -269,7 +270,7 @@ class PrinceVnPay extends PayStrategy
         $res = $this->requestService->postFormData(self::$url_cashout, $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('Princepay_withdrawalOrder',[$res]);
         if ($res['status'] != 10000) {
-            $this->_msg = "大夫请求失败,状态码{$res['status']}";
+            $this->_msg = "代付请求失败,状态码{$res['status']}";
             return false;
         }
         return  [
