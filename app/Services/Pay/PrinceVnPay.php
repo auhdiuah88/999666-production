@@ -171,14 +171,14 @@ class PrinceVnPay extends PayStrategy
         $order_no = self::onlyosn();
         $params = [
             'uid' => $this->rechargeMerchantID,
-            'orderid' => $order_no,
+            'orderid' => substr($order_no,-20),
             'channel' => $this->rechargeTypeList[$this->rechargeType],
             'notify_url' => $this->recharge_callback_url,
             'return_url' => env('SHARE_URL',''),
             'amount' => $money,
             'userip' => getIp(),
             'timestamp' => time(),
-            'custom' => "",
+            'custom' => $order_no,
         ];
         $params['sign'] = $this->generateSign($params,1);
 
@@ -231,7 +231,7 @@ class PrinceVnPay extends PayStrategy
         $params['result'] = json_decode($params['result'],true);
         $this->amount = $params['result']['amount'];
         $where = [
-            'order_no' => $params['result']['orderid'],
+            'order_no' => $params['result']['custom'],
         ];
         return $where;
     }
