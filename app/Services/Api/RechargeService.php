@@ -151,20 +151,25 @@ class RechargeService extends PayService
             unset($where['pltf_order_id']);
         }
         $requestData = $request->all();
-        ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100  sevenpay=>payamount
-        if(!empty($strategyClass->amountFiled)){
-            if($payProvide == 'YJpay'){
-                $money = $requestData['data'][$strategyClass->amountFiled];
-            }else{
-                $money = $requestData[$strategyClass->amountFiled];
-            }
+        if($strategyClass->amount > 0){
+            $money = $strategyClass->amount;
         }else{
-            $money = isset($requestData['money']) ? $requestData['money'] : (isset($requestData['pay_amount']) ? $requestData['pay_amount'] : (isset($requestData['amt'])?$requestData['amt']: (isset($requestData['payamount'])?$requestData['payamount']:$requestData['amount'])));
+            ##ipay=>money  mtbpay=>pay_amount amout=>winpay leap=>money in8pay=>amount/100  sevenpay=>payamount
+            if(!empty($strategyClass->amountFiled)){
+                if($payProvide == 'YJpay'){
+                    $money = $requestData['data'][$strategyClass->amountFiled];
+                }else{
+                    $money = $requestData[$strategyClass->amountFiled];
+                }
+            }else{
+                $money = isset($requestData['money']) ? $requestData['money'] : (isset($requestData['pay_amount']) ? $requestData['pay_amount'] : (isset($requestData['amt'])?$requestData['amt']: (isset($requestData['payamount'])?$requestData['payamount']:$requestData['amount'])));
+            }
+
+            if($payProvide == 'in8pay' || $payProvide == 'YJpay'){ //返回的是分做单位的
+                $money = $money / 100;
+            }
         }
 
-        if($payProvide == 'in8pay' || $payProvide == 'YJpay'){ //返回的是分做单位的
-            $money = $money / 100;
-        }
         // 下面的方法相同
         $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
         if (!$rechargeLog) {
