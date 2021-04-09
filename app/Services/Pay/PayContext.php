@@ -36,7 +36,8 @@ class PayContext
         YJpay $YJpay,
         Yeahpay $yeahpay,
         SevenIndiaPay $sevenIndiaPay,
-        PrinceVnPay $princeVnPay
+        PrinceVnPay $princeVnPay,
+        Fypay $fypay
     )
     {
         // 每种api地址对应的支付公司
@@ -64,6 +65,7 @@ class PayContext
             'Yeahpay' => $yeahpay,
             '77pay' => $sevenIndiaPay, // 印度777pay
             'princepay' => $princeVnPay, // 越南王子支付
+            'fypay' => $fypay,   //越南凤扬支付
         ];
     }
     /**
