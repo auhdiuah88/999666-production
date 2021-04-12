@@ -20,7 +20,7 @@ class BankRepository
     public function findAll($offset, $limit)
     {
         return $this->Cx_User_Bank->with(["user" => function ($query) {
-            $query->select("id", "nickname");
+            $query->select("id", "nickname", "phone");
         }])->offset($offset)->limit($limit)->get()->toArray();
     }
 
@@ -56,15 +56,25 @@ class BankRepository
         return $this->Cx_User->where("phone", $phone)->select("id")->first();
     }
 
-    public function findBankByUserId($id, $offset, $limit)
+    public function findBankByUserId($id,$account_holder, $offset, $limit)
     {
-        return $this->Cx_User_Bank->with(["user" => function ($query) {
-            $query->select("id", "nickname");
-        }])->where("user_id", $id)->offset($offset)->limit($limit)->get()->toArray();
+        $where = [];
+        if($id)
+            $where["user_id"] = ["=",$id];
+        if($account_holder)
+            $where["account_holder"] = ["=",$account_holder];
+        return makeModel($where,$this->Cx_User_Bank)->with(["user" => function ($query) {
+            $query->select("id", "nickname", "phone");
+        }])->offset($offset)->limit($limit)->get()->toArray();
     }
 
-    public function countBankByUserId($id)
+    public function countBankByUserId($id,$account_holder)
     {
-        return $this->Cx_User_Bank->where("user_id", $id)->count();
+        $where = [];
+        if($id)
+            $where["user_id"] = ["=",$id];
+        if($account_holder)
+            $where["account_holder"] = ["=",$account_holder];
+        return makeModel($where,$this->Cx_User_Bank)->count();
     }
 }

@@ -58,14 +58,18 @@ class BankService extends BaseService
         }
     }
 
-    public function searchBank($phone, $page, $limit)
+    public function searchBank($phone, $account_holder, $page, $limit)
     {
-        $user = $this->BankRepository->getBankUserIds($phone);
-        if (empty($user)) {
-            return;
+        $user_id = 0;
+        if($phone){
+            $user = $this->BankRepository->getBankUserIds($phone);
+            if (empty($user)) {
+                return;
+            }
+            $user_id = $user->id;
         }
-        $list = $this->BankRepository->findBankByUserId($user->id, ($page - 1) * $limit, $limit);
-        $total = $this->BankRepository->countBankByUserId($user->id);
+        $list = $this->BankRepository->findBankByUserId($user_id,$account_holder,($page - 1) * $limit, $limit);
+        $total = $this->BankRepository->countBankByUserId($user_id,$account_holder);
         $this->_data = ["total" => $total, "list" => $list];
     }
 }

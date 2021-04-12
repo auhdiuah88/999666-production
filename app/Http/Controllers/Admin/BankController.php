@@ -71,6 +71,7 @@ class BankController extends Controller
     {
         $this->BankService->searchBank(
             $request->post("phone"),
+            $request->post("account_holder"),
             $request->post("page"),
             $request->post("limit")
         );
