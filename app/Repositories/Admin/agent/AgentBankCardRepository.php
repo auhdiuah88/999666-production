@@ -15,14 +15,18 @@ class AgentBankCardRepository
         $this->Cx_User_Bank = $cx_User_Bank;
     }
 
-    public function getBackCardList($where, $size){
-        return $this->Cx_User_Bank
+    public function getBackCardList($where, $account_holder, $size){
+        $con = [
+            "user_id" => ["in", $where]
+        ];
+        if($account_holder)
+            $con["account_holder"] = ["=", $account_holder];
+        return makeModel($con,$this->Cx_User_Bank)
             ->with([
                 'user' => function($query){
                     $query->select(['id', 'phone']);
                 }
             ])
-            ->whereIn("user_id",$where)
             ->paginate($size);
     }
 

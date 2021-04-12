@@ -25,7 +25,8 @@ class AgentBankCardService extends BaseAgentService
         $this->getAdmin();
         $size = $this->sizeInput();
         $this->setBankCardListWhere();
-        $this->_data = $this->AgentBankCardRepository->getBackCardList($this->where, $size);
+        $account_holder = $this->strInput("account_holder");
+        $this->_data = $this->AgentBankCardRepository->getBackCardList($this->where,$account_holder, $size);
         return true;
     }
 
