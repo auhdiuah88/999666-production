@@ -48,14 +48,14 @@ class BettingRepository extends BaseRepository
         return $this->getModel()->orderByDesc("betting_time")->limit(10)->get()->setAppends(['win_lose_money']);
     }
 
-    public function countAll()
+    public function countAll($data)
     {
-        return $this->Cx_Game_Betting->count("id");
+        return $this->whereCondition($data, $this->Cx_Game_Betting)->count("id");
     }
 
-    public function sumAll($column)
+    public function sumAll($data,$column)
     {
-        return $this->Cx_Game_Betting->sum($column);
+        return $this->whereCondition($data, $this->Cx_Game_Betting)->sum($column);
     }
 
     public function searchBettingLogs($data, $offset, $limit)

@@ -195,7 +195,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
         Route::group(["prefix" => "betting"], function () {
             Route::get("/findAll", "BettingController@findAll");
             Route::post("/search", "BettingController@searchBettingLogs");
-            Route::get("/statistics", "BettingController@statisticsBettingLogs");
+            Route::post("/statistics", "BettingController@statisticsBettingLogs");
             Route::get("/noticeList", "BettingController@noticeList");
             Route::get("/noticeBettingList", "BettingController@noticeBettingList");
         });

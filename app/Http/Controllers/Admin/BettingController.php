@@ -56,9 +56,9 @@ class BettingController extends Controller
         );
     }
 
-    public function statisticsBettingLogs()
+    public function statisticsBettingLogs(Request $request)
     {
-        $this->BettingService->statisticsBettingLogs();
+        $this->BettingService->statisticsBettingLogs($request->post());
         return $this->AppReturn(
             $this->BettingService->_code,
             $this->BettingService->_msg,

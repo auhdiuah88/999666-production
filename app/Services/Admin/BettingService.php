@@ -19,7 +19,7 @@ class BettingService extends BaseService
     public function findAll($page, $limit)
     {
         $list = $this->BettingRepository->findAll(($page - 1) * $limit, $limit);
-        $total = $this->BettingRepository->countAll();
+        $total = $this->BettingRepository->countAll([]);
         $this->_data = ["total" => $total, "list" => $list];
     }
 
@@ -43,12 +43,13 @@ class BettingService extends BaseService
 
     }
 
-    public function statisticsBettingLogs()
+    public function statisticsBettingLogs($data)
     {
-        $this->_data["betting_count"] = $this->BettingRepository->countAll();
-        $this->_data["betting_money"] = $this->BettingRepository->sumAll("money");
-        $this->_data["service_charge"] = $this->BettingRepository->sumAll("service_charge");
-        $this->_data["win_money"] = $this->BettingRepository->sumAll("win_money");
+        $data = $this->assemblyParameters($data);
+        $this->_data["betting_count"] = $this->BettingRepository->countAll($data);
+        $this->_data["betting_money"] = $this->BettingRepository->sumAll($data,"money");
+        $this->_data["service_charge"] = $this->BettingRepository->sumAll($data,"service_charge");
+        $this->_data["win_money"] = $this->BettingRepository->sumAll($data,"win_money");
     }
 
     public function assemblyParameters($data)
