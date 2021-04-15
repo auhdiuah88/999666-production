@@ -35,7 +35,7 @@ class BalanceTypeDic
         ],
         '7' => [
             'value' => 7,
-            'name' => '签到零回扣'
+            'name' => '签到领回扣'
         ],
         '8' => [
             'value' => 8,
@@ -84,5 +84,17 @@ class BalanceTypeDic
         return self::$type;
     }
 
+    protected static $inType = [
+        2, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16
+    ];
+
+    protected static $ouType = [
+        1, 3, 10, 12
+    ];
+
+    public static function getType($flag=1): array
+    {
+        return $flag == 1 ? self::$inType : self::$ouType;
+    }
 
 }

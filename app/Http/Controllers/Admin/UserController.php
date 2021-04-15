@@ -200,7 +200,17 @@ class UserController extends Controller
 
     public function getBalanceLogs(Request $request)
     {
-        $this->UserService->getBalanceLogs($request->post("id"), $request->post("page"), $request->post("limit"), $request->post('type'));
+        $start_time =  $request->post('start_time',0);
+        $end_time =  $request->post('end_time',0);
+        $timeMap = [];
+        if($start_time && $end_time)$timeMap = [$start_time,$end_time];
+        $this->UserService->getBalanceLogs(
+            $request->post("id"),
+            $request->post("page"),
+            $request->post("limit"),
+            $request->post('type',[]),
+            $timeMap
+        );
         return $this->AppReturn(
             $this->UserService->_code,
             $this->UserService->_msg,

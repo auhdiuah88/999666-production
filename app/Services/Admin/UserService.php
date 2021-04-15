@@ -366,11 +366,12 @@ class UserService extends BaseService
         }
     }
 
-    public function getBalanceLogs($id, $page, $limit, $type)
+    public function getBalanceLogs($id, $page, $limit, $type, $timeMap)
     {
-        $list = $this->UserRepository->getBalanceLogs($id, ($page - 1) * $limit, $limit, $type);
-        $total = $this->UserRepository->countBalanceLogs($id, $type);
-        $this->_data = ["total" => $total, "list" => $list];
+        $list = $this->UserRepository->getBalanceLogs($id, ($page - 1) * $limit, $limit, $type, $timeMap);
+        $total = $this->UserRepository->countBalanceLogs($id, $type, $timeMap);
+        $statistics = $this->UserRepository->countInOut($id, $type, $timeMap);
+        $this->_data = ["total" => $total, "list" => $list, "statistics" => $statistics];
     }
 
     public function getBalanceType()

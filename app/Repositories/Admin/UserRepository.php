@@ -4,6 +4,7 @@
 namespace App\Repositories\Admin;
 
 
+use App\Dictionary\BalanceTypeDic;
 use App\Models\Cx_User;
 use App\Models\Cx_User_Balance_Logs;
 use App\Repositories\BaseRepository;
@@ -24,24 +25,50 @@ class UserRepository extends BaseRepository
         return $this->Cx_User->where("is_customer_service", 0)->orderByDesc("last_time")->offset($offset)->limit($limit)->select(["*", "id as total_win_money"])->get()->setAppends(['online_status', 'group_leader'])->toArray();
     }
 
-    public function getBalanceLogs($userId, $offset, $limit, $type)
+    public function getBalanceLogs($userId, $offset, $limit, $type, $timeMap)
     {
         $where = [
             'user_id' => ['=', $userId]
         ];
-        if($type > 0)$where['type'] = ['=', $type];
+        if($type)$where['type'] = ['in', $type];
+        if($timeMap)$where["time"] = ['BETWEEN', $timeMap];
         return makeModel($where, $this->Cx_User_Balance_Logs)->with(["admin" => function ($query) {
             $query->select(["id", "nickname"]);
         }])->offset($offset)->limit($limit)->orderByDesc("time")->select(["*", "type as type_map"])->get()->toArray();
     }
 
-    public function countBalanceLogs($userId, $type)
+    public function countBalanceLogs($userId, $type, $timeMap)
     {
         $where = [
             'user_id' => ['=', $userId]
         ];
-        if($type > 0)$where['type'] = ['=', $type];
+        if($type)$where['type'] = ['in', $type];
+        if($timeMap)$where["time"] = ['BETWEEN', $timeMap];
         return makeModel($where, $this->Cx_User_Balance_Logs)->count("id");
+    }
+
+    public function countInOut($userId, $type, $timeMap)
+    {
+        $where = [
+            'user_id' => ['=', $userId],
+        ];
+        if($timeMap)$where["time"] = ['BETWEEN', $timeMap];
+        {
+
+        }
+        $in =  $this->perCount($where, $type,1);
+        $out =  $this->perCount($where, $type,2);
+        return compact('in','out');
+    }
+
+    public function perCount($where, $type, $flag)
+    {
+        if($type){
+            $where['type'] = ['in', array_intersect(BalanceTypeDic::getType($flag), $type)];
+        }else{
+            $where['type'] = ['in', BalanceTypeDic::getType($flag)];
+        }
+        return makeModel($where, $this->Cx_User_Balance_Logs)->sum("money");
     }
 
     public function getRecommenders()
