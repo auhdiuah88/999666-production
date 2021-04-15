@@ -138,9 +138,16 @@ class WithdrawalController extends Controller
      */
     public function agentApplyBalance(Request $request)
     {
+        $limit = config('site.agent_withdraw',[]);
+        if(!$limit){
+            $limit = [
+                'min' => WithdrawalAmount::MIN,
+                'max' => WithdrawalAmount::MAX
+            ];
+        }
         $data = $request->post();
         $rules = [
-            "money" => "required|integer|min:".WithdrawalAmount::MIN."|max:" . WithdrawalAmount::MAX
+            "money" => "required|integer|min:".$limit['min']."|max:" . $limit['max']
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
