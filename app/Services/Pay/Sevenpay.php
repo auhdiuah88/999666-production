@@ -65,7 +65,7 @@ class Sevenpay extends PayStrategy
             'bankName' => 'BIDV'
         ],
         'VietinBank' => [
-            'bankId' => 121,
+            'bankId' => 120,
             'bankName' => 'VTB'
         ],
         'SHB' => [
