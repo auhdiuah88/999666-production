@@ -193,6 +193,11 @@ class HomeRepository extends BaseRepository
         return array_column($this->Cx_User->where("reg_source_id", $reg_source_id)->get("id")->toArray(), "id");
     }
 
+    public function getBettingOrder($ids, $timeMap)
+    {
+        return $this->Cx_Game_Betting->whereIn("user_id", $ids)->whereBetween("betting_time", $timeMap)->selelct("id", "money", "service_charge", "win_money")->get();
+    }
+
     public function countBettingNumber($ids, $timeMap)
     {
         return $this->Cx_Game_Betting->whereIn("user_id", $ids)->whereBetween("betting_time", $timeMap)->count("id");

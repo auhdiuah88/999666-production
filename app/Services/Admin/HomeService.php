@@ -213,26 +213,46 @@ class HomeService extends BaseService
     public function getOrderContext($timeMap, $ids)
     {
         $item = new \stdClass();
+
+        //订单
+        $orders = $this->HomeRepository->getSignOrders($ids, $timeMap);
+        $bettingNumber = $bettingMoney = $serviceMoney = $userProfit = 0;
+        foreach ($orders as $key => $item){
+            $bettingNumber ++;
+            $bettingMoney += $item->money;
+            $serviceMoney += $item->service_charge;
+            $userProfit += $item->win_money;
+        }
+
         // 订单数
-        $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
-        // 下单金额
-        $item->bettingMoney = $this->HomeRepository->sumBettingMoney($ids, $timeMap);
+//        $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
+//        // 下单金额
+//        $item->bettingMoney = $this->HomeRepository->sumBettingMoney($ids, $timeMap);
 //        // 总服务费
 //        $item->serviceMoney = $this->HomeRepository->sumServiceMoney($ids, $timeMap);
 //        // 用户投注盈利
 //        $item->userProfit = $this->HomeRepository->sumUserProfit($ids, $timeMap);
-//        // 订单分佣
-//        $item->subCommission = $this->HomeRepository->sumSubCommission($ids, $timeMap);
-//        // 平台服务费
-//        $item->platformServiceMoney = bcsub($item->serviceMoney, $item->subCommission, 2);
-//        // 总盈亏
-//        $item->totalProfitLoss = bcadd(bcsub($item->bettingMoney, $item->userProfit, 2), $item->platformServiceMoney, 2);
-//        // 后台赠送礼金
-//        $item->backstageGiftMoney = $this->HomeRepository->sumBackstageGiftMoney($ids, $timeMap);
-//        // 当日上方
-//        $item->upperSeparation = $this->HomeRepository->sumUpperSeparation($ids, $timeMap);
-//        // 当日下分
-//        $item->downSeparation = $this->HomeRepository->sumDownSeparation($ids, $timeMap);
+        $item->bettingNumber = $bettingNumber;
+        // 下单金额
+        $item->bettingMoney = $bettingMoney;
+        // 总服务费
+        $item->serviceMoney = $serviceMoney;
+        // 用户投注盈利
+        $item->userProfit = $userProfit;
+
+
+        // 订单分佣
+        $item->subCommission = $this->HomeRepository->sumSubCommission($ids, $timeMap);
+        // 平台服务费
+        $item->platformServiceMoney = bcsub($item->serviceMoney, $item->subCommission, 2);
+        // 总盈亏
+        $item->totalProfitLoss = bcadd(bcsub($item->bettingMoney, $item->userProfit, 2), $item->platformServiceMoney, 2);
+        // 后台赠送礼金
+        $item->backstageGiftMoney = $this->HomeRepository->sumBackstageGiftMoney($ids, $timeMap);
+        // 当日上方
+        $item->upperSeparation = $this->HomeRepository->sumUpperSeparation($ids, $timeMap);
+        // 当日下分
+        $item->downSeparation = $this->HomeRepository->sumDownSeparation($ids, $timeMap);
 
         return $item;
     }
