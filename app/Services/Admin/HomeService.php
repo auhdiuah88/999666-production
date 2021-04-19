@@ -234,13 +234,14 @@ class HomeService extends BaseService
         }
 
         // 订单数
-        $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
-        // 下单金额
-        $item->bettingMoney = $this->HomeRepository->sumBettingMoney($ids, $timeMap);
-        // 总服务费
-        $item->serviceMoney = $this->HomeRepository->sumServiceMoney($ids, $timeMap);
-        // 用户投注盈利
-        $item->userProfit = $this->HomeRepository->sumUserProfit($ids, $timeMap);
+//        $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
+//        // 下单金额
+//        $item->bettingMoney = $this->HomeRepository->sumBettingMoney($ids, $timeMap);
+//        // 总服务费
+//        $item->serviceMoney = $this->HomeRepository->sumServiceMoney($ids, $timeMap);
+//        // 用户投注盈利
+//        $item->userProfit = $this->HomeRepository->sumUserProfit($ids, $timeMap);
+
         $item->bettingNumber = $bettingNumber;
         // 下单金额
         $item->bettingMoney = $bettingMoney;
