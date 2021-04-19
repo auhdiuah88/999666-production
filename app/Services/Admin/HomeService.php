@@ -119,7 +119,13 @@ class HomeService extends BaseService
             $ids = $this->HomeRepository->getIds();
         }
         $flag = $this->intInput("flag",1);
-        $this->_data = $this->getContextByFlag($timeMap, $ids, $flag);
+        $data = $this->getContextByFlag($timeMap, $ids, $flag);
+        if(!$data){
+            $this->_msg = "时间范围只能是连续的5天";
+            $this->_code = 403;
+        }else{
+            $this->_data = $data;
+        }
     }
 
     public function findAllContext()
@@ -212,26 +218,29 @@ class HomeService extends BaseService
 
     public function getOrderContext($timeMap, $ids)
     {
+        if($timeMap && $timeMap[1] - $timeMap[0] >= 5 * 24 * 60 * 60){
+            return false;
+        }
         $item = new \stdClass();
 
         //订单
         $orders = $this->HomeRepository->getBettingOrder($ids, $timeMap);
         $bettingNumber = $bettingMoney = $serviceMoney = $userProfit = 0;
-//        foreach ($orders as $key => $item){
-//            $bettingNumber ++;
-//            $bettingMoney += $item->money;
-//            $serviceMoney += $item->service_charge;
-//            $userProfit += $item->win_money;
-//        }
+        foreach ($orders as $key => $item){
+            $bettingNumber ++;
+            $bettingMoney += $item->money;
+            $serviceMoney += $item->service_charge;
+            $userProfit += $item->win_money;
+        }
 
         // 订单数
-//        $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
-//        // 下单金额
-//        $item->bettingMoney = $this->HomeRepository->sumBettingMoney($ids, $timeMap);
-//        // 总服务费
-//        $item->serviceMoney = $this->HomeRepository->sumServiceMoney($ids, $timeMap);
-//        // 用户投注盈利
-//        $item->userProfit = $this->HomeRepository->sumUserProfit($ids, $timeMap);
+        $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
+        // 下单金额
+        $item->bettingMoney = $this->HomeRepository->sumBettingMoney($ids, $timeMap);
+        // 总服务费
+        $item->serviceMoney = $this->HomeRepository->sumServiceMoney($ids, $timeMap);
+        // 用户投注盈利
+        $item->userProfit = $this->HomeRepository->sumUserProfit($ids, $timeMap);
         $item->bettingNumber = $bettingNumber;
         // 下单金额
         $item->bettingMoney = $bettingMoney;
