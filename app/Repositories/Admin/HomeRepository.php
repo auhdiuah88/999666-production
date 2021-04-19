@@ -195,7 +195,7 @@ class HomeRepository extends BaseRepository
 
     public function getBettingOrder($ids, $timeMap)
     {
-        return $this->Cx_Game_Betting->whereIn("user_id", $ids)->whereBetween("betting_time", $timeMap)->select("id", "money", "service_charge", "win_money")->limit(10)->get();
+        return $this->Cx_Game_Betting->whereIn("user_id", $ids)->whereBetween("betting_time", $timeMap)->select("id", "money", "service_charge", "win_money")->limit(1000)->get();
     }
 
     public function countBettingNumber($ids, $timeMap)
