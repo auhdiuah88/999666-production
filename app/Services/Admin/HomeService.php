@@ -100,7 +100,8 @@ class HomeService extends BaseService
         // 当日下分
         $item->downSeparation = $this->HomeRepository->sumDownSeparation($ids, $timeMap);
         // 在线人数
-        $item->onlineNum = $this->HomeRepository->sumOnlineNum();
+//        $item->onlineNum = $this->HomeRepository->sumOnlineNum();
+        $item->onlineNum = 0;
         return $item;
     }
 }
