@@ -136,6 +136,9 @@ class HomeService extends BaseService
     }
 
     public function getContextByFlag($timeMap, $ids, $flag=1){
+        if($timeMap && $timeMap[1] - $timeMap[0] >= 5 * 24 * 60 * 60){
+            return false;
+        }
         switch ($flag){
             case 1:
                 $item = $this->getUserContext($timeMap, $ids);
@@ -218,9 +221,6 @@ class HomeService extends BaseService
 
     public function getOrderContext($timeMap, $ids)
     {
-        if($timeMap && $timeMap[1] - $timeMap[0] >= 5 * 24 * 60 * 60){
-            return false;
-        }
         $item = new \stdClass();
 
         //订单
