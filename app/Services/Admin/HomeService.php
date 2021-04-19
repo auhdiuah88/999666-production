@@ -190,14 +190,22 @@ class HomeService extends BaseService
         $item->rechargeRebate = $this->HomeRepository->sumRechargeRebate($ids, $timeMap);
         // 注册赠送彩金
         $item->registerRebate = $this->HomeRepository->sumRegisterRebate($ids, $timeMap);
-        // 购买签到礼包
-        $item->payEnvelope = $this->HomeRepository->countPayEnvelope($ids, $timeMap);
-        // 领取签到礼包
-        $item->receiveEnvelope = $this->HomeRepository->sumReceiveEnvelope($ids, $timeMap);
         // 后台赠送礼金
         $item->backstageGiftMoney = $this->HomeRepository->sumBackstageGiftMoney($ids, $timeMap);
+
+        $signOrder = $this->HomeRepository->getSignOrders($ids, $timeMap);
+        $receiveEnvelope = $payEnvelope = $payEnvelopeAmount = 0;
+        foreach($signOrder as $key => $item){
+            $receiveEnvelope += $item->yet_receive_count;
+            $payEnvelopeAmount += $item->amount;
+            $payEnvelope += 1;
+        }
+        // 领取签到礼包
+        $item->receiveEnvelope = $receiveEnvelope;
+        // 购买签到礼包
+        $item->payEnvelope = $payEnvelope;
         // 购买签到礼包金额
-        $item->payEnvelopeAmount = $this->HomeRepository->sumPayEnvelope($ids, $timeMap);
+        $item->payEnvelopeAmount = $payEnvelopeAmount;
 
         return $item;
     }
