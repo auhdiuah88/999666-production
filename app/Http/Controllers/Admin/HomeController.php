@@ -27,6 +27,26 @@ class HomeController extends Controller
         );
     }
 
+    public function findContext()
+    {
+        $this->HomeService->findAllContext();
+        return $this->AppReturn(
+            $this->HomeService->_code,
+            $this->HomeService->_msg,
+            $this->HomeService->_data
+        );
+    }
+
+    public function searchContext(Request $request)
+    {
+        $this->HomeService->searchAllContext($request->post());
+        return $this->AppReturn(
+            $this->HomeService->_code,
+            $this->HomeService->_msg,
+            $this->HomeService->_data
+        );
+    }
+
     public function searchHome(Request $request)
     {
         $this->HomeService->searchHome($request->post());
