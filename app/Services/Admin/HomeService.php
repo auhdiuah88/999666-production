@@ -217,12 +217,12 @@ class HomeService extends BaseService
         //订单
         $orders = $this->HomeRepository->getBettingOrder($ids, $timeMap);
         $bettingNumber = $bettingMoney = $serviceMoney = $userProfit = 0;
-        foreach ($orders as $key => $item){
-            $bettingNumber ++;
-            $bettingMoney += $item->money;
-            $serviceMoney += $item->service_charge;
-            $userProfit += $item->win_money;
-        }
+//        foreach ($orders as $key => $item){
+//            $bettingNumber ++;
+//            $bettingMoney += $item->money;
+//            $serviceMoney += $item->service_charge;
+//            $userProfit += $item->win_money;
+//        }
 
         // 订单数
 //        $item->bettingNumber = $this->HomeRepository->countBettingNumber($ids, $timeMap);
