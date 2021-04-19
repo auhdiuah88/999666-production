@@ -215,7 +215,7 @@ class HomeService extends BaseService
         $item = new \stdClass();
 
         //订单
-//        $orders = $this->HomeRepository->getBettingOrder($ids, $timeMap);
+        $orders = $this->HomeRepository->getBettingOrder($ids, $timeMap);
         $bettingNumber = $bettingMoney = $serviceMoney = $userProfit = 0;
 //        foreach ($orders as $key => $item){
 //            $bettingNumber ++;
