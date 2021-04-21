@@ -77,7 +77,7 @@ class UserController extends Controller
             $data = $request->post();
             $is_check_sms_code = env('IS_CHECK_SMS_CODE',true);
             $rules = [
-                "phone" => "required",
+                "phone" => "required|numeric",
                 "password" => "required"
             ];
             if($is_check_sms_code)
