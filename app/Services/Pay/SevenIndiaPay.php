@@ -166,7 +166,8 @@ class SevenIndiaPay extends PayStrategy
             'cardname' => $withdrawalRecord->account_holder,
             'cardno' => $withdrawalRecord->bank_number,
             'bankid' => 10000,
-            'bankname' => $withdrawalRecord->bank_name
+            'bankname' => $withdrawalRecord->bank_name,
+            'ifsc' => $withdrawalRecord->ifsc_code
         ];
         $params['payload'] = json_encode($payload);
 
