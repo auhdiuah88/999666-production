@@ -165,7 +165,9 @@ class AgentDataService extends BaseAgentService
         $order_win_money = $this->AgentDataRepository->getOrderWinMoney();
         ##服务费[代理赚到的服务费]
         $service_money = $this->AgentDataRepository->getServiceMoney();
-        $order_data = compact('order_num','order_money','order_win_money','service_money');
+        ##下单人数
+        $betting_people = $this->AgentDataRepository->getBettingPeople();
+        $order_data = compact('order_num','order_money','order_win_money','service_money','betting_people');
         return $order_data;
     }
 

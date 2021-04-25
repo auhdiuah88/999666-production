@@ -159,6 +159,16 @@ class AgentDataRepository
         return makeModel($where, $this->Cx_Game_Betting)->sum('money');
     }
 
+    public function getBettingPeople()
+    {
+        $where = [
+            'user_id' => ['in', $this->user_ids]
+        ];
+        if($this->time_map)
+            $where['betting_time'] = ['BETWEEN', $this->time_map];
+        return makeModel($where, $this->Cx_Game_Betting)->group('user_id')->count('user_id');
+    }
+
     public function getOrderWinMoney(){
         $where = [
             'user_id' => ['in', $this->user_ids],

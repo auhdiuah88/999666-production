@@ -226,11 +226,15 @@ class HomeService extends BaseService
         //订单
         $orders = $this->HomeRepository->getBettingOrder($ids, $timeMap);
         $bettingNumber = $bettingMoney = $serviceMoney = $userProfit = 0;
+        $user_ids = [];
         foreach ($orders as $key => $item){
             $bettingNumber ++;
             $bettingMoney += $item->money;
             $serviceMoney += $item->service_charge;
             $userProfit += $item->win_money;
+            if(!in_array($item['user_id'],$user_ids)){
+                $user_ids[] = $item['user_id'];
+            }
         }
 
         // 订单数
@@ -249,6 +253,8 @@ class HomeService extends BaseService
         $item->serviceMoney = $serviceMoney;
         // 用户投注盈利
         $item->userProfit = $userProfit;
+        // 下单人数
+        $item->bettingPeople = count($user_ids);
 
 
         // 订单分佣
