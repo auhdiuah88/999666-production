@@ -89,7 +89,7 @@ class AgentDataService extends BaseAgentService
         if($start_time && $end_time){
             $time_map = [$start_time, $end_time];
         }else{
-            $time_map = [];
+            $time_map = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
         }
         if($time_map && $time_map[1] - $time_map[0] >= 5 * 24 * 60 * 60){
             $this->_code = 402;
