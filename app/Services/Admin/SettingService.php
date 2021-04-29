@@ -334,8 +334,8 @@ class SettingService extends BaseService
                 $validator = Validator::make(request()->input(), [
                     'left.text' => ['required', 'between:2,20', 'alpha_dash'],
                     'right.text' => ['required', 'between:2,20', 'alpha_dash'],
-                    'left.link' => ['required', 'url'],
-                    'right.link' => ['required', 'url'],
+                    'left.link' => ['url'],
+                    'right.link' => ['url'],
                     'status' => ['required', 'integer', Rule::in(0,1)]
                 ]);
                 if($validator->fails()){
