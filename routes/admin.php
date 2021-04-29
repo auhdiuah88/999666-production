@@ -241,7 +241,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::get("/findAll", "HomeController@findAll");
             Route::post("/search", "HomeController@searchHome");
             Route::get("/findContext", "HomeController@findContext");
-            Route::post("/searchContext", "HomeController@searchContext");
+            Route::post("/searchContext", "HomeController@searchContext2");
             Route::post("/systemTime", "HomeController@getSystemTime");
         });
 

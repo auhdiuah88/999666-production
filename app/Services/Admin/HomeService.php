@@ -128,6 +128,29 @@ class HomeService extends BaseService
         }
     }
 
+    public function searchAllContext2($data)
+    {
+        if (array_key_exists("timeMap", $data) && $data["timeMap"]) {
+            $timeMap = $data["timeMap"];
+        } else {
+            $timeMap = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
+        }
+
+        if (array_key_exists("reg_source_id", $data)) {
+            $reg_source_id = $data['reg_source_id'];
+        } else {
+            $reg_source_id = -1;
+        }
+        $flag = $this->intInput("flag",1);
+        $data = $this->getContextByFlag($timeMap, $reg_source_id, $flag);
+        if(!$data){
+            $this->_msg = "时间范围只能是连续的5天";
+            $this->_code = 403;
+        }else{
+            $this->_data = $data;
+        }
+    }
+
     public function findAllContext()
     {
         $flag = $this->intInput("flag",1);
@@ -135,74 +158,74 @@ class HomeService extends BaseService
         $this->_data = $this->getContextByFlag($timeMap, $this->HomeRepository->getIds(),$flag);
     }
 
-    public function getContextByFlag($timeMap, $ids, $flag=1){
+    public function getContextByFlag($timeMap, $reg_source_id, $flag=1){
         if($timeMap && $timeMap[1] - $timeMap[0] >= 5 * 24 * 60 * 60){
             return false;
         }
         switch ($flag){
             case 1:
-                $item = $this->getUserContext($timeMap, $ids);
+                $item = $this->getUserContext($timeMap, $reg_source_id);
                 break;
             case 2:
-                $item = $this->getFinancialContext($timeMap, $ids);
+                $item = $this->getFinancialContext($timeMap, $reg_source_id);
                 break;
             default:
-                $item = $this->getOrderContext($timeMap, $ids);
+                $item = $this->getOrderContext($timeMap, $reg_source_id);
                 break;
         }
         return $item;
     }
 
-    public function getUserContext($timeMap, $ids)
+    public function getUserContext($timeMap, $reg_source_id)
     {
         $item = new \stdClass();
         // 会员数
-        $item->members = $this->HomeRepository->countMembers($ids);
+        $item->members = $this->HomeRepository->countMembers($reg_source_id);
         // 新增会员
-        $item->newMembers = $this->HomeRepository->countNewMembers($timeMap, $ids);
+        $item->newMembers = $this->HomeRepository->countNewMembers($timeMap, $reg_source_id);
         // 普通新增会员
-        $item->ordinaryMembers = $this->HomeRepository->countOrdinaryMembers($timeMap, $ids);
+        $item->ordinaryMembers = $this->HomeRepository->countOrdinaryMembers($timeMap, $reg_source_id);
         // 代理裂变会员
-        $item->agentMembers = $this->HomeRepository->countAgentMembers($timeMap, $ids);
+        $item->agentMembers = $this->HomeRepository->countAgentMembers($timeMap, $reg_source_id);
         // 红包裂变会员
-        $item->envelopeMembers = $this->HomeRepository->countEnvelopeMembers($timeMap, $ids);
+        $item->envelopeMembers = $this->HomeRepository->countEnvelopeMembers($timeMap, $reg_source_id);
         // 活跃人数
-        $item->activePeopleNumber = $this->HomeRepository->countActivePeopleNumber($timeMap, $ids);
+        $item->activePeopleNumber = $this->HomeRepository->countActivePeopleNumber($timeMap, $reg_source_id);
         // 首充人数
-        $item->firstChargeNumber = $this->HomeRepository->countFirstChargeNumber($timeMap, $ids);
+        $item->firstChargeNumber = $this->HomeRepository->countFirstChargeNumber($timeMap, $reg_source_id);
         // 普通首充
-        $item->ordinaryFirstChargeNumber = $this->HomeRepository->countOrdinaryFirstChargeNumber($timeMap, $ids);
+        $item->ordinaryFirstChargeNumber = $this->HomeRepository->countOrdinaryFirstChargeNumber($timeMap, $reg_source_id);
         // 代理首充
-        $item->agentFirstChargeNumber = $this->HomeRepository->countAgentFirstChargeNumber($timeMap, $ids);
+        $item->agentFirstChargeNumber = $this->HomeRepository->countAgentFirstChargeNumber($timeMap, $reg_source_id);
         // 在线人数
         $item->onlineNum = $this->HomeRepository->sumOnlineNum();
 
         return $item;
     }
 
-    public function getFinancialContext($timeMap, $ids)
+    public function getFinancialContext($timeMap, $reg_source_id)
     {
         $item = new \stdClass();
         // 充值金额
-        $item->rechargeMoney = $this->HomeRepository->sumRechargeMoney($ids, $timeMap);
+        $item->rechargeMoney = $this->HomeRepository->sumRechargeMoney($reg_source_id, $timeMap);
         // 线下银行卡充值金额
-        $item->bankCardRechargeMoney = $this->HomeRepository->sumBankCardRechargeMoney($ids, $timeMap);
+        $item->bankCardRechargeMoney = $this->HomeRepository->sumBankCardRechargeMoney($reg_source_id, $timeMap);
         // 提现金额
-        $item->withdrawalMoney = $this->HomeRepository->sumWithdrawalMoney($ids, $timeMap);
+        $item->withdrawalMoney = $this->HomeRepository->sumWithdrawalMoney($reg_source_id, $timeMap);
         // 待提现金额
-        $item->toBeWithdrawalMoney = bcadd($this->HomeRepository->sumUserBalance($ids), $this->HomeRepository->sumUserCommission($ids), 2);
+        $item->toBeWithdrawalMoney = bcadd($this->HomeRepository->sumUserBalance($reg_source_id), $this->HomeRepository->sumUserCommission($reg_source_id), 2);
         // 订单分佣
-        $item->subCommission = $this->HomeRepository->sumSubCommission($ids, $timeMap);
+        $item->subCommission = $this->HomeRepository->sumSubCommission($reg_source_id, $timeMap);
         // 赠金
-        $item->giveMoney = $this->HomeRepository->sumGiveMoney($ids, $timeMap);
+        $item->giveMoney = $this->HomeRepository->sumGiveMoney($reg_source_id, $timeMap);
         // 充值赠送彩金
-        $item->rechargeRebate = $this->HomeRepository->sumRechargeRebate($ids, $timeMap);
+        $item->rechargeRebate = $this->HomeRepository->sumRechargeRebate($reg_source_id, $timeMap);
         // 注册赠送彩金
-        $item->registerRebate = $this->HomeRepository->sumRegisterRebate($ids, $timeMap);
+        $item->registerRebate = $this->HomeRepository->sumRegisterRebate($reg_source_id, $timeMap);
         // 后台赠送礼金
-        $item->backstageGiftMoney = $this->HomeRepository->sumBackstageGiftMoney($ids, $timeMap);
+        $item->backstageGiftMoney = $this->HomeRepository->sumBackstageGiftMoney2($reg_source_id, $timeMap);
 
-        $signOrder = $this->HomeRepository->getSignOrders($ids, $timeMap);
+        $signOrder = $this->HomeRepository->getSignOrders($reg_source_id, $timeMap);
         $receiveEnvelope = $payEnvelope = $payEnvelopeAmount = 0;
         foreach($signOrder as $key => $item){
             $receiveEnvelope += $item->yet_receive_count;
@@ -219,21 +242,21 @@ class HomeService extends BaseService
         return $item;
     }
 
-    public function getOrderContext($timeMap, $ids)
+    public function getOrderContext($timeMap, $reg_source_id)
     {
         $item = new \stdClass();
 
         //订单
-        $orders = $this->HomeRepository->getBettingOrder($ids, $timeMap);
+        $orders = $this->HomeRepository->getBettingOrder($reg_source_id, $timeMap);
         $bettingNumber = $bettingMoney = $serviceMoney = $userProfit = 0;
         $user_ids = [];
-        foreach ($orders as $key => $item){
+        foreach ($orders as $key => $it){
             $bettingNumber ++;
-            $bettingMoney += $item->money;
-            $serviceMoney += $item->service_charge;
-            $userProfit += $item->win_money;
-            if(!in_array($item['user_id'],$user_ids)){
-                $user_ids[] = $item['user_id'];
+            $bettingMoney += $it->money;
+            $serviceMoney += $it->service_charge;
+            $userProfit += $it->win_money;
+            if(!in_array($it['user_id'],$user_ids)){
+                $user_ids[] = $it['user_id'];
             }
         }
 
@@ -256,19 +279,18 @@ class HomeService extends BaseService
         // 下单人数
         $item->bettingPeople = count($user_ids);
 
-
         // 订单分佣
-        $item->subCommission = $this->HomeRepository->sumSubCommission($ids, $timeMap);
+        $item->subCommission = $this->HomeRepository->sumSubCommission2($reg_source_id, $timeMap);
         // 平台服务费
         $item->platformServiceMoney = bcsub($item->serviceMoney, $item->subCommission, 2);
         // 总盈亏
         $item->totalProfitLoss = bcadd(bcsub($item->bettingMoney, $item->userProfit, 2), $item->platformServiceMoney, 2);
         // 后台赠送礼金
-        $item->backstageGiftMoney = $this->HomeRepository->sumBackstageGiftMoney($ids, $timeMap);
+        $item->backstageGiftMoney = $this->HomeRepository->sumBackstageGiftMoney2($reg_source_id, $timeMap);
         // 当日上方
-        $item->upperSeparation = $this->HomeRepository->sumUpperSeparation($ids, $timeMap);
+        $item->upperSeparation = $this->HomeRepository->sumUpperSeparation2($reg_source_id, $timeMap);
         // 当日下分
-        $item->downSeparation = $this->HomeRepository->sumDownSeparation($ids, $timeMap);
+        $item->downSeparation = $this->HomeRepository->sumDownSeparation2($reg_source_id, $timeMap);
 
         return $item;
     }

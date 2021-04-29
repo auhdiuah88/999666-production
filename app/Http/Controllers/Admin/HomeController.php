@@ -57,6 +57,21 @@ class HomeController extends Controller
         }
     }
 
+    public function searchContext2(Request $request)
+    {
+        try{
+            $this->HomeService->searchAllContext2($request->post());
+            return $this->AppReturn(
+                $this->HomeService->_code,
+                $this->HomeService->_msg,
+                $this->HomeService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
+    }
+
     public function searchHome(Request $request)
     {
         $this->HomeService->searchHome($request->post());

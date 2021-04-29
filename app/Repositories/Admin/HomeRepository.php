@@ -56,81 +56,148 @@ class HomeRepository extends BaseRepository
         return $this->Cx_User->where("is_customer_service", 1)->count("id");
     }
 
-    public function sumGiveMoney($ids, $timeMap)
+    public function sumGiveMoney($reg_source_id, $timeMap)
     {
-        return $this->Cx_User_Balance_Logs->where("type", 5)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u', 'ubl.user_id', '=','u.id')->where("u.reg_source_id",'=',$reg_source_id)->where("ubl.type", 5)->whereBetween("ubl.time", $timeMap)->sum("ubl.money");
+        }else{
+            return $this->Cx_User_Balance_Logs->where("type", 5)->whereBetween("time", $timeMap)->sum("money");
+        }
     }
 
-    public function sumRechargeRebate($ids, $timeMap)
+    public function sumRechargeRebate($reg_source_id, $timeMap)
     {
-        return $this->Cx_User_Balance_Logs->where("type", 14)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u', 'ubl.user_id', '=','u.id')->where("u.reg_source_id",'=',$reg_source_id)->where("ubl.type", 14)->whereBetween("ubl.time", $timeMap)->sum("ubl.money");
+        }else{
+            return $this->Cx_User_Balance_Logs->where("type", 14)->whereBetween("time", $timeMap)->sum("money");
+        }
     }
 
-    public function sumRegisterRebate($ids, $timeMap)
+    public function sumRegisterRebate($reg_source_id, $timeMap)
     {
-        return $this->Cx_User_Balance_Logs->where("type", 15)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u', 'ubl.user_id', '=','u.id')->where("u.reg_source_id",'=',$reg_source_id)->where("ubl.type", 15)->whereBetween("ubl.time", $timeMap)->sum("ubl.money");
+        }else{
+            return $this->Cx_User_Balance_Logs->where("type", 15)->whereBetween("time", $timeMap)->sum("money");
+        }
     }
 
-    public function countNewMembers($timeMap, $ids)
+    public function countNewMembers($timeMap, $reg_source_id)
     {
-        return $this->Cx_User->whereIn("id", $ids)->whereBetween("reg_time", $timeMap)->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User->where("reg_source_id","=",$reg_source_id)->whereBetween("reg_time", $timeMap)->count("id");
+        }else{
+            return $this->Cx_User->whereBetween("reg_time", $timeMap)->count("id");
+        }
     }
 
-    public function countMembers($ids)
+    public function countMembers($reg_source_id)
     {
-        return $this->Cx_User->whereIn("id", $ids)->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User->where("reg_source_id",'=',$reg_source_id)->count("id");
+        }else{
+            return $this->Cx_User->count("id");
+        }
+
     }
 
-    public function countOrdinaryMembers($timeMap, $ids)
+    public function countOrdinaryMembers($timeMap, $reg_source_id)
     {
-        return $this->Cx_User->whereIn("id", $ids)->whereBetween("reg_time", $timeMap)->whereNull("two_recommend_id")->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User->where("reg_source_id",'=',$reg_source_id)->whereBetween("reg_time", $timeMap)->whereNull("two_recommend_id")->count("id");
+        }else{
+            return $this->Cx_User->whereBetween("reg_time", $timeMap)->whereNull("two_recommend_id")->count("id");
+        }
     }
 
-    public function countAgentMembers($timeMap, $ids)
+    public function countAgentMembers($timeMap, $reg_source_id)
     {
-        return $this->Cx_User
-            ->whereIn("id", $ids)
-            ->whereBetween("reg_time", $timeMap)
-            ->whereNotNull("two_recommend_id")
-            ->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User
+                ->where("reg_source_id", "=", $reg_source_id)
+                ->whereBetween("reg_time", $timeMap)
+                ->whereNotNull("two_recommend_id")
+                ->count("id");
+        }else{
+            return $this->Cx_User
+                ->whereBetween("reg_time", $timeMap)
+                ->whereNotNull("two_recommend_id")
+                ->count("id");
+        }
     }
 
-    public function countEnvelopeMembers($timeMap, $ids)
+    public function countEnvelopeMembers($timeMap, $reg_source_id)
     {
-        return $this->Cx_User
-            ->whereIn("id", $ids)
-            ->whereBetween("reg_time", $timeMap)
-            ->whereNotNull("two_recommend_id")
-            ->where("is_first_recharge", 1)
-            ->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User
+                ->where("reg_source_id", "=", $reg_source_id)
+                ->whereBetween("reg_time", $timeMap)
+                ->whereNotNull("two_recommend_id")
+                ->where("is_first_recharge", 1)
+                ->count("id");
+        }else{
+            return $this->Cx_User
+                ->whereBetween("reg_time", $timeMap)
+                ->whereNotNull("two_recommend_id")
+                ->where("is_first_recharge", 1)
+                ->count("id");
+        }
+
     }
 
-    public function countActivePeopleNumber($timeMap, $ids)
+    public function countActivePeopleNumber($timeMap, $reg_source_id)
     {
-        return $this->Cx_User
-            ->whereIn("id", $ids)
-            ->whereBetween("last_time", $timeMap)
-            ->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User
+                ->where("reg_source_id", "=", $reg_source_id)
+                ->whereBetween("last_time", $timeMap)
+                ->count("id");
+        }else{
+            return $this->Cx_User
+                ->whereBetween("last_time", $timeMap)
+                ->count("id");
+        }
     }
 
-    public function countFirstChargeNumber($timeMap, $ids)
+    public function countFirstChargeNumber($timeMap, $reg_source_id)
     {
-        return $this->Cx_User_Balance_Logs
-            ->whereIn("user_id", $ids)
-            ->whereBetween("time", $timeMap)
-            ->where("is_first_recharge", 1)
-            ->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
+                ->leftJoin('users as u','ubl.user_id','=','u.id')
+                ->where('u.reg_source_id','=',$reg_source_id)
+                ->whereBetween("ubl.time", $timeMap)
+                ->where("ubl.is_first_recharge", 1)
+                ->count("ubl.id");
+        }else{
+            return $this->Cx_User_Balance_Logs
+                ->whereBetween("time", $timeMap)
+                ->where("is_first_recharge", 1)
+                ->count("id");
+        }
     }
 
-    public function countOrdinaryFirstChargeNumber($timeMap, $ids)
+    public function countOrdinaryFirstChargeNumber($timeMap, $reg_source_id)
     {
-        $ids = $this->screenIds($ids, 0);
-        return $this->Cx_User_Balance_Logs
-            ->whereIn("user_id", $ids)
-            ->whereBetween("time", $timeMap)
-            ->where("type", 2)
-            ->where("is_first_recharge", 1)
-            ->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
+                ->leftJoin('users as u','ubl.user_id','=','u.id')
+                ->where('u.reg_source_id','=',$reg_source_id)
+                ->whereNull("u.two_recommend_id")
+                ->whereBetween("ubl.time", $timeMap)
+                ->where("ubl.type", 2)
+                ->where("ubl.is_first_recharge", 1)
+                ->count("ubl.id");
+
+        }else{
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
+                ->leftJoin('users as u','ubl.user_id','=','u.id')
+                ->whereNull("u.two_recommend_id")
+                ->whereBetween("ubl.time", $timeMap)
+                ->where("ubl.type", 2)
+                ->where("ubl.is_first_recharge", 1)
+                ->count("ubl.id");
+        }
     }
 
     public function screenIds($ids, $status)
@@ -142,45 +209,92 @@ class HomeRepository extends BaseRepository
         }
     }
 
-    public function countAgentFirstChargeNumber($timeMap, $ids)
+    public function countAgentFirstChargeNumber($timeMap, $reg_source_id)
     {
-        $ids = $this->screenIds($ids, 1);
-        return $this->Cx_User_Balance_Logs
-            ->whereIn("user_id", $ids)
-            ->whereBetween("time", $timeMap)
-            ->where("type", 2)
-            ->where("is_first_recharge", 1)
-            ->count("id");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
+                ->leftJoin('users as u','ubl.user_id','=','u.id')
+                ->where('u.reg_source_id','=',$reg_source_id)
+                ->whereNotNull("u.two_recommend_id")
+                ->whereBetween("ubl.time", $timeMap)
+                ->where("ubl.type", 2)
+                ->where("ubl.is_first_recharge", 1)
+                ->count("ubl.id");
+
+        }else{
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
+                ->leftJoin('users as u','ubl.user_id','=','u.id')
+                ->whereNotNull("u.two_recommend_id")
+                ->whereBetween("ubl.time", $timeMap)
+                ->where("ubl.type", 2)
+                ->where("ubl.is_first_recharge", 1)
+                ->count("ubl.id");
+        }
     }
 
-    public function sumRechargeMoney($ids, $timeMap)
+    public function sumRechargeMoney($reg_source_id, $timeMap)
     {
-        return $this->Cx_User_Recharge_Logs->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->where("status", 2)->sum("arrive_money");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Recharge_Logs->from('user_recharge_logs as url')->leftJoin('users as u','u.id','=','url.user_id')->where('u.reg_source_id','=',$reg_source_id)->where("url.status", 2)->whereBetween("url.time", $timeMap)->sum("arrive_money");
+        }else{
+            return $this->Cx_User_Recharge_Logs->whereBetween("time", $timeMap)->where("status", 2)->sum("arrive_money");
+        }
     }
 
-    public function sumBankCardRechargeMoney($ids, $timeMap)
+    public function sumBankCardRechargeMoney($reg_source_id, $timeMap)
     {
-        return $this->Cx_User_Balance_Logs->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->where("type", 16)->sum("money");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u','u.id','=','ubl.user_id')->where('u.reg_source_id','=',$reg_source_id)->where("ubl.type", 16)->whereBetween("ubl.time", $timeMap)->sum("ubl.money");
+        }else{
+            return $this->Cx_User_Balance_Logs->whereBetween("time", $timeMap)->where("type", 16)->sum("money");
+        }
     }
 
-    public function sumWithdrawalMoney($ids, $timeMap)
+    public function sumWithdrawalMoney($reg_source_id, $timeMap)
     {
-        return $this->Cx_Withdrawal_Record->whereIn("user_id", $ids)->whereBetween("approval_time", $timeMap)->where("status", 1)->sum("payment");
+        if($reg_source_id >= 0){
+            return $this->Cx_Withdrawal_Record->from('withdrawal_record as wr')->leftJoin('users as u','u.id','=','wr.user_id')
+                ->where('u.reg_source_id','=',$reg_source_id)->whereBetween("wr.approval_time", $timeMap)->where("wr.status", 1)->sum("wr.payment");
+        }else{
+            return $this->Cx_Withdrawal_Record->whereBetween("approval_time", $timeMap)->where("status", 1)->sum("payment");
+        }
     }
 
-    public function sumUserBalance($ids)
+    public function sumUserBalance($reg_source_id)
     {
-        return $this->Cx_User->whereIn("id", $ids)->sum("balance");
+        if($reg_source_id >= 0){
+            return $this->Cx_User->where('reg_source_id', '=', $reg_source_id)->sum("balance");
+        }else {
+            return $this->Cx_User->sum("balance");
+        }
     }
 
-    public function sumUserCommission($ids)
+    public function sumUserCommission($reg_source_id)
     {
-        return $this->Cx_User->whereIn("id", $ids)->sum("commission");
+        if($reg_source_id >= 0){
+            return $this->Cx_User->where('reg_source_id', '=', $reg_source_id)->sum("commission");
+        }else{
+            return $this->Cx_User->sum("commission");
+        }
     }
 
-    public function sumSubCommission($ids, $timeMap)
+    public function sumSubCommission($reg_source_id, $timeMap)
     {
-        return $this->Cx_Charge_Logs->whereIn("charge_user_id", $ids)->whereBetween("create_time", $timeMap)->sum("money");
+        if($reg_source_id >= 0){
+            return $this->Cx_Charge_Logs->from('charge_logs as cl')->leftJoin('users as u','u.id','=','cl.charge_user_id')
+                ->where("u.reg_source_id", '=', $reg_source_id)->whereBetween("cl.create_time", $timeMap)->sum("cl.money");
+        }else{
+            return $this->Cx_Charge_Logs->whereBetween("create_time", $timeMap)->sum("money");
+        }
+    }
+
+    public function sumSubCommission2($reg_source_id, $timeMap)
+    {
+        if($reg_source_id >= 0){
+            return $this->Cx_Charge_Logs->from('charge_logs as cl')->leftJoin('users as u', 'u.id', '=', 'cl.charge_user_id')->where('u.reg_source_id','=',$reg_source_id)->whereBetween("cl.create_time", $timeMap)->sum("cl.money");
+        }else{
+            return $this->Cx_Charge_Logs->from('charge_logs as cl')->leftJoin('users as u', 'u.id', '=', 'cl.charge_user_id')->whereBetween("cl.create_time", $timeMap)->sum("cl.money");
+        }
     }
 
     public function getIds()
@@ -193,9 +307,13 @@ class HomeRepository extends BaseRepository
         return array_column($this->Cx_User->where("reg_source_id", $reg_source_id)->get("id")->toArray(), "id");
     }
 
-    public function getBettingOrder($ids, $timeMap)
+    public function getBettingOrder($reg_source_id, $timeMap)
     {
-        return $this->Cx_Game_Betting->whereIn("user_id", $ids)->whereBetween("betting_time", $timeMap)->select("id", "money", "service_charge", "win_money", "user_id")->get();
+        if($reg_source_id >= 0){
+            return $this->Cx_Game_Betting->from('game_betting as gb')->leftJoin('users as u', 'u.id', '=', 'gb.user_id')->where('u.reg_source_id','=',$reg_source_id)->whereBetween("gb.betting_time", $timeMap)->select("gb.id", "gb.money", "gb.service_charge", "gb.win_money", "gb.user_id")->get();
+        }else{
+            return $this->Cx_Game_Betting->from('game_betting as gb')->leftJoin('users as u', 'u.id', '=', 'gb.user_id')->whereBetween("gb.betting_time", $timeMap)->select("gb.id", "gb.money", "gb.service_charge", "gb.win_money", "gb.user_id")->get();
+        }
     }
 
     public function countBettingNumber($ids, $timeMap)
@@ -238,9 +356,28 @@ class HomeRepository extends BaseRepository
         return $this->Cx_User_Balance_Logs->where("type", 8)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
     }
 
+    public function sumBackstageGiftMoney2($reg_source_id, $timeMap)
+    {
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u','u.id','=','ubl.user_id')->where("ubl.type", 8)->where('u.reg_source_id','=',$reg_source_id)->whereBetween("ubl.time", $timeMap)->sum("ubl.money");
+        }else{
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u','u.id','=','ubl.user_id')->where("ubl.type", 8)->whereBetween("ubl.time", $timeMap)->sum("ubl.money");
+        }
+    }
+
     public function sumDownSeparation($ids, $timeMap)
     {
         return $this->Cx_User_Balance_Logs->where("type", 10)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
+    }
+
+    public function sumDownSeparation2($reg_source_id, $timeMap)
+    {
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u','u.id','=','ubl.user_id')->where("ubl.type", 10)->where('u.reg_source_id','=',$reg_source_id)->whereBetween("ubl.time", $timeMap)->sum("money");
+        }else{
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u','u.id','=','ubl.user_id')->where("ubl.type", 10)->whereBetween("ubl.time", $timeMap)->sum("money");
+        }
+
     }
 
     public function sumUpperSeparation($ids, $timeMap)
@@ -248,9 +385,22 @@ class HomeRepository extends BaseRepository
         return $this->Cx_User_Balance_Logs->where("type", 9)->whereIn("user_id", $ids)->whereBetween("time", $timeMap)->sum("money");
     }
 
-    public function getSignOrders($ids, $timeMap)
+    public function sumUpperSeparation2($reg_source_id, $timeMap)
     {
-        return $this->Cx_Sign_Orders->whereIn("user_id", $ids)->whereBetween("start_time", $timeMap)->select("id", "yet_receive_count", "amount");
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u','u.id','=','ubl.user_id')->where("ubl.type", 9)->where('u.reg_source_id','=',$reg_source_id)->whereBetween("ubl.time", $timeMap)->sum("ubl.money");
+        }else{
+            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')->leftJoin('users as u','u.id','=','ubl.user_id')->where("ubl.type", 9)->whereBetween("ubl.time", $timeMap)->sum("ubl.money");
+        }
+    }
+
+    public function getSignOrders($reg_source_id, $timeMap)
+    {
+        if($reg_source_id >= 0){
+            return $this->Cx_Sign_Orders->from('sign_orders as so')->leftJoin('users as u','u.id','=','so.user_id')->where('u.reg_source_id','=',$reg_source_id)->whereBetween("so.start_time", $timeMap)->select("so.id", "so.yet_receive_count", "so.amount");
+        }else{
+            return $this->Cx_Sign_Orders->whereBetween("start_time", $timeMap)->select("id", "yet_receive_count", "amount");
+        }
     }
 
     public function sumOnlineNum()
