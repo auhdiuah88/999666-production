@@ -159,7 +159,7 @@ class HomeService extends BaseService
     }
 
     public function getContextByFlag($timeMap, $reg_source_id, $flag=1){
-        if($timeMap && $timeMap[1] - $timeMap[0] >= 5 * 24 * 60 * 60){
+        if($timeMap && $timeMap[1] - $timeMap[0] >= config('site.home_limit_day',5) * 24 * 60 * 60){
             return false;
         }
         switch ($flag){
