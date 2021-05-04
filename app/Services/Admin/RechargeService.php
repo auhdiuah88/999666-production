@@ -28,6 +28,7 @@ class RechargeService extends BaseService
     public function searchRechargeLogs($data)
     {
         if(isset($data['conditions']['status']) && $data['conditions']['status'] == 0)unset($data['conditions']['status']);
+        if(isset($data['conditions']['agent']))unset($data['conditions']['agent']);
         $data = $this->getUserIds($data, "user_id");
         $list = $this->RechargeRepository->searchChargeLogs($data, ($data["page"] - 1) * $data["limit"], $data["limit"]);
         $total = $this->RechargeRepository->countSearchChargeLogs($data);
