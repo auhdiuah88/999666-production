@@ -91,9 +91,10 @@ class AgentDataService extends BaseAgentService
         }else{
             $time_map = [strtotime(date("Y-m-d 00:00:00")), strtotime(date("Y-m-d 23:59:59"))];
         }
-        if($time_map && $time_map[1] - $time_map[0] >= 5 * 24 * 60 * 60){
+        $home_limit_day = config('site.home_limit_day',5);
+        if($time_map && $time_map[1] - $time_map[0] > $home_limit_day * 24 * 60 * 60){
             $this->_code = 402;
-            $this->_msg = "时间范围只能是连续的5天";
+            $this->_msg = "时间范围只能是连续的{$home_limit_day}天";
             return false;
         }
         $this->AgentDataRepository->time_map = $time_map;

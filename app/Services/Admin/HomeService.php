@@ -142,6 +142,11 @@ class HomeService extends BaseService
             $reg_source_id = -1;
         }
         $flag = $this->intInput("flag",1);
+        $home_limit_day = config('site.home_limit_day',5);
+        if($timeMap && $timeMap[1] - $timeMap[0] > $home_limit_day * 24 * 60 * 60){
+            $this->_msg = "时间范围只能是连续的{$home_limit_day}天";
+            $this->_code = 403;
+        }
         $data = $this->getContextByFlag($timeMap, $reg_source_id, $flag);
         if(!$data){
             $this->_msg = "时间范围只能是连续的5天";
@@ -159,9 +164,6 @@ class HomeService extends BaseService
     }
 
     public function getContextByFlag($timeMap, $reg_source_id, $flag=1){
-        if($timeMap && $timeMap[1] - $timeMap[0] >= config('site.home_limit_day',5) * 24 * 60 * 60){
-            return false;
-        }
         switch ($flag){
             case 1:
                 $item = $this->getUserContext($timeMap, $reg_source_id);
