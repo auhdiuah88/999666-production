@@ -66,6 +66,14 @@ abstract class BaseService
             }
         }
 
+        if (array_key_exists("agent", $data["conditions"])) {
+            if (!is_null($data["conditions"]["agent"])) {
+                $model = $model->where(function ($query) use ($data) {
+                    $query->where("invite_relation", "like", "%-" . $data["conditions"]["agent"] . "-%");
+                });
+            }
+        }
+
         return $model;
     }
 
