@@ -45,6 +45,13 @@ abstract class BaseService
             unset($data["ops"]["reg_source_id"]);
             $data["ops"][$key] = "in";
         }
+
+        if (array_key_exists("agent", $conditions)) {
+            unset($data["conditions"]["agent"]);
+            $data["conditions"][$key] = $ids;
+            unset($data["ops"]["agent"]);
+            $data["ops"][$key] = "in";
+        }
         return $data;
     }
 
