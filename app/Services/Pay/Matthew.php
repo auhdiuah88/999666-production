@@ -78,32 +78,37 @@ class Matthew extends PayStrategy
             'thirdOrderNumber' => $order_no,//商家自己平台的订单号
             'thirdUserId' => $this->getUserId(),//商家自己平台的会员ID，如果没有可以用上面的订单号
         ];
-        $Aes = new Aes();
-        $key = substr($this->rechargeSecretkey, 0,16);
-        $encryptedData = $Aes->encryptWithOpenssl($key, $en, $this->iv);
-        $data = [
-            'encryptedData' => $encryptedData,   //openssl_encrypt进行aes对称加密
-            'signaturePo' => [
-                'apiId' => $this->rechargeMerchantID,  //商家ID
-                'nonce' => (string)randomStr(10),
-                'signature' => '',
-                'timestamp' => get_total_millisecond()
-            ],
+        $header = [
+            'Content-Type: application/json',
+            'Authorization: Basic'.base64_encode($this->rechargeMerchantID.':'.$this->rechargeSecretkey.''), //添加头，在name和pass处填写对应账号密码
+            'Content-Length: ' . strlen(json_encode($en))
         ];
-        $signature = $this->generateSign([   //调用签名函数进行数据签名
-            $data['signaturePo']['timestamp'].'',
-            $data['signaturePo']['nonce'].'',
-            $data['signaturePo']['apiId'],
-            $this->rechargeSecretkey,
-            json_encode($en),  //将数组转json格式的数据
-        ]);
-        $data['signaturePo']['signature'] = $signature;
+//        $Aes = new Aes();
+//        $key = substr($this->rechargeSecretkey, 0,16);
+//        $encryptedData = $Aes->encryptWithOpenssl($key, $en, $this->iv);
+//        $data = [
+//            'encryptedData' => $encryptedData,   //openssl_encrypt进行aes对称加密
+//            'signaturePo' => [
+//                'apiId' => $this->rechargeMerchantID,  //商家ID
+//                'nonce' => (string)randomStr(10),
+//                'signature' => '',
+//                'timestamp' => get_total_millisecond()
+//            ],
+//        ];
+//        $signature = $this->generateSign([   //调用签名函数进行数据签名
+//            $data['signaturePo']['timestamp'].'',
+//            $data['signaturePo']['nonce'].'',
+//            $data['signaturePo']['apiId'],
+//            $this->rechargeSecretkey,
+//            json_encode($en),  //将数组转json格式的数据
+//        ]);
+//        $data['signaturePo']['signature'] = $signature;
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder', $data);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder', $en);
 
-        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'otc/api/recharge', $data);
+        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'otc/api/getRechargeData', $en, $header);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder_return', [$res]);
         if ($res['code'] <> 0) {
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder_return', $res);
             $this->_msg = $res['message'];
             return false;
         }
@@ -161,9 +166,9 @@ class Matthew extends PayStrategy
         ]);
         $data['signaturePo']['signature'] = $signature;
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$data);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_withdrawalOrder',$data);
         $res = $this->requestService->postFormData(self::$withdrawUrl . 'otc/api/withdrawal', $data);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder_rtn',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_withdrawalOrder_rtn',$res);
         if($res['code'] != 0){
             $this->_msg = $res['message'];
             return false;
@@ -176,17 +181,18 @@ class Matthew extends PayStrategy
 
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeCallback',$request->post());
 
         if(!isset($request->encryptedData)){
-            $this->_msg = 'sepro-recharge-交易未完成.';
+            $this->_msg = 'matthew-recharge-交易未完成.';
             return false;
         }
         $Aes = new Aes();
         $key = substr($this->rechargeSecretkey, 0,16);
-        $data = $Aes->encryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
+        $data = $Aes->decryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeCallback_decryptWithOpenssl',[$data]);
         if ($request->tradeResult != '1')  {
-            $this->_msg = 'sepro-recharge-交易未完成';
+            $this->_msg = 'matthew-recharge-交易未完成';
             return false;
         }
 
