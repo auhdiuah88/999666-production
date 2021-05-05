@@ -185,14 +185,18 @@ class Matthew extends PayStrategy
         $data['signaturePo']['signature'] = $signature;
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_withdrawalOrder',$data);
-        $res = $this->requestService->postFormData(self::$withdrawUrl . 'otc/api/withdrawal', $data);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_withdrawalOrder_rtn',$res);
+        $res = $this->requestService->postJsonData(self::$withdrawUrl . 'otc/api/issue', $data);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_withdrawalOrder_rtn',[$res]);
+        if(!$res){
+            $this->_msg = 'request payout failed';
+            return false;
+        }
         if($res['code'] != 0){
             $this->_msg = $res['message'];
             return false;
         }
         return  [
-            'pltf_order_no' => '',
+            'pltf_order_no' => $res['orderNumber'],
             'order_no' => $order_no
         ];
     }
@@ -209,57 +213,45 @@ class Matthew extends PayStrategy
         $key = substr($this->rechargeSecretkey, 0,16);
         $data = $Aes->decryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeCallback_decryptWithOpenssl',[$data]);
-        if ($request->tradeResult != '1')  {
+        if ($data['status'] != '1')  {
             $this->_msg = 'matthew-recharge-交易未完成';
             return false;
         }
-
-        // 验证签名
-        $params = $request->post();
-        $sign = $params['sign'];
-        unset($params['sign']);
-        unset($params['signType']);
-        if ($this->generateSign($params,1) <> $sign){
-            $this->_msg = '签名错误';
-            return false;
-        }
-
         $where = [
-            'order_no' => $request->mchOrderNo,
-            'pltf_order_id' => $request->orderNo,
+            'order_no' => $data['thirdOrderNumber'],
+            'pltf_order_id' => '',
         ];
-
+        $this->amount = DB::table('user_recharge_logs')->where("order_no","=",$where['order_no'])->value('money');
         return $where;
     }
 
     function withdrawalCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalCallback',$request->post());
-
+        if(!isset($request->encryptedData)){
+            $this->_msg = 'matthew-withdraw-交易未完成.';
+            return false;
+        }
+        $Aes = new Aes();
+        $key = substr($this->withdrawSecretkey, 0,16);
+        $data = $Aes->decryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_withdrawCallback_decryptWithOpenssl',[$data]);
         $pay_status = 0;
-        $status = (string)($request->tradeResult);
-        if($status == '1'){
+        $status = (string)($data['status']);
+        if($status == 1){
             $pay_status= 1;
         }
-        if($status == '2' || $status == '3'){
+        if($status == 0 || $status == 2){
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'sepro_withdrawal-交易未完成';
+            $this->_msg = 'matthew_withdrawal-交易未完成';
             return false;
         }
-        // 验证签名
-        $params = $request->post();
-        $sign = $params['sign'];
-        unset($params['sign']);
-        unset($params['signType']);
-        if ($this->generateSign($params,2) <> $sign) {
-            $this->_msg = 'sepro_签名错误';
-            return false;
-        }
+
         $where = [
-            'order_no' => $request->merTransferId,
-            'plat_order_id' => $request->tradeNo,
+            'order_no' => $data['thirdOrderNumber'],
+            'plat_order_id' => '',
             'pay_status' => $pay_status
         ];
         return $where;
