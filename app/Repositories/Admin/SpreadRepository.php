@@ -38,6 +38,7 @@ class SpreadRepository extends BaseRepository
 
         $prefix = DB::getConfig('prefix');
         $offset = ($page - 1) * $size;
+        $total_cha = $total_service = 0;
         if($status == 0){
             $list = DB::select('select sum(gb.win_money - gb.money) as cha, sum(gb.money) as total_betting_money, sum(gb.win_money) as total_win_money, sum(gb.service_charge) as total_service_charge, gb.user_id, u.phone from `'.$prefix.'game_betting` gb left join `'.$prefix.'users` u on gb.user_id = u.id '. $where .' group by user_id having cha > 0 order by cha desc limit '. $offset .','.$size);
 
@@ -48,8 +49,12 @@ class SpreadRepository extends BaseRepository
             $total = count(DB::select('select sum(gb.money - gb.win_money) as cha from `'.$prefix.'game_betting` gb '. $where.' group by user_id having cha > 0'));
             $all = DB::select('select sum(gb.money - gb.win_money) as cha, sum(gb.money) as total_betting_money, sum(gb.win_money) as total_win_money, sum(gb.service_charge) as total_service_charge from `'.$prefix.'game_betting` gb '. $where .' group by user_id having cha > 0');
         }
+        foreach($all as $key =>  $item){
+            $total_cha += $item['cha'];
+            $total_service += $item['total_service_charge'];
+        }
 
-        return compact('list','total','all');
+        return compact('list','total','total_cha','total_service');
 
 //        return $this->Cx_User_Balance_Logs->whereBetween("time", $timeMap)->whereIn("user_id", $ids)->select(["id", "user_id", "dq_balance"])->orderBy("time")->groupBy("user_id")->get()->map(function ($item) {
 //            $user = $this->Cx_User->where("id", $item->user_id)->select(["id", "phone", "balance"])->first();
