@@ -107,7 +107,7 @@ class Matthew extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder', $en);
 
-        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'otc/api/getRechargeData', $en, $header);
+        $res = $this->requestService->postFormData(self::$rechargeUrl . 'otc/api/getRechargeData', $en, $header);
 //        $res = $this->curlhead(self::$rechargeUrl . 'otc/api/getRechargeData', $en, $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder_return', [$res]);
         if ($res['code'] <> 0) {
