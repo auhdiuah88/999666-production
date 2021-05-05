@@ -107,7 +107,8 @@ class Matthew extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder', $en);
 
-        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'otc/api/getRechargeData', $en, $header);
+//        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'otc/api/getRechargeData', $en, $header);
+        $res = $this->curlhead(self::$rechargeUrl . 'otc/api/getRechargeData', $en, $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder_return', [$res]);
         if ($res['code'] <> 0) {
             $this->_msg = $res['message'];
@@ -127,6 +128,17 @@ class Matthew extends PayStrategy
             'is_post' => 0,
         ];
         return $resData;
+    }
+
+    public  function curlhead($url,$params,$header){  //请求参数与URL post数据组装
+        $data_string = json_encode($params); //将数组转json格式的数据
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $hdresult = curl_exec($ch);
+        return $hdresult;
     }
 
     function withdrawalOrder(object $withdrawalRecord)
