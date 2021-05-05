@@ -50,8 +50,8 @@ class SpreadRepository extends BaseRepository
             $all = DB::select('select sum(gb.money - gb.win_money) as cha, sum(gb.money) as total_betting_money, sum(gb.win_money) as total_win_money, sum(gb.service_charge) as total_service_charge from `'.$prefix.'game_betting` gb '. $where .' group by user_id having cha > 0');
         }
         foreach($all as $key =>  $item){
-            $total_cha += $item['cha'];
-            $total_service += $item['total_service_charge'];
+            $total_cha += $item->cha;
+            $total_service += $item->total_service_charge;
         }
 
         return compact('list','total','total_cha','total_service');
