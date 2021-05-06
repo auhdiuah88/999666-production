@@ -219,7 +219,6 @@ class Matthew extends PayStrategy
         }
         $where = [
             'order_no' => $data['thirdOrderNumber'],
-            'pltf_order_id' => '',
         ];
         $this->amount = $data['amount'];
         return $where;
