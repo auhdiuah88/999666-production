@@ -222,7 +222,6 @@ class Matthew extends PayStrategy
             'order_no' => $data['thirdOrderNumber'],
         ];
         $this->amount = $data['amount'];
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeCallback_where',[$where]);
         return $where;
     }
 
@@ -236,6 +235,7 @@ class Matthew extends PayStrategy
         $Aes = new Aes();
         $key = substr($this->withdrawSecretkey, 0,16);
         $data = $Aes->decryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
+        $data = json_decode($data,true);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_withdrawCallback_decryptWithOpenssl',[$data]);
         $pay_status = 0;
         $status = (string)($data['status']);
