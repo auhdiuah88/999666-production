@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\DB;
 class Matthew extends PayStrategy
 {
 
-    protected static $rechargeUrl = 'https://payapitest.soon-ex.com/';
+    protected static $rechargeUrl = 'https://bms.soon-ex.com/';
 
-    protected static $withdrawUrl = 'https://payapitest.soon-ex.com/';
+    protected static $withdrawUrl = 'https://bms.soon-ex.com/';
 
-    protected static $nativeUrl = 'http://paytest.soon-ex.com/#/?orderId=';
+    protected static $nativeUrl = 'http://bms.soon-ex.com/#/?orderId=';
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
