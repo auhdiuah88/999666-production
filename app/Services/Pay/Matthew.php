@@ -196,7 +196,7 @@ class Matthew extends PayStrategy
             return false;
         }
         return  [
-            'pltf_order_no' => $res['orderNumber'],
+            'pltf_order_no' => $res['data']['orderNumber'],
             'order_no' => $order_no
         ];
     }
