@@ -212,6 +212,7 @@ class Matthew extends PayStrategy
         $Aes = new Aes();
         $key = substr($this->rechargeSecretkey, 0,16);
         $data = $Aes->decryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
+        $data = json_decode($data,true);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeCallback_decryptWithOpenssl',[$data]);
         if ($data['status'] != '1')  {
             $this->_msg = 'matthew-recharge-交易未完成';
