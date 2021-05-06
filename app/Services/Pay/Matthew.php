@@ -203,7 +203,7 @@ class Matthew extends PayStrategy
 
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeCallback',$request->input());
 
         if(!isset($request->encryptedData)){
             $this->_msg = 'matthew-recharge-交易未完成.';
