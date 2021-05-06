@@ -176,11 +176,9 @@ function is_ip($str){
  */
 function get_total_millisecond()
 {
-    $time = explode(" ", microtime() );
-    $time = $time[1] . ($time[0] * 1000);
-    $time2 = explode( ".", $time );
-    $time = $time2[0];
-    return $time;
+    list($msec, $sec) = explode(' ', microtime());
+    $msectime= (float)sprintf('%.0f', (floatval($msec) + floatval($sec)) * 1000); //获取当前时间戳
+    return (string)$msectime;
 }
 
 /**
