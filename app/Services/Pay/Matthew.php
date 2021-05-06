@@ -221,7 +221,7 @@ class Matthew extends PayStrategy
             'order_no' => $data['thirdOrderNumber'],
             'pltf_order_id' => '',
         ];
-        $this->amount = DB::table('user_recharge_logs')->where("order_no","=",$where['order_no'])->value('money');
+        $this->amount = $data['amount'];
         return $where;
     }
 
