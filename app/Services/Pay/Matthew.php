@@ -221,6 +221,7 @@ class Matthew extends PayStrategy
             'order_no' => $data['thirdOrderNumber'],
         ];
         $this->amount = $data['amount'];
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeCallback_where',[$where]);
         return $where;
     }
 
