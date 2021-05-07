@@ -16,13 +16,13 @@ class Matthew extends PayStrategy
 {
 
 //    protected static $rechargeUrl = 'https://payapi.soon-ex.com/';
-    protected static $rechargeUrl = 'https://paytest.soon-ex.com/';
+    protected static $rechargeUrl = 'https://payapitest.soon-ex.com/';
 
 //    protected static $withdrawUrl = 'https://payapi.soon-ex.com/';
-    protected static $withdrawUrl = 'https://paytest.soon-ex.com/';
+    protected static $withdrawUrl = 'https://payapitest.soon-ex.com/';
 
 //    protected static $nativeUrl = 'http://payapi.soon-ex.com/#/?orderId=';
-    protected static $nativeUrl = 'http://paytest.soon-ex.com/#/?orderId=';
+    protected static $nativeUrl = 'http://payapitest.soon-ex.com/#/?orderId=';
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
