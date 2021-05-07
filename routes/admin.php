@@ -342,6 +342,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::get("/inviteInfo","agent\AgentDataController@inviteInfo");
 
             Route::get("/staffLists","agent\AgentStaffController@staffLists");
+            Route::get("/filterStaffData","agent\AgentStaffController@getFilterData");
         });
 
         // banner设置

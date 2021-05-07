@@ -35,4 +35,19 @@ class AgentStaffController extends Controller
         }
     }
 
+    public function getFilterData()
+    {
+        try{
+            $this->AgentStaffService->getFilterData();
+            return $this->AppReturn(
+                $this->AgentStaffService->_code,
+                $this->AgentStaffService->_msg,
+                $this->AgentStaffService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(403, $e->getMessage());
+        }
+    }
+
 }

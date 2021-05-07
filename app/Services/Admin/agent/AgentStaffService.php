@@ -30,6 +30,14 @@ class AgentStaffService extends BaseAgentService
         return true;
     }
 
+    public function getFilterData()
+    {
+        $type = $this->intInput('type');
+        $user_id = $this->intInput('user_id');
+        $data = $this->AgentStaffRepository->getFilterData($type,$user_id);
+        $this->_data = $data;
+    }
+
     protected function setGetListsWhere()
     {
         $is_group_leader = $this->intInput('is_group_leader');
