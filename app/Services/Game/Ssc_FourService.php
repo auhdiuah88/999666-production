@@ -5,6 +5,7 @@ namespace App\Services\Game;
 
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Game\SscRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
@@ -47,55 +48,64 @@ class Ssc_FourService
     }
 
     public function ssc_ki($play_id){
-        $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);
-        if($Is_Executive_Prize<=0){
-            return false;
-        }
-        ##获取本期的情况
-        $game_play_info = $this->GameRepository->Get_Game_play($play_id);
-        ##本局的下注金额
-        $cur_betting_money = $this->GameRepository->Get_Cur_Betting_Money($play_id);
-        //单局杀率判定
+        DB::beginTransaction();
+        try{
+            $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);
+            if($Is_Executive_Prize<=0){
+                return false;
+            }
+            ##获取本期的情况
+            $game_play_info = $this->GameRepository->Get_Game_play($play_id);
+            ##本局的下注金额
+            $cur_betting_money = $this->GameRepository->Get_Cur_Betting_Money($play_id);
+            //单局杀率判定
 //        $system=$this->GameRepository->Get_System();
-        $system=$this->GameRepository->Get_Game_Config($this->game_id);
+            $system=$this->GameRepository->Get_Game_Config($this->game_id);
 //        if(!isset($system->open_type)){
 //            Log::channel('game_debug')->info("开奖失败debug-44",[$system]);
 //        }
 //        if(!isset($system->open_type->value)){
 //            Log::channel('game_debug')->info("开奖失败debug-4444",[$system]);
 //        }
-        $open_type = intval($system->open_type->value);
-        switch ($open_type){
-            case 1: //天杀
-                $date_kill = $system->date_kill;  //获得天杀率
-                ##今天内的投注金额 s_money，中奖金额 y_money
-                $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
-                ##可赔金额
-                $can_donate_money = (1-$date_kill) * ($new_money_sum['s_money'] + $cur_betting_money - $new_money_sum['y_money']);
-                break;
-            case 2:  //局杀
-                $kill_rate = $system->one_kill;//获得局杀率
-                $can_donate_money = (1-$kill_rate) * $cur_betting_money;
-                break;
-            case 3:  //随机
-                $can_donate_money = 0;
-                break;
-            default:
-                $can_donate_money = 0;
-                Log::channel('kidebug')->error('开奖处出现异常',compact('play_id'));
-                break;
-        }
-        $calc = $this->calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money, $open_type);
+            $open_type = intval($system->open_type->value);
+            switch ($open_type){
+                case 1: //天杀
+                    $date_kill = $system->date_kill;  //获得天杀率
+                    ##今天内的投注金额 s_money，中奖金额 y_money
+                    $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
+                    ##可赔金额
+                    $can_donate_money = (1-$date_kill) * ($new_money_sum['s_money'] + $cur_betting_money - $new_money_sum['y_money']);
+                    break;
+                case 2:  //局杀
+                    $kill_rate = $system->one_kill;//获得局杀率
+                    $can_donate_money = (1-$kill_rate) * $cur_betting_money;
+                    break;
+                case 3:  //随机
+                    $can_donate_money = 0;
+                    break;
+                default:
+                    $can_donate_money = 0;
+                    Log::channel('kidebug')->error('开奖处出现异常',compact('play_id'));
+                    break;
+            }
+            $calc = $this->calculateNumMoney($game_play_info, $can_donate_money, $cur_betting_money, $open_type);
 
-        ##输赢 1赢 2输 3平
-        $type = $calc['win_money'] > $cur_betting_money ? 2 : ($calc['win_money'] < $cur_betting_money ? 1 : 3) ;
-        ##用户输的钱
-        $lostmoney = $cur_betting_money - $calc['win_money'];
-        ##平台赢的钱
-        $pt_money = $lostmoney;
-        ##结算
-        $this->Ki_Executive_Prize($calc['result'],$play_id, $calc['win_money'], $lostmoney, $type, $pt_money, $cur_betting_money);
-        return true;
+            ##输赢 1赢 2输 3平
+            $type = $calc['win_money'] > $cur_betting_money ? 2 : ($calc['win_money'] < $cur_betting_money ? 1 : 3) ;
+            ##用户输的钱
+            $lostmoney = $cur_betting_money - $calc['win_money'];
+            ##平台赢的钱
+            $pt_money = $lostmoney;
+            ##结算
+            $this->Ki_Executive_Prize($calc['result'],$play_id, $calc['win_money'], $lostmoney, $type, $pt_money, $cur_betting_money);
+
+            DB::commit();
+            return true;
+        }catch(\Exception $e){
+            DB::rollBack();
+            return false;
+        }
+
     }
 
     public function calculateResult($temp_win_money, $win_money, $can_donate_money, $result_array, $n){
