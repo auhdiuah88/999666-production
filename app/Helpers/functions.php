@@ -45,6 +45,12 @@ function makeModel($where, $model){
             case 'like':
                 $model = $model->where($key, 'like', $item[1]);
                 break;
+            case '>':
+                $model = $model->where($key, '>', $item[1]);
+                break;
+            case '<':
+                $model = $model->where($key, '<', $item[1]);
+                break;
         }
     }
     return $model;

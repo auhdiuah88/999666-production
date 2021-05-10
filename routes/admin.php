@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 Route::any('/admin_login', 'Admin\AdminController@Login')->middleware(['admin_handle', 'params_decrypt']);
 Route::post("/admin_out", 'Admin\AdminController@Out')->middleware(['admin_handle', 'params_decrypt']);
 Route::get("/period/exportTask", "Admin\PeriodController@exportTask");
+Route::get("/period/exportSD", "Admin\PeriodController@exportSD");
+Route::post("/period/test", "Admin\PeriodController@test");
 Route::get("/user/exportUser", "Admin\UserController@exportUser");
 
 // 实时更新最新数据
@@ -189,6 +191,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::get("/findById", "PeriodController@findById");
             Route::post("/search", "PeriodController@searchPeriod");
             Route::get("/planTaskList", "PeriodController@planTaskList");
+            Route::post("/SDList", "PeriodController@getSDList");
         });
 
         // 订单列表

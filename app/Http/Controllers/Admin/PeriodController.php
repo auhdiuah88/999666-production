@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Admin;
 
 
+use App\Exports\SDReader;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\PeriodService;
 use Illuminate\Http\Request;
@@ -92,6 +93,30 @@ class PeriodController extends Controller
         }
     }
 
+    public function getSDList()
+    {
+        try{
+            $validator = Validator::make(request()->input(),
+                [
+                    'game_id' => ['required', 'integer', Rule::in(0,1,2,3,4)],
+                    'page' => ['required', 'integer', 'gte:1'],
+                    'size' => ['required', 'integer', Rule::in(1,50,100,200,400)]
+                ]
+            );
+            if($validator->fails())
+                return $this->AppReturn(402,$validator->errors()->first());
+            $this->PeriodService->getSDList();
+            return $this->AppReturn(
+                $this->PeriodService->_code,
+                $this->PeriodService->_msg,
+                $this->PeriodService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
     public function exportTask()
     {
         try{
@@ -112,4 +137,54 @@ class PeriodController extends Controller
             return $this->AppReturn(402,$e->getMessage());
         }
     }
+
+    public function exportSD()
+    {
+        try{
+            $validator = Validator::make(request()->input(),
+                [
+                    'game_id' => ['required', 'integer', Rule::in(0,1,2,3,4)],
+                    'page' => ['required', 'integer', 'gte:1'],
+                    'size' => ['required', 'integer', Rule::in(1,50,100,200,400)]
+                ]
+            );
+            if($validator->fails())
+                return $this->AppReturn(402,$validator->errors()->first());
+            $this->PeriodService->exportSD();
+            return Excel::download(new PlanTaskExport($this->PeriodService->_data), 'SD-DEMO-'. date('YmdHis') .'.xlsx');
+//            return response()->download($this->PeriodService->_data);
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function test()
+    {
+        if(!request()->hasFile('file')){
+            return $this->AppReturn(402,'请上传批量手动开奖excel文件');
+        }
+
+        $excelUrl =request()->file("file")->store("/public/storage/excel");
+        $items = Excel::toArray(new SDReader(),$excelUrl,"","");
+        if(empty($items) || !isset($items[0])){
+            return $this->AppReturn(402,'非标准手动开奖excel文件');
+        }
+        foreach($items[0] as $key => $val){
+            if($key == 0){
+                ##检查
+                if(count($val) != 6){
+                    return $this->AppReturn(402,'非标准手动开奖excel文件');
+                }
+            }
+            ##设置手动开奖结果
+            $period_id = intval($val[0]);
+            if($period_id <= 0)continue;
+            $prize_number = intval($val[4]);
+            if(!in_array($prize_number,[0,1,2,3,4,5,6,7,8,9]))continue;
+            $this->PeriodService->SDPrize($period_id, $prize_number);
+        }
+        return $this->AppReturn(200,'批量手动开奖设置成功');
+    }
+
 }

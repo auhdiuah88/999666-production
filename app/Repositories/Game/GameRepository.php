@@ -560,7 +560,7 @@ class GameRepository
     }
 
     public function Get_Game_play($id){
-        return $this->Cx_Game_Play->where("id", $id)->lockForUpdate()->first()->toArray();
+        return $this->Cx_Game_Play->where("id", $id)->first()->toArray();
     }
 
     public function Get_Config($game_id){

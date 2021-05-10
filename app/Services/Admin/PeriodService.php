@@ -6,6 +6,7 @@ namespace App\Services\Admin;
 
 use App\Repositories\Admin\PeriodRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\DB;
 
 class PeriodService extends BaseService
 {
@@ -61,6 +62,25 @@ class PeriodService extends BaseService
         $this->_data = $this->PeriodRepository->planTaskList($where, $size);
     }
 
+    public function getSDList()
+    {
+        $size = $this->sizeInput();
+        $game_id = $this->intInput('game_id');
+        $timeMap = request()->input('time',[]);
+        $where = [
+            'status' => ['=', 0],
+            'is_queue' => ['=', 0]
+        ];
+        if($game_id)
+            $where['game_id'] = ['=', $game_id];
+        if($timeMap){
+            $where['end_time'] = ['BETWEEN', $timeMap];
+        }else{
+            $where['end_time'] = ['>', time() + 20 * 60];
+        }
+        $this->_data = $this->PeriodRepository->planTaskList($where, $size);
+    }
+
     public function exportTask()
     {
         $size = $this->sizeInput();
@@ -83,6 +103,57 @@ class PeriodService extends BaseService
             '游戏类型',
         ]], $data);
         $this->_data = $result;
+    }
+
+    public function exportSD()
+    {
+        $size = $this->sizeInput();
+        $page = $this->pageInput();
+        $game_id = $this->intInput('game_id');
+        $start = request()->input('start_time',[]);
+        $end = request()->input('end_time',[]);
+        $where = [
+            'status' => ['=', 0],
+            'is_queue' => ['=', 0]
+        ];
+        if($game_id)
+            $where['game_id'] = ['=', $game_id];
+        if($start && $end){
+            $where['end_time'] = ['BETWEEN', [$start, $end]];
+        }else{
+            $where['end_time'] = ['>', time() + 20 * 60];
+        }
+        if($game_id)
+            $where['game_id'] = ['=', $game_id];
+        $data = $this->PeriodRepository->exportTask($where, $size, $page);
+        $result = array_merge([[
+            '期数ID',
+            '期数',
+            '开始时间',
+            '开奖时间',
+            '本期结果',
+            '游戏类型',
+        ]], $data);
+        $this->_data = $result;
+    }
+
+    public function SDPrize($period_id, $prize_number)
+    {
+        $where = [
+            'id' => ['=', $period_id],
+            'status' => ['=', 0],
+            'end_time' => ['>', time() + 10 * 60],
+            'is_status' => ['=', 0],
+            'is_queue' => ['=', 0]
+        ];
+        DB::beginTransaction();
+        try{
+            ##查询期数信息
+            $info = $this->PeriodRepository->getPeriodAndLock($where);
+        }catch(\Exception $e){
+            DB::rollBack();
+            return false;
+        }
     }
 
 }

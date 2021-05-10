@@ -201,4 +201,10 @@ class PeriodRepository extends BaseRepository
         }
         return $data;
     }
+
+    public function getPeriodAndLock($where)
+    {
+        return makeModel($where, $this->Cx_Game_Play)->sharedLock()->first();
+    }
+
 }
