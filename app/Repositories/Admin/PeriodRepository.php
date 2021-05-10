@@ -192,6 +192,7 @@ class PeriodRepository extends BaseRepository
             ->get();
         if($data->isEmpty())return [];
         $data = $data->toArray();
+        date_default_timezone_set("Asia/Shanghai");
         foreach($data as &$item){
             $item['number'] = "'" . (string)$item['number'];
             $item['start_time'] = date('Y-m-d H:i:s', $item['start_time']);
