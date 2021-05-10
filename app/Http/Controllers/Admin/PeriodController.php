@@ -170,6 +170,7 @@ class PeriodController extends Controller
         if(empty($items) || !isset($items[0])){
             return $this->AppReturn(402,'非标准手动开奖excel文件');
         }
+        print_r($items);die;
         foreach($items[0] as $key => $val){
             if($key == 0){
                 ##检查
