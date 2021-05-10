@@ -50,7 +50,7 @@ class PeriodService extends BaseService
 
     public function planTaskList()
     {
-        $size = $this->sizeInput();
+        $size = request()->input('size',50);
         $game_id = $this->intInput('game_id');
         $where = [
             'is_status' => ['=', 1],
@@ -64,7 +64,7 @@ class PeriodService extends BaseService
 
     public function getSDList()
     {
-        $size = $this->sizeInput();
+        $size = request()->input('size',50);
         $game_id = $this->intInput('game_id');
         $timeMap = request()->input('time',[]);
         $where = [
@@ -85,7 +85,7 @@ class PeriodService extends BaseService
 
     public function exportTask()
     {
-        $size = $this->sizeInput();
+        $size = request()->input('size',50);
         $page = $this->pageInput();
         $game_id = $this->intInput('game_id');
         $where = [
@@ -109,7 +109,7 @@ class PeriodService extends BaseService
 
     public function exportSD()
     {
-        $size = $this->sizeInput();
+        $size = request()->input('size',50);
         $page = $this->pageInput();
         $game_id = $this->intInput('game_id');
         $start = request()->input('start_time',[]);
