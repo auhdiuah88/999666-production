@@ -170,7 +170,6 @@ class PeriodController extends Controller
         if(empty($items) || !isset($items[0])){
             return $this->AppReturn(402,'非标准手动开奖excel文件');
         }
-        print_r($items);die;
         foreach($items[0] as $key => $val){
             if($key == 0){
                 ##检查
@@ -181,9 +180,7 @@ class PeriodController extends Controller
             ##设置手动开奖结果
             $period_id = intval($val[0]);
             if($period_id <= 0)continue;
-            $prize_number = $val[4];
-            if($prize_number == "")continue;
-            $prize_number = intval($prize_number);
+            $prize_number = intval($val[4]);
             if(!in_array($prize_number,[0,1,2,3,4,5,6,7,8,9]))continue;
             $this->PeriodService->SDPrize($period_id, $prize_number);
         }
