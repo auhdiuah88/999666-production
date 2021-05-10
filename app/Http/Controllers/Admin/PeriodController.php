@@ -159,13 +159,13 @@ class PeriodController extends Controller
         }
     }
 
-    public function test()
+    public function SDPrize()
     {
         if(!request()->hasFile('file')){
             return $this->AppReturn(402,'请上传批量手动开奖excel文件');
         }
 
-        $excelUrl =request()->file("file")->store("/public/storage/excel");
+        $excelUrl =request()->file("file")->store("/public/excel");
         $items = Excel::toArray(new SDReader(),$excelUrl,"","");
         if(empty($items) || !isset($items[0])){
             return $this->AppReturn(402,'非标准手动开奖excel文件');

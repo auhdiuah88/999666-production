@@ -150,6 +150,15 @@ class PeriodService extends BaseService
         try{
             ##查询期数信息
             $info = $this->PeriodRepository->getPeriodAndLock($where);
+            if(!$info){
+                throw new \Exception('期数不存在');
+            }
+            ##修改
+            $info->prize_number = $prize_number;
+            $info->is_status = 1;
+            $info->save();
+            DB::commit();
+            return true;
         }catch(\Exception $e){
             DB::rollBack();
             return false;

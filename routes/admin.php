@@ -26,7 +26,7 @@ Route::any('/admin_login', 'Admin\AdminController@Login')->middleware(['admin_ha
 Route::post("/admin_out", 'Admin\AdminController@Out')->middleware(['admin_handle', 'params_decrypt']);
 Route::get("/period/exportTask", "Admin\PeriodController@exportTask");
 Route::get("/period/exportSD", "Admin\PeriodController@exportSD");
-Route::post("/period/test", "Admin\PeriodController@test");
+
 Route::get("/user/exportUser", "Admin\UserController@exportUser");
 
 // 实时更新最新数据
@@ -38,6 +38,9 @@ Route::get("/withdrawal/auditnotice", "Admin\WithdrawalController@syncInRealtime
 Route::group(['middleware' => ['token', "auth"]], function () {
     //文件上传
     Route::post("/upload", "Admin\UploadController@upload");
+
+    //批量手动开奖
+    Route::post("/period/SDPrize", "Admin\PeriodController@SDPrize");
 });
 
 Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"]], function () {
