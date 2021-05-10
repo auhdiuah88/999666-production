@@ -52,7 +52,6 @@ class Ssc_ThreeService
         if($Is_Executive_Prize<=0){
             return false;
         }
-        DB::beginTransaction();
         try{
             ##获取本期的情况
             $game_play_info = $this->GameRepository->Get_Game_play($play_id);
@@ -99,10 +98,8 @@ class Ssc_ThreeService
             ##结算
             $this->Ki_Executive_Prize($calc['result'],$play_id, $calc['win_money'], $lostmoney, $type, $pt_money, $cur_betting_money);
 
-            DB::commit();
             return true;
         }catch(\Exception $e){
-            DB::rollBack();
             return false;
         }
 

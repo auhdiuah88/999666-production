@@ -200,7 +200,6 @@ class SscService
     }
 
     public function ssc_ki($play_id){
-        DB::beginTransaction();
         try{
             $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);
             if($Is_Executive_Prize<=0){
@@ -251,10 +250,9 @@ class SscService
             ##结算
             $this->Ki_Executive_Prize($calc['result'],$play_id, $calc['win_money'], $lostmoney, $type, $pt_money, $cur_betting_money);
             Log::channel('game_debug')->info("开奖成功debug",[$system]);
-            DB::commit();
+
             return true;
         }catch (\Exception $e){
-            DB::rollBack();
             $system=$this->GameRepository->Get_Game_Config($this->game_id);
             Log::channel('game_debug')->info("开奖失败debug",[$system]);
             return false;

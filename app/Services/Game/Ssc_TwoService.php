@@ -48,7 +48,6 @@ class Ssc_TwoService
     }
 
     public function ssc_ki($play_id){
-        DB::beginTransaction();
         try{
             $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);
             if($Is_Executive_Prize<=0){
@@ -99,10 +98,9 @@ class Ssc_TwoService
             ##结算
             $this->Ki_Executive_Prize($calc['result'],$play_id, $calc['win_money'], $lostmoney, $type, $pt_money, $cur_betting_money);
 
-            DB::commit();
             return true;
         }catch(\Exception $e){
-            DB::rollBack();
+
             return false;
         }
 
