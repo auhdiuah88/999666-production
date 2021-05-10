@@ -180,7 +180,9 @@ class PeriodController extends Controller
             ##设置手动开奖结果
             $period_id = intval($val[0]);
             if($period_id <= 0)continue;
-            $prize_number = intval($val[4]);
+            $prize_number = $val[4];
+            if(!$prize_number)continue;
+            $prize_number = intval($prize_number);
             if(!in_array($prize_number,[0,1,2,3,4,5,6,7,8,9]))continue;
             $this->PeriodService->SDPrize($period_id, $prize_number);
         }
