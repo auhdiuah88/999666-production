@@ -51,6 +51,9 @@ function makeModel($where, $model){
             case '<':
                 $model = $model->where($key, '<', $item[1]);
                 break;
+            case 'null':
+                $model = $model->whereNull($key);
+                break;
         }
     }
     return $model;

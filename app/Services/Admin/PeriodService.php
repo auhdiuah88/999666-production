@@ -69,7 +69,9 @@ class PeriodService extends BaseService
         $timeMap = request()->input('time',[]);
         $where = [
             'status' => ['=', 0],
-            'is_queue' => ['=', 0]
+            'is_queue' => ['=', 0],
+            'is_status' => ['=', 0],
+            'prize_number' => ['null','']
         ];
         if($game_id)
             $where['game_id'] = ['=', $game_id];
@@ -114,7 +116,9 @@ class PeriodService extends BaseService
         $end = request()->input('end_time',[]);
         $where = [
             'status' => ['=', 0],
-            'is_queue' => ['=', 0]
+            'is_queue' => ['=', 0],
+            'is_status' => ['=', 0],
+            'prize_number' => ['null','']
         ];
         if($game_id)
             $where['game_id'] = ['=', $game_id];
@@ -144,7 +148,7 @@ class PeriodService extends BaseService
             'status' => ['=', 0],
             'end_time' => ['>', time() + 10 * 60],
             'is_status' => ['=', 0],
-            'is_queue' => ['=', 0]
+            'is_queue' => ['=', 0],
         ];
         DB::beginTransaction();
         try{
