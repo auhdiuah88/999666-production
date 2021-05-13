@@ -83,7 +83,7 @@ class Matthew extends PayStrategy
         ];
         $header = [
             'Content-Type: application/json',
-            'Authorization: Basic'.base64_encode('60371540'.':'.'02f32e264e6c6decc113e90844844422'), //添加头，在name和pass处填写对应账号密码
+            'Authorization: Basic'.base64_encode($this->rechargeMerchantID.':'.$this->rechargeSecretkey), //添加头，在name和pass处填写对应账号密码
             'Content-Length: ' . strlen(json_encode($en))
         ];
         \Illuminate\Support\Facades\Log::channel('mytest')->info('matthew_rechargeOrder', $header);
