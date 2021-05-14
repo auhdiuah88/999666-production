@@ -166,7 +166,7 @@ class Wowpay extends PayStrategy
             $this->_msg = $res['errorMsg'];
             return false;
         }
-        if ($res['tradeResult'] != 1) {
+        if ($res['tradeResult'] != 0) {
             $this->_msg = '代付请求失败';
             return false;
         }
