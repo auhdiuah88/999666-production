@@ -58,7 +58,7 @@ class Wowpay extends PayStrategy
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_sign', [$sign]);
+//        \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_sign', [$sign]);
         return strtolower(md5($sign));
     }
 
