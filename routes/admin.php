@@ -34,6 +34,7 @@ Route::get("/period/newests", "Admin\PeriodController@syncInRealtime");
 Route::get("/betting/newests", "Admin\BettingController@syncInRealtime");
 Route::get("/withdrawal/auditlist", "Admin\WithdrawalController@syncInRealtime");
 Route::get("/withdrawal/auditnotice", "Admin\WithdrawalController@syncInRealtimeNotice");
+Route::get("/recharge/auditnotice", "Admin\RechargeController@syncInRealtimeNotice");
 
 Route::group(['middleware' => ['token', "auth"]], function () {
     //文件上传

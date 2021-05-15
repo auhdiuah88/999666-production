@@ -4,16 +4,22 @@
 namespace App\Repositories\Admin;
 
 
+use App\Models\Cx_Direct_Recharge_logs;
 use App\Models\Cx_User_Recharge_Logs;
 use App\Repositories\BaseRepository;
 
 class RechargeRepository extends BaseRepository
 {
-    private $Cx_User_Recharge_Logs;
+    private $Cx_User_Recharge_Logs, $Cx_Direct_Recharge_logs;
 
-    public function __construct(Cx_User_Recharge_Logs $cx_User_Recharge_Logs)
+    public function __construct
+    (
+        Cx_User_Recharge_Logs $cx_User_Recharge_Logs,
+        Cx_Direct_Recharge_logs $cx_Direct_Recharge_logs
+    )
     {
         $this->Cx_User_Recharge_Logs = $cx_User_Recharge_Logs;
+        $this->Cx_Direct_Recharge_logs = $cx_Direct_Recharge_logs;
     }
 
     public function findAll($offset, $limit, $status)
@@ -67,5 +73,10 @@ class RechargeRepository extends BaseRepository
     public function countSearchChargeLogs($data)
     {
         return $this->whereCondition($data, $this->Cx_User_Recharge_Logs)->count("id");
+    }
+
+    public function getNewest()
+    {
+        return $this->Cx_Direct_Recharge_logs->where('status', 0)->orderByDesc("id")->first(['created_at', 'id']);
     }
 }

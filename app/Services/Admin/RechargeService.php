@@ -39,4 +39,13 @@ class RechargeService extends BaseService
     {
         $this->_data = $this->UserRepository->findById($id);
     }
+
+    public function getNewest()
+    {
+        $result = $this->RechargeRepository->getNewest();
+        if (!$result) {
+            return ['create_at' => 0, 'id' => 0];
+        }
+        return $result;
+    }
 }
