@@ -39,11 +39,11 @@ class HXpay extends PayStrategy
 
         $this->withdrawMerchantID = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['merchant_id']:"";
         $this->withdrawSecretkey = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['secret_key']:"";
-        $this->WITHDRAW_MERCHANT_SECRET_KEY = $withdrawConfig['public_key'];
+        $this->WITHDRAW_MERCHANT_SECRET_KEY = isset($withdrawConfig[$this->company])?$withdrawConfig[$this->company]['public_key']:"";
 
         $this->rechargeMerchantID = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['merchant_id']:"";
         $this->rechargeSecretkey = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['secret_key']:"";
-        $this->RECHARGE_MERCHANT_ACCESS_KEY = $rechargeConfig['public_key'];
+        $this->RECHARGE_MERCHANT_ACCESS_KEY = isset($rechargeConfig[$this->company])?$rechargeConfig[$this->company]['public_key']:"";
 
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
