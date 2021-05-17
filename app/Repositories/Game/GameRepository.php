@@ -1127,6 +1127,7 @@ class GameRepository
             if(!$pr_lx->isEmpty()){
                 Redis::setex("PR_LX_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($pr_lx));
             }
+            return $pr_lx;
         };
         $pr_lx = Redis::get("PR_LX_GAME_PLAY_{$id}");
         if(!$pr_lx){
