@@ -1102,34 +1102,43 @@ class GameRepository
 
     public function getPreGamePlay($game_play, $id, $time)
     {
+        $func = function()use($game_play, $id, $time){
+            return $this->Cx_Game_Play->where("game_id", $id)->where('id', '<', $game_play->id)->orderByDesc('id')->first();
+        };
         $sq_game = Redis::get("PRE_GAME_PLAY_{$id}");
         if(!$sq_game){
-            $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('id', '<', $game_play->id)->orderByDesc('id')->first();
+            $sq_game = $func();
             if($sq_game && $sq_game->prize_number){
                 Redis::setex("PRE_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($sq_game));
-            }else{
-                sleep(1);
-                $sq_game = $this->Cx_Game_Play->where("game_id", $id)->where('id', '<', $game_play->id)->orderByDesc('id')->first();
-                if($sq_game){
-                    Redis::setex("PRE_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($sq_game));
-                }
             }
         }else{
             $sq_game = json_decode($sq_game);
+            if($sq_game->prize_number == ''){
+                $sq_game = $func();
+            }
         }
         return $sq_game;
     }
 
     public function getPrLx($game_play, $id, $time)
     {
-        $pr_lx = Redis::get("PR_LX_GAME_PLAY_{$id}");
-        if(!$pr_lx){
+        $func = function()use($game_play, $id, $time){
             $pr_lx = $this->Cx_Game_Play->select("number","prize_number","type")->where("game_id", $id)->where("id", "<",$game_play->id)->orderBy('start_time', 'desc')->limit(10)->get();
             if(!$pr_lx->isEmpty()){
                 Redis::setex("PR_LX_GAME_PLAY_{$id}", ($game_play->end_time-$time), json_encode($pr_lx));
             }
+        };
+        $pr_lx = Redis::get("PR_LX_GAME_PLAY_{$id}");
+        if(!$pr_lx){
+            $pr_lx = $func();
         }else{
             $pr_lx = json_decode($pr_lx);
+            foreach($pr_lx as $item){
+                if($item->prize_number == ''){
+                    $pr_lx = $func();
+                    break;
+                }
+            }
         }
         return $pr_lx;
     }
