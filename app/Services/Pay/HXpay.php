@@ -103,6 +103,7 @@ class HXpay extends PayStrategy
         }
         $native_url = $res['data']['pay_url'];
         $resData = [
+            'pay_type' => $pay_type,
             'out_trade_no' => $order_no,
             'order_no' => $order_no,
             'native_url' => $native_url,
