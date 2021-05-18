@@ -59,7 +59,7 @@ class RequestRechargeController extends Controller
                     'id' => ['required', 'integer', 'gte:1'],
                     'status' => ['required', 'integer', Rule::in(1,2)],
                     'message' => ['max:100'],
-                    'real_money' => ['numeric', 'gte:0', 'lte:10000000']
+                    'real_money' => ['numeric', 'gte:0', 'lte:100000000']
                 ]
             );
             if($validator->fails())
