@@ -145,8 +145,8 @@ class HXpay extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
-        $money = $withdrawalRecord['real_num'];    // 打款金额
-        $order_no = $withdrawalRecord['out_trade_no'];
+        $money = $withdrawalRecord->payment;    // 打款金额
+        $order_no = $withdrawalRecord->order_no;
         $params = [
             'merchant_sn' => $this->withdrawMerchantID,
             'order_sn' => $order_no,
