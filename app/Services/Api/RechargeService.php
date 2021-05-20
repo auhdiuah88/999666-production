@@ -292,7 +292,7 @@ class RechargeService extends PayService
     public function requestDirectRecharge()
     {
         ##检查用户未审核的申请
-        if($this->rechargeRepository->requestDirectRechargeNum(['user_id'=>['=', request()->get('userInfo')['id']], 'status'=>0]) >= 5)
+        if($this->rechargeRepository->requestDirectRechargeNum(['user_id'=>['=', request()->get('userInfo')['id']], 'status'=>['=', 0]]) >= 5)
         {
             $this->_code = 402;
             $this->_msg = 'There are currently 5 pending applications, Please try again later';
