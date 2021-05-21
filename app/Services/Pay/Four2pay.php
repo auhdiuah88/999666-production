@@ -48,12 +48,16 @@ class Four2pay extends PayStrategy
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
-    public  function generateSign($u, $id, $je, $sp, $type=1)
+    public  function generateSign($params, $type=1)
     {
         $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
-        $str = $u . $id . $je . $sp . $secretKey;
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeParamsStr', [$str]);
-        return md5($u . $id . $je . $sp . $secretKey);
+        $str = '';
+        foreach($params as $val){
+            $str .= $val;
+        }
+        $str .= $secretKey;
+//        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeParamsStr', [$str]);
+        return md5($str);
     }
 
     protected function makeNative($params, $url)
@@ -81,7 +85,13 @@ class Four2pay extends PayStrategy
             'pm' => 'c1401',
             'json' => 0,
         ];
-        $params['sign'] = $this->generateSign($params['u'], $params['id'], urldecode($params['je']), urldecode($params['sp']),1);
+        $signParam = [
+            'u' => $params['u'],
+            'id' => $params['id'],
+            'je' => urldecode($params['je']),
+            'sp' => urldecode($params['sp'])
+        ];
+        $params['sign'] = $this->generateSign($signParam,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeParams', [$params]);
 
@@ -116,25 +126,23 @@ class Four2pay extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeCallback',$request->input());
 
-        if ($request->tradeResult != 1)  {
-            $this->_msg = 'WOW-recharge-交易未完成';
-            return false;
-        }
         // 验证签名
-        $params = $request->post();
+        $params = $request->input();
         $sign = $params['sign'];
-        unset($params['sign']);
-        unset($params['type']);
-        unset($params['signType']);
-        if ($this->generateSign($params,1) <> $sign) {
-            $this->_msg = 'WOW-签名错误';
+        $signParam = [
+            'ordered' => $params['orderid'],
+            'amount' => $params['amount'],
+            'payno' => $params['payno'],
+        ];
+        if ($this->generateSign($signParam,1) <> $sign) {
+            $this->_msg = 'four-签名错误';
             return false;
         }
-        $this->amount = $request->amount;
+        $this->amount = $request->amount / 100;
         $where = [
-            'order_no' => $request->mchOrderNo,
+            'order_no' => $request->orderid,
         ];
         return $where;
     }
