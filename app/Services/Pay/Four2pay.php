@@ -126,7 +126,7 @@ class Four2pay extends PayStrategy
             'order_no' => $order_no,
             'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
-            'pltf_order_id' => $res['data']['trade_no'],
+            'pltf_order_id' => '',
             'verify_money' => '',
             'match_code' => '',
             'is_post' => isset($is_post)?$is_post:0
