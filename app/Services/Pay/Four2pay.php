@@ -79,7 +79,7 @@ class Four2pay extends PayStrategy
             'cb' => urlencode($this->recharge_callback_url),
             'notify_url' => $this->recharge_callback_url,
             'pm' => 'c1401',
-            'json' => 1,
+            'json' => 0,
         ];
         $params['sign'] = $this->generateSign($params['u'], $params['id'], urldecode($params['je']), urldecode($params['sp']),1);
 
