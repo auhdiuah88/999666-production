@@ -79,7 +79,7 @@ class Four2pay extends PayStrategy
             'pm' => 'c1401',
             'json' => 1,
         ];
-        $params['sign'] = $this->generateSign($params['u'], $params['je'], $params['sp'],1);
+        $params['sign'] = $this->generateSign($params['u'], urldecode($params['je']), urldecode($params['sp']),1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeParams', [$params]);
 
@@ -93,7 +93,7 @@ class Four2pay extends PayStrategy
 //            $this->_msg = 'request recharge failed';
 //            return false;
 //        }
-        $native_url = $this->makeNative($params, self::$url);
+        $native_url = $this->makeNative($params, self::$url . 'pay_index.php');
 
         $resData = [
             'out_trade_no' => $order_no,
