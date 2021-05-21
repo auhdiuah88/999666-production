@@ -51,6 +51,8 @@ class Four2pay extends PayStrategy
     public  function generateSign($u, $id, $je, $sp, $type=1)
     {
         $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
+        $str = $u . $id . $je . $sp . $secretKey;
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeParamsStr', [$str]);
         return md5($u . $id . $je . $sp . $secretKey);
     }
 
