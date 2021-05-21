@@ -60,6 +60,22 @@ class Four2pay extends PayStrategy
         return md5($str);
     }
 
+    /**
+     * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
+     */
+    public  function generateSign2(array $params, $type=2)
+    {
+        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
+        ksort($params);
+        $string = [];
+        foreach ($params as $key => $value) {
+            if(!empty($value))
+                $string[] = $key . '=' . $value;
+        }
+        $sign = (implode('&', $string)) . '&key=' .  $secretKey;
+        return strtolower(md5($sign));
+    }
+
     protected function makeNative($params, $url)
     {
         $url .= "?";
@@ -95,17 +111,13 @@ class Four2pay extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeParams', [$params]);
 
-//        $res = $this->requestService->postFormData(self::$url . 'pay_index.php' , $params);
-//        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeOrder_return', [$res]);
-//        if ($res['respCode'] != 'SUCCESS') {
-//            $this->_msg = $res['tradeMsg'];
-//            return false;
-//        }
-//        if($res['tradeResult'] != 1){
-//            $this->_msg = 'request recharge failed';
-//            return false;
-//        }
-        $native_url = $this->makeNative($params, self::$url . 'pay_index.php');
+        $res = $this->requestService->get(self::$url . 'pay_index.php' , $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeOrder_return', [$res]);
+        if ($res['status'] != 1) {
+            $this->_msg = $res['message'];
+            return false;
+        }
+        $native_url = $res['data']['pay_url'];
 
         $resData = [
             'out_trade_no' => $order_no,
@@ -113,8 +125,8 @@ class Four2pay extends PayStrategy
             'order_no' => $order_no,
             'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
-            'pltf_order_id' => '',
-            'verify_money' => '',
+            'pltf_order_id' => $res['data']['trade_no'],
+            'verify_money' => $res['data']['amount'],
             'match_code' => '',
             'is_post' => isset($is_post)?$is_post:0
         ];
@@ -155,32 +167,30 @@ class Four2pay extends PayStrategy
         $money = $withdrawalRecord->payment;    // 打款金额
         $order_no = $withdrawalRecord->order_no;
         $params = [
-            'mch_id' => $this->withdrawMerchantID,
-            'mch_transferId' => $order_no,
-            'transfer_amount' => (string)intval($money),
-            'apply_date' => date('Y-m-d H:i:s'),
-            'bank_code' => 'IDPT0001',
-            'receive_name' => $withdrawalRecord->account_holder,
-            'receive_account' => $withdrawalRecord->bank_number,
-            'remark' => $withdrawalRecord->ifsc_code,
-            'back_url' => $this->withdrawal_callback_url,
-            'receiver_telephone' => $withdrawalRecord->phone,
+            'uid' => $this->withdrawMerchantID,
+            'thirdId' => $order_no,
+            'amount' => $money * 100,
+            'name' => $withdrawalRecord->account_holder,
+            'account' => $withdrawalRecord->bank_number,
+            'ifsc' => $withdrawalRecord->ifsc_code,
+            'callback' => $this->withdrawal_callback_url,
+            'pay_code' => 'c1704',
+            'bank' => $withdrawalRecord->bank_name,
         ];
-        $params['sign'] = $this->generateSign($params,2);
-        $params['sign_type'] = 'MD5';
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_withdrawalParams',$params);
-        $res = $this->requestService->postFormData(self::$url_cashout, $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_withdrawalReturn',[$res]);
-        if ($res['respCode'] != 'SUCCESS') {
-            $this->_msg = $res['errorMsg'];
+        $params['sign'] = $this->generateSign2($params,2);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_withdrawalParams',$params);
+        $res = $this->requestService->get(self::$url_cashout . 'df_query.php', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_withdrawalReturn',[$res]);
+        if ($res['status'] != 1) {
+            $this->_msg = $res['message'];
             return false;
         }
-        if ($res['tradeResult'] != 0) {
+        if ($res['data'] != 'ok') {
             $this->_msg = '代付请求失败';
             return false;
         }
         return  [
-            'pltf_order_no' => $res['tradeNo'],
+            'pltf_order_no' => '',
             'order_no' => $order_no
         ];
     }
@@ -190,33 +200,32 @@ class Four2pay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('four_withdrawalCallback',$request->input());
 
         $pay_status = 0;
-        $status = (string)($request->tradeResult);
+        $status = (string)($request->stat);
         if($status == 1){
             $pay_status= 1;
-        }
-        if($status == 2){
+        }else{
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'WOW-withdrawal-交易未完成';
+            $this->_msg = 'four-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
-        $params = $request->post();
+        $params = $request->input();
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
         unset($params['signType']);
-        if ($this->generateSign($params,2) <> $sign) {
-            $this->_msg = 'WOW-签名错误';
+        if ($this->generateSign2($params,2) <> $sign) {
+            $this->_msg = 'four-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $request->merTransferId,
-            'plat_order_id' => $request->tradeNo,
+            'order_no' => $request->orderid,
+            'plat_order_id' => $request->payno,
             'pay_status' => $pay_status
         ];
         return $where;
