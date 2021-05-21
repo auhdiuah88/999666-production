@@ -92,7 +92,7 @@ class Four2pay extends PayStrategy
     {
         $order_no = self::onlyosn();
         $params = [
-            'u' => '85',
+            'u' => $this->rechargeMerchantID,
             'id' => $order_no,
             'je' => $money * 100,
             'sp' => urlencode("customer recharge"),
@@ -126,8 +126,8 @@ class Four2pay extends PayStrategy
             'order_no' => $order_no,
             'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
-            'pltf_order_id' => '',
-            'verify_money' => '',
+            'pltf_order_id' => $res['data']['trade_no'],
+            'verify_money' => $res['data']['amount'] / 100,
             'match_code' => '',
             'is_post' => isset($is_post)?$is_post:0
         ];
