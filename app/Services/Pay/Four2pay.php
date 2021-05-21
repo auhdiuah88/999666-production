@@ -79,7 +79,7 @@ class Four2pay extends PayStrategy
             'pm' => 'c1401',
             'json' => 1,
         ];
-        $params['sign'] = $this->generateSign($params['u'], $params['u'], urldecode($params['je']), urldecode($params['sp']),1);
+        $params['sign'] = $this->generateSign($params['u'], $params['id'], urldecode($params['je']), urldecode($params['sp']),1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeParams', [$params]);
 
