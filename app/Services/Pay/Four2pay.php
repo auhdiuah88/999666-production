@@ -180,6 +180,7 @@ class Four2pay extends PayStrategy
         $params['sign'] = $this->generateSign2($params,2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_withdrawalParams',$params);
         $url = $this->makeNative($params,self::$url_cashout . 'df_query.php');
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_withdrawalUrl',[$url]);
         $res = $this->requestService->get($url);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_withdrawalReturn',[$res]);
         if ($res['status'] != 1) {
