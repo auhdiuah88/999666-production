@@ -110,8 +110,9 @@ class Four2pay extends PayStrategy
         $params['sign'] = $this->generateSign($signParam,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeParams', [$params]);
-
-        $res = $this->requestService->get(self::$url . 'pay_index.php' , $params);
+        $url = $this->makeNative($params, self::$url . 'pay_index.php');
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeOrder_url', [$url]);
+        $res = $this->requestService->get( $url, []);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('four2_rechargeOrder_return', [$res]);
         if ($res['status'] != 1) {
             $this->_msg = $res['message'];
