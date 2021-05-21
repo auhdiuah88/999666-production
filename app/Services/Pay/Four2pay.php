@@ -25,7 +25,7 @@ class Four2pay extends PayStrategy
     public $rechargeRtn = 'success';
     public $withdrawRtn = 'success';
 
-    public $company = 'WOWpay';   // 支付公司名
+    public $company = 'Four2';   // 支付公司名
 
     public function _initialize()
     {
