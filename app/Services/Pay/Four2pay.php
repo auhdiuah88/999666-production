@@ -98,7 +98,7 @@ class Four2pay extends PayStrategy
             'sp' => urlencode("customer recharge"),
             'cb' => urlencode($this->recharge_callback_url),
             'pm' => 'c1401',
-            'json' => 0,
+            'json' => 1,
         ];
         $signParam = [
             'u' => $params['u'],
@@ -118,6 +118,7 @@ class Four2pay extends PayStrategy
             return false;
         }
         $native_url = $res['data']['pay_url'];
+//        $native_url = $this->makeNative($params, self::$url . 'pay_index.php');
 
         $resData = [
             'out_trade_no' => $order_no,
@@ -125,8 +126,8 @@ class Four2pay extends PayStrategy
             'order_no' => $order_no,
             'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
-            'pltf_order_id' => $res['data']['trade_no'],
-            'verify_money' => $res['data']['amount'],
+            'pltf_order_id' => '',
+            'verify_money' => '',
             'match_code' => '',
             'is_post' => isset($is_post)?$is_post:0
         ];
