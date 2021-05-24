@@ -124,6 +124,14 @@ class SystemController extends Controller
                     'language' => 'vn'
                 ];
                 break;
+            case 'br':
+                $lang[] = [
+                    'text' => 'Brasil',
+                    'color' => 'blue',
+                    'fontSize' => 28,
+                    'language' => 'br'
+                ];
+                break;
         }
         return $this->AppReturn(
             200,
