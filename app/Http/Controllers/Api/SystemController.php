@@ -144,7 +144,8 @@ class SystemController extends Controller
     {
         $currency_arr = [
             'india' => '₹',
-            'vn' => '₫'
+            'vn' => '₫',
+            'br' => 'R$',
         ];
         $country = env('COUNTRY','india');
         $currency = $currency_arr[$country];
