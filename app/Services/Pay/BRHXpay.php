@@ -230,7 +230,7 @@ class BRHXpay extends PayStrategy
             $this->_msg = "prepay failed";
             return false;
         }
-        $native_url = $res['data']['pay_url'];
+        $native_url = $res['pay_url'];
         $resData = [
             'pay_type' => $pay_type,
             'out_trade_no' => $order_no,
