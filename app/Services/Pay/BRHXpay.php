@@ -338,7 +338,7 @@ class BRHXpay extends PayStrategy
             $pay_status= 1;
         }
         if($status == -1 || $status == 3){
-            $pay_status = 2;
+            $pay_status = 3;
         }
         if ($pay_status == 0) {
             $this->_msg = 'BRHX-withdrawal-交易未完成';
