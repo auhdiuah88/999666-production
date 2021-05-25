@@ -258,7 +258,7 @@ class BRHXpay extends PayStrategy
         }
         // 验证签名
         $sign = $params['sign'];
-        if ($this->generateSIgn($params['mer_no'], $params['mer_order_no']) <> $sign) {
+        if ($this->generateSIgn($params['mer_order_no']) <> $sign) {
             $this->_msg = 'BRHX-签名错误';
             return false;
         }
