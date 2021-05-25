@@ -513,6 +513,9 @@ class UserService
             case 'vn':
                 $type = 2;
                 break;
+            case 'br':
+                $type = 3;
+                break;
         }
         $where['type'] = ['=', $type];
         return $this->UserRepository->bankList($where);

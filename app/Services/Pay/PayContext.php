@@ -40,7 +40,8 @@ class PayContext
         Fypay $fypay,
         Wowpay $wowpay,
         HXpay $HXpay,
-        Four2pay $four2pay
+        Four2pay $four2pay,
+        BRHXpay $BRHXpay
     )
     {
         // 每种api地址对应的支付公司
@@ -72,6 +73,7 @@ class PayContext
             'WOWpay' => $wowpay,  //印度wow支付
             'HXpay' => $HXpay,  //印度hxpay
             'Four2' => $four2pay,  //印度four2
+            'BRHX' => $BRHXpay,  //巴西hx
         ];
     }
     /**
