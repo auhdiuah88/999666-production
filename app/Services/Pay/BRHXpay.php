@@ -226,7 +226,7 @@ class BRHXpay extends PayStrategy
         $res =dopost(self::$url . 'poi/pay/index/PayOrderCreate', $params_string, $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('BRHX_return',[$res]);
         $res = json_decode($res,true);
-        if (!$res || $res['code'] != 0) {
+        if (!$res || $res['code'] != 1) {
             $this->_msg = "prepay failed";
             return false;
         }
