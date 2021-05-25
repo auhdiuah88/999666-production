@@ -297,6 +297,7 @@ class BRHXpay extends PayStrategy
             'cpf' => $withdrawalRecord->bank_number,
             'bank_code' => $withdrawalRecord->ifsc_code,
             'bank_encrypt' => $bank_code,
+            'notifyurl' => $this->withdrawal_callback_url
         ];
         $params['sign'] = $this->generateSIgn($order_no,2);
         $params_string = json_encode($params);
