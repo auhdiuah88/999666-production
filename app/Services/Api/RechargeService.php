@@ -73,7 +73,6 @@ class RechargeService extends PayService
         }
         if(in_array($payProvide, $strategyClass->vnPayArray)){
             $strategyClass->rechargeType = $request->charge_type;
-            $strategyClass->bankName = $request->bank_name;
         }
         $result = $strategyClass->rechargeOrder($pay_type, $money);
         if (!$result) {

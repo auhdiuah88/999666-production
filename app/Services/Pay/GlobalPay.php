@@ -198,8 +198,8 @@ class GlobalPay extends PayStrategy
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')
         ];
-        if($this->bankName && isset($this->banks[$this->bankName])){
-            $params['bankCode'] = $this->banks[$this->bankName]['bankName'];
+        if(in_array($this->rechargeType, [1,5])){
+            $params['bankCode'] = 'BIDV';
         }
         $params['sign'] = $this->generateSignRigorous($params,1);
 
