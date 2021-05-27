@@ -266,14 +266,29 @@ class TongLinkPay extends PayStrategy
         return $resData;
     }
 
+    public function getUrlParam($a){
+        $res = array();
+        foreach ($a as $k => $v) {
+            $arr = explode('=', $v);
+            $res[$arr[0]] = $arr[1];
+        }
+        return $res;
+    }
+
     /**
      * 充值回调
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback',$request->input());
+//        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback',$request->input());
         \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback',[$request->getQueryString()]);
-        $params = $request->input();
+        $params = $request->getQueryString();
+        $params = urldecode($params);
+        $arr = explode("?", $params);
+        $a = $this->getUrlParam(explode("&", $arr[0]));
+        $b = $this->getUrlParam(explode("&", $arr[1]));
+        $params = array_merge($a,$b);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback2',[$params]);
         if ($params['status'] != 'SUCCESS')  {
             $this->_msg = 'TongLink-recharge-交易未完成';
             return false;
