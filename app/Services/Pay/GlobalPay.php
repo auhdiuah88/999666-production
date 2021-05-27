@@ -111,7 +111,7 @@ class GlobalPay extends PayStrategy
         ],
         'DongABank' => [
             'bankId' => 145,
-            'bankName' => 'OCB'
+            'bankName' => 'Dong'
         ],
         'GPBank' => [
             'bankId' => 970408,
@@ -200,10 +200,10 @@ class GlobalPay extends PayStrategy
         ];
         $params['sign'] = $this->generateSignRigorous($params,1);
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder', [$params]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('GlobalPay_rechargeOrder', [$params]);
 
         $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder_return', [$res]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('GlobalPay_rechargeOrder_return', [$res]);
         if ($res['status'] != 'SUCCESS') {
             $this->_msg = $res['err_msg'];
             return false;
@@ -232,10 +232,10 @@ class GlobalPay extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('GlobalPay_rechargeCallback',$request->post());
 
         if ($request->status != 'SUCCESS')  {
-            $this->_msg = 'VNMTB-recharge-交易未完成';
+            $this->_msg = 'GlobalPay-recharge-交易未完成';
             return false;
         }
         // 验证签名
@@ -244,7 +244,7 @@ class GlobalPay extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,1) <> $sign) {
-            $this->_msg = 'VNMTB-签名错误';
+            $this->_msg = 'GlobalPay-签名错误';
             return false;
         }
 
@@ -285,9 +285,9 @@ class GlobalPay extends PayStrategy
             'notifyUrl' => $this->withdrawal_callback_url
         ];
         $params['sign'] = $this->generateSignRigorous($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalOrder',$params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('GlobalPay_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleOrder', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalOrder',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('GlobalPay_withdrawalOrder',$res);
         if ($res['status'] != 'SUCCESS') {
             $this->_msg = $res['err_msg'];
             return false;
@@ -303,7 +303,7 @@ class GlobalPay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('GlobalPay_withdrawalCallback',$request->post());
 
         $pay_status = 0;
         $status = (string)($request->status);
@@ -314,7 +314,7 @@ class GlobalPay extends PayStrategy
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'VNMTBpay-withdrawal-交易未完成';
+            $this->_msg = 'GlobalPay-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
@@ -323,7 +323,7 @@ class GlobalPay extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,2) <> $sign) {
-            $this->_msg = 'VNMTBpay-签名错误';
+            $this->_msg = 'GlobalPay-签名错误';
             return false;
         }
         $where = [
@@ -332,35 +332,6 @@ class GlobalPay extends PayStrategy
             'pay_status' => $pay_status
         ];
         return $where;
-    }
-
-    protected function makeRequestNo($withdraw_id){
-        return date('YmdDis') . $withdraw_id;
-    }
-
-    /**
-     * 请求待付状态
-     * @param $withdrawalRecord
-     * @return array|false|mixed|string
-     */
-    public function callWithdrawBack($withdrawalRecord){
-        $request_no = $this->makeRequestNo($withdrawalRecord->id);
-        $request_time = date("YmdHis");
-        $mer_no = $this->merchantID;
-        $mer_order_no = $withdrawalRecord->order_no;
-
-        $params = compact('request_no','request_time','mer_no','mer_order_no');
-        $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Param',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
-        if(!$res){
-            return false;
-        }
-        if($res['query_status'] != 'SUCCESS'){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Err',$res);
-            return false;
-        }
-        return $res;
     }
 
 }
