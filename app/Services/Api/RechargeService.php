@@ -133,7 +133,7 @@ class RechargeService extends PayService
             $this->_msg = 'can not find pay Provide';
             return false;
         }
-        if(strpos($payProvide, 'TongLink')){
+        if(strpos($payProvide, 'TongLink') !== false){
             $payProvide = 'TongLink';
         }
         $strategyClass = $this->payContext->getStrategy($payProvide);  // 获取支付提供商类
