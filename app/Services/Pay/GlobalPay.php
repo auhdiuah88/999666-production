@@ -247,7 +247,7 @@ class GlobalPay extends PayStrategy
             $this->_msg = 'GlobalPay-签名错误';
             return false;
         }
-
+        $this->amount = $params['pay_amount'];
         $where = [
             'order_no' => $request->mer_order_no,
         ];
