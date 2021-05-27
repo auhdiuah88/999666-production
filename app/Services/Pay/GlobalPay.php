@@ -212,10 +212,7 @@ class GlobalPay extends PayStrategy
             return false;
         }
         $native_url = $res['order_data'];
-        if(strpos($native_url,"POST;") == 0){
-            $native_url = str_replace('POST;','',$native_url);
-            $is_post = 1;
-        }
+
         $resData = [
             'out_trade_no' => $order_no,
             'pay_type' => $pay_type,
