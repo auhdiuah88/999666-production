@@ -42,7 +42,8 @@ class PayContext
         HXpay $HXpay,
         Four2pay $four2pay,
         BRHXpay $BRHXpay,
-        GlobalPay $globalPay
+        GlobalPay $globalPay,
+        TongLinkPay $tongLinkPay
     )
     {
         // 每种api地址对应的支付公司
@@ -76,6 +77,7 @@ class PayContext
             'Four2' => $four2pay,  //印度four2
             'BRHX' => $BRHXpay,  //巴西hx
             'globalpay' => $globalPay,  //印度-》前惠众 换了网关
+            'TongLink' => $tongLinkPay,  //巴西tonglink
         ];
     }
     /**
