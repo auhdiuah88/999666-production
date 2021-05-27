@@ -326,7 +326,7 @@ class TongLinkPay extends PayStrategy
         $params['sign'] = $this->generateWithdrawSign($params);
         $header[] = "Content-Type: application/x-www-form-urlencoded";
         \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdraw_params',[$params]);
-        $res =dopost(self::$url_cashout, $params, $header);
+        $res =dopost(self::$url_cashout, http_build_query($params), $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdraw_return',[$res]);
 
         if(!$res || $res != 'SUCCESS'){
