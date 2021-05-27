@@ -206,8 +206,8 @@ class TongLinkPay extends PayStrategy
     }
 
     public function generateWithdrawSign($params){
-        ksort($params);
         $params['privateKey'] = $this->withdrawSecretkey;
+        ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
             if($value != '')
