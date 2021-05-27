@@ -359,11 +359,11 @@ class TongLinkPay extends PayStrategy
             return false;
         }
         $pay_status = 0;
-        $status = (int)$params['status'];
-        if($status == 'SUCCESS'){
+        $status = $params['status'];
+        if($status === 'SUCCESS'){
             $pay_status= 1;
         }
-        if($status == 'FAILE'){
+        if($status === 'FAILE'){
             $pay_status = 3;
         }
         if ($pay_status == 0) {
