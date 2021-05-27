@@ -85,12 +85,13 @@ class GlobalPay extends PayStrategy
             'busi_code' => 'UPI',
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
+            'pageUrl' => env('SHARE_URL')
         ];
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder', [$params]);
 
-        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
+        $res = $this->requestService->postFormData(self::$url . 'ty/orderPay' , $params);
         if ($res['status'] != 'SUCCESS') {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
