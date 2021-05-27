@@ -324,11 +324,9 @@ class TongLinkPay extends PayStrategy
             'cardno' => $withdrawalRecord->bank_number,
         ];
         $params['sign'] = $this->generateWithdrawSign($params);
-        $params_string = json_encode($params);
-        $header[] = "Content-Type: application/json";
-        $header[] = "Content-Length: " . strlen($params_string);
+        $header[] = "Content-Type: application/x-www-form-urlencoded";
         \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdraw_params',[$params]);
-        $res =dopost(self::$url_cashout . 'poi/dai/index/DaiOrderCreate', $params_string, $header);
+        $res =dopost(self::$url_cashout, $params, $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdraw_return',[$res]);
 
         if(!$res || $res != 'SUCCESS'){
