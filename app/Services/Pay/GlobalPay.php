@@ -45,8 +45,8 @@ class GlobalPay extends PayStrategy
 
     protected $rechargeTypeList = [
         '1' => '100103',
-        '2' => 'MoMoPay',
-        '3' => 'ZaloPay',
+        '2' => '100106',
+        '3' => '100105',
         '4' => '100104',
         '5' => '100101',
         '6' => '100102',
