@@ -29,7 +29,8 @@ abstract class PayStrategy
         'YJpay',
         '77pay',
         'princepay',
-        'fypay'
+        'fypay',
+        'globalpay',
     ];
 
     public $rechargeRtn = '';
