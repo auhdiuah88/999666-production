@@ -203,12 +203,7 @@ class GlobalPay extends PayStrategy
         \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder', [$params]);
 
         $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder_return', $res);
-        $res = json_decode($res,true);
-        if(!$res){
-            $this->_msg = 'pay request failed';
-            return false;
-        }
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder_return', [$res]);
         if ($res['status'] != 'SUCCESS') {
             $this->_msg = $res['err_msg'];
             return false;
