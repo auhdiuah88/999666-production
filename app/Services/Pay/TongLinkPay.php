@@ -272,6 +272,7 @@ class TongLinkPay extends PayStrategy
     function rechargeCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback',$request->input());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback',[$request->getQueryString()]);
         $params = $request->input();
         if ($params['status'] != 'SUCCESS')  {
             $this->_msg = 'TongLink-recharge-交易未完成';
