@@ -91,7 +91,7 @@ class GlobalPay extends PayStrategy
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder', [$params]);
 
-        $res = $this->requestService->postHttpBuildQuery(self::$url . 'ty/orderPay' , $params);
+        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', [$res]);
         if ($res['status'] != 'SUCCESS') {
             $this->_msg = $res['err_msg'];
