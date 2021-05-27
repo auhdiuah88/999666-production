@@ -21,7 +21,10 @@ class GlobalPay extends PayStrategy
     public $withdrawSecretkey;
     public $rechargeMerchantID;
     public $rechargeSecretkey;
-    public $company = 'GlobalPay';   // 支付公司名
+    public $company = 'globalpay';   // 支付公司名
+
+    public $withdrawRtn = "SUCCESS";
+    public $rechargeRtn = "SUCCESS";
 
     public function _initialize()
     {
@@ -39,6 +42,114 @@ class GlobalPay extends PayStrategy
         $this->recharge_callback_url = self::$url_callback . '/api/recharge_callback' . '?type='.$this->company;
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
     }
+
+    protected $rechargeTypeList = [
+        '1' => '100103',
+        '2' => 'MoMoPay',
+        '3' => 'ZaloPay',
+        '4' => '100104',
+        '5' => '100101',
+        '6' => '100102',
+    ];
+
+    protected $banks = [
+        'VIB' => [
+            'bankId' => 115,
+            'bankName' => 'VIB'
+        ],
+        'VPBank' => [
+            'bankId' => 128,
+            'bankName' => 'VPB'
+        ],
+        'BIDV' => [
+            'bankId' => 121,
+            'bankName' => 'BIDV'
+        ],
+        'VietinBank' => [
+            'bankId' => 121,
+            'bankName' => 'CTG'
+        ],
+        'SHB' => [
+            'bankId' => 133,
+            'bankName' => 'SHB'
+        ],
+        'ABBANK' => [
+            'bankId' => 137,
+            'bankName' => 'ABB-K'
+        ],
+        'AGRIBANK' => [
+            'bankId' => 131,
+            'bankName' => 'AGR'
+        ],
+        'Vietcombank' => [
+            'bankId' => 117,
+            'bankName' => 'VCB'
+        ],
+        'Techcom' => [
+            'bankId' => 115,
+            'bankName' => 'TCB'
+        ],
+        'ACB' => [
+            'bankId' => 118,
+            'bankName' => 'ACB'
+        ],
+        'SCB' => [
+            'bankId' => 147,
+            'bankName' => 'SCB'
+        ],
+        'MBBANK' => [
+            'bankId' => 129,
+            'bankName' => 'MB'
+        ],
+        'EIB' => [
+            'bankId' => 122,
+            'bankName' => 'EIB'
+        ],
+        'STB' => [
+            'bankId' => 10000,
+            'bankName' => 'STB'
+        ],
+        'DongABank' => [
+            'bankId' => 145,
+            'bankName' => 'OCB'
+        ],
+        'GPBank' => [
+            'bankId' => 970408,
+            'bankName' => 'GPB'
+        ],
+        'Saigonbank' => [
+            'bankId' => 148,
+            'bankName' => 'SGB'
+        ],
+        'PGBank' => [
+            'bankId' => 152,
+            'bankName' => 'PGB'
+        ],
+        'Oceanbank' => [
+            'bankId' => 970414,
+            'bankName' => 'OJB'
+        ],
+        'NamABank' => [
+            'bankId' => 142,
+            'bankName' => 'NAB'
+        ],
+        'TPB' => [
+            'bankId' => 130,
+            'bankName' => 'TPB'
+        ],
+        'HDB' => [
+            'bankId' => 144,
+            'bankName' => 'HDB'
+        ],
+        'VAB' => [
+            'bankId' => 149,
+            'bankName' => 'VAB'
+        ],
+        'Sacombank' => [
+            'bankId' => 116,
+            'bankName' => 'SACOM'
+        ],
+    ];
 
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
@@ -60,7 +171,7 @@ class GlobalPay extends PayStrategy
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
-            if($value)
+            if($value != '')
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
@@ -77,30 +188,23 @@ class GlobalPay extends PayStrategy
             'mer_no' => $this->rechargeMerchantID,
             'mer_order_no' => $order_no,
             'pname' => 'ZhangSan',
-            'pemail' => '11111111@qq.com',
-            'phone' => 13122336688,
+            'pemail' => '11111111@email.com',
+            'phone' => 15988888888,
             'order_amount' => intval($money),
-            'countryCode' => 'IND',
-            'ccy_no' => 'INR',
-            'busi_code' => 'UPI',
+            'countryCode' => 'VNM',
+            'ccy_no' => 'VND',
+            'busi_code' => $this->rechargeTypeList[$this->rechargeType],
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
-            'pageUrl' => env('SHARE_URL')
+            'pageUrl' => env('SHARE_URL','')
         ];
-        $params['sign'] = $this->generateSign($params,1);
+        $params['sign'] = $this->generateSignRigorous($params,1);
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder', [$params]);
-        $params_string = json_encode($params);
-        $header[] = "Content-Type: application/json";
-        $header[] = "Content-Length: " . strlen($params_string);
-        $res = dopost(self::$url . 'ty/orderPay' , $params_string,$header);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', [$res]);
-        $res = json_decode($res,true);
-        if(!$res){
-            $this->_msg = 'recharge request failed';
-            return false;
-        }
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder', [$params]);
+
+        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
         if ($res['status'] != 'SUCCESS') {
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
             return false;
         }
@@ -118,7 +222,7 @@ class GlobalPay extends PayStrategy
             'pltf_order_id' => '',
             'verify_money' => '',
             'match_code' => '',
-            'is_post' => isset($is_post)?$is_post:0
+            'is_post' => $is_post ?? 0
         ];
         return $resData;
     }
@@ -128,10 +232,10 @@ class GlobalPay extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTB_rechargeCallback',$request->post());
 
         if ($request->status != 'SUCCESS')  {
-            $this->_msg = 'MTB-recharge-交易未完成';
+            $this->_msg = 'VNMTB-recharge-交易未完成';
             return false;
         }
         // 验证签名
@@ -140,7 +244,7 @@ class GlobalPay extends PayStrategy
         unset($params['sign']);
         unset($params['type']);
         if ($this->generateSignRigorous($params,1) <> $sign) {
-            $this->_msg = 'MTB-签名错误';
+            $this->_msg = 'VNMTB-签名错误';
             return false;
         }
 
@@ -162,22 +266,28 @@ class GlobalPay extends PayStrategy
 //        $ip = $this->request->ip();
 //        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
+        $bank = $this->banks[$withdrawalRecord->bank_name] ?? '';
+        if(!$bank)
+        {
+            $this->_msg = '该银行卡不支持提现,请换一张银行卡';
+            return false;
+        }
         $params = [
             'mer_no' => $this->withdrawMerchantID,
             'mer_order_no' => $order_no,
             'acc_no' => $withdrawalRecord->bank_number,
             'acc_name' => $withdrawalRecord->account_holder,
-            'ccy_no' => 'INR',
+            'ccy_no' => 'VND',
             'order_amount' => intval($money),
-            'bank_code' => 'IDPT0001',
+            'bank_code' => $bank['bankName'],
             'summary' => 'Balance Withdrawal',
-            'province' => $withdrawalRecord->ifsc_code,
+//            'province' => $withdrawalRecord->ifsc_code,
             'notifyUrl' => $this->withdrawal_callback_url
         ];
-        $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalOrder',$params);
+        $params['sign'] = $this->generateSignRigorous($params,2);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalOrder',$params);
         $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleOrder', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalOrder',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalOrder',$res);
         if ($res['status'] != 'SUCCESS') {
             $this->_msg = $res['err_msg'];
             return false;
@@ -193,7 +303,7 @@ class GlobalPay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('VNMTBpay_withdrawalCallback',$request->post());
 
         $pay_status = 0;
         $status = (string)($request->status);
@@ -204,15 +314,16 @@ class GlobalPay extends PayStrategy
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'MTBpay-withdrawal-交易未完成';
+            $this->_msg = 'VNMTBpay-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
+        unset($params['type']);
         if ($this->generateSignRigorous($params,2) <> $sign) {
-            $this->_msg = 'MTBpay-签名错误';
+            $this->_msg = 'VNMTBpay-签名错误';
             return false;
         }
         $where = [
@@ -240,13 +351,13 @@ class GlobalPay extends PayStrategy
 
         $params = compact('request_no','request_time','mer_no','mer_order_no');
         $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawSingleQuery_Param',$params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Param',$params);
         $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
         if(!$res){
             return false;
         }
         if($res['query_status'] != 'SUCCESS'){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawSingleQuery_Err',$res);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTBpay_withdrawSingleQuery_Err',$res);
             return false;
         }
         return $res;
