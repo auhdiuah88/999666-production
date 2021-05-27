@@ -198,6 +198,9 @@ class GlobalPay extends PayStrategy
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')
         ];
+        if($this->bankName && isset($this->banks[$this->bankName])){
+            $params['bankCode'] = $this->banks[$this->bankName]['bankName'];
+        }
         $params['sign'] = $this->generateSignRigorous($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('GlobalPay_rechargeOrder', [$params]);
