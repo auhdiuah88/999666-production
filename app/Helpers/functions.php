@@ -228,3 +228,14 @@ function dopost($url = '', $param = '', $headers)
     curl_close($ch);
     return $data;
 }
+
+function getPhoneReg()
+{
+    $phonePreg = [
+        'india' => "/^\d{10}$/",
+        'vn' => "/^\d{8,11}$/",
+        'mx' => "/^\d{8,10}$/",
+        'br' => "/^\d{8,11}$/",
+    ];
+    return $phonePreg[env('COUNTRY','india')];
+}

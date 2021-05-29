@@ -119,6 +119,7 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::post("/status", "UserController@modifyUserStatus");
             Route::get("/recommend", "UserController@getRecommenders");
             Route::post("/gift", "UserController@giftMoney");
+            Route::post("/staffGift", "UserController@staffGiftMoney");
             Route::post("/up", "UserController@upperSeparation");
             Route::post("/down", "UserController@downSeparation");
             Route::post("/logs", "UserController@getBalanceLogs");

@@ -80,6 +80,10 @@ class UserController extends Controller
                 "phone" => "required|numeric",
                 "password" => "required"
             ];
+            if(!preg_match(getPhoneReg(),request()->post('phone')))
+            {
+                return $this->AppReturn(414, 'wrong phone number');
+            }
             if($is_check_sms_code)
             {
                 $rules['sms_code'] = "required";
