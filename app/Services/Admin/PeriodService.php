@@ -54,7 +54,7 @@ class PeriodService extends BaseService
         $game_id = $this->intInput('game_id');
         $where = [
             'is_status' => ['=', 1],
-            'end_time' => ['<', time() - 5 * 60],
+            'end_time' => ['>=', time() + 5 * 60],
             'is_queue' => ['=', 0]
         ];
         if($game_id)
