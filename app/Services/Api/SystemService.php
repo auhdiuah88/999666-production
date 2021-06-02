@@ -173,4 +173,18 @@ class SystemService extends Service
         $this->_data = $data;
     }
 
+    public function getIndexAd()
+    {
+        $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key('INDEX_AD'));
+        if (!$data){
+            $data = [
+                'status' => 0,
+                'content' => ''
+            ];
+        }else{
+            $data['content'] = htmlspecialchars_decode($data['content']);
+        }
+        $this->_data = $data;
+    }
+
 }

@@ -96,6 +96,10 @@ class SettingDic
             'title' => 'withdraw service charge',
             'key' => 'WITHDRAW_SERVICE_CHARGE'
         ],
+        'INDEX_AD' => [
+            'title' => 'index ad',
+            'key' => 'INDEX_AD'
+        ],
     ];
 
     public static function key($key): string

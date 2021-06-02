@@ -650,4 +650,42 @@ class SettingController extends Controller
         }
     }
 
+    public function getIndexAd()
+    {
+        try{
+            $this->SettingService->getIndexAd();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function indexAdSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'status' => ['required', Rule::in(0,1)],
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->indexAdSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

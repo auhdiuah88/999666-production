@@ -71,6 +71,10 @@ Route::group(["namespace" => "Api", "prefix" => "banner", 'middleware'=>['params
     Route::get("/find", "BannerController@banners");
 });
 
+Route::group(["namespace" => "Api", "prefix" => "indexAd", 'middleware'=>['params_decrypt']], function (){
+    Route::get("/find", "SystemController@indexAd");
+});
+
 //setting
 Route::group(["namespace" => "Api", "prefix" => "setting", 'middleware'=>['params_decrypt']], function (){
     Route::get("/basic", "SystemController@basicSetting");

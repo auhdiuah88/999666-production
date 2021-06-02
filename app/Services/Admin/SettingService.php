@@ -616,6 +616,34 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function getIndexAd()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('INDEX_AD'));
+        if (!$data){
+            $data = [
+                'content' => '',
+                'status' => 0
+            ];
+        }else{
+            $data['content'] = htmlspecialchars_decode($data['content']);
+        }
+        $this->_data = $data;
+    }
+
+    public function indexAdSave(): bool
+    {
+        $content = $this->htmlInput('content');
+        $status = $this->intInput('status');
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('INDEX_AD'), compact('content','status'));
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
     public function getWithdrawServiceCharge()
     {
         $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('WITHDRAW_SERVICE_CHARGE'));
