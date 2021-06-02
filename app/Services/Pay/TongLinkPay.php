@@ -281,14 +281,8 @@ class TongLinkPay extends PayStrategy
     function rechargeCallback(Request $request)
     {
 //        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback',$request->input());
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback',[$request->getQueryString()]);
-        $params = $request->getQueryString();
-        $params = urldecode($params);
-        $arr = explode("?", $params);
-        $a = $this->getUrlParam(explode("&", $arr[0]));
-        $b = $this->getUrlParam(explode("&", $arr[1]));
-        $params = array_merge($a,$b);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback2',[$params]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_rechargeCallback',$request->post());
+        $params = $request->post();
         if ($params['status'] != 'SUCCESS')  {
             $this->_msg = 'TongLink-recharge-交易未完成';
             return false;
@@ -345,15 +339,8 @@ class TongLinkPay extends PayStrategy
     function withdrawalCallback(Request $request)
     {
 //        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdrawalCallback',$request->input());
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdrawalCallback2', [$request->getQueryString()]);
-        $params = $request->getQueryString();
-        $params = urldecode($params);
-        $arr = explode("?", $params);
-        $a = $this->getUrlParam(explode("&", $arr[0]));
-        $b = $this->getUrlParam(explode("&", $arr[1]));
-        $params = array_merge($a,$b);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdrawalCallback',[$params]);
-//        $params = $request->input();
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdrawalCallback', $request->post());
+        $params = $request->post();
         if(!isset($params['status'])){
             $this->_msg = 'TongLink-withdrawal-交易未完成';
             return false;
