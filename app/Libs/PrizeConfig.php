@@ -78,16 +78,16 @@ class PrizeConfig
         $res = [];
         switch (intval($val->game_id)){
             case 1:
-                self::getRebateAndType_1($val, $result, $k1);
+                $res = self::getRebateAndType_1($val, $result, $k1);
                 break;
             case 2:
-                self::getRebateAndType_2($val, $result, $k1);
+                $res = self::getRebateAndType_2($val, $result, $k1);
                 break;
             case 3:
-                self::getRebateAndType_3($val, $result, $k1);
+                $res = self::getRebateAndType_3($val, $result, $k1);
                 break;
             case 4:
-                self::getRebateAndType_4($val, $result, $k1);
+                $res = self::getRebateAndType_4($val, $result, $k1);
                 break;
         }
         return $res;
