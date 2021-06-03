@@ -337,8 +337,11 @@ class Ssc_ThreeService
                 }else{
                     ##获取用户返点比例
                     $rebate_rate = $this->GameRepository->Get_rebate_rate($val->user_id);
+                    Log::channel('game_debug')->info('test1',['123']);
                     $res = PrizeConfig::getRebateRate($rebate_rate,$val,$result);
+                    Log::channel('game_debug')->info('test2',['456']);
                     $this->GameRepository->Result_Entry($val,$res['type'],$res['rebate_rate']);
+                    Log::channel('game_debug')->info('test3',['789']);
                 }
             }
 
