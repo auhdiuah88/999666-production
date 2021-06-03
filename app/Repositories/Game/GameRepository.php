@@ -435,6 +435,11 @@ class GameRepository
             return false;
         }
     }
+    //根据用户id获取用户返点比例
+    public function Get_rebate_rate($user_id)
+    {
+        return $this->Cx_User->where("id",$user_id)->value('rebate_rate');
+    }
     //结算用户投注
     public function Result_Entry($betting, $type,$odds)
     {
