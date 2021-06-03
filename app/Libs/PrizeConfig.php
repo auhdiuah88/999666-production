@@ -76,7 +76,7 @@ class PrizeConfig
         $k1 = self::getK1($rate);
         ##获取中奖类型
         $res = [];
-        switch ($val->game_id){
+        switch (intval($val->game_id)){
             case 1:
                 self::getRebateAndType_1($val, $result, $k1);
                 break;
