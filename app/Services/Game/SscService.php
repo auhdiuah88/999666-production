@@ -256,6 +256,7 @@ class SscService
         }catch (\Exception $e){
             $system=$this->GameRepository->Get_Game_Config($this->game_id);
             Log::channel('game_debug')->info("开奖失败debug",[$system]);
+            Log::channel('game_debug')->info("开奖失败debug-err",['msg'=>$e->getMessage(),'line'=>$e->getLine(), 'file'=>$e->getFile()]);
             return false;
         }
     }
