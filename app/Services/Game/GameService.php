@@ -165,6 +165,7 @@ class GameService
                 DB::rollBack();
             }
         }else{ //新代理模式
+            Log::channel('kidebug')->info('prize3',$prize_arr);
             if(!empty($prize_arr)){
                 DB::beginTransaction();
                 try {
