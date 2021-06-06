@@ -197,7 +197,6 @@ class GameService
             foreach ($relationArr as $item) {
                 $pUser = $this->UserRepository->findByIdUser($item);
                 if ($pUser->rebate_rate > $cur_rate && $pUser->reg_source_id == 0) {
-                    $cur_rate = $pUser->rebate_rate;
                     $cha_rate = bcsub($pUser->rebate_rate,$cur_rate, 2);
                     $cha_rate = bcmul($cha_rate, 0.01, 3);
                     $prize = bcmul($cha_rate, $money, 2);
@@ -209,6 +208,7 @@ class GameService
                             'commission' => $pUser->commission
                         ];
                     }
+                    $cur_rate = $pUser->rebate_rate;
                 } else {
                     break;
                 }
