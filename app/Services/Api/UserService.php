@@ -291,6 +291,25 @@ class UserService
         $data["ip"] = $ip;
         $data["code"] = $this->UserRepository->getcode();
 
+        ##判断用户是否是新代理模式邀请的用户
+        if(isset($data['en']))
+        {
+            $en = $data['en'];
+            unset($data['en']);
+            if($en)
+            {
+                $en = Crypt::decryptString($en);
+                if($en)
+                {
+                    $en = trim($en,'&');
+                    $enArr = explode('&',$en);
+                    $rateArr = explode('=', $enArr[0]);
+                    $data['rebate_rate'] = $rateArr[1];
+                    $userTypeArr = explode('=', $enArr[1]);
+                    $data['user_type'] = $userTypeArr[1];
+                }
+            }
+        }
 
         $user_id = $this->UserRepository->createUser($data);
         $userObj = $this->UserRepository->findByIdUser($user_id);

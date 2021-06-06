@@ -239,3 +239,21 @@ function getPhoneReg()
     ];
     return $phonePreg[env('COUNTRY','india')];
 }
+
+function getInviteLink($code, $rate=10, $type=2)
+{
+    $link = '/?code='. $code;
+    $encryptStr = "";
+    if($rate){
+        $encryptStr .= "r=" . $rate;
+    }
+    if($type){
+        $encryptStr .= "&t=" . $type;
+    }
+    if($encryptStr){
+        $encryptStr = \Illuminate\Support\Facades\Crypt::encryptString($encryptStr);
+        $link .= '&en=' . $encryptStr;
+    }
+    $link .= '#/pages/register/register';
+    return $link;
+}

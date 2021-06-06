@@ -297,7 +297,7 @@ class GameRepository
         return $row;
     }
     //投注接口
-    public function Betting($user, $data)
+    public function Betting($user, $data, $prize_info)
     {
         $row = explode("|", $data['game_c_x_id']);
 
@@ -309,11 +309,11 @@ class GameRepository
             $arr['game_id'] = $data['game_id'];
             $arr['game_p_id'] = $data['game_p_id'];
             $arr['game_c_x_id'] = $val;
-            $arr['money'] = $money-($money * 0.03);
+            $arr['money'] = $money-$prize_info['serviceCharge'];
             $arr['betting_time'] = time();
             $arr['status'] = 0;
             $arr['type'] = 0;
-            $arr["service_charge"] = $money * 0.03;
+            $arr["service_charge"] = $prize_info['serviceCharge'];
 
             //开启事务
 //            DB::beginTransaction();

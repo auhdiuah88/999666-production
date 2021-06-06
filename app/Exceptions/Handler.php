@@ -50,6 +50,17 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        if ($exception instanceof ValidateException) {
+            // 如果是自定义的异常
+            return response()->json(
+                [
+                    "code" => 401,
+                    "msg" => $exception->message,
+                    "data" => []
+                ]
+            )->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        }else{
+            return parent::render($request, $exception);
+        }
     }
 }

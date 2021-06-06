@@ -102,9 +102,17 @@ class GameService
         if ($data["money"] > $user_info->balance) {
             return false;
         }
+        if(env('',1) == 2){
+            $prize_info = $this->Calc_Charge($user_info, $data["money"]);
+        }else{
+            $prize_info = [
+                'serviceCharge' => $data["money"] * 0.03,
+                'prize_arr' => []
+            ];
+        }
         //进行投注
-        if ($balance=$this->GameRepository->Betting($user_info, $data)) {
-            $this->CalculateRevenue($user_info, $data["money"]);
+        if ($balance=$this->GameRepository->Betting($user_info, $data, $prize_info)) {
+            $this->CalculateRevenue($user_info, $data["money"], $prize_info['prize_arr']);
             return $balance;
         }
     }
@@ -113,44 +121,97 @@ class GameService
      * 计算收益并入库
      * @param $user
      * @param $money
+     * @param $prize_arr
      */
-    public function CalculateRevenue($user, $money)
+    public function CalculateRevenue($user, $money, $prize_arr)
     {
-        // 计算平台收益，一级代理人收益，二级代理人收益
-        $serviceCharge = $money * 0.03;
-        $oneCharge = $serviceCharge * 0.3;
-        $twoCharge = $serviceCharge * 0.2;
-        $platformCharge = $serviceCharge - $oneCharge - $twoCharge;
-        DB::beginTransaction();
-        try {
-            // 将一级，二级代理人收益添加到数据库
-            if(!empty($user->one_recommend_id)){
-                $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
-                $oneCondition = ["id" => $user->one_recommend_id, "one_commission" => $one->one_commission + $oneCharge, "commission" => $one->commission + $oneCharge];
-                $this->UserRepository->updateAgentMoney($oneCondition);
-                $oneChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->one_recommend_id, "type" => 1, "money" => $oneCharge, "create_time" => time()];
-                $this->UserRepository->addChargeLogs($oneChargeLog);
+        $PRIZE_TYPE = env('PRIZE_TYPE',1);
+        if($PRIZE_TYPE == 1){  //老代理模式
+            // 计算平台收益，一级代理人收益，二级代理人收益
+            $serviceCharge = $money * 0.03;
+            $oneCharge = $serviceCharge * 0.3;
+            $twoCharge = $serviceCharge * 0.2;
+            $platformCharge = $serviceCharge - $oneCharge - $twoCharge;
+            DB::beginTransaction();
+            try {
+                // 将一级，二级代理人收益添加到数据库
+                if(!empty($user->one_recommend_id)){
+                    $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
+                    $oneCondition = ["id" => $user->one_recommend_id, "one_commission" => $one->one_commission + $oneCharge, "commission" => $one->commission + $oneCharge];
+                    $this->UserRepository->updateAgentMoney($oneCondition);
+                    $oneChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->one_recommend_id, "type" => 1, "money" => $oneCharge, "create_time" => time()];
+                    $this->UserRepository->addChargeLogs($oneChargeLog);
+                }
+                if(!empty($user->two_recommend_id)){
+                    $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
+                    $twoCondition = ["id" => $user->two_recommend_id, "two_commission" => $two->two_commission + $twoCharge, "commission" => $two->commission + $twoCharge];
+                    $this->UserRepository->updateAgentMoney($twoCondition);
+                    $twoChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->two_recommend_id, "type" => 2, "money" => $twoCharge, "create_time" => time()];
+                    $this->UserRepository->addChargeLogs($twoChargeLog);
+                }
+
+
+                // 更改平台收入
+                $system = $this->UserRepository->findSystemCharge();
+                $this->UserRepository->updateSystemCharge($system->platform_charge + $platformCharge);
+
+                // 将收入记录入库
+                $systemChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => 0, "type" => 0, "money" => $platformCharge, "create_time" => time()];
+                $this->UserRepository->addChargeLogs($systemChargeLog);
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
             }
-            if(!empty($user->two_recommend_id)){
-                $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
-                $twoCondition = ["id" => $user->two_recommend_id, "two_commission" => $two->two_commission + $twoCharge, "commission" => $two->commission + $twoCharge];
-                $this->UserRepository->updateAgentMoney($twoCondition);
-                $twoChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->two_recommend_id, "type" => 2, "money" => $twoCharge, "create_time" => time()];
-                $this->UserRepository->addChargeLogs($twoChargeLog);
+        }else{ //新代理模式
+            if(!empty($prize_arr)){
+                DB::beginTransaction();
+                try {
+                    foreach($prize_arr as $item)
+                    {
+                        ##增加用户佣金
+                        $condition = ["id" => $item->user_id, "commission" => bcadd($item->commission, $item->prize)];
+                        $this->UserRepository->updateAgentMoney($condition);
+                        $chargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $item->user_id, "type" => 3, "money" => $item->prize, "create_time" => time()];
+                        $this->UserRepository->addChargeLogs($chargeLog);
+                    }
+                    DB::commit();
+                } catch(\Exception $e){
+                    DB::rollBack();
+                }
             }
-
-
-            // 更改平台收入
-            $system = $this->UserRepository->findSystemCharge();
-            $this->UserRepository->updateSystemCharge($system->platform_charge + $platformCharge);
-
-            // 将收入记录入库
-            $systemChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => 0, "type" => 0, "money" => $platformCharge, "create_time" => time()];
-            $this->UserRepository->addChargeLogs($systemChargeLog);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
         }
+
+    }
+
+    public function Calc_Charge($user, $money)
+    {
+        $serviceCharge = 0;
+        $prize_arr = [];
+        $relation = trim($user->invite_relation,'-');
+        if($relation){
+            $relationArr = explode('-',$relation);
+            $cur_rate = $user->rebate_rate;
+
+            foreach ($relationArr as $item) {
+                $pUser = $this->UserRepository->findByIdUser($item);
+                if ($pUser->rebate_rate > $cur_rate && $pUser->reg_source_id == 0) {
+                    $cha_rate = bcsub($pUser->rebate_rate - $cur_rate, 2);
+                    $cha_rate = bcmul($cha_rate, 0.01, 3);
+                    $prize = bcmul($cha_rate, $money, 2);
+                    if ($prize > 0) {
+                        $serviceCharge = bcadd($serviceCharge, $prize, 2);
+                        $prize_arr[] = [
+                            'user_id' => $pUser->id,
+                            'prize' => $prize,
+                            'commission' => $pUser->commission
+                        ];
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+        return compact('serviceCharge','prize_arr');
     }
 
     //获取用户投注列表

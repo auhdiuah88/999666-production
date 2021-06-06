@@ -68,6 +68,12 @@ class Kernel extends HttpKernel
         "params_decrypt" => [
             \App\Http\Middleware\ParamsDecryptMiddleware::class
         ],
+        "ag_login" => [
+            \App\Http\Middleware\Ag\CheckAgMiddleware::class
+        ],
+        "ag_locale" => [
+            \App\Http\Middleware\Ag\SetAgLocale::class
+        ]
     ];
 
     /**
