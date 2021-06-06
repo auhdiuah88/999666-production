@@ -11,6 +11,7 @@ use App\Repositories\Api\UserRepository;
 use App\Services\Game\Ssc_TwoService;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use App\Services\Game\SscService;
 use App\Services\Game\Ssc_FourService;
@@ -104,6 +105,7 @@ class GameService
         }
         if(env('PRIZE_TYPE',1) == 2){
             $prize_info = $this->Calc_Charge($user_info, $data["money"]);
+            Log::channel('kidebug')->info('prize2',$prize_info);
         }else{
             $prize_info = [
                 'serviceCharge' => $data["money"] * 0.03,
