@@ -102,7 +102,7 @@ class GameService
         if ($data["money"] > $user_info->balance) {
             return false;
         }
-        if(env('',1) == 2){
+        if(env('PRIZE_TYPE',1) == 2){
             $prize_info = $this->Calc_Charge($user_info, $data["money"]);
         }else{
             $prize_info = [
