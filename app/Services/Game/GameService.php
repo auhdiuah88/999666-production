@@ -105,7 +105,6 @@ class GameService
         }
         if(env('PRIZE_TYPE',1) == 2){
             $prize_info = $this->Calc_Charge($user_info, $data["money"]);
-            Log::channel('kidebug')->info('prize2',$prize_info);
         }else{
             $prize_info = [
                 'serviceCharge' => $data["money"] * 0.03,
@@ -165,16 +164,15 @@ class GameService
                 DB::rollBack();
             }
         }else{ //新代理模式
-            Log::channel('kidebug')->info('prize3',$prize_arr);
             if(!empty($prize_arr)){
                 DB::beginTransaction();
                 try {
                     foreach($prize_arr as $item)
                     {
                         ##增加用户佣金
-                        $condition = ["id" => $item->user_id, "commission" => bcadd($item->commission, $item->prize)];
+                        $condition = ["id" => $item['user_id'], "commission" => bcadd($item['commission'], $item['prize'])];
                         $this->UserRepository->updateAgentMoney($condition);
-                        $chargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $item->user_id, "type" => 3, "money" => $item->prize, "create_time" => time()];
+                        $chargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $item['user_id'], "type" => 3, "money" => $item['prize'], "create_time" => time()];
                         $this->UserRepository->addChargeLogs($chargeLog);
                     }
                     DB::commit();
