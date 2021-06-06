@@ -177,9 +177,9 @@ class GameService
                         $chargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $item->user_id, "type" => 3, "money" => $item->prize, "create_time" => time()];
                         $this->UserRepository->addChargeLogs($chargeLog);
                     }
-                    Log::channel('kidebug')->info('prize4',$prize_arr);
                     DB::commit();
                 } catch(\Exception $e){
+                    Log::channel('kidebug')->info('prize4',['msg'=>$e->getMessage()]);
                     DB::rollBack();
                 }
             }
