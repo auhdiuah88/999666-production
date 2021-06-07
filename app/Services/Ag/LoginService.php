@@ -27,14 +27,14 @@ class LoginService extends BaseService
         if($this->LoginRepository->getLoginTimes() > 5)
         {
             $this->_code = 403;
-            $this->_msg = '登录次数频繁,请20分钟之后再试';
+            $this->_msg = trans('ag.login_err1');
             return false;
         }
         ##获取用户信息
         $user = $this->LoginRepository->getUserByPhone($data['phone']);
         if(empty($user))
         {
-            $this->_msg = '账号或密码错误';
+            $this->_msg = trans('ag.login_err2');
             $this->_code = 403;
             return false;
         }
@@ -42,7 +42,7 @@ class LoginService extends BaseService
         if (Crypt::decrypt($user->password) != $data['pwd']) {
             $this->LoginRepository->setLoginTimes();
             $this->_code = 403;
-            $this->_msg = '账号或密码错误';
+            $this->_msg = trans('ag.login_err2');
             return false;
         }
         ##判断用户类型
@@ -50,7 +50,7 @@ class LoginService extends BaseService
         {
             $this->LoginRepository->setLoginTimes();
             $this->_code = 403;
-            $this->_msg = '非代理不可登录';
+            $this->_msg = trans('ag.login_err3');
             return false;
         }
         ##判断用户状态
@@ -58,7 +58,7 @@ class LoginService extends BaseService
         {
             $this->LoginRepository->setLoginTimes();
             $this->_code = 403;
-            $this->_msg = '账号已冻结';
+            $this->_msg = trans('ag.login_err4');
             return false;
         }
         ##登录成功

@@ -23,6 +23,36 @@ function day_end(){
     return strtotime(date('Y-m-d') . ' 23:59:59');
 }
 
+function last_day_start()
+{
+    return strtotime(date("Y-m-d", strtotime("-1 day")) . " 00:00:01");
+}
+
+function last_day_end()
+{
+    return strtotime(date("Y-m-d", strtotime("-1 day")) . " 23:59:59");
+}
+
+function month_start()
+{
+    return mktime(0,0,0,date('m'),1,date('Y'));
+}
+
+function month_end()
+{
+    return mktime(23,59,59,date('m'),date('t'),date('Y'));
+}
+
+function last_month_start()
+{
+    return date('Y-m-01 00:00:00',strtotime('-1 month'));
+}
+
+function last_month_end()
+{
+    return date("Y-m-d 23:59:59", strtotime(-date('d').'day'));
+}
+
 function makeInviteRelation($relation, $user_id){
     return '-' . trim($user_id . '-' . trim($relation,'-'),'-') . '-';
 }

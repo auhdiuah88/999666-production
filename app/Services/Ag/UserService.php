@@ -66,11 +66,18 @@ class UserService extends BaseService
         $res = $this->UserRepository->delLink($data['id']);
         if(!$res)
         {
-            $this->_msg = '链接删除失败';
+            $this->_msg = trans('ag.del_link_fail');
             $this->_code = 403;
             return false;
         }
         return true;
+    }
+
+    public function getUserList()
+    {
+        $phone = request()->input('phone','');
+        $user_type = request()->input('user_type',0);
+        $this->_data = $this->UserRepository->getUserList($phone, $user_type);
     }
 
 }

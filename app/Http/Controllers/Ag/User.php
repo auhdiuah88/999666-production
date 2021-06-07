@@ -27,7 +27,7 @@ class User extends Base
             return view('ag.invite_index', ['idx'=>4]);
         }else{
             $this->UserService->getLinkList();
-            return view('ag.invite_link', ['idx'=>4, 'data'=>$this->UserService->_data->toArray()]);
+            return view('ag.invite_link', ['idx'=>4, 'data'=>$this->UserService->_data]);
         }
 
     }
@@ -50,6 +50,12 @@ class User extends Base
         }catch (\Exception $e){
             return $this->AppHostErr($e);
         }
+    }
+
+    public function userList()
+    {
+        $this->UserService->getUserList();
+        return view('ag.user_list', ['idx'=>5, 'data'=>$this->UserService->_data]);
     }
 
 }

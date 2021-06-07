@@ -7,7 +7,7 @@
     <!-- <link rel="stylesheet" href=""> -->
 
     <!--[if IE 9]>
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/ie.css">
+    <link rel="stylesheet" type="text/css" href="{{asset('static/css/ie.css')}}">
     <![endif]-->
     <link href="{{asset('static/css/21ea59.app.css')}}" rel="stylesheet">
 
@@ -17,40 +17,16 @@
 
 </head>
 <body>
-<!--[if lte IE 9]><h1>你正在使用的是IE9版本以下的浏览器，建议更换成Chrome内核或者IE9及更高版本的浏览器</h1><![endif]-->
-<!--
-                   _ooOoo_
-                  o8888888o
-                  88" . "88
-                  (| -_- |)
-                  O\  =  /O
-               ____/`---'\____
-             .'  \\|     |//  `.
-            /  \\|||  :  |||//  \
-           /  _||||| -:- |||||-  \
-           |   | \\\  -  /// |   |
-           | \_|  ''\---/''  |   |
-           \  .-\__  `-`  ___/-. /
-         ___`. .'  /--.--\  `. . __
-      ."" '<  `.___\_<|>_/___.'  >'"".
-     | | :  `- \`.;`\ _ /`;.`/ - ` : | |
-     \  \ `-.   \_ __\ /__ _/   .-` /  /
-======`-.____`-.___\_____/___.-`____.-'======
-                   `=---='
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-           佛祖保佑       永无BUG
-           心外无法       法外无心
--->
+<!--[if lte IE 9]><h1>{{trans('ag.system_err')}}</h1><![endif]-->
 <ui-view style="" class="ng-scope"><!-- ngInclude: TPL_ROOT + 'member_head/member_head.tpl.html' --><div ng-include="TPL_ROOT + 'member_head/member_head.tpl.html'" class="ng-scope"><div class="header ng-scope">
             <div class="main main_btm_border">
                 <div class="left logo" style="min-height: 68px; max-height: 110px;">
-                    <a ng-href="/" class="logo-link" id="" href="/">
-                        <img width="227px" alt="" ng-src="https://www.huanrezhijia.com/uploads/1/20201213/477696589588991fb4c16c982ecd2d83.png" src="https://www.huanrezhijia.com/uploads/1/20201213/477696589588991fb4c16c982ecd2d83.png">
+                    <a class="logo-link" id="" href="/">
+                        <img width="227px" alt="" src="{{asset('static/image/logo.png')}}">
                     </a>
                 </div>
 
-                <div class="right login_and_userinfo ng-scope" ng-if="!isLogin">
+                <div class="right login_and_userinfo ng-scope">
                     @php
                     $user = \Illuminate\Support\Facades\Cache::get('user')
                     @endphp
@@ -59,16 +35,16 @@
                         <form method="POST" id="login_form" action="{{url('ag/login')}}" class="ng-pristine ng-valid" onsubmit="return checkLogin()">
                             <div class="username left">
                                 <i class="iconfont icon-mail"></i>
-                                <input type="text" placeholder="手机号" name="phone" id="username" autocomplete="off" class="ng-pristine ng-untouched ng-valid ng-not-empty">
+                                <input type="text" placeholder="{{trans('ag.phone')}}" name="phone" id="username" autocomplete="off" class="ng-pristine ng-untouched ng-valid ng-not-empty">
                             </div>
                             <div class="password left">
                                 <div class="password left">
                                     <i class="iconfont icon-mima"></i>
-                                    <input name="pwd" type="password" placeholder="密码" autocomplete="off" class="ng-pristine ng-untouched ng-valid ng-empty">
+                                    <input name="pwd" type="password" placeholder="{{trans('ag.password')}}" autocomplete="off" class="ng-pristine ng-untouched ng-valid ng-empty">
                                 </div>
                                 <!-- ngIf: data.isCode -->
                                 <div class="login-btn-right">
-                                    <button type="submit" class="left btn-default login-btn btn">登录</button>
+                                    <button type="submit" class="left btn-default login-btn btn">{{trans('ag.login')}}</button>
 
 {{--                                    <button type="button" class="left d-btn reg-btn btn" name="register" id="register">注册</button>--}}
                                     <!-- ngIf: is_open_guest == 1 -->
@@ -78,16 +54,16 @@
                     </div>
                     @else
                     <div class="logined">
-                        <em>您好，</em>
+                        <em>{{trans('ag.hello')}}，</em>
                         <span class="username">{{$user['phone']}}</span>
-                        <em>可用余额:</em>
+                        <em>{{trans('ag.rest_balance')}}:</em>
                         <span class="money ng-binding ng-scope">{{$user['balance']}}</span>
 {{--                        <span class="eye_open ng-scope"></span>--}}
-                        <a href="javascript:;" style="margin-left: 30px">刷新</a>
+                        <a href="javascript:;" onclick="window.location.reload()" style="margin-left: 30px">{{trans('ag.refresh')}}</a>
 {{--                        <a ng-click="checkStatus('充值')" style="color: #E94335;" target="_blank">充值</a>--}}
 {{--                        <a ng-click="checkStatus('提现')" target="_blank">提现</a>--}}
 {{--                        <a ng-href="/member/member_transaction" target="_blank" href="/member/member_transaction">投注记录</a>--}}
-                        <a class="btn-quit">退出</a>
+                        <a class="btn-quit">{{trans('ag.quit')}}</a>
                     </div>
                     @endif
                 </div>
@@ -105,25 +81,22 @@
                                 <div class="user_header_nav ng-scope">
                                     <ul>
                                         <li ng-class="{hover: path=='{{url('ag/index')}}'}" @if($idx == 1) class="hover" @endif>
-                                            <a href="{{url('ag/index')}}">代理说明</a>
+                                            <a href="{{url('ag/index')}}">{{trans('ag.nav1')}}</a>
                                         </li>
                                         <li ng-class="{hover: path=='{{url('ag/report')}}'}" @if($idx == 2) class="hover" @endif>
-                                            <a href="{{url('ag/report')}}">代理报表</a>
+                                            <a href="{{url('ag/report')}}">{{trans('ag.nav2')}}</a>
                                         </li>
-                                        <li ng-class="{hover: path=='{{url('ag/ag_report')}}'}" @if($idx == 3) class="hover" @endif>
-                                            <a href="{{url('ag/ag_report')}}">下级报表</a>
-                                        </li>
+{{--                                        <li ng-class="{hover: path=='{{url('ag/ag_report')}}'}" @if($idx == 3) class="hover" @endif>--}}
+{{--                                            <a href="{{url('ag/ag_report')}}">下级报表</a>--}}
+{{--                                        </li>--}}
                                         <li ng-class="{hover: path=='{{url('ag/invite')}}'}" @if($idx == 4) class="hover" @endif>
-                                            <a href="{{url('ag/invite')}}">下级开户</a>
+                                            <a href="{{url('ag/invite')}}">{{trans('ag.nav3')}}</a>
                                         </li>
                                         <li ng-class="{hover: path=='{{url('ag/member')}}'}" @if($idx == 5) class="hover" @endif>
-                                            <a href="{{url('ag/member')}}">会员管理</a>
+                                            <a href="{{url('ag/member')}}">{{trans('ag.nav4')}}</a>
                                         </li>
                                         <li ng-class="{hover: path=='{{url('ag/betting_records')}}'}" @if($idx == 6) class="hover" @endif>
-                                            <a href="{{url('ag/betting_records')}}">投注记录</a>
-                                        </li>
-                                        <li ng-class="{hover: path=='{{url('ag/balance_log')}}'}" @if($idx == 7) class="hover" @endif>
-                                            <a href="{{url('ag/balance_log')}}">交易明细</a>
+                                            <a href="{{url('ag/betting_records')}}">{{trans('ag.nav5')}}</a>
                                         </li>
                                     </ul>
                                 </div></div>

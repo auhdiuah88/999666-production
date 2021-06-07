@@ -2,105 +2,88 @@
 
 @section('content')
     <div class="u_codeedit">
+        @php
+        $time_flag = request()->input('time_flag',1);
+        $phone = request()->input('phone','');
+        @endphp
         <div class="newTab">
-            <a ng-class="{curr: type === 0}" ng-click="toggleTime(0)" class="curr">今天</a>
-            <a ng-class="{curr: type === 1}" ng-click="toggleTime(1)">昨天</a>
-            <a ng-class="{curr: type === 2}" ng-click="toggleTime(2)">本月</a>
-            <a ng-class="{curr: type === 3}" ng-click="toggleTime(3)">上月</a>
+            <a href="{{url('ag/report')}}?time_flag=1" @if($time_flag == 1) class="curr" @endif>{{trans('ag.today')}}</a>
+            <a href="{{url('ag/report')}}?time_flag=2" @if($time_flag == 2) class="curr" @endif>{{trans('ag.yesterday')}}</a>
+            <a href="{{url('ag/report')}}?time_flag=3" @if($time_flag == 3) class="curr" @endif>{{trans('ag.cur_month')}}</a>
+            <a href="{{url('ag/report')}}?time_flag=4" @if($time_flag == 4) class="curr" @endif>{{trans('ag.last_month')}}</a>
         </div>
-        <ul class="todayView mgb10">
-            <input type="text" placeholder="下级报表查询" class="userInput ng-pristine ng-untouched ng-valid ng-empty" ng-model="name.username">
-            <a class="submitBtn ClickShade" ng-click="searchBtn(name.username)">搜索</a>
-        </ul>
+        <form class="todayView mgb10" action="" method="get">
+            <input value="{{$time_flag}}" name="time_flag" type="hidden" />
+            <input value="{{$phone}}" name="phone" type="text" placeholder="{{trans('ag.report_ipt_search')}}" class="userInput ng-pristine ng-untouched ng-valid ng-empty">
+            <button class="submitBtn ClickShade">{{trans('ag.search')}}</button>
+        </form>
         <div class="code_cont" style="">
             <ul class="plMore">
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>投注金额</span>
+                    <em class="ng-binding">{{$data['member']}}</em>
+                    <span>{{trans('ag.report_detail1')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>中奖金额</span>
+                    <em class="ng-binding">{{$data['balance']}}</em>
+                    <span>{{trans('ag.report_detail2')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>活动礼金</span>
+                    <em></em>
+                    <span></span>
                 </li>
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>团队返点</span>
+                    <em></em>
+                    <span></span>
                 </li>
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>团队盈利</span>
+                    <em></em>
+                    <span></span>
                 </li>
             </ul>
             <ul class="plMore">
                 <li>
-                    <em class="ng-binding">0人</em>
-                    <span>投注人数</span>
+                    <em class="ng-binding">{{$data['betting_money']}}</em>
+                    <span>{{trans('ag.report_detail3')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">0人</em><span>首充人数</span>
+                    <em class="ng-binding">{{$data['win_money']}}</em>
+                    <span>{{trans('ag.report_detail4')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">0人</em>
-                    <span>注册人数</span>
+                    <em class="ng-binding">{{$data['commission']}}</em>
+                    <span>{{trans('ag.report_detail5')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">0人</em>
-                    <span>下级人数</span>
+                    <em class="ng-binding">{{$data['profit']}}</em>
+                    <span>{{trans('ag.report_detail6')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">¥1000000.00</em>
-                    <span>团队余额</span>
+                    <em class="ng-binding">{{$data['betting_member']}}</em>
+                    <span>{{trans('ag.report_detail7')}}</span>
                 </li>
             </ul>
             <ul class="plMore">
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>充值金额</span>
+                    <em class="ng-binding">{{$data['first_recharge']}}</em>
+                    <span>{{trans('ag.report_detail8')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>提现金额</span>
+                    <em class="ng-binding">{{$data['register_member']}}</em>
+                    <span>{{trans('ag.report_detail9')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>代理返点</span>
+                    <em class="ng-binding">{{$data['recharge']}}</em>
+                    <span>{{trans('ag.report_detail10')}}</span>
                 </li>
                 <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>代理返点</span>
+                    <em class="ng-binding">{{$data['withdraw']}}</em>
+                    <span>{{trans('ag.report_detail11')}}</span>
                 </li>
-                <!-- ngIf: reportData.ky_win --><li ng-if="reportData.ky_win" class="ng-scope">
-                    <em class="ng-binding">¥0.00</em>
-                    <span>团队开元盈利</span>
-                </li><!-- end ngIf: reportData.ky_win -->
-                <!-- ngIf: !reportData.ky_win -->
+                <li>
+                    <em></em>
+                    <span></span>
+                </li>
             </ul>
-            <!-- ngIf: reportData.ag_win --><ul class="plMore ng-scope" ng-if="reportData.ag_win">
-                <li>
-                    <em class="ng-binding">¥0.00</em>
-                    <span>团队ag盈利</span>
-                </li>
-                <li>
-                    <em></em>
-                    <span></span>
-                </li>
-                <li>
-                    <em></em>
-                    <span></span>
-                </li>
-                <li>
-                    <em></em>
-                    <span></span>
-                </li>
-                <li>
-                    <em></em>
-                    <span></span>
-                </li>
-            </ul><!-- end ngIf: reportData.ag_win -->
         </div>
     </div>
 @endsection

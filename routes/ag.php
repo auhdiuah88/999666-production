@@ -11,6 +11,8 @@ Route::group(["namespace" => "Ag", "middleware"=>["ag_locale"]], function(){
 Route::group(["namespace" => "Ag", "middleware"=>["ag_login", "ag_locale"]], function(){
     Route::get('/report','Report@index');
     Route::get('/invite','User@inviteIndex');
+    Route::get('/member','User@userList');
+    Route::get('/betting_records','Game@bettingList');
     Route::post('/logout','Login@logout');
     Route::post('/add_link','User@addLink');
     Route::post('/del_link','User@delLink');

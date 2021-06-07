@@ -7,21 +7,23 @@ namespace App\Http\Requests\Ag;
 class LoginRequest extends BaseRequest
 {
 
-    public function rules(): array
-    {
-        return [
+    protected $rule = [
+        'login' => [
             'phone' => 'required|min:8',
             'pwd' => 'required|min:6'
-        ];
-    }
+        ],
+    ];
 
-    public function messages(): array
+    public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
     {
-        return [
-            'phone.required' => '请输入手机号',
-            'phone.min' => '手机号长度至少8位',
-            'pwd.required' => '请输入登录密码',
-            'pwd.min' => '登录密码长度至少6位',
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+        $this->message = [
+            'login' => [
+                'phone.required' => trans('ag.login_request1'),
+                'phone.min' => trans('ag.login_request2'),
+                'pwd.required' => trans('ag.login_request3'),
+                'pwd.min' => trans('ag.login_request4'),
+            ]
         ];
     }
 
