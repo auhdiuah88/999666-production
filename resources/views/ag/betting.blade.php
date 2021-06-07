@@ -56,7 +56,7 @@
                 <th>{{$item['users']['phone']}}</th>
                 <th>{{$item['game_name']['name']}}</th>
                 <th>{{$item['game_play']['number']}}</th>
-                <th>{{$item['game_c_x']['name']}}</th>
+                <th>{{$item['game_c_x']['name'] == "奇数" ? "Odd" : ($item['game_c_x']['name'] == "偶数" ? "Even" : ($item['game_c_x']['name'] == "幸运"? "Lucky" : $item['game_c_x']['name']))}}</th>
                 <th>{{$item['money']}}</th>
                 <th>{{$item['game_play']['prize_number']}}</th>
                 <th>{{$item['status']==0 ? trans('ag.wait_prize') : ($item['status']==1? trans('ag.win') : trans('ag.not_win'))}}</th>
