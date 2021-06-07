@@ -30,11 +30,11 @@
                 <!-- ngRepeat: item in allData[0].data track by $index -->
                 <li ng-repeat="item in allData[0].data track by $index" class="ng-binding ng-scope">0,5</li>
                 <!-- end ngRepeat: item in allData[0].data track by $index -->
+                <li ng-repeat="item in allData[0].data track by $index" class="ng-binding ng-scope">{{trans('ag.result_lucky')}}</li>
+                <!-- end ngRepeat: item in allData[0].data track by $index -->
                 <li ng-repeat="item in allData[0].data track by $index" class="ng-binding ng-scope">{{trans('ag.result_number')}}</li>
                 <!-- end ngRepeat: item in allData[0].data track by $index -->
                 <li ng-repeat="item in allData[0].data track by $index" class="ng-binding ng-scope">{{trans('ag.result_odd_even')}}</li>
-                <!-- end ngRepeat: item in allData[0].data track by $index -->
-                <li ng-repeat="item in allData[0].data track by $index" class="ng-binding ng-scope">{{trans('ag.result_lucky')}}</li>
             </ul>
             <div class="rebateTableCon clearfix" id="wrap" style="width: 1070px !important;">
                 <div class="rebateTable fix" id="content">
