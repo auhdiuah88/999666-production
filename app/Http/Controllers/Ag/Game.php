@@ -25,4 +25,9 @@ class Game extends Base
         return view('ag.betting',['idx'=>6, 'data'=>$this->GameService->_data]);
     }
 
+    public function oddsTable()
+    {
+        return view('ag.adds_table', ['idx'=>4]);
+    }
+
 }

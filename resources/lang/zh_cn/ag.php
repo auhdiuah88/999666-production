@@ -119,4 +119,9 @@ return [
     'user_request5' => '请选择开户类型',
     'user_request6' => '开户类型需要是整数',
     'user_request7' => '请选择链接',
+
+    'result_type' => '开奖结果',
+    'result_number' => '数字',
+    'result_odd_even' => '单双',
+    'result_lucky' => '幸运',
 ];

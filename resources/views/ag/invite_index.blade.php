@@ -15,7 +15,7 @@
                 <a class="userSearch" data-usertype="1">{{trans('ag.user_type1')}}</a>
                 <a class="userSearch active" data-usertype="2">{{trans('ag.user_type2')}}</a>
                 <br> {{trans('ag.set_rate_notice')}}
-                <a class="rebateDesLink" target="_blank" href="/odds_table">{{trans('ag.click_see')}}</a>
+                <a class="rebateDesLink" target="_blank" href="{{url('ag/odds_table')}}">{{trans('ag.click_see')}}</a>
             </li>
         </ul>
         <div class="bonusTable">
