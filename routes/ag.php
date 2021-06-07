@@ -5,6 +5,7 @@ use \Illuminate\Support\Facades\Route;
 
 Route::group(["namespace" => "Ag", "middleware"=>["ag_locale"]], function(){
     Route::get('/index','Index@index');
+    Route::get('/','Index@index');
     Route::post('/login','Login@login');
 });
 
