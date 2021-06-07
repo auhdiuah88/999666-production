@@ -121,7 +121,8 @@ return [
     'user_request7' => '请选择链接',
 
     'result_type' => '开奖结果',
-    'result_number' => '数字',
-    'result_odd_even' => '单双',
-    'result_lucky' => '幸运',
+    'result_number' => '买单个数字',
+    'result_odd_even' => '买Odd,Even赔率',
+    'result_lucky' => '买Lucky',
+    'result_0_5' => '买Odd开5/买Even开0',
 ];

@@ -28,7 +28,7 @@
                     <span></span>
                     <span>{{trans('ag.rate')}}</span></li>
                 <!-- ngRepeat: item in allData[0].data track by $index -->
-                <li ng-repeat="item in allData[0].data track by $index" class="ng-binding ng-scope">0,5</li>
+                <li ng-repeat="item in allData[0].data track by $index" class="ng-binding ng-scope">{{trans('ag.result_0_5')}}</li>
                 <!-- end ngRepeat: item in allData[0].data track by $index -->
                 <li ng-repeat="item in allData[0].data track by $index" class="ng-binding ng-scope">{{trans('ag.result_lucky')}}</li>
                 <!-- end ngRepeat: item in allData[0].data track by $index -->
