@@ -214,7 +214,8 @@ class TongLinkPay extends PayStrategy
                 $string[] = $key . '=' . $value;
         }
         $sign = implode('&', $string);
-        return md5(strtoupper($sign));
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('TongLink_withdrawSign',[unicodeStrtoupper($sign)]);
+        return md5(unicodeStrtoupper($sign));
     }
 
     public function generateWithdrawCallbackSign($appid,  $orderno, $actualamount, $status)
