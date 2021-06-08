@@ -11,27 +11,21 @@ use Illuminate\Support\Facades\DB;
 /**
  *  如：unicasino.in  的充值和提现类
  */
-class Sepropay extends PayStrategy
+class YLpay extends PayStrategy
 {
 
     protected static $rechargeUrl = 'https://pay.sepropay.com/';
 
     protected static $withdrawUrl = 'https://pay.sepropay.com/';
 
-    // 测试环境
-//    protected static $merchantID = 10120;
-//    protected static $secretkey = 'j3phc11lg986dx3tkai120ngpxy7a2sw';
-
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
-
-    //public static $company = 'seproPay';   // 支付公司名
 
     public $withdrawMerchantID;
     public $withdrawSecretkey;
     public $rechargeMerchantID;
     public $rechargeSecretkey;
-    public $company = 'sepro';   // 支付公司名
+    public $company = 'ylpay';   // 支付公司名
 
     public $rechargeRtn='success'; //支付成功的返回
     public $withdrawRtn='success'; //提现成功的返回
@@ -74,7 +68,7 @@ class Sepropay extends PayStrategy
         }
         $string[] = 'key=' . $secretKey;
         $sign = (implode('&', $string));
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder_sign', [$sign]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ylpay_rechargeOrder_sign', [$sign]);
         return strtolower(md5($sign));
     }
 
@@ -98,7 +92,7 @@ class Sepropay extends PayStrategy
         $params['sign'] = $this->generateSign($params,1);
         $params['sign_type'] = 'MD5';
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeOrder', $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ylpay_rechargeOrder', $params);
 
 //        $res = $this->requestService->postJsonData(self::$rechargeUrl . 'sepro/pay/web', $params);
 //        if ($res['rtn_code'] <> 1000) {
@@ -132,6 +126,7 @@ class Sepropay extends PayStrategy
         $params = [
             'mch_id' => $this->withdrawMerchantID,
             'mch_transferId' => $order_no,
+            'currency' => 'INR',
             'transfer_amount' => intval($money),
             'apply_date' => date('Y-m-d H:i:s'),
             'bank_code' => 'IDPT0001',
@@ -142,9 +137,9 @@ class Sepropay extends PayStrategy
         ];
         $params['sign'] = $this->generateSign($params,2);
         $params['sign_type'] = 'MD5';
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder',$params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ylpay_withdrawalOrder',$params);
         $res = $this->requestService->postFormData(self::$withdrawUrl . 'pay/transfer', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalOrder_rtn',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ylpay_withdrawalOrder_rtn',$res);
         if($res['respCode'] != 'SUCCESS'){
             $this->_msg = $res['errorMsg'];
             return false;
@@ -154,14 +149,14 @@ class Sepropay extends PayStrategy
             return false;
         }
         return  [
-            'pltf_order_no' => '',
+            'pltf_order_no' => $res['tradeNo'],
             'order_no' => $order_no
         ];
     }
 
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ylpay_rechargeCallback',$request->post());
 
         if ($request->tradeResult != '1')  {
             $this->_msg = 'sepro-recharge-交易未完成';
@@ -188,7 +183,7 @@ class Sepropay extends PayStrategy
 
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('sepro_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('ylpay_withdrawalCallback',$request->post());
 
         $pay_status = 0;
         $status = (string)($request->tradeResult);
@@ -199,7 +194,7 @@ class Sepropay extends PayStrategy
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'sepro_withdrawal-交易未完成';
+            $this->_msg = 'ylpay_withdrawal-交易未完成';
             return false;
         }
         // 验证签名
@@ -208,7 +203,7 @@ class Sepropay extends PayStrategy
         unset($params['sign']);
         unset($params['signType']);
         if ($this->generateSign($params,2) <> $sign) {
-            $this->_msg = 'sepro_签名错误';
+            $this->_msg = 'ylpay_签名错误';
             return false;
         }
         $where = [
