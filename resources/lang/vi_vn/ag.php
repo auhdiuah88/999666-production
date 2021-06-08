@@ -120,8 +120,9 @@ Nếu bạn cài đặt cho cấp dưới là loại hình tài khoản đại l
     'user_request6' => 'loại hình mở tài khoản phải là số nguyên',
     'user_request7' => 'vui lòng chọn liên kết',
 
-    'result_type' => 'kết quả mở thưởng',
-    'result_number' => 'số',
-    'result_odd_even' => 'chẵn lẻ',
-    'result_lucky' => 'may mắn',
+    'result_type' => 'kết quả',
+    'result_number' => 'mua số',
+    'result_odd_even' => 'odd/even',
+    'result_lucky' => 'mua lucky',
+    'result_0_5' => 'mua odd ra 5/ mua even ra 0',
 ];
