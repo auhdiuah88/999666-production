@@ -195,14 +195,14 @@ class TongLinkPay extends PayStrategy
     {
         $secret = $this->rechargeSecretkey;
         $string = $appid . $paytype . $orderamount . $orderno . $secret;
-        return md5(strtoupper($string));
+        return md5(mb_strtoupper($string));
     }
 
     public function generateRechargeCallbackSign($appid,  $orderno, $actualamount, $status)
     {
         $secret = $this->rechargeSecretkey;
         $string = $appid . $orderno . $actualamount . $status . $secret;
-        return md5(strtoupper($string));
+        return md5(mb_strtoupper($string));
     }
 
     public function generateWithdrawSign($params){
@@ -214,14 +214,14 @@ class TongLinkPay extends PayStrategy
                 $string[] = $key . '=' . $value;
         }
         $sign = implode('&', $string);
-        return md5(strtoupper($sign));
+        return md5(mb_strtoupper($sign));
     }
 
     public function generateWithdrawCallbackSign($appid,  $orderno, $actualamount, $status)
     {
         $secret = $this->withdrawSecretkey;
         $string = $appid . $orderno . $actualamount . $status . $secret;
-        return md5(strtoupper($string));
+        return md5(mb_strtoupper($string));
     }
 
     /**
