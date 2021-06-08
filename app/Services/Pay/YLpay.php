@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\DB;
 class YLpay extends PayStrategy
 {
 
-    protected static $rechargeUrl = 'https://pay.sepropay.com/';
+    protected static $rechargeUrl = 'https://pay.yarlungpay.com/';
 
-    protected static $withdrawUrl = 'https://pay.sepropay.com/';
+    protected static $withdrawUrl = 'https://pay.yarlungpay.com/';
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
