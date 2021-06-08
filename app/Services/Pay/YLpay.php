@@ -106,7 +106,7 @@ class YLpay extends PayStrategy
             'shop_id' => $this->rechargeMerchantID,
             'pay_company' => $this->company,
             'pay_type' => $pay_type,
-            'native_url' => self::$rechargeUrl . 'sepro/pay/web',
+            'native_url' => self::$rechargeUrl . 'pay/web',
             'pltf_order_id' => '',
             'verify_money' => $params['trade_amount'],
             'match_code' => '',
