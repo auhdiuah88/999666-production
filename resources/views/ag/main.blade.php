@@ -28,7 +28,7 @@
 
                 <div class="right login_and_userinfo ng-scope">
                     @php
-                    $user = \Illuminate\Support\Facades\Cache::get('user')
+                    $user = \Illuminate\Support\Facades\Cookie::get('user')
                     @endphp
                     @if(!$user)
                     <div class="login">
