@@ -2,7 +2,7 @@
 
 @section('content')
     <div data-v-24479cb0="" class="Box viewBox paddingBottom0">
-        <div data-v-24479cb0="" class="_img">
+        <div data-v-24479cb0="" class="_img" style="background:url({{asset('static/m/images/desc.jpg')}}) 50%/cover no-repeat">
         </div>
         <div data-v-24479cb0="" class="content_box">
 					<span data-v-24479cb0="" class="text_top">

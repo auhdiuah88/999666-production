@@ -2,7 +2,7 @@
 
 @section('content')
     <div data-v-1f5930b0="" class="Box viewBox paddingBottom0">
-        <div data-v-1f5930b0="" class="_top">
+        <div data-v-1f5930b0="" class="_top" style="background:url({{asset('static/m/images/index.jpg')}}) 0 0/100% 100% no-repeat;">
         </div>
         <div data-v-1f5930b0="" class="van-cell-group van-hairline--top-bottom">
 
