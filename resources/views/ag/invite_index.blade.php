@@ -6,7 +6,7 @@
         <a class="nav-tab" href="{{url('ag/invite')}}?tab=2">{{trans('ag.invite_tab2')}}</a>
     </div>
     @php
-        $user = \Illuminate\Support\Facades\Cookie::get('user')
+        $user = $_SESSION['user'];
     @endphp
     <div class="TabLi ng-scope">
         <ul class="searchFirst" id="userType">

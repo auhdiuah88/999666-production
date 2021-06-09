@@ -5,13 +5,15 @@ namespace App\Http\Middleware\Ag;
 
 use Closure;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Session;
 
 class CheckAgMiddleware
 {
 
     public function handle($request, Closure $next)
     {
-        if(!Cache::get('user'))
+        if(!getAgentUser())
         {
            if(strpos($request->path(),'m-')){
                return response()->redirectTo(url('ag/m-login'));

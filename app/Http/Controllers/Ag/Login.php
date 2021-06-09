@@ -44,7 +44,7 @@ class Login extends Base
 
     public function mLogin()
     {
-        if(Cache::get('user'))
+        if(getAgentUser())
         {
             return response()->redirectTo(url('ag/m-index'));
         }

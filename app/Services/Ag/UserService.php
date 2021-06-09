@@ -23,7 +23,7 @@ class UserService extends BaseService
 
     public function addLink($data): bool
     {
-        $user = Cache::get('user');
+        $user = getAgentUser();
         $user_id = $user['id'];
         ##获取用户
         $userInfo = $this->UserRepository->getById($user_id);

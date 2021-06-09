@@ -7,6 +7,7 @@ namespace App\Repositories\Ag;
 use App\Models\Cx_User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Session;
 
 class LoginRepository
 {
@@ -44,13 +45,14 @@ class LoginRepository
     public function doLogin($user)
     {
         $this->clearLoginTimes();
-        ##存入cookie
-        Cookie::queue('user',$user->toArray(),2 * 60 * 60);
+        ##存入session
+        session_start();
+        $_SESSION['user'] = $user->toArray();
     }
 
     public function doLogout()
     {
-        Cookie::queue('user',null,-1);
+        unset($_SESSION['user']);
     }
 
 }

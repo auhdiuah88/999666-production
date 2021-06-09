@@ -287,3 +287,10 @@ function getInviteLink($code, $rate=10, $type=2)
     $link .= '#/pages/register/register';
     return $link;
 }
+
+function getAgentUser(): array
+{
+    if(!isset($_SESSION)) session_start();
+    if(!isset($_SESSION['user']))return [];
+    return $_SESSION['user'];
+}

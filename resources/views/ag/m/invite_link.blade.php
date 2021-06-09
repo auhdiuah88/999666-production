@@ -2,8 +2,8 @@
 
 @section('content')
     @php
-        $user = \Illuminate\Support\Facades\Cookie::get('user');
-        $tab = request()->input('tab',1)
+        $user = $_SESSION['user'];
+        $tab = request()->input('tab',1);
     @endphp
     <div data-v-52f556ac="" class="nextUser viewBox paddingBottom0">
         <div data-v-52f556ac="">
