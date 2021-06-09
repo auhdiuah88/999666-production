@@ -79,6 +79,8 @@
         $.post("{{url('ag/login')}}", {phone,pwd}, function(res){
             if(res.code === 200){
                 window.location.href = "{{url('ag/m-index')}}"
+            }else{
+                alert(res.msg)
             }
         }, 'json')
     })
