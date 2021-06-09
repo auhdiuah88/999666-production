@@ -33,6 +33,7 @@ Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);
 Route::get("/h5Alert", "Api\SystemController@h5Alert")->middleware(['params_decrypt']);
 Route::get("/serviceSetting", "Api\SystemController@serviceSetting")->middleware(['params_decrypt']);
+Route::get("/agentUrl", "Api\SystemController@agentUrl")->middleware(['params_decrypt']);
 //Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
 //Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
 

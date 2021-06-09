@@ -168,4 +168,13 @@ class SystemController extends Controller
         );
     }
 
+    public function agentUrl()
+    {
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            env('AGENT_URL','')
+        );
+    }
+
 }
