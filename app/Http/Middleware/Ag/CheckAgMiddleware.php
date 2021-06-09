@@ -15,7 +15,7 @@ class CheckAgMiddleware
     {
         if(!getAgentUser())
         {
-           if(strpos($request->path(),'m-')){
+           if(strpos($request->path(),'m-') || strpos($request->path(),'index')){
                return response()->redirectTo(url('ag/m-login'));
            }else{
                return response()->redirectTo(url('ag/index'));
