@@ -55,8 +55,8 @@ Nếu bạn cài đặt cho cấp dưới là loại hình tài khoản đại l
     'report_detail11' => 'số tiền rút',
 
     //invite
-    'invite_tab1' => 'người dùng',
-    'invite_tab2' => 'mã mời',
+    'invite_tab1' => 'cấp dưới',
+    'invite_tab2' => 'mã giới thiệu',
     'user_type' => 'loại hình người dùng',
     'user_type1' => 'đại lý',
     'user_type2' => 'người chơi',
