@@ -4,7 +4,6 @@ use \Illuminate\Support\Facades\Route;
 
 
 Route::group(["namespace" => "Ag", "middleware"=>["ag_locale"]], function(){
-    Route::get('/index','Index@index');
     Route::post('/login','Login@login');
     Route::get('/m-login','Login@mLogin');
 });
@@ -27,5 +26,6 @@ Route::group(["namespace" => "Ag", "middleware"=>["ag_login", "ag_locale"]], fun
     Route::get('/m-betting','Game@mBettingList');
     Route::get('/m-odds_table','Game@mOddsTable');
     Route::get('/','Index@mIndex');
+    Route::get('/index','Index@mIndex');
 
 });
