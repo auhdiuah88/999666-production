@@ -47,7 +47,7 @@ class UserRepository
 
     public function getLinkList()
     {
-        $user_id = getAgentUser();
+        $user_id = getAgentUser()['id'];
         return $this->Cx_Ag_Link->where("user_id", $user_id)->orderByDesc('created_at')->select("id", "link", "type", "rebate_percent", "created_at")->paginate(10);
     }
 
@@ -58,7 +58,7 @@ class UserRepository
 
     public function getUserList($phone, $user_type)
     {
-        $user_id = getAgentUser();
+        $user_id = getAgentUser()['id'];
         $where = [
             'invite_relation' => ['like', "%-{$user_id}-%"]
         ];
