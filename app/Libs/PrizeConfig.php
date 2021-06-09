@@ -95,8 +95,8 @@ class PrizeConfig
 
     protected static function getK1($rate): string
     {
-        $rate = floor($rate);
         if($rate < 8.5){
+            $rate = floor($rate);
             $k1 = (string)$rate;
         }else{
             $k1 = "8.5";
