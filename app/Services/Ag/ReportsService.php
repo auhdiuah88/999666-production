@@ -25,21 +25,19 @@ class ReportsService extends BaseService
 
     public function getAgReport()
     {
-        $user_ids = $this->UserRepository->getMemberUserIds();
-        $phone = request()->input('phone','');
+        $phone = trim(request()->input('phone',''));
         if($phone){
             ##获取用户
-            $user = $this->UserRepository->getByPhone($phone);
-            if($user && in_array($user['id'], $user_ids))
+            $user = $this->UserRepository->getMemberByPhone($phone);
+            if($user)
             {
-                $this->ReportRepository->user_ids = [$user['id']];
+                $this->ReportRepository->user_ids = $this->UserRepository->getMemberUserIds($user->id);
             }else{
                 $this->ReportRepository->user_ids = [];
             }
         }else{
-            $this->ReportRepository->user_ids = $user_ids;
+            $this->ReportRepository->user_ids =  $this->UserRepository->getMemberUserIds();;
         }
-
         ##时间
         $time_flag = request()->input('time_flag',1);
         switch ($time_flag){

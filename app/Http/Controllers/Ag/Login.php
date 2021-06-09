@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Ag;
 
 use App\Http\Requests\Ag\LoginRequest;
 use App\Services\Ag\LoginService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class Login extends Base
@@ -39,6 +40,15 @@ class Login extends Base
         }catch (\Exception $e){
             return $this->AppHostErr($e);
         }
+    }
+
+    public function mLogin()
+    {
+        if(Cache::get('user'))
+        {
+            return response()->redirectTo(url('ag/m-index'));
+        }
+        return view('ag.m.login', ['title'=> trans('ag.agent_login')]);
     }
 
 }

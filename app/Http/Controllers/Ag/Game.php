@@ -30,4 +30,15 @@ class Game extends Base
         return view('ag.adds_table', ['idx'=>4]);
     }
 
+    public function mBettingList()
+    {
+        $this->GameService->bettingList();
+        return view('ag.m.betting',['title'=>trans('ag.betting_manage'), 'data'=>$this->GameService->_data, 'prev'=>1]);
+    }
+
+    public function mOddsTable()
+    {
+        return view('ag.m.adds_table', ['title'=>trans('ag.rate_table'), 'prev'=>1]);
+    }
+
 }

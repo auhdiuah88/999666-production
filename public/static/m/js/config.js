@@ -1,0 +1,2 @@
+// eslint-disable-next-line no-unused-vars
+var webHost = window.location.host; var AuthGC = ''; var payApi = ''; var apiKy = {}; if (webHost === 'localhost:8080') { AuthGC = 'n01'; payApi = 'https://h5newapi.guocaiapi.com'; apiKy = { 'ky': 'https://h5newapi.guocaiapi.com' } } else { AuthGC = webHost; payApi = 'https://www.aliycpaycdn.com'; apiKy = { 'ky': 'https://www.sxycapi.com' } };var urlArr = [ 'https://kdomain.kkckg.com', 'https://kdomain.gfzkapi1.com' ]; var AJAXCONFIG = { AuthGC: AuthGC, payApi: payApi, apiKy: apiKy }

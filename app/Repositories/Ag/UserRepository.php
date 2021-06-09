@@ -33,15 +33,22 @@ class UserRepository
         return $this->Cx_Users->where("phone", $phone)->first();
     }
 
+    public function getMemberByPhone($phone)
+    {
+        $user_id = Cache::get('user')['id'];
+        return $this->Cx_Users->where("phone", $phone)->where("invite_relation", "like", "%-{$user_id}-%")->first();
+    }
+
     public function addLink($data)
     {
+        $data['created_at'] = time();
         return $this->Cx_Ag_Link->create($data);
     }
 
     public function getLinkList()
     {
         $user_id = Cache::get('user')['id'];
-        return $this->Cx_Ag_Link->where("user_id", $user_id)->select("id", "link", "type", "rebate_percent", "created_at")->paginate(10);
+        return $this->Cx_Ag_Link->where("user_id", $user_id)->orderByDesc('created_at')->select("id", "link", "type", "rebate_percent", "created_at")->paginate(10);
     }
 
     public function delLink($id)
@@ -76,9 +83,9 @@ class UserRepository
         return $this->Cx_Users->where("invite_relation", "like", "%-{$user_id}-%")->count("id");
     }
 
-    public function getMemberUserIds()
+    public function getMemberUserIds($user_id=0)
     {
-        $user_id = Cache::get('user')['id'];
+        $user_id = $user_id?: Cache::get('user')['id'];
         $where = [
             'invite_relation' => ['like', "%-{$user_id}-%"]
         ];

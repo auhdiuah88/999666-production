@@ -13,7 +13,11 @@ class CheckAgMiddleware
     {
         if(!Cache::get('user'))
         {
-            return response()->redirectTo(url('ag/index'));
+           if(strpos($request->path(),'m-')){
+               return response()->redirectTo(url('ag/m-login'));
+           }else{
+               return response()->redirectTo(url('ag/index'));
+           }
         }
         return $next($request);
     }

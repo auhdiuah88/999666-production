@@ -31,6 +31,7 @@ class GameService extends BaseService
         $type = request()->input('type',-1);
         $game_id = request()->input('game_id',0);
         $phone = request()->input('phone','');
+        $time_flag = request()->input('time_flag',0);
         $where = [];
         ##获取用户Id
         $user_ids = $this->UserRepository->getMemberUserIds();
@@ -66,8 +67,22 @@ class GameService extends BaseService
         }else{
             $cur_game = '全部';
         }
-        $where['betting_time'] = ['>', strtotime("-7 day")];
-//        dd($where);
+        if($time_flag > 0)
+        {
+            switch ($time_flag){
+                case 1:
+                    $where['betting_time'] = ['BETWEEN', [day_start(), day_end()]];
+                    break;
+                case 2:
+                    $where['betting_time'] = ['BETWEEN', [last_day_start(), last_day_end()]];
+                    break;
+                case 3:
+                    $where['betting_time'] = ['BETWEEN', [day_start()-6 * 24 * 60 * 60, day_end()]];
+                    break;
+            }
+        }else{
+            $where['betting_time'] = ['>', strtotime("-7 day")];
+        }
         $list = $this->GameRepository->bettingList($where);
         $this->_data = compact('game','list','cur_game');
     }

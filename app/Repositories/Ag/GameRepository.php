@@ -48,7 +48,7 @@ class GameRepository
             )
             ->select("id", "betting_num", "user_id", "game_id", "game_p_id", "game_c_x_id", "money", "betting_time", "status")
             ->orderByDesc("betting_time")
-            ->paginate(15);
+            ->paginate(20);
     }
 
 }

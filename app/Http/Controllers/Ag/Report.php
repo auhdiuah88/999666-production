@@ -25,4 +25,10 @@ class Report extends Base
         return view('ag.report', ['idx'=>2, 'data'=>$this->ReportService->_data]);
     }
 
+    public function mIndex()
+    {
+        $this->ReportService->getAgReport();
+        return view('ag.m.report', ['title'=>trans('ag.agent_report'), 'data'=>$this->ReportService->_data, 'prev'=>1]);
+    }
+
 }
