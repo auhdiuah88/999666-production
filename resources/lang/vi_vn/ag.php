@@ -144,4 +144,6 @@ Nếu bạn cài đặt cho cấp dưới là loại hình tài khoản đại l
     'invite_code' => 'mã giới thiệu',
     'agent_login' => 'đăng nhập',
     'agree_rule' => 'tôi đồng ý và tuân thủ thỏa hiệp này',
+
+    'return_index' => 'quay lại trang chủ',
 ];

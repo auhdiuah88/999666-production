@@ -144,4 +144,6 @@ return [
     'invite_code' => '邀请码',
     'agent_login' => '代理登录',
     'agree_rule' => '我同意并遵守服务协议',
+
+    'return_index' => '返回首页',
 ];

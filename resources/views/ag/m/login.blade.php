@@ -60,6 +60,9 @@
                     <button class="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none btn-login">
                         <span class="ml-3">{{trans('ag.login')}}</span>
                     </button>
+                    <button class="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none btn-return">
+                        <span class="ml-3">{{trans('ag.return_index')}}</span>
+                    </button>
                     <p class="mt-6 text-xs text-gray-600 text-center">{{trans('ag.agree_rule')}}</p>
                 </div>
             </div>
@@ -83,6 +86,13 @@
                 alert(res.msg)
             }
         }, 'json')
+    })
+
+    $('.btn-return').on('click', function(){
+        var url = "{{env('SHARE_URL','')}}"
+        if(url){
+            window.location.href = url;
+        }
     })
 </script>
 

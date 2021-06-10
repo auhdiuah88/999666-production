@@ -54,6 +54,14 @@
                 </div>
                 <i data-v-1f5930b0="" class="van-icon van-icon-arrow van-cell__right-icon"></i>
             </div>
+            <div data-v-1f5930b0="" role="button" tabindex="0" class="van-cell btn-return">
+                <div data-v-1f5930b0="" class="van-cell__title">
+                    <span data-v-1f5930b0="">
+                        {{trans('ag.return_index')}}
+                    </span>
+                </div>
+                <i data-v-1f5930b0="" class="van-icon van-icon-arrow van-cell__right-icon"></i>
+            </div>
         </div>
     </div>
 @endsection
@@ -72,6 +80,13 @@
                     alert('{{trans("ag.logout_fail")}}')
                 }
             },'json')
+        })
+
+        $('.btn-return').on('click', function(){
+            var url = "{{env('SHARE_URL','')}}"
+            if(url){
+                window.location.href = url;
+            }
         })
     </script>
 @endsection
