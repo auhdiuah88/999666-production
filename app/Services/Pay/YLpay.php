@@ -130,7 +130,7 @@ class YLpay extends PayStrategy
             'currency' => 'INR',
             'transfer_amount' => intval($money),
             'apply_date' => date('Y-m-d H:i:s'),
-            'bank_code' => 'IDPT0001',
+            'bank_code' => 'SBI',
             'receive_name' => $withdrawalRecord->account_holder,
             'receive_account' => $withdrawalRecord->bank_number,
             'remark' => $withdrawalRecord->ifsc_code,
