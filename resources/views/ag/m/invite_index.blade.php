@@ -68,12 +68,13 @@
                                     </div>
                                     <div class="van-cell__value">
                                         <div class="van-field__body">
-                                            <input name="rate" type="text" placeholder="{{trans('ag.self_rate')}}{{$user['rebate_rate']}}，{{trans('ag.member_rate')}}0.1-{{$user['rebate_rate']}}" class="van-field__control">
+                                            <input name="rate" type="text" placeholder="{{trans('ag.rate')}}" class="van-field__control">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div style="color: red;margin-left:20px;margin-top:10px;">{{trans('ag.self_rate')}}{{$user['rebate_rate']}}，{{trans('ag.member_rate')}}0.1-{{$user['rebate_rate']}}</div>
                         <div data-v-52f556ac="" data-v-6fab7655="" class="_btn">
                             <button data-v-52f556ac="" data-v-6fab7655="" class="van-button van-button--danger van-button--normal van-button--block btn-submit">
                                 <span data-v-52f556ac="" data-v-6fab7655="" class="van-button__text">

@@ -7,7 +7,7 @@ return [
     'refresh' => 'làm mới',
     'quit' => 'đăng xuất',
     'system_err' => '你正在使用的是IE9版本以下的浏览器，建议更换成Chrome内核或者IE9及更高版本的浏览器',
-    'phone' => 'số điện thoại',
+    'phone' => 'sđt',
     'password' => 'mật khẩu',
     'login' => 'đăng nhập',
     'nav1' => 'thuyết minh ',
@@ -57,7 +57,7 @@ Nếu bạn cài đặt cho cấp dưới là loại hình tài khoản đại l
     //invite
     'invite_tab1' => 'cấp dưới',
     'invite_tab2' => 'mã giới thiệu',
-    'user_type' => 'loại hình người dùng',
+    'user_type' => 'loại hình',
     'user_type1' => 'đại lý',
     'user_type2' => 'người chơi',
     'set_rate_notice' => 'cài đặt hoàn trả: vui lòng cài đặt hoàn trả cho cấp dưới trước.',
@@ -80,9 +80,9 @@ Nếu bạn cài đặt cho cấp dưới là loại hình tài khoản đại l
     'del_link_success' => 'xóa liên kết thành công',
 
     //member
-    'next_member' => 'số người cấp dưới',
+    'next_member' => 'số người',
     'balance' => 'số dư',
-    'last_login' => 'đăng nhập cuối',
+    'last_login' => 'đăng nhập',
     'register_time' => 'thời gian đăng ký',
 
     //betting
