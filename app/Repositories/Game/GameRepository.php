@@ -1010,16 +1010,28 @@ class GameRepository
         return $this->Cx_Game_Betting->where('game_p_id',$game_id)->sum('money');
     }
 
-    public function Get_New_Sum_Money(){
-        $s = strtotime(date('Y-m-d').'00:00:00');
-        $l = strtotime(date('Y-m-d').'23:59:59');
-        $ids=array_column($this->Cx_User->where("reg_source_id", 0)->get("id")->toArray(), "id");
-        $data['y_money']=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->whereIn("user_id",$ids)->where("status",1)->sum("win_money");
-        $s1_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l]) ->whereIn("user_id",$ids)->where("status",1)->sum("money");
-        $s2_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->whereIn("user_id",$ids)->where("status",2)->sum("money");
-        $data['s_money']=$s1_money+$s2_money;
-        $data['c_money']=$this->Cx_User_Recharge_Logs->whereBetween('time', [$s, $l])->where("status",2)->sum("money");
-        return $data;
+    public function Get_New_Sum_Money($game_id=0){
+        if($game_id && env('DAY_KILL_MODULE',1) == 2){
+            $s = strtotime(date('Y-m-d').'00:00:00');
+            $l = strtotime(date('Y-m-d').'23:59:59');
+            $ids=array_column($this->Cx_User->where("reg_source_id", 0)->get("id")->toArray(), "id");
+            $data['y_money']=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->where("game_id",$game_id)->whereIn("user_id",$ids)->where("status",1)->sum("win_money");
+            $s1_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->where("game_id",$game_id)->whereIn("user_id",$ids)->where("status",1)->sum("money");
+            $s2_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->where("game_id",$game_id)->whereIn("user_id",$ids)->where("status",2)->sum("money");
+            $data['s_money']=$s1_money+$s2_money;
+            $data['c_money']=$this->Cx_User_Recharge_Logs->whereBetween('time', [$s, $l])->where("status",2)->sum("money");
+            return $data;
+        }else{
+            $s = strtotime(date('Y-m-d').'00:00:00');
+            $l = strtotime(date('Y-m-d').'23:59:59');
+            $ids=array_column($this->Cx_User->where("reg_source_id", 0)->get("id")->toArray(), "id");
+            $data['y_money']=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->whereIn("user_id",$ids)->where("status",1)->sum("win_money");
+            $s1_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->whereIn("user_id",$ids)->where("status",1)->sum("money");
+            $s2_money=$this->Cx_Game_Betting->whereBetween('betting_time', [$s, $l])->whereIn("user_id",$ids)->where("status",2)->sum("money");
+            $data['s_money']=$s1_money+$s2_money;
+            $data['c_money']=$this->Cx_User_Recharge_Logs->whereBetween('time', [$s, $l])->where("status",2)->sum("money");
+            return $data;
+        }
     }
 
     public function Get_New_Sum_Money1(){

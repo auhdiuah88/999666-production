@@ -72,7 +72,7 @@ class Ssc_FourService
                 case 1: //天杀
                     $date_kill = $system->date_kill;  //获得天杀率
                     ##今天内的投注金额 s_money，中奖金额 y_money
-                    $new_money_sum=$this->GameRepository->Get_New_Sum_Money();
+                    $new_money_sum=$this->GameRepository->Get_New_Sum_Money($this->game_id);
                     ##可赔金额
                     $can_donate_money = (1-$date_kill) * ($new_money_sum['s_money'] + $cur_betting_money - $new_money_sum['y_money']);
                     break;
