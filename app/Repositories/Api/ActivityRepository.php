@@ -130,7 +130,7 @@ class ActivityRepository
      */
     public function getAllSignInGetMoney()
     {
-        return $this->sign_Product->orderBy('amount', 'asc')->get();
+        return $this->sign_Product->where("status", 1)->orderBy('amount', 'asc')->get();
     }
 
 
