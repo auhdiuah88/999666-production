@@ -37,6 +37,8 @@ class ActivityService extends BaseService
             'rebate_ratio' => $this->floatInput('rebate_ratio'),
             'stock' => $this->intInput('stock'),
         ];
+        $data['receive_amount'] = bcmul($data['daily_rebate'], $data['payback_cycle']);
+        $data['profit'] = bcsub($data['receive_amount'], $data['amount']);
         $res = $this->ActivityRepository->signProductEdit($data);
         if($res === false){
             $this->_code = 302;
