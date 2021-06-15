@@ -76,9 +76,9 @@ class SystemService extends Service
                 'image_url' => ''
             ];
         }
-        $signSetting = $this->SystemRepository->getSettingValueByKey(SettingDic::key('SIGN_SETTING'));
-        if (!$signSetting){
-            $signSetting = [
+        $signSetting2 = $this->SystemRepository->getSettingValueByKey(SettingDic::key('SIGN_SETTING'));
+        if (!$signSetting2){
+            $signSetting2 = [
                 'image_id' => 0,
                 'image_url' => '',
                 'status' => 0
@@ -93,7 +93,7 @@ class SystemService extends Service
             ];
         }
 
-        $this->_data = compact('banners','inviteSetting','signSetting','taskSetting');
+        $this->_data = compact('banners','inviteSetting','signSetting2','taskSetting');
     }
 
     public function serviceSetting()
