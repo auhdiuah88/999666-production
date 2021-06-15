@@ -93,7 +93,7 @@ class SystemService extends Service
             ];
         }
 
-        $this->_data = compact('banners','inviteSetting','signSetting2','taskSetting');
+        $this->_data = compact('banners','inviteSetting','taskSetting','signSetting2');
     }
 
     public function serviceSetting()
