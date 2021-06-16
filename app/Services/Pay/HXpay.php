@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 class HXpay extends PayStrategy
 {
 
-    protected static $url = 'https://upi.cash/';    // 支付网关
+    protected static $url = 'https://upi.best/';    // 支付网关
 
-    protected static $url_cashout = 'https://upi.cash/'; // 提现网关
+    protected static $url_cashout = 'https://upi.best/'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
@@ -94,7 +94,7 @@ class HXpay extends PayStrategy
         $header[] = "Content-Type: application/json";
         $header[] = "Content-Length: " . strlen($params_string);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('HXpay_rechargeParams',[$params]);
-        $res =dopost(self::$url . 'gateway/payin/', $params_string, $header);
+        $res =dopost(self::$url . 'gateway/payin', $params_string, $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('HXpay_return',[$res]);
         $res = json_decode($res,true);
         if (!$res || $res['code'] != 0) {
@@ -162,7 +162,7 @@ class HXpay extends PayStrategy
         $header[] = "Content-Type: application/json";
         $header[] = "Content-Length: " . strlen($params_string);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('HXpay_withdraw_params',[$params]);
-        $res =dopost(self::$url_cashout . 'gateway/payout/', $params_string, $header);
+        $res =dopost(self::$url_cashout . 'gateway/payout', $params_string, $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('HX_withdraw_return',[$res]);
         $res = json_decode($res,true);
         if(!$res){
