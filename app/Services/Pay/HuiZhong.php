@@ -91,8 +91,16 @@ class HuiZhong extends PayStrategy
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder', [$params]);
-
-        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
+        $params_string = json_encode($params);
+        $header[] = "Content-Type: application/json";
+        $header[] = "Content-Length: " . strlen($params_string);
+        $res =dopost(self::$url . 'ty/orderPay', $params_string, $header);
+//        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
+        $res = json_decode($res,true);
+        if (!$res) {
+            $this->_msg = "prepay failed";
+            return false;
+        }
         if ($res['status'] != 'SUCCESS') {
             \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
