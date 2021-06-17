@@ -21,7 +21,7 @@ class HuiZhong extends PayStrategy
     public $withdrawSecretkey;
     public $rechargeMerchantID;
     public $rechargeSecretkey;
-    public $company = 'MTBpay';   // 支付公司名
+    public $company = 'huizhong';   // 支付公司名
 
     public function _initialize()
     {

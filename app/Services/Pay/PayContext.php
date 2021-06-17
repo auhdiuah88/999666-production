@@ -44,7 +44,8 @@ class PayContext
         BRHXpay $BRHXpay,
         GlobalPay $globalPay,
         TongLinkPay $tongLinkPay,
-        YLpay $YLpay
+        YLpay $YLpay,
+        CloudPay $cloudPay
     )
     {
         // 每种api地址对应的支付公司
@@ -80,6 +81,7 @@ class PayContext
             'globalpay' => $globalPay,  //印度-》前惠众 换了网关
             'TongLink' => $tongLinkPay,  //巴西tonglink
             'ylpay' => $YLpay,  //印度 类似sepropay
+            'cloudpay' => $cloudPay,  //印度云支付
         ];
     }
     /**
