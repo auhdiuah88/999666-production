@@ -86,6 +86,7 @@ class HuiZhong extends PayStrategy
             'busi_code' => 'UPI',
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
+            'pageUrl' => env('SHARE_URL',''),
         ];
         $params['sign'] = $this->generateSign($params,1);
 
