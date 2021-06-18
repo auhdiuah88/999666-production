@@ -34,24 +34,29 @@ class UserController extends Controller
      */
     public function Login(Request $request)
     {
-        $data = $request->post();
-        $rules = [
-            "phone" => "required",
-            "password" => "required",
-        ];
+        try{
+            $data = $request->post();
+            $rules = [
+                "phone" => "required",
+                "password" => "required",
+            ];
 //        $massages = [
 //            "phone.required" => "手机不能为空",
 //            "password.required" => "密码不能为空",
 //        ];
-        $validator = Validator::make($data, $rules);
-        if ($validator->fails()) {
-            return $this->AppReturn(414, $validator->errors()->first());
-        }
+            $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                return $this->AppReturn(414, $validator->errors()->first());
+            }
 
-        if ($this->UserService->Login($data)) {
-            return $this->AppReturn(200, 'login success', $this->UserService->data);
+            if ($this->UserService->Login($data)) {
+                return $this->AppReturn(200, 'login success', $this->UserService->data);
+            }
+            return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
+        }catch(\Exception $e){
+            $this->logError('apidebug',$e);
+            return $this->AppReturn(414, 'login fail');
         }
-        return $this->AppReturn($this->UserService->error_code, $this->UserService->error);
     }
 
     /**
