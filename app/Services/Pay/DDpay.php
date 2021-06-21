@@ -112,8 +112,8 @@ class DDpay extends PayStrategy
         }
         // 验证签名
         $params = $request->input();
-        $sign = $params['sign'];
-        unset($params['sign']);
+        $sign = $params['Sign'];
+        unset($params['Sign']);
         unset($params['type']);
         if ($this->generateSign($params,1) <> $sign) {
             $this->_msg = 'DDPay-签名错误';
@@ -188,8 +188,8 @@ class DDpay extends PayStrategy
         }
         // 验证签名
         $params = $request->input();
-        $sign = $params['sign'];
-        unset($params['sign']);
+        $sign = $params['Sign'];
+        unset($params['Sign']);
         unset($params['type']);
         if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'DDPay-签名错误';
