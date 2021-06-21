@@ -69,10 +69,10 @@ class DDpay extends PayStrategy
         $params['sign'] = $this->generateSign($params,1);
 
         \Illuminate\Support\Facades\Log::channel('mytest')->info('DDPay_rechargeOrder', [$params]);
-        $params_string = json_encode($params);
-        $header[] = "Content-Type: application/json";
-        $header[] = "Content-Length: " . strlen($params_string);
-        $res =dopost(self::$url, $params_string, $header);
+//        $params_string = json_encode($params);
+        $header[] = "Content-Type: application/x-www-form-urlencoded";
+//        $header[] = "Content-Length: " . strlen($params_string);
+        $res =dopost(self::$url, $params, $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('DDPay_rechargeOrder_return', [$res]);
         $res = json_decode($res,true);
         if (!$res) {
