@@ -146,11 +146,11 @@ class DDpay extends PayStrategy
             'MerchantId' => $this->withdrawMerchantID,
         ];
         $params['sign'] = $this->generateSign($params,2);
-        $params_string = json_encode($params);
-        $header[] = "Content-Type: application/json";
-        $header[] = "Content-Length: " . strlen($params_string);
+//        $params_string = json_encode($params);
+        $header[] = "Content-Type: application/x-www-form-urlencoded";
+//        $header[] = "Content-Length: " . strlen($params_string);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('DDPay_withdrawalOrder',$params);
-        $res =dopost(self::$url_cashout, $params_string, $header);
+        $res =dopost(self::$url_cashout, http_build_query($params), $header);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('DDPay_withdrawalOrder',[$res]);
         $res = json_decode($res,true);
         if(!$res){
