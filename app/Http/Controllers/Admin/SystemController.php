@@ -36,4 +36,44 @@ class SystemController extends Controller
             $this->SystemService->_data
         );
     }
+
+    public function tipsList()
+    {
+        $this->SystemService->tipsList();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
+    public function addTips()
+    {
+        $this->SystemService->addTips();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
+    public function editTips()
+    {
+        $this->SystemService->editTips();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
+    public function delTips()
+    {
+        $this->SystemService->delTips();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
 }

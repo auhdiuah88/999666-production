@@ -8,6 +8,8 @@ use App\Dictionary\SettingDic;
 use App\Repositories\Admin\SettingRepository;
 use App\Repositories\Admin\SystemRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class SystemService extends BaseService
 {
@@ -61,4 +63,130 @@ class SystemService extends BaseService
             $this->_msg = "编辑失败";
         }
     }
+
+    public function tipsList()
+    {
+        try{
+            ##参数验证
+            $validator = Validator::make(request()->input(), [
+                'page' => 'required|gte:1',
+                'status' => Rule::in(0,1,-1)
+            ]);
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $status = $this->intInput('status',-1);
+            $where = [];
+            if($status > -1)
+            {
+                $where['status'] = ['=', $status];
+            }
+            $size = $this->sizeInput();
+            $this->_data = $this->SystemRepository->tipsList($where, $size);
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function addTips()
+    {
+        try{
+            ##参数验证
+            $validator = Validator::make(request()->input(), [
+                'content' => 'required|max:255|min:5',
+                'status' => Rule::in(0,1)
+            ]);
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $data = [
+                'content' => $this->htmlInput('content'),
+                'status' => $this->intInput('status'),
+                'start_time' => $this->intInput('start_time'),
+                'end_time' => $this->intInput('end_time')
+            ];
+            if($data['end_time'] <= $data['start_time'])
+            {
+                throw new \Exception('结束时间应该大于开始时间');
+            }
+            if($data['end_time'] <= time())
+            {
+                throw new \Exception('结束时间不能早于当前时间');
+            }
+            $res = $this->SystemRepository->addTips($data);
+            if(!$res)
+            {
+                throw new \Exception('操作失败');
+            }
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function editTips()
+    {
+        try{
+            ##参数验证
+            $validator = Validator::make(request()->input(), [
+                'id' => 'required|gte:1',
+                'content' => 'required|max:255|min:5',
+                'status' => Rule::in(0,1)
+            ]);
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $id = $this->intInput('id');
+            $data = [
+                'content' => $this->htmlInput('content'),
+                'status' => $this->intInput('status'),
+                'start_time' => $this->intInput('start_time'),
+                'end_time' => $this->intInput('end_time')
+            ];
+            if($data['end_time'] <= $data['start_time'])
+            {
+                throw new \Exception('结束时间应该大于开始时间');
+            }
+            if($data['end_time'] <= time())
+            {
+                throw new \Exception('结束时间不能早于当前时间');
+            }
+            $res = $this->SystemRepository->editTips($id, $data);
+            if(!$res)
+            {
+                throw new \Exception('操作失败');
+            }
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function delTips()
+    {
+        try{
+            ##参数验证
+            $validator = Validator::make(request()->input(), [
+                'id' => 'required|gte:1',
+            ]);
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $id = $this->intInput('id');
+            $res = $this->SystemRepository->delTips($id);
+            if(!$res)
+            {
+                throw new \Exception('操作失败');
+            }
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
 }

@@ -146,6 +146,15 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             });
         });
 
+        //游戏
+        Route::group(["prefix" => "game"], function () {
+            Route::get("/cateList", "GameController@cateList");
+            Route::post("/addCate", "GameController@addCate");
+            Route::post("/editCate", "GameController@editCate");
+            Route::post("/delCate", "GameController@delCate");
+            Route::get("/cateDetail", "GameController@cateDetail");
+        });
+
         // 用户下注信息
         Route::group(["prefix" => "wager"], function () {
             Route::get("/findAll", "WagerController@findAll");
@@ -300,6 +309,12 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::get("/activity/redEnvelopeTask","ActivityController@redEnvelopeTask");
             Route::post("/activity/redEnvelopeTaskEdit","ActivityController@redEnvelopeTaskEdit");
             Route::get("/activity/redEnvelopeTaskList","ActivityController@redEnvelopeTaskList");
+
+            ##系统通知
+            Route::get("/tips","SystemController@tipsList");
+            Route::post("/addTips","SystemController@addTips");
+            Route::post("/editTips","SystemController@editTips");
+            Route::post("/delTips","SystemController@delTips");
         });
 
         // 后台赠金记录列表

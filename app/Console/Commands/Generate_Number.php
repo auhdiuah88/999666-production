@@ -40,9 +40,9 @@ class Generate_Number extends Command
      */
     public function handle()
     {
-        $this->GameRepository->Generate_Gold_Number();
-        $this->GameRepository->Generate_Silver_Number();
-        $this->GameRepository->Generate_Jewelry_Number();
-        $this->GameRepository->Generate_Other_Number();
+        $this->GameRepository->Generate_Gold_Number(env('GOLD_TIME',60));
+        $this->GameRepository->Generate_Silver_Number(env('SILVER_TIME',120));
+        $this->GameRepository->Generate_Jewelry_Number(env('JEWELRY_TIME',180));
+        $this->GameRepository->Generate_Other_Number(env('OTHER_TIME',300));
     }
 }

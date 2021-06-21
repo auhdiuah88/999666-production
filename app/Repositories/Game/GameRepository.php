@@ -56,7 +56,7 @@ class GameRepository
     }
 
     //每小时生成Gold期数
-    public function Generate_Gold_Number()
+    public function Generate_Gold_Number($time)
     {
         $return = array();
         //获取所有彩票游戏
@@ -73,21 +73,21 @@ class GameRepository
                     //获取最新一期信息
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
-                        $this->end_time = $this->start_time + 60;
+                        $this->end_time = $this->start_time + $time;
                         $this->number = date('YmdH', $this->start_time)."1".$j;
                     } else {
                         $this->start_time = $this->end_time;
-                        $this->end_time = $this->end_time + 60;
+                        $this->end_time = $this->end_time + $time;
                         $this->number = date('YmdH', $this->start_time)."1".$j;
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = strtotime(date("Y-m-d",time()));
-                        $this->end_time = $this->start_time + 60;
+                        $this->end_time = $this->start_time + $time;
                         $this->number = date('YmdH', $this->start_time)."1".$j;
                     } else {
                         $this->start_time = $this->end_time;
-                        $this->end_time = $this->end_time + 60;
+                        $this->end_time = $this->end_time + $time;
                         $this->number = date('YmdH', $this->start_time)."1".$j;
                     }
                 }
@@ -104,7 +104,7 @@ class GameRepository
         $this->Cx_Game_Play->insert($return);
     }
     //每小时生成Silver期数
-    public function Generate_Silver_Number()
+    public function Generate_Silver_Number($time)
     {
         $return = array();
         //获取所有彩票游戏
@@ -121,21 +121,21 @@ class GameRepository
                     //获取最新一期信息
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
-                        $this->end_time = $this->start_time + 120;
+                        $this->end_time = $this->start_time + $time;
                         $this->number = date('YmdH', $this->start_time)."2".$j;
                     } else {
                         $this->start_time = $this->end_time ;
-                        $this->end_time = $this->end_time + 120;
+                        $this->end_time = $this->end_time + $time;
                         $this->number = date('YmdH', $this->start_time)."2".$j;
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = strtotime(date("Y-m-d",time()));
-                        $this->end_time = $this->start_time + 120;
+                        $this->end_time = $this->start_time + $time;
                         $this->number = date('YmdH', $this->start_time)."2".$j;
                     } else {
                         $this->start_time = $this->end_time ;
-                        $this->end_time = $this->end_time + 120;
+                        $this->end_time = $this->end_time + $time;
                         $this->number = date('YmdH', $this->start_time)."2".$j;
                     }
                 }
@@ -152,7 +152,7 @@ class GameRepository
         $this->Cx_Game_Play->insert($return);
     }
     //每小时生成Jewelry期数
-    public function Generate_Jewelry_Number()
+    public function Generate_Jewelry_Number($time)
     {
         $return = array();
         //获取所有彩票游戏
@@ -170,21 +170,21 @@ class GameRepository
                     //获取最新一期信息
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
-                        $this->end_time = $this->start_time + 180;
+                        $this->end_time = $this->start_time + $time;
                         $this->number = date('YmdH', $this->start_time)."3".$j;
                     } else {
                         $this->start_time = $this->end_time ;
-                        $this->end_time = $this->end_time + 180;
+                        $this->end_time = $this->end_time + $time;
                         $this->number = date('YmdH', $this->start_time)."3".$j;
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = strtotime(date("Y-m-d",time()));
-                        $this->end_time = $this->start_time + 180;
+                        $this->end_time = $this->start_time + $time;
                         $this->number = date('YmdH', $this->start_time)."3".$j;
                     } else {
                         $this->start_time = $this->end_time ;
-                        $this->end_time = $this->end_time + 180;
+                        $this->end_time = $this->end_time + $time;
                         $this->number = date('YmdH', $this->start_time)."3".$j;
                     }
                 }
@@ -201,7 +201,7 @@ class GameRepository
         $this->Cx_Game_Play->insert($return);
     }
     //每小时生成Other期数
-    public function Generate_Other_Number()
+    public function Generate_Other_Number($time)
     {
         $return = array();
         //获取所有彩票游戏
@@ -219,21 +219,21 @@ class GameRepository
                     //获取最新一期信息
                     if ($j == 0) {
                         $this->start_time = $row->end_time;
-                        $this->end_time = $this->start_time + 300;
+                        $this->end_time = $this->start_time + $time;
                         $this->number = date('YmdH', $this->start_time)."4".$j;
                     } else {
                         $this->start_time = $this->end_time ;
-                        $this->end_time = $this->end_time + 300;
+                        $this->end_time = $this->end_time + $time;
                         $this->number = date('YmdH', $this->start_time)."4".$j;
                     }
                 } else {
                     if ($j == 0) {
                         $this->start_time = strtotime(date("Y-m-d",time()));
-                        $this->end_time = $this->start_time + 300;
+                        $this->end_time = $this->start_time + $time;
                         $this->number = date('YmdH', $this->start_time)."4".$j;
                     } else {
                         $this->start_time = $this->end_time;
-                        $this->end_time = $this->end_time + 300;
+                        $this->end_time = $this->end_time + $time;
                         $this->number = date('YmdH', $this->start_time)."4".$j;
                     }
                 }
