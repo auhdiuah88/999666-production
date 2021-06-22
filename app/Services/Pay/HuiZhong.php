@@ -61,7 +61,7 @@ class HuiZhong extends PayStrategy
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
-            if($value)
+            if($value != "")
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
