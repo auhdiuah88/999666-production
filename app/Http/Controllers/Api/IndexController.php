@@ -50,4 +50,14 @@ class IndexController extends Controller
         );
     }
 
+    public function adsDetail()
+    {
+        $this->IndexService->adsDetail();
+        return $this->AppReturn(
+            $this->IndexService->_code,
+            $this->IndexService->_msg,
+            $this->IndexService->_data
+        );
+    }
+
 }

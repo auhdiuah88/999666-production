@@ -43,4 +43,9 @@ class Cx_Game_Cates extends Model
         return $this->belongsTo('App\Models\Cx_Uploads','icon','image_id');
     }
 
+    public function games()
+    {
+        return $this->hasMany('App\Models\Cx_Game_List','cid','id');
+    }
+
 }

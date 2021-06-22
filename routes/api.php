@@ -52,6 +52,14 @@ Route::group(["namespace" => "Api", 'middleware'=>['params_decrypt']], function 
     Route::get("/crisp", "SystemController@crispSetting"); // 获取三方客服配置
     Route::get("/app", "SystemController@appSetting"); // 获取三方客服配置
     Route::get("/activity", "SystemController@activity"); // 获取活动页配置
+
+    ##新首页的接口
+    Route::group(["prefix" => "index"], function(){
+        Route::get("/tips", "IndexController@tips");
+        Route::get("/game_cate", "IndexController@gameCateList");
+        Route::get("/cate_detail", "IndexController@cateDetail");
+        Route::get("/ads_detail", "IndexController@adsDetail");
+    });
 });
 
 Route::group(['middleware' => ['user_token', 'params_decrypt']], function () {

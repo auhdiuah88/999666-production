@@ -17,6 +17,8 @@ class IndexService extends BaseService
         IndexRepository $indexRepository
     )
     {
+        $this->_code = 200;
+        $this->_msg = '';
         $this->IndexRepository = $indexRepository;
     }
 
@@ -62,8 +64,38 @@ class IndexService extends BaseService
             {
                 $this->_data = $this->IndexRepository->gameRecords();
             }else{
-                $this->_data = $this->IndexRepository->cateDetail();
+                $this->_data = $this->IndexRepository->cateDetail($cid);
             }
+        }catch(\Exception $e){
+            $this->_code = 414;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function adsDetail()
+    {
+        try{
+            ##验证
+            $validator = Validator::make(request()->input(),
+                [
+                    'id' => 'required|integer|gte:1'
+                ]
+            );
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $id = request('id',0);
+            $info = $this->IndexRepository->adsDetail($id);
+            if(!$info)
+            {
+                throw new \Exception('article not exist');
+            }
+            if($info->status != 1)
+            {
+                throw new \Exception('the article has been taken off ');
+            }
+            $this->_data = $info;
         }catch(\Exception $e){
             $this->_code = 414;
             $this->_msg = $e->getMessage();
