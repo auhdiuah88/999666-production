@@ -95,6 +95,7 @@ class HuiZhong extends PayStrategy
         $header[] = "Content-Type: application/json";
         $header[] = "Content-Length: " . strlen($params_string);
         $res =dopost(self::$url . 'ty/orderPay', $params_string, $header);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrderReturn', [$res]);
 //        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
         $res = json_decode($res,true);
         if (!$res) {
@@ -107,10 +108,7 @@ class HuiZhong extends PayStrategy
             return false;
         }
         $native_url = $res['order_data'];
-        if(strpos($native_url,"POST;") == 0){
-            $native_url = str_replace('POST;','',$native_url);
-            $is_post = 1;
-        }
+
         $resData = [
             'out_trade_no' => $order_no,
             'pay_type' => $pay_type,
