@@ -26,7 +26,27 @@ class IndexController extends Controller
         return $this->AppReturn(
             $this->IndexService->_code,
             $this->IndexService->_msg,
-            $this->IndexService->_data,
+            $this->IndexService->_data
+        );
+    }
+
+    public function gameCateList()
+    {
+        $this->IndexService->gameCateList();
+        return $this->AppReturn(
+            $this->IndexService->_code,
+            $this->IndexService->_msg,
+            $this->IndexService->_data
+        );
+    }
+
+    public function cateDetail()
+    {
+        $this->IndexService->cateDetail();
+        return $this->AppReturn(
+            $this->IndexService->_code,
+            $this->IndexService->_msg,
+            $this->IndexService->_data
         );
     }
 
