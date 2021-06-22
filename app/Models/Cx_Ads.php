@@ -7,10 +7,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Cx_Game_Cates extends Model
+class Cx_Ads extends Model
 {
 
-    protected $table = "game_cates";
+    protected $table = "ads";
 
     protected $primaryKey = "id";
 
@@ -28,19 +28,14 @@ class Cx_Game_Cates extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function children()
+    public function getContentAttribute($value)
     {
-        return $this->hasMany('\App\Models\Cx_Game_Cates','pid','id');
+        return htmlspecialchars_decode($value);
     }
 
-    public function parent()
+    public function getTitleAttribute($value)
     {
-        return $this->belongsTo('\App\Models\Cx_Game_Cates','pid','id');
-    }
-
-    public function icon_url()
-    {
-        return $this->belongsTo('App\Models\Cx_Uploads','icon','image_id');
+        return stripslashes($value);
     }
 
 }

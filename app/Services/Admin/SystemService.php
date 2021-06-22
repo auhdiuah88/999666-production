@@ -189,4 +189,119 @@ class SystemService extends BaseService
         }
     }
 
+    public function adsList()
+    {
+        try{
+            ##参数验证
+            $validator = Validator::make(request()->input(), [
+                'page' => 'required|gte:1',
+                'status' => Rule::in(0,1,-1)
+            ]);
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $status = $this->intInput('status',-1);
+            $where = [];
+            if($status > -1)
+            {
+                $where['status'] = ['=', $status];
+            }
+            $size = $this->sizeInput();
+            $this->_data = $this->SystemRepository->adsList($where, $size);
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function addAds()
+    {
+        try{
+            ##验证
+            $validator = Validator::make(request()->input(), $this->handleAdsRules());
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $res = $this->SystemRepository->addAds($this->handleAdsData());
+            if(!$res)
+            {
+                throw new \Exception('创建失败');
+            }
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function editAds()
+    {
+        try{
+            ##验证
+            $validator = Validator::make(request()->input(), $this->handleAdsRules(2));
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $id = $this->intInput('id');
+            $res = $this->SystemRepository->editAds($id, $this->handleAdsData());
+            if(!$res)
+            {
+                throw new \Exception('更新失败');
+            }
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    protected function handleAdsRules($flag=1): array
+    {
+        $rule = [
+            'title' => 'required|max:50',
+            'content' => 'required',
+            'status' => Rule::in(0,1),
+        ];
+        if($flag == 2)
+        {
+            $rule['id'] = 'required|gte:1';
+        }
+        return $rule;
+    }
+
+    protected function handleAdsData(): array
+    {
+        return [
+            'title' => $this->strInput('title'),
+            'content' => $this->htmlInput('content'),
+            'status' => $this->intInput('status')
+        ];
+    }
+
+    public function delAds()
+    {
+        try{
+            ##验证
+            $validator = Validator::make(request()->input(),
+                [
+                    'id' => 'required|gte:1'
+                ]
+            );
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $id = $this->intInput('id');
+            $res = $this->SystemRepository->delAds($id);
+            if(!$res)
+            {
+                throw new \Exception('删除失败');
+            }
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
 }

@@ -76,4 +76,45 @@ class SystemController extends Controller
             $this->SystemService->_data
         );
     }
+
+    public function adsList()
+    {
+        $this->SystemService->adsList();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
+    public function addAds()
+    {
+        $this->SystemService->addAds();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
+    public function editAds()
+    {
+        $this->SystemService->editAds();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
+    public function delAds()
+    {
+        $this->SystemService->delAds();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
 }

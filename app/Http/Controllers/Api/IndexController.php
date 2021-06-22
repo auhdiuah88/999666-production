@@ -1,0 +1,33 @@
+<?php
+
+
+namespace App\Http\Controllers\Api;
+
+
+use App\Http\Controllers\Controller;
+use App\Services\Api\IndexService;
+
+class IndexController extends Controller
+{
+
+    protected $IndexService;
+
+    public function __construct
+    (
+        IndexService $indexService
+    )
+    {
+        $this->IndexService = $indexService;
+    }
+
+    public function tips()
+    {
+        $this->IndexService->tips();
+        return $this->AppReturn(
+            $this->IndexService->_code,
+            $this->IndexService->_msg,
+            $this->IndexService->_data,
+        );
+    }
+
+}

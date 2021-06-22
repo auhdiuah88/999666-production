@@ -149,10 +149,16 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
         //游戏
         Route::group(["prefix" => "game"], function () {
             Route::get("/cateList", "GameController@cateList");
+            Route::get("/parentCateList", "GameController@parentCateList");
             Route::post("/addCate", "GameController@addCate");
             Route::post("/editCate", "GameController@editCate");
             Route::post("/delCate", "GameController@delCate");
             Route::get("/cateDetail", "GameController@cateDetail");
+            Route::get("/list", "GameController@gameList");
+            Route::post("/add", "GameController@addGame");
+            Route::post("/edit", "GameController@editGame");
+            Route::post("/del", "GameController@delGame");
+            Route::get("/gameCateList", "GameController@gameCateList");
         });
 
         // 用户下注信息
@@ -315,6 +321,12 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::post("/addTips","SystemController@addTips");
             Route::post("/editTips","SystemController@editTips");
             Route::post("/delTips","SystemController@delTips");
+
+            ##广告
+            Route::get("/ads","SystemController@adsList");
+            Route::post("/addAds","SystemController@addAds");
+            Route::post("/editAds","SystemController@editAds");
+            Route::post("/delAds","SystemController@delAds");
         });
 
         // 后台赠金记录列表

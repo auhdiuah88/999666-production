@@ -30,6 +30,16 @@ class GameController extends Controller
         );
     }
 
+    public function parentCateList()
+    {
+        $this->GameService->parentCateList();
+        return $this->AppReturn(
+            $this->GameService->_code,
+            $this->GameService->_msg,
+            $this->GameService->_data
+        );
+    }
+
     public function addCate()
     {
         $this->GameService->addCate();
@@ -63,6 +73,56 @@ class GameController extends Controller
     public function cateDetail()
     {
         $this->GameService->cateDetail();
+        return $this->AppReturn(
+            $this->GameService->_code,
+            $this->GameService->_msg,
+            $this->GameService->_data
+        );
+    }
+
+    public function gameList()
+    {
+        $this->GameService->gameList();
+        return $this->AppReturn(
+            $this->GameService->_code,
+            $this->GameService->_msg,
+            $this->GameService->_data
+        );
+    }
+
+    public function addGame()
+    {
+        $this->GameService->addGame();
+        return $this->AppReturn(
+            $this->GameService->_code,
+            $this->GameService->_msg,
+            $this->GameService->_data
+        );
+    }
+
+    public function editGame()
+    {
+        $this->GameService->editGame();
+        return $this->AppReturn(
+            $this->GameService->_code,
+            $this->GameService->_msg,
+            $this->GameService->_data
+        );
+    }
+
+    public function delGame()
+    {
+        $this->GameService->delGame();
+        return $this->AppReturn(
+            $this->GameService->_code,
+            $this->GameService->_msg,
+            $this->GameService->_data
+        );
+    }
+
+    public function gameCateList()
+    {
+        $this->GameService->gameCateList();
         return $this->AppReturn(
             $this->GameService->_code,
             $this->GameService->_msg,

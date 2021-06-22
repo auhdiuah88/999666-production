@@ -35,9 +35,47 @@ class GameService extends BaseService
                 throw new \Exception($validator->errors()->first());
             }
             $where = [
-                'is_rg' => ['=', 0]
+                'is_rg' => ['=', 0],
+                'pid' => ['=', 0]
             ];
             $this->_data = $this->GameRepository->cateList($where);
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function gameCateList()
+    {
+        try{
+            $where = [
+                'is_rg' => ['=', 0],
+                'pid' => ['=', 0]
+            ];
+            $this->_data = $this->GameRepository->gameCateList($where);
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function parentCateList()
+    {
+        try{
+            $validator = Validator::make(request()->input(),
+                [
+                    'page' => 'gte:1',
+                ]
+            );
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $where = [
+                'is_rg' => ['=', 0],
+                'pid' => ['=', 0]
+            ];
+            $this->_data = $this->GameRepository->parentCateList($where);
         }catch(\Exception $e){
             $this->_code = 402;
             $this->_msg = $e->getMessage();
@@ -122,6 +160,105 @@ class GameService extends BaseService
             'sort' => $this->intInput('sort'),
             'pid' => $this->intInput('pid')
         ];
+    }
+
+    public function gameList()
+    {
+        try{
+            $validator = Validator::make(request()->input(),
+                [
+                    'page' => 'gte:1',
+                    'size' => Rule::in(10,20,30,40),
+                    'cid' => 'integer|gte:0',
+                    'status' => Rule::in(-1,0,1)
+                ]
+            );
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $where = [];
+            $size = $this->sizeInput();
+            $cid = $this->intInput('cid');
+            if($cid)
+            {
+                $cids = $this->GameRepository->cateGetChildren($cid);
+                $where['cid'] = ['in', $cids];
+            }
+            $status = $this->intInput('status',-1);
+            if($status >= 0)
+            {
+                $where['status'] = ['=', $status];
+            }
+            $this->_data = $this->GameRepository->gameList($where, $size);
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function addGame()
+    {
+        try{
+            $validator = Validator::make(request()->input(), $this->gameHandleRule());
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $this->_data = $this->GameRepository->addGame($this->gameFilterData());
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    public function editGame()
+    {
+        try{
+            $validator = Validator::make(request()->input(), $this->gameHandleRule(2));
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $id = $this->intInput('id');
+            $this->_data = $this->GameRepository->editGame($this->gameFilterData(), $id);
+        }catch(\Exception $e){
+            $this->_code = 402;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
+    protected function gameHandleRule($flag=1): array
+    {
+        $rule = [
+            'label' => 'required|max:16|min:2',
+            'icon' => 'required',
+            'status' => Rule::in(0,1),
+            'sort' => 'gte:0|lte:9999',
+            'cid' => 'required|array',
+        ];
+        if($flag == 2)
+        {
+            $rule['id'] = "required|gte:1";
+        }
+        return $rule;
+    }
+
+    protected function gameFilterData(): array
+    {
+        return [
+            'label' => $this->strInput('label'),
+            'icon' => $this->strInput('icon'),
+            'status' => $this->intInput('status'),
+            'sort' => $this->intInput('sort'),
+            'cid' => request()->input('cid')[1],
+            'link' => $this->strInput('link')
+        ];
+    }
+
+    public function delGame()
+    {
+        $this->GameRepository->delGame($this->intInput('id'));
     }
 
 }
