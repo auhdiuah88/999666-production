@@ -46,7 +46,8 @@ class PayContext
         TongLinkPay $tongLinkPay,
         YLpay $YLpay,
         CloudPay $cloudPay,
-        DDpay $DDpay
+        DDpay $DDpay,
+        Gspay $gspay
     )
     {
         // 每种api地址对应的支付公司
@@ -84,6 +85,7 @@ class PayContext
             'ylpay' => $YLpay,  //印度 类似sepropay
             'cloudpay' => $cloudPay,  //印度云支付
             'ddpay' => $DDpay,  //印度DDPAY
+            'gspay' => $gspay,  //印度gapayment
         ];
     }
     /**
