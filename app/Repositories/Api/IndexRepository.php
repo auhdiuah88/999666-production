@@ -62,6 +62,11 @@ class IndexRepository
         return $this->Cx_Game_Cates->where("id", $id)->select("id", "is_rg", "label", "pid")->first();
     }
 
+    public function getGameRgCate()
+    {
+        return $this->Cx_Game_Cates->where("is_rg", 1)->select("id", "label")->first();
+    }
+
     public function gameRecords(): array
     {
         $id_arr = [

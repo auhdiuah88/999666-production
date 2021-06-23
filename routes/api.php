@@ -59,6 +59,7 @@ Route::group(["namespace" => "Api", 'middleware'=>['params_decrypt']], function 
         Route::get("/game_cate", "IndexController@gameCateList");
         Route::get("/cate_detail", "IndexController@cateDetail");
         Route::get("/ads_detail", "IndexController@adsDetail");
+        Route::get("/game_record", "IndexController@rgRecord");
     });
 });
 

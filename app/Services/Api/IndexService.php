@@ -72,6 +72,16 @@ class IndexService extends BaseService
         }
     }
 
+    public function rgRecord()
+    {
+        try{
+            $this->_data = $this->IndexRepository->gameRecords();
+        }catch(\Exception $e){
+            $this->_code = 414;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
     public function adsDetail()
     {
         try{

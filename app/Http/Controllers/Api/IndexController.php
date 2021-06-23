@@ -50,6 +50,16 @@ class IndexController extends Controller
         );
     }
 
+    public function rgRecord()
+    {
+        $this->IndexService->rgRecord();
+        return $this->AppReturn(
+            $this->IndexService->_code,
+            $this->IndexService->_msg,
+            $this->IndexService->_data
+        );
+    }
+
     public function adsDetail()
     {
         $this->IndexService->adsDetail();
