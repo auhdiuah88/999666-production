@@ -189,11 +189,11 @@ class GlobalPay extends PayStrategy
             'mer_order_no' => $order_no,
             'pname' => 'ZhangSan',
             'pemail' => '11111111@email.com',
-            'phone' => 15988888888,
+            'phone' => 13122336688,
             'order_amount' => intval($money),
-            'countryCode' => 'VNM',
-            'ccy_no' => 'VND',
-            'busi_code' => $this->rechargeTypeList[$this->rechargeType],
+            'countryCode' => 'IND',
+            'ccy_no' => 'INR',
+            'busi_code' => 'UPI',
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')
@@ -259,29 +259,18 @@ class GlobalPay extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
-
-        // 1 银行卡 2 Paytm 3代付
-//        $pay_type = 3;
         $money = $withdrawalRecord->payment;    // 打款金额
-//        $ip = $this->request->ip();
-//        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
-        $bank = $this->banks[$withdrawalRecord->bank_name] ?? '';
-        if(!$bank)
-        {
-            $this->_msg = '该银行卡不支持提现,请换一张银行卡';
-            return false;
-        }
         $params = [
             'mer_no' => $this->withdrawMerchantID,
             'mer_order_no' => $order_no,
             'acc_no' => $withdrawalRecord->bank_number,
             'acc_name' => $withdrawalRecord->account_holder,
-            'ccy_no' => 'VND',
+            'ccy_no' => 'INR',
             'order_amount' => intval($money),
-            'bank_code' => $bank['bankName'],
+            'bank_code' => 'IDPT0001',
             'summary' => 'Balance Withdrawal',
-//            'province' => $withdrawalRecord->ifsc_code,
+            'province' => $withdrawalRecord->ifsc_code,
             'notifyUrl' => $this->withdrawal_callback_url
         ];
         $params['sign'] = $this->generateSignRigorous($params,2);
