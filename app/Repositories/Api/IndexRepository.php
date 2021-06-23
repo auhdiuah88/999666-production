@@ -105,7 +105,7 @@ class IndexRepository
             ->select("id", "prize_number")
             ->get();
         $bq = $this->getCurGamePlay($game_id);
-        $bq->end_time = time() - $bq->end_time;
+        $bq->end_time = $bq->end_time - time();
         return compact('list','bq');
     }
 
