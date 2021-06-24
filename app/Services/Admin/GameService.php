@@ -235,7 +235,7 @@ class GameService extends BaseService
             'icon' => 'required',
             'status' => Rule::in(0,1),
             'sort' => 'gte:0|lte:9999',
-            'cid' => 'required|array',
+            'cid' => 'required',
         ];
         if($flag == 2)
         {
@@ -246,12 +246,14 @@ class GameService extends BaseService
 
     protected function gameFilterData(): array
     {
+        $cid = request()->input('cid');
+        if(is_array($cid))$cid = $cid[1];
         return [
             'label' => $this->strInput('label'),
             'icon' => $this->strInput('icon'),
             'status' => $this->intInput('status'),
             'sort' => $this->intInput('sort'),
-            'cid' => request()->input('cid')[1],
+            'cid' => $cid,
             'link' => $this->strInput('link')
         ];
     }
