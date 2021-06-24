@@ -76,11 +76,6 @@ class IndexRepository
                 'default' => 60,
             ],
             [
-                'game_id' => 2,
-                'name' => 'SILVER_TIME',
-                'default' => 120,
-            ],
-            [
                 'game_id' => 3,
                 'name' => 'JEWELRY_TIME',
                 'default' => 180,
@@ -89,7 +84,12 @@ class IndexRepository
                 'game_id' => 4,
                 'name' => 'OTHER_TIME',
                 'default' => 300,
-            ]
+            ],
+            [
+                'game_id' => 2,
+                'name' => 'SILVER_TIME',
+                'default' => 120,
+            ],
         ];
         $data = [];
         foreach($id_arr as $val)
