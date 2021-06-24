@@ -8,6 +8,8 @@ use App\Models\Cx_Banner;
 use App\Repositories\Api\BannerRepository;
 use App\Repositories\Api\SystemRepository;
 use App\Services\BaseService as Service;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 
 class SystemService extends Service
 {
@@ -183,6 +185,19 @@ class SystemService extends Service
             ];
         }else{
             $data['content'] = htmlspecialchars_decode($data['content']);
+        }
+        $this->_data = $data;
+    }
+
+    public function logo()
+    {
+        $logo = $this->SystemRepository->getSettingValueByKey(SettingDic::key('LOGO'));
+        if (!$logo){
+            $data = [
+                'url' => '',
+            ];
+        }else{
+            $data['url'] = URL::asset(DB::table('uploads')->where("image_id",$logo['logo'])->value("path"));
         }
         $this->_data = $data;
     }

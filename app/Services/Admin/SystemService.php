@@ -8,6 +8,8 @@ use App\Dictionary\SettingDic;
 use App\Repositories\Admin\SettingRepository;
 use App\Repositories\Admin\SystemRepository;
 use App\Services\BaseService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -44,6 +46,19 @@ class SystemService extends BaseService
                 'is_check_recharge' => 0
             ];
         }
+        $logo = $this->SettingRepository->getSettingValueByKey(SettingDic::key('LOGO'),false);
+        if($logo){
+            $logo_url = DB::table('uploads')->where("image_id",$logo['logo'])->value("path");
+            $data->logo = [
+                'logo' => $logo['logo'],
+                'logo_url' => URL::asset($logo_url),
+            ];
+        }else{
+            $data->logo = [
+                'logo' => 0,
+                'logo_url' => '',
+            ];
+        }
         $this->_data = $data;
     }
 
@@ -51,11 +66,14 @@ class SystemService extends BaseService
     {
         $ipSwitch = $data['ipSwitch']??0;
         $isCheckRecharge = $data['isCheckRecharge']??0;
+        $logo = $data['logo']??0;
         if(isset($data['ipSwitch']))unset($data['ipSwitch']);
         if(isset($data['isCheckRecharge']))unset($data['isCheckRecharge']);
+        if(isset($data['logo']))unset($data['logo']);
         ##编辑setting
         $this->SettingRepository->saveSetting(SettingDic::key('IP_SWITCH'), ['ip_switch'=>$ipSwitch]);
         $this->SettingRepository->saveSetting(SettingDic::key('IS_CHECK_RECHARGE'), ['is_check_recharge'=>$isCheckRecharge]);
+        $this->SettingRepository->saveSetting(SettingDic::key('LOGO'), ['logo'=>$logo]);
         if ($this->SystemRepository->editSystem($data)) {
             $this->_msg = "编辑成功";
         } else {

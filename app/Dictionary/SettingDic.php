@@ -100,6 +100,10 @@ class SettingDic
             'title' => 'index ad',
             'key' => 'INDEX_AD'
         ],
+        'LOGO' => [
+            'title' => 'logo',
+            'key' => 'LOGO'
+        ],
     ];
 
     public static function key($key): string
