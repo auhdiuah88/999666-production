@@ -967,7 +967,7 @@ class GameRepository
                     $query->where('new_old', 1);
                 }
             )
-        )->select("game_c_x_id as x_id",$this->Cx_User->raw('COUNT(id) as count'))->where("game_p_id", $play_id)->groupBy('game_c_x_id')->get()->toArray();
+        )->select("game_c_x_id as x_id",$this->Cx_User->raw('COUNT(id) as count'))->where("game_p_id", $play_id)->whereNotIn('user_id',$this->getTestUserIds())->groupBy('game_c_x_id')->get()->toArray();
         foreach ($a as $key => $value){
             $name=$this->Cx_Game_Config->where("id",$value['x_id'])->select("name")->first()->toArray();
             $a[$key]['name']=$name['name'];
