@@ -5,16 +5,22 @@ namespace App\Services\Admin;
 
 
 use App\Repositories\Admin\PeriodRepository;
+use App\Repositories\Admin\UserRepository;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\DB;
 
 class PeriodService extends BaseService
 {
-    private $PeriodRepository;
+    private $PeriodRepository, $UserRepository;
 
-    public function __construct(PeriodRepository $periodRepository)
+    public function __construct
+    (
+        PeriodRepository $periodRepository,
+        UserRepository $userRepository
+    )
     {
         $this->PeriodRepository = $periodRepository;
+        $this->UserRepository = $userRepository;
     }
 
     public function findAll($page, $limit, $status)
@@ -45,7 +51,10 @@ class PeriodService extends BaseService
 
     public function findById($id)
     {
-        $this->_data = $this->PeriodRepository->findById($id);
+        $data = $this->PeriodRepository->findById($id);
+        $rel_data = $this->PeriodRepository->findRelById($id, $this->UserRepository->getTestUserIds());
+        $data->rel_data = $rel_data;
+        $this->_data = $data;
     }
 
     public function planTaskList()

@@ -4,17 +4,23 @@
 namespace App\Repositories\Admin;
 
 
+use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Game_Play;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\DB;
 
 class PeriodRepository extends BaseRepository
 {
-    private $Cx_Game_Play;
+    private $Cx_Game_Play, $Cx_Game_Betting;
 
-    public function __construct(Cx_Game_Play $cx_Game_Play)
+    public function __construct
+    (
+        Cx_Game_Play $cx_Game_Play,
+        Cx_Game_Betting $cx_Game_Betting
+    )
     {
         $this->Cx_Game_Play = $cx_Game_Play;
+        $this->Cx_Game_Betting = $cx_Game_Betting;
     }
 
     public function findAll($offset, $limit, $status)
@@ -153,6 +159,12 @@ class PeriodRepository extends BaseRepository
     public function findById($id)
     {
         return $this->Cx_Game_Play->where("id", $id)->first();
+    }
+
+    public function findRelById($id, $test_user_ids)
+    {
+        $prefix = DB::getConfig('prefix');
+        return DB::selectOne('select sum(gb.money - gb.win_money) as cha, sum(gb.money) as total_betting_money, sum(gb.win_money) as total_win_money from `'.$prefix.'game_betting` gb where gb.game_p_id = '.$id.' and gb.user_id NOT IN ('. implode(',',$test_user_ids) .')');
     }
 
     public function planTaskList($where, $size)

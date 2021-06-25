@@ -415,6 +415,12 @@ class GameRepository
             return false;
         }
     }
+
+    public function getTestUserIds()
+    {
+        return $this->Cx_User->where("reg_source_id", 1)->pluck('id')->toArray();
+    }
+
     //根据下注项id分组查询下注项总金额
     public function GroupBy_W($play_id)
     {
@@ -423,7 +429,7 @@ class GameRepository
                     $query->select('id', 'odds');
                 },
             )
-        )->where("game_p_id", $play_id)->select('game_c_x_id', $this->Cx_Game_Betting->raw('SUM(money) as money'))->groupBy('game_c_x_id')->get();
+        )->where("game_p_id", $play_id)->whereNotIn('user_id',$this->getTestUserIds())->select('game_c_x_id', $this->Cx_Game_Betting->raw('SUM(money) as money'))->groupBy('game_c_x_id')->get();
     }
     //根据期数ID，玩法ID获取用户下注信息
     public function Get_Betting($play_id)
@@ -952,7 +958,7 @@ class GameRepository
     //根据ID获取当期下注总金额
     public function Get_Betting_Sum($play_id)
     {
-        return $this->Cx_Game_Betting->where("game_p_id", $play_id)->sum('money');
+        return $this->Cx_Game_Betting->where("game_p_id", $play_id)->whereNotIn('user_id', $this->getTestUserIds())->sum('money');
     }
     //根据下注项id分组查询新用户个数
     public function Get_Betting_Usering($play_id){
