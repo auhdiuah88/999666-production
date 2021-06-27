@@ -261,7 +261,7 @@ class JunHePay extends PayStrategy
         ];
         $is_post=3;
 
-        $native_url = $this->createNativeUrl($params);
+        $native_url = self::$url;
         $resData = [
             'pay_type' => $pay_type,
             'out_trade_no' => $order_no,
@@ -271,6 +271,7 @@ class JunHePay extends PayStrategy
             'pltf_order_id' => '',
             'verify_money' => '',
             'match_code' => '',
+            'params' => $params,
             'is_post' => isset($is_post) ? $is_post : 0
         ];
         return $resData;
