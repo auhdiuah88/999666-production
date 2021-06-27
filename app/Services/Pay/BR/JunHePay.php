@@ -198,6 +198,7 @@ class JunHePay extends PayStrategy
     public function generateSign($params, $flag = 1)
     {
         $secret = $flag == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
+        $secret = 'safdsrewsdsfdsewffew123';
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
