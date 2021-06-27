@@ -211,12 +211,16 @@ class JunHePay extends PayStrategy
 
     protected function signLogin($flag=1)
     {
-        $params = [];
         $params = [
             'appId' => $flag == 1 ? $this->rechargeMerchantID : $this->withdrawMerchantID,
-            'ts' => time(),
+            'ts' => time() * 1000,
             'terminalType' => 'app'
         ];
+//        $params = [
+//            'appId' => 'fdsafdsafdfdsafsafdsrewq',
+//            'ts' => '1561949184369',
+//            'terminalType' => 'app'
+//        ];
         $params['sign'] = $this->generateSign($params, $flag);
         Log::channel('mytest')->info('JunHe-login-sign',$params);
         $res = $this->requestService->postFormData(self::$login, $params);
