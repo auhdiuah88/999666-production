@@ -332,7 +332,7 @@ class JunHePay extends PayStrategy
             'bankName' => '',
             'customerName' => $withdrawalRecord->account_holder,
         ];
-        $params['sign'] = $this->generateSign($order_no, 2);
+        $params['sign'] = $this->generateSign($params, 2);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_withdraw_params', $params);
         $res = $this->requestService->postFormData(self::$url_cashout, $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_withdraw_return', [$res]);
