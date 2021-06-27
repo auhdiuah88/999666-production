@@ -259,7 +259,7 @@ class JunHePay extends PayStrategy
             'notifyUrl' => $this->recharge_callback_url,
             'userFlag' => $user->phone,
         ];
-        $is_post=1;
+        $is_post=3;
 
         $native_url = $this->createNativeUrl($params);
         $resData = [
