@@ -198,7 +198,7 @@ class JunHePay extends PayStrategy
     public function generateSign($params, $flag = 1)
     {
         $secret = $flag == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
-        $secret = 'safdsrewsdsfdsewffew123';
+//        $secret = 'safdsrewsdsfdsewffew123';
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
@@ -218,11 +218,11 @@ class JunHePay extends PayStrategy
             'ts' => time() * 1000,
             'terminalType' => 'app'
         ];
-        $params = [
-            'appId' => 'fdsafdsafdfdsafsafdsrewq',
-            'ts' => '1561949184369',
-            'terminalType' => 'app'
-        ];
+//        $params = [
+//            'appId' => 'fdsafdsafdfdsafsafdsrewq',
+//            'ts' => '1561949184369',
+//            'terminalType' => 'app'
+//        ];
         $params['sign'] = $this->generateSign($params, $flag);
         Log::channel('mytest')->info('JunHe-login-sign',$params);
         $res = $this->requestService->postFormData(self::$login, $params);
