@@ -256,7 +256,7 @@ class JunHePay extends PayStrategy
             'token' => $token,
             'amount' => intval($money),
             'payType' => 9,
-            'notifyUrl' => $this->recharge_callback_url,
+            'notifyUrl' => urlencode($this->recharge_callback_url),
             'userFlag' => $user->phone,
         ];
         $is_post=3;
