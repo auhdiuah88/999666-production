@@ -211,6 +211,7 @@ class JunHePay extends PayStrategy
 
     protected function signLogin($flag=1)
     {
+        $params = [];
         $params = [
             'appId' => $flag == 1 ? $this->rechargeMerchantID : $this->withdrawMerchantID,
             'ts' => time(),

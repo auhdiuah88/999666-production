@@ -139,16 +139,6 @@ class WithdrawalService extends PayService
         $service_charge = 0;
         $amount = $data['money'];
         $conf = $this->SettingRepository->getWithdrawServiceCharge();
-        ##判断提现次数限制
-        if($conf['limit_times'] >= -1)
-        {
-            $count = $this->WithdrawalRepository->countUserWithdraw($data['user_id']);
-            if($count >= $conf['limit_times'])
-            {
-                $this->_msg = "The maximum number of withdrawals today is {$conf['limit_times']}";
-                return false;
-            }
-        }
         if(isset($conf['status']) &&  $conf['status']== 1){ //手续费开启
 //            $country = env('COUNTRY','india');
 //            if($country == 'india'){
@@ -162,7 +152,7 @@ class WithdrawalService extends PayService
 //                $service_charge = bcmul($amount,0.03);
 //            }
             if(isset($conf['free_status']) && $conf['free_status'] == 1){  //开启了次数免费
-                if(!isset($count))$count = $this->WithdrawalRepository->countUserWithdraw($data['user_id']);
+                $count = $this->WithdrawalRepository->countUserWithdraw($data['user_id']);
                 $free_times = $conf['free_times']??0;
                 if($count >= $free_times){ //收取手续费
                     $service_charge = $this->calcCharge($conf, $amount);
@@ -241,6 +231,18 @@ class WithdrawalService extends PayService
         if(!$user->is_withdrawal){
             $this->_msg = 'Your withdrawal function has been disabled';
             return false;
+        }
+
+        $conf = $this->SettingRepository->getWithdrawServiceCharge();
+        ##判断提现次数限制
+        if($conf['limit_times'] >= -1)
+        {
+            $count = $this->WithdrawalRepository->countUserWithdraw($user->id);
+            if($count >= $conf['limit_times'])
+            {
+                $this->_msg = "The maximum number of withdrawals today is {$conf['limit_times']}";
+                return false;
+            }
         }
 
         $bank_id = $request->bank_id;
