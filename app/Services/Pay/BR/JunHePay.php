@@ -208,7 +208,15 @@ class JunHePay extends PayStrategy
         $sign = implode('&', $string);
         $sign = urlencode($sign);
         Log::channel('mytest')->info('JunHe-login-sign-str',[$sign]);
-        return base64_encode(hash_hmac('sha1',$sign,$secret,true));
+        return $this->base64UrlEncode(hash_hmac('sha1',$sign,$secret));
+    }
+
+
+    function base64UrlEncode($str)
+    {
+        $find = array('+', '/');
+        $replace = array('-', '_');
+        return str_replace($find, $replace, base64_encode($str));
     }
 
     protected function signLogin($flag=1)
