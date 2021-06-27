@@ -220,15 +220,8 @@ class JunHePay extends PayStrategy
 
         $params['sign'] = $this->generateSign($params, $flag);
         Log::channel('mytest')->info('JunHe-login-sign',$params);
-        $header[] = "Content-Type: application/x-www-form-urlencoded";
-        $res =dopost(self::$url, $params, $header);
-//        $res = $this->requestService->postFormData(self::$login, $params);
+        $res = $this->requestService->postFormData(self::$login, $params);
         Log::channel('mytest')->info('JunHe-login-return',[$res]);
-        $res = json_decode($res,true);
-        if(!$res){
-            $this->_msg = 'get token fail';
-            return false;
-        }
         if($res['code'] != 200)
         {
             $this->_msg = $res['message'];
