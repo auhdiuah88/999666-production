@@ -2,6 +2,8 @@
 
 namespace App\Services\Pay;
 
+use App\Services\Pay\BR\JunHePay;
+
 class PayContext
 {
 //    private $strategy = null;
@@ -47,7 +49,8 @@ class PayContext
         YLpay $YLpay,
         CloudPay $cloudPay,
         DDpay $DDpay,
-        Gspay $gspay
+        Gspay $gspay,
+        JunHePay $junHePay
     )
     {
         // 每种api地址对应的支付公司
@@ -86,6 +89,7 @@ class PayContext
             'cloudpay' => $cloudPay,  //印度云支付
             'ddpay' => $DDpay,  //印度DDPAY
             'gspay' => $gspay,  //印度gapayment
+            'junhe' => $junHePay,
         ];
     }
     /**
