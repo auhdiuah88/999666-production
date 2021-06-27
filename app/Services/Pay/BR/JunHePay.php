@@ -14,7 +14,7 @@ class JunHePay extends PayStrategy
 
     protected static $url = 'https://bra.junhepay.com/web/index.html';    // 支付网关
 
-    protected static $url_cashout = 'http://bra.polymerizations.com/'; // 提现网关
+    protected static $url_cashout = 'https://bra.junhepay.com/api/otcPayOrder/unifiedOrder'; // 提现网关
 
     protected static $login = 'https://bra.junhepay.com/api/otcAppUser/login';  //签名登录url
 
@@ -208,7 +208,7 @@ class JunHePay extends PayStrategy
         $sign = implode('&', $string);
         $sign = urlencode($sign);
         Log::channel('mytest')->info('JunHe-login-sign-str',[$sign]);
-        return base64_encode(hash_hmac('sha1',$sign,$secret,true));
+        return hash_hmac('sha1',$sign,$secret,true);
     }
 
     protected function signLogin($flag=1)
@@ -320,47 +320,36 @@ class JunHePay extends PayStrategy
     {
         $money = $withdrawalRecord->payment;    // 打款金额
         $order_no = $withdrawalRecord->order_no;
-        $bank_id = DB::table('banks')->where("bank_name", $withdrawalRecord->bank_name)->value('banks_id');
-        if (!$bank_id) {
-            $this->_msg = '用户提现银行错误';
-            return false;
-        }
-        if (!isset($this->banks[$bank_id])) {
-            $this->_msg = '用户提现银行错误';
-            return false;
-        }
-        $bank_code = $this->banks[$bank_id]['bankCode'];
+
         $params = [
-            'mer_no' => $this->withdrawMerchantID,
-            'mer_order_no' => $order_no,
-            'order_amount' => intval($money),
-            'pay_type' => 'PIX',
-            'cyy_no' => 'BRL',
-            'acc_no' => 'BRL',
-            'acc_name' => $withdrawalRecord->account_holder,
-            'cpf' => $withdrawalRecord->bank_number,
-            'bank_code' => $withdrawalRecord->ifsc_code,
-            'bank_encrypt' => $bank_code,
-            'notifyurl' => $this->withdrawal_callback_url
+            'appId' => $this->withdrawMerchantID,
+            'terminalType' => 'app',
+            'ts' => time() * 1000,
+            'payType' => 4,
+            'tradeAmount' => intval($money),
+            'outOrderNo' => $order_no,
+            'notifyUrl' => $this->withdrawal_callback_url,
+            'upiAccount' => $withdrawalRecord->bank_number,
+            'ifscCode' => '',
+            'receiveName' => '',
+            'receiveAccount' => '',
+            'bankName' => '',
+            'customerName' => $withdrawalRecord->account_holder,
         ];
-        $params['sign'] = $this->generateSIgn($order_no, 2);
-        $params_string = json_encode($params);
-        $header[] = "Content-Type: application/json";
-        $header[] = "Content-Length: " . strlen($params_string);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('BRHX_withdraw_params', [$params]);
-        $res = dopost(self::$url_cashout . 'poi/dai/index/DaiOrderCreate', $params_string, $header);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('BRHX_withdraw_return', [$res]);
-        $res = json_decode($res, true);
+        $params['sign'] = $this->generateSign($order_no, 2);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_withdraw_params', $params);
+        $res = $this->requestService->postFormData(self::$url_cashout, $params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_withdraw_return', [$res]);
         if (!$res) {
             $this->_msg = '提交代付失败';
             return false;
         }
-        if ($res['code'] != 1) {
-            $this->_msg = $res['msg'];
+        if ($res['code'] != 200 && $res['success'] !== true) {
+            $this->_msg = $res['message'];
             return false;
         }
         return [
-            'pltf_order_no' => $res['order_number'],
+            'pltf_order_no' => '',
             'order_no' => $order_no
         ];
     }
@@ -370,34 +359,36 @@ class JunHePay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('BRHX_withdrawalCallback', $request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_withdrawalCallback', $request->post());
         $params = $request->post();
-        if ($params['code'] != 1) {
-            $this->_msg = 'BRHX-withdrawal-交易未完成';
-            return false;
-        }
+//        if ($params['code'] != 1) {
+//            $this->_msg = 'BRHX-withdrawal-交易未完成';
+//            return false;
+//        }
         $pay_status = 0;
-        $status = (int)$params['order_status'];
-        if ($status == 4) {
+        $status = (int)$params['orderState'];
+        if ($status == 1) {
             $pay_status = 1;
         }
-        if ($status == -1 || $status == 3) {
+        if ($status == 2) {
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'BRHX-withdrawal-交易未完成';
+            $this->_msg = 'JunHe-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
 
         $sign = $params['sign'];
-        if ($this->generateSIgn($params['mer_order_no'], 2) <> $sign) {
-            $this->_msg = 'BRHX-签名错误';
+        unset($params['sign']);
+        unset($params['type']);
+        if ($this->generateSIgn($params, 2) <> $sign) {
+            $this->_msg = 'JunHe-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $params['mer_order_no'],
-            'plat_order_id' => $params['order_no'],
+            'order_no' => $params['outOrderNo'],
+            'plat_order_id' => '',
             'pay_status' => $pay_status
         ];
         return $where;
