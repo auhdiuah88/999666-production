@@ -206,6 +206,7 @@ class JunHePay extends PayStrategy
         }
         $sign = implode('&', $string);
         $sign = urlencode($sign);
+        Log::channel('mytest')->info('JunHe-login-sign-str',[$sign]);
         return base64_encode(hash_hmac('sha1',$sign,$secret,true));
     }
 
@@ -216,11 +217,11 @@ class JunHePay extends PayStrategy
             'ts' => time() * 1000,
             'terminalType' => 'app'
         ];
-//        $params = [
-//            'appId' => 'fdsafdsafdfdsafsafdsrewq',
-//            'ts' => '1561949184369',
-//            'terminalType' => 'app'
-//        ];
+        $params = [
+            'appId' => 'fdsafdsafdfdsafsafdsrewq',
+            'ts' => '1561949184369',
+            'terminalType' => 'app'
+        ];
         $params['sign'] = $this->generateSign($params, $flag);
         Log::channel('mytest')->info('JunHe-login-sign',$params);
         $res = $this->requestService->postFormData(self::$login, $params);
