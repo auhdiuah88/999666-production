@@ -5,15 +5,21 @@ namespace App\Services\Admin;
 
 
 use App\Repositories\Admin\BettingRepository;
+use App\Repositories\Admin\UserRepository;
 use App\Services\BaseService;
 
 class BettingService extends BaseService
 {
-    private $BettingRepository;
+    private $BettingRepository, $UserRepository;
 
-    public function __construct(BettingRepository $bettingRepository)
+    public function __construct
+    (
+        BettingRepository $bettingRepository,
+        UserRepository $userRepository
+    )
     {
         $this->BettingRepository = $bettingRepository;
+        $this->UserRepository = $userRepository;
     }
 
     public function findAll($page, $limit)
@@ -76,6 +82,16 @@ class BettingService extends BaseService
             $data["ops"]["user_id"] = "=";
             unset($data["conditions"]["phone"]);
             unset($data["ops"]["phone"]);
+        }
+
+        if (array_key_exists("reg_source_id", $data["conditions"])) {
+            if($data["conditions"]["reg_source_id"] != '')
+            {
+                $data["conditions"]["user_id"] = $this->UserRepository->getSourceUserIds($data["conditions"]["reg_source_id"]);
+                $data["ops"]["user_id"] = "in";
+            }
+            unset($data["conditions"]["reg_source_id"]);
+            unset($data["ops"]["reg_source_id"]);
         }
         return $data;
     }

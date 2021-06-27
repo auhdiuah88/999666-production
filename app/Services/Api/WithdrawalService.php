@@ -114,7 +114,10 @@ class WithdrawalService extends PayService
             return false;
         }
 //        $onlydata["payment"] = bcsub($data["money"], self::$service_charge, 2);
-        $pay_money = $this->countServiceCharge($data);
+        if(!$pay_money = $this->countServiceCharge($data))
+        {
+            return false;
+        }
         $onlydata["payment"] = $pay_money['amount'];
         $onlydata["service_charge"] = $pay_money['service_charge'];
         $data = array_merge($data, $onlydata);
@@ -130,13 +133,22 @@ class WithdrawalService extends PayService
     /**
      * 计算提现服务费
      * @param $data
-     * @return array
      */
     public function countServiceCharge($data)
     {
         $service_charge = 0;
         $amount = $data['money'];
         $conf = $this->SettingRepository->getWithdrawServiceCharge();
+        ##判断提现次数限制
+        if($conf['limit_times'] >= -1)
+        {
+            $count = $this->WithdrawalRepository->countUserWithdraw($data['user_id']);
+            if($count >= $conf['limit_times'])
+            {
+                $this->_msg = "The maximum number of withdrawals today is {$conf['limit_times']}";
+                return false;
+            }
+        }
         if(isset($conf['status']) &&  $conf['status']== 1){ //手续费开启
 //            $country = env('COUNTRY','india');
 //            if($country == 'india'){
@@ -150,7 +162,7 @@ class WithdrawalService extends PayService
 //                $service_charge = bcmul($amount,0.03);
 //            }
             if(isset($conf['free_status']) && $conf['free_status'] == 1){  //开启了次数免费
-                $count = $this->WithdrawalRepository->countUserWithdraw($data['user_id']);
+                if(!isset($count))$count = $this->WithdrawalRepository->countUserWithdraw($data['user_id']);
                 $free_times = $conf['free_times']??0;
                 if($count >= $free_times){ //收取手续费
                     $service_charge = $this->calcCharge($conf, $amount);
@@ -289,16 +301,22 @@ class WithdrawalService extends PayService
                 return false;
             }
 
-            ##投注金额 * 打码倍数 + 虚拟流水  >= 当前提现金额
-            if($system->multiple > 0){
-                if ((float)$system->multiple * (float)$user->cl_betting + (float)$fake_betting_money < $money) {
-                    $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
+            if($user['force_betting_money'] > 0)
+            {
+                if ($user->force_betting_money > $user->cl_betting) {
+                    $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal.";
                     return false;
                 }
-//                if (((float)$user->total_recharge * (int)$system->multiple) + (float)$fake_betting_money + (float)$user->cl_betting < $money) {
-//                    $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
-//                    return false;
-//                }
+            }else{
+                ##投注金额 * 打码倍数 + 虚拟流水  >= 当前提现金额
+                if($system->multiple > 0) {
+                    ##待审核提现金额
+                    $total_withdraw = $this->WithdrawalRepository->sumUserWithdraw($user_id);
+                    if ((float)$system->multiple * (float)$user->cl_betting + (float)$fake_betting_money < $money + $total_withdraw + $user->cl_withdrawal) {
+                        $this->_msg = "Your order amount is not enough to complete the withdrawal of {$money} amount, please complete the corresponding order amount before initiating the withdrawal";
+                        return false;
+                    }
+                }
             }
 
 //            if (((float)$user->cl_betting - $user->cl_withdrawal + (float)$fake_betting_money) < $money * (int)$system->multiple) {

@@ -337,9 +337,19 @@ class UserRepository extends BaseRepository
         return $data->toArray();
     }
 
+    public function getSourceUserIds($reg_source_id=0)
+    {
+        return $this->Cx_User->where("reg_source_id", $reg_source_id)->pluck('id')->toArray();
+    }
+
     public function getTestUserIds()
     {
         return $this->Cx_User->where("reg_source_id", 1)->pluck('id')->toArray();
+    }
+
+    public function getRelUserIds()
+    {
+        return $this->Cx_User->where("reg_source_id", 0)->pluck('id')->toArray();
     }
 
 }

@@ -63,6 +63,11 @@ class WithdrawalRepository
         return $this->Cx_Withdrawal_Record->where("user_id", $userId)->whereIn("status", [0,1])->whereBetween("create_time",[day_start(),day_end()])->count("id");
     }
 
+    public function sumUserWithdraw($userId)
+    {
+        return $this->Cx_Withdrawal_Record->where("user_id", $userId)->where("status", 0)->sum("money");
+    }
+
     public function getAgentRewardRecord($user_id, $type)
     {
         return $this->Cx_Charge_Logs->with(["user" => function ($query) {

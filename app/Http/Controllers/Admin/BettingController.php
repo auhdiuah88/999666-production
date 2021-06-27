@@ -35,7 +35,7 @@ class BettingController extends Controller
      */
     public function syncInRealtime(Request $request)
     {
-        $retry = 10000;
+        $retry = 30000;
         $result = $this->BettingService->getNewest();
         $response = new StreamedResponse(function() use ($result,$retry) {
             echo "retry: {$retry}" . PHP_EOL.'data: ' . json_encode($result) . "\n\n";

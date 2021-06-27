@@ -654,9 +654,11 @@ class SettingService extends BaseService
                 'percent' => 0.03,
                 'status' => 1,
                 'free_status' => 0,
-                'free_times' => 0
+                'free_times' => 0,
+                'limit_times' => -1,
             ];
         }
+        if(!isset($data['limit_times']))$data['limit_times'] = -1;
         $this->_data = $data;
     }
 
@@ -668,6 +670,7 @@ class SettingService extends BaseService
         $status = $this->intInput('status');
         $free_status = $this->intInput('free_status');
         $free_times = $this->intInput('free_times');
+        $limit_times = $this->intInput('limit_times',-1);
         if($status == 1){
             if($standard <= $charge)
             {
@@ -677,7 +680,7 @@ class SettingService extends BaseService
             }
         }
 
-        $res = $this->SettingRepository->saveSetting(SettingDic::key('WITHDRAW_SERVICE_CHARGE'), compact('standard','charge','percent','status','free_status','free_times'));
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('WITHDRAW_SERVICE_CHARGE'), compact('standard','charge','percent','status','free_status','free_times','limit_times'));
         if($res === false){
             $this->_code = 403;
             $this->_msg = '修改失败';

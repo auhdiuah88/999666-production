@@ -44,9 +44,11 @@ class SettingRepository
                 'percent' => 0.03,
                 'status' => 1,
                 'free_status' => 0,
-                'free_times' => 0
+                'free_times' => 0,
+                'limit_times' => -1
             ];
         }
+        if(!isset($data['limit_times']))$data['limit_times'] = -1;
         return $data;
     }
 
