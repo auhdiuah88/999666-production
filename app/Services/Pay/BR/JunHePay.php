@@ -198,7 +198,6 @@ class JunHePay extends PayStrategy
     public function generateSign($params, $flag = 1)
     {
         $secret = $flag == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
-        $secret = 'safdsrewsdsfdsewffew123';
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
@@ -218,15 +217,17 @@ class JunHePay extends PayStrategy
             'ts' => time() * 1000,
             'terminalType' => 'app'
         ];
-        $params = [
-            'appId' => 'fdsafdsafdfdsafsafdsrewq',
-            'ts' => '1561949184369',
-            'terminalType' => 'app'
-        ];
+
         $params['sign'] = $this->generateSign($params, $flag);
         Log::channel('mytest')->info('JunHe-login-sign',$params);
-        $res = $this->requestService->postFormData(self::$login, $params);
+        $header[] = "Content-Type: application/x-www-form-urlencoded";
+        $res =dopost(self::$url, http_build_query($params), $header);
+//        $res = $this->requestService->postFormData(self::$login, $params);
         Log::channel('mytest')->info('JunHe-login-return',[$res]);
+        if(!$res){
+            $this->_msg = 'get token fail';
+            return false;
+        }
         if($res['code'] != 200)
         {
             $this->_msg = $res['message'];
