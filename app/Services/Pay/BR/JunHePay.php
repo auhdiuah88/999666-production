@@ -206,7 +206,7 @@ class JunHePay extends PayStrategy
         }
         $sign = implode('&', $string);
         $sign = urlencode($sign);
-        return hash_hmac('sha1',$sign,$secret,true);
+        return base64_encode(hash_hmac('sha1',$sign,$secret,true));
     }
 
     protected function signLogin($flag=1)
