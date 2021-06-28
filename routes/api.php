@@ -93,6 +93,8 @@ Route::group(["namespace" => "Api", "prefix" => "setting", 'middleware'=>['param
 
 Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'params_decrypt']], function () {
 
+    Route::get("/launch", "BettingController@launch");
+
     Route::group(["prefix" => "user"], function () {
         Route::get("/info", "InfoController@getInfo"); // 查询用户基本信息
         Route::post("/nickname", "InfoController@updateNickname"); // 修改用户昵称 参数: nickname

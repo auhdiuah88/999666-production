@@ -4,6 +4,7 @@
 namespace App\Services\Admin;
 
 
+use App\Libs\Games\WDYY\Client;
 use App\Repositories\Admin\BettingRepository;
 use App\Repositories\Admin\UserRepository;
 use App\Services\BaseService;
@@ -139,6 +140,38 @@ class BettingService extends BaseService
             $where['game_id'] = ['=', $type];
         $this->_data = $this->BettingRepository->noticeBettingList($where, $sort, $size);
 //        $this->_data = $this->BettingRepository->noticeBettingList($sort, $size);
+    }
+
+    public function launch()
+    {
+        try{
+            $game_id = $this->intInput('game_id');
+            ##获取游戏信息
+            $game = $this->BettingRepository->gameInfo($game_id);
+            if(!$game)
+            {
+                throw new \Exception("The game doesn't exist");
+            }
+            if($game->status != 1)
+            {
+               throw new \Exception('The game has been taken off the shelves');
+            }
+            if(!$game->cate)
+            {
+                throw new \Exception('Abnormal game data');
+            }
+            if($game->cate->status != 1)
+            {
+                throw new \Exception('The game has been taken off the shelves .');
+            }
+            ##
+            $Client = new Client();
+            $Client->launch('racing');
+        }catch(\Exception $e){
+            $this->_msg = $e->getMessage();
+            $this->_code = 414;
+            return;
+        }
     }
 
 }

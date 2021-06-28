@@ -7,6 +7,7 @@ namespace App\Repositories\Admin;
 use App\Models\Cx_Game;
 use App\Models\Cx_Game_Betting;
 use App\Models\Cx_Game_Config;
+use App\Models\Cx_Game_List;
 use App\Models\Cx_Game_Play;
 use App\Models\Cx_User;
 use App\Repositories\BaseRepository;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class BettingRepository extends BaseRepository
 {
-    private $Cx_Game_Betting, $Cx_Game_Config, $Cx_Game_Play, $Cx_User;
+    private $Cx_Game_Betting, $Cx_Game_Config, $Cx_Game_Play, $Cx_User, $Cx_Game_List;
     /**
      * @var Cx_Game
      */
@@ -25,7 +26,8 @@ class BettingRepository extends BaseRepository
         Cx_Game_Config $config,
         Cx_Game_Play $cx_Game_Play,
         Cx_User $cx_User,
-        Cx_Game $cx_Game
+        Cx_Game $cx_Game,
+        Cx_Game_List $cx_Game_List
     )
     {
         $this->Cx_Game_Betting = $game_Betting;
@@ -33,6 +35,7 @@ class BettingRepository extends BaseRepository
         $this->Cx_Game_Play = $cx_Game_Play;
         $this->Cx_User = $cx_User;
         $this->cx_Game = $cx_Game;
+        $this->Cx_Game_List = $cx_Game_List;
     }
 
     public function findAll($offset, $limit)
@@ -234,5 +237,26 @@ class BettingRepository extends BaseRepository
             )
             ->orderByDesc($sortArr[$sort])
             ->paginate($size);
+    }
+
+    /**
+     * 游戏信息
+     * @param $game_id
+     * @return mixed
+     */
+    public function gameInfo($game_id)
+    {
+        return $this->Cx_Game_List
+            ->where("id", $game_id)
+            ->with(
+                [
+                    'cate' => function($query)
+                    {
+                        $query->select('label', 'id', 'status');
+                    }
+                ]
+            )
+            ->select('cid', 'label', 'status')
+            ->first();
     }
 }

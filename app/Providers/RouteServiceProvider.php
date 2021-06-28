@@ -93,4 +93,11 @@ class RouteServiceProvider extends ServiceProvider
             ->namespace($this->namespace)
             ->group(base_path('routes/ag.php'));
     }
+    protected function mapPlatRoutes()
+    {
+        Route::prefix('plat')
+//            ->middleware('ag')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/plat.php'));
+    }
 }

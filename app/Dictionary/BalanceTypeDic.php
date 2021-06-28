@@ -73,6 +73,23 @@ class BalanceTypeDic
             'value' => 16,
             'name' => '银行卡充值'
         ],
+
+        '101' => [
+            'value' => 101,
+            'name' => 'WD/YY-下注',
+        ],
+        '102' => [
+            'value' => 102,
+            'name' => 'WD/YY-派彩',
+        ],
+        '103' => [
+            'value' => 103,
+            'name' => 'WD/YY-退回下注',
+        ],
+        '104' => [
+            'value' => 104,
+            'name' => 'WD/YY-退回派彩',
+        ],
     ];
 
     public static function data(int $type){

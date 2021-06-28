@@ -134,6 +134,12 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/game-debug/' . date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
             'level' => 'debug',
+        ],
+
+        'plat' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/plat/' . date('Y') . '/' . date('m') . '/' . date('Ymd') .'.log'),		//  tail  -f storage/logs/test.log
+            'level' => 'debug',
         ]
     ],
 
