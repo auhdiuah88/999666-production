@@ -24,15 +24,16 @@ class Client extends GameStrategy
             'returnUrl' => env('SHARE_URL',''),
             'token' => getToken(),
             'requestTime' => date('YmdHis'),
-            'storeUrl' => '',
+            'storeUrl' => trim(env('APP_URL',''),'/') . '/plat/bl-balance',
         ];
         $params['sign'] = generateSign($params);
         ##请求
         $params_string = json_encode($params);
         $header[] = "Content-Type: application/json";
         $header[] = "Content-Length: " . strlen($params_string);
+        Log::channel('plat')->info('wdyy-launch-param',$params);
         $res = $this->doRequest(HOST . $api, $params_string, $header);
-        Log::channel('plat')->info('wdyy-launch',[$res]);
+        Log::channel('plat')->info('wdyy-launch-return',[$res]);
         $res = json_decode($res,true);
         if(!$res){
             $this->_msg = 'launch request fail';
