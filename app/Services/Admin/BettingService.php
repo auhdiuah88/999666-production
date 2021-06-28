@@ -166,7 +166,14 @@ class BettingService extends BaseService
             }
             ##
             $Client = new Client();
-            $Client->launch('racing');
+            if(!$Client->launch('racing'))
+            {
+                $this->_msg = $Client->_msg;
+                $this->_code = 415;
+                return;
+            }
+            $this->_data = $Client->_data;
+            return;
         }catch(\Exception $e){
             $this->_msg = $e->getMessage();
             $this->_code = 414;

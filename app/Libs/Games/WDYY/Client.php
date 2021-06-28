@@ -44,6 +44,7 @@ class Client extends GameStrategy
             $this->_msg = 'launch request fail .';
             return false;
         }
+        Log::channel('plat')->info('wdyy-launch-return222',$res);
         $this->_data = $res['data']['gameUrl'];
         return true;
     }
