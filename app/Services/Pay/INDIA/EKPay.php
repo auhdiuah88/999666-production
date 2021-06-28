@@ -117,7 +117,7 @@ class EKPay extends PayStrategy
             $this->_msg = 'EK-签名错误';
             return false;
         }
-        $this->amount = $params['amount'];
+        $this->amount = $params['paid'];
         $where = [
             'order_no' => $params['merchant_order'],
         ];
