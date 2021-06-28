@@ -3,6 +3,7 @@
 namespace App\Services\Pay;
 
 use App\Services\Pay\BR\JunHePay;
+use App\Services\Pay\INDIA\EKPay;
 
 class PayContext
 {
@@ -50,7 +51,8 @@ class PayContext
         CloudPay $cloudPay,
         DDpay $DDpay,
         Gspay $gspay,
-        JunHePay $junHePay
+        JunHePay $junHePay,
+        EKPay $EKPay
     )
     {
         // 每种api地址对应的支付公司
@@ -90,6 +92,7 @@ class PayContext
             'ddpay' => $DDpay,  //印度DDPAY
             'gspay' => $gspay,  //印度gapayment
             'junhe' => $junHePay,
+            'ekpay' => $EKPay,  //印度ek
         ];
     }
     /**
