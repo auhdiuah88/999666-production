@@ -35,6 +35,7 @@ class Client extends GameStrategy
         $res = $this->doRequest(HOST . $api, $params_string, $header);
         Log::channel('plat')->info('wdyy-launch-return',[$res]);
         $res = json_decode($res,true);
+        Log::channel('plat')->info('wdyy-launch-return',$res);
         if(!$res){
             $this->_msg = 'launch request fail';
             return false;
