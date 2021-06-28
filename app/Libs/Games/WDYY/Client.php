@@ -19,7 +19,7 @@ class Client extends GameStrategy
     {
         $api = 'launch/mobile';
         $params = [
-            'spId' => SP_ID,
+            'spId' => env('WDYY_SP_ID','68tbs'),
             'productId' => $productId,
             'returnUrl' => env('SHARE_URL',''),
             'token' => getToken(),

@@ -11,12 +11,13 @@ use Illuminate\Support\Facades\Validator;
 class BL extends Controller
 {
 
-    public function blReturn($retCode, $data=[])
+    public function blReturn($retCode, $data=[], $msg='')
     {
         return response()->json(
             [
                 "retCode" => $retCode,
-                "data" => $data
+                "data" => $data,
+                "msg" => $msg
             ]
         )->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
@@ -57,7 +58,7 @@ class BL extends Controller
             return $this->blReturn(1);
         }
         $this->Client->userInfo();
-        return $this->blReturn($this->Client->_data['retCode'],$this->Client->_data['data']);
+        return $this->blReturn($this->Client->_data['retCode'],$this->Client->_data['data'],$this->Client->_msg);
     }
 
 }

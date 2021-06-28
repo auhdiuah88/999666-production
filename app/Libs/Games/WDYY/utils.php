@@ -16,7 +16,7 @@ function generateSign($params): string
     foreach ($params as $key => $value) {
         $string[] = $key . '=' . $value;
     }
-    $sign = implode('&', $string) . '&key=' . MD5_KEY;
+    $sign = implode('&', $string) . '&key=' . env('WDYY_KEY', 'QDAQpubHyfu7tX4');
     return strtolower(md5($sign));
 }
 

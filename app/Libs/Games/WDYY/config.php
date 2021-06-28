@@ -1,9 +1,5 @@
 <?php
 
-const MD5_KEY = 'QDAQpubHyfu7tX4';
-
-const SP_ID = '68tbs';
-
 const HOST = 'https://5ulx.com/';
 
 const ACTION = [
