@@ -46,26 +46,26 @@ class Client extends GameStrategy
         return true;
     }
 
-    public function userInfo()
+    public function userInfo(): bool
     {
         ##验签
         if(!$params = checkSign())
         {
             $this->_msg = '验签失败';
-            $this->_data = json_encode([
+            $this->_data = [
                 'retCode' => 1,
                 'data' => []
-            ]);
+            ];
             return false;
         }
         $user_id = getUserId($params['token']);
         $info = DB::table('users')->where("id",$user_id)->select("phone","code","balance")->first();
         if(empty($info)){
             $this->_msg = '用户不存在';
-            $this->_data = json_encode([
+            $this->_data = [
                 'retCode' => 2,
                 'data' => []
-            ]);
+            ];
             return false;
         }
         $data = [
@@ -74,14 +74,14 @@ class Client extends GameStrategy
             'balance' => $info->balance * 100,
             'headerUrl' => '',
         ];
-        $this->_data = json_encode([
+        $this->_data = [
             'retCode' => 2,
             'data' => $data
-        ]);
+        ];
         return true;
     }
 
-    public function balanceHandle()
+    public function balanceHandle(): bool
     {
         try{
             ##验签
@@ -98,10 +98,10 @@ class Client extends GameStrategy
             return true;
         }catch(\Exception $e){
             $this->_msg = $e->getMessage();
-            $this->_data = json_encode([
+            $this->_data = [
                 'retCode' => 1,
                 'data' => []
-            ]);
+            ];
             return false;
         }
     }
@@ -172,12 +172,12 @@ class Client extends GameStrategy
             {
                 throw new \Exception('变更用户余额失败');
             }
-            $this->_data = json_encode([
+            $this->_data = [
                 'retCode' => 0,
                 'data' => [
                     'balance' => $wc_balance * 100
                 ]
-            ]);
+            ];
             DB::commit();
             return true;
         }catch(\Exception $e){
