@@ -9,14 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class JunHePay extends PayStrategy
+class SpePay extends PayStrategy
 {
 
-    protected static $url = 'https://bra.junhepay.com/web/index.html';    // 支付网关
+    protected static $url = 'https://pay.speedlyp.com/pay/recharge/order';    // 支付网关
 
-    protected static $url_cashout = 'https://bra.junhepay.com/api/otcPayOrder/unifiedOrder'; // 提现网关
-
-    protected static $login = 'https://bra.junhepay.com/api/otcAppUser/login';  //签名登录url
+    protected static $url_cashout = 'https://pay.speedlyp.com/api/withdrawal/order/add'; // 提现网关
 
     private $recharge_callback_url = '';     // 充值回调地址
     private $withdrawal_callback_url = '';  //  提现回调地址
@@ -26,10 +24,10 @@ class JunHePay extends PayStrategy
     public $rechargeMerchantID;
     public $rechargeSecretkey;
 
-    public $rechargeRtn = "success";
-    public $withdrawRtn = 'success';
+    public $rechargeRtn = "SUCCESS";
+    public $withdrawRtn = 'SUCCESS';
 
-    public $company = 'junhe';   // 支付公司名
+    public $company = 'spepay';   // 支付公司名
 
     public function _initialize()
     {
@@ -63,34 +61,16 @@ class JunHePay extends PayStrategy
         return hash_hmac('sha1',$sign,$secret);
     }
 
-    protected function signLogin($flag=1)
+    public function rechargeSign($params)
     {
-        $params = [
-            'appId' => $flag == 1 ? $this->rechargeMerchantID : $this->withdrawMerchantID,
-            'ts' => time() * 1000,
-            'terminalType' => 'app'
-        ];
-
-        $params['sign'] = $this->generateSign($params, $flag);
-        Log::channel('mytest')->info('JunHe-login-sign',$params);
-        $res = $this->requestService->postFormData(self::$login, $params);
-        Log::channel('mytest')->info('JunHe-login-return',[$res]);
-        if($res['code'] != 200)
-        {
-            $this->_msg = $res['message'];
-            return false;
-        }
-        return $res['data'];
+        $str = sprintf('payType=%d&merchantId=%s&amount=%s&orderId=%s&notifyUrl=%s&key=%s',$params['payType'],$params['merchantId'],$params['amount'],$params['orderId'],$params['notifyUrl'],$this->rechargeSecretkey);
+        return md5($str);
     }
 
-    protected function createNativeUrl($params):string
+    public function rechargeCallbackSign($params)
     {
-        $url = self::$url . "?";
-        foreach ($params as $key => $val)
-        {
-            $url .= $key .'='. $val . '&';
-        }
-        return trim($url,'&');
+        $str = sprintf('merchantId=%s&amount=%s&orderId=%s&orderStatus=%d&key=%s',$params['merchantId'],$params['amount'],$params['orderId'],$params['orderStatus'],$this->rechargeSecretkey);
+        return md5($str);
     }
 
     /**
@@ -99,22 +79,29 @@ class JunHePay extends PayStrategy
     public function rechargeOrder($pay_type, $money)
     {
         $order_no = self::onlyosn();
-        if(!$token = $this->signLogin())
-        {
+        $params = [
+            'merchantId' => $this->rechargeMerchantID,
+            'payType' => 101,
+            'orderId' => $order_no,
+            'amount' => intval($money),
+            'redirectURL' => env('SHARE_URL',''),
+            'notifyUrl' => $this->recharge_callback_url,
+        ];
+        $params['sign'] = $this->rechargeSign($params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('spepay_rechargeOrder', [$params]);
+        $res = dopost(self::$url . 'v1/idpay/pay_center', http_build_query($params), []);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('spepay_rechargeOrder_return', [$res]);
+        $res = json_decode($res,true);
+        if (!$res) {
+            $this->_msg = "prepay failed";
             return false;
         }
-        $user = $this->getUser();
-        $params = [
-            'outOrderNo' => $order_no,
-            'token' => $token,
-            'amount' => intval($money),
-            'payType' => 9,
-            'notifyUrl' => urlencode($this->recharge_callback_url),
-            'userFlag' => $user->phone,
-        ];
-        $is_post=3;
+        if($res['status'] != 0){
+            $this->_msg = $res['message'];
+            return false;
+        }
 
-        $native_url = self::$url;
+        $native_url = $res['data']['payUrl'];
         $resData = [
             'pay_type' => $pay_type,
             'out_trade_no' => $order_no,
@@ -135,30 +122,24 @@ class JunHePay extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_rechargeCallback', $request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('spepay_rechargeCallback', $request->post());
         $params = $request->post();
-        if($params['orderState'] != 1) {
-            $this->_msg = 'JunHe-recharge-交易未完成';
+        if($params['orderStatus'] != 1) {
+            $this->_msg = 'SPE-recharge-交易未完成';
             return false;
         }
         // 验证签名
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-        if ($this->generateSign($params) <> $sign) {
-            $this->_msg = 'JunHe-签名错误';
+        if ($this->rechargeCallbackSign($params) <> $sign) {
+            $this->_msg = 'SPE-签名错误';
             return false;
         }
-        $this->amount = $params['tradeAmount'];
+        $this->amount = $params['amount'];
         $where = [
-            'order_no' => $params['outOrderNo'],
+            'order_no' => $params['orderId'],
         ];
-        $this->rechargeRtn = json_encode([
-            'code' => 200,
-            'data' => true,
-            'message' => '请求成功',
-            'success' => true,
-        ]);
         return $where;
     }
 
@@ -171,6 +152,14 @@ class JunHePay extends PayStrategy
         $order_no = $withdrawalRecord->order_no;
 
         $params = [
+            'merchantId' => $this->withdrawMerchantID,
+            'idCard' => $withdrawalRecord->bank_number,
+            'orderId' => $order_no,
+            'amount' => intval($money),
+            'bankNumber' => '',
+            'bankName' => $withdrawalRecord->bank_name,
+            'name' => $withdrawalRecord->account_holder,
+
             'appId' => $this->withdrawMerchantID,
             'terminalType' => 'app',
             'ts' => time() * 1000,
