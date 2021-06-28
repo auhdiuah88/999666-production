@@ -206,7 +206,7 @@ class UserService
 
         if($this->SettingRepository->getIpSwitch() && $this->UserRepository->ipExist($ip)){
             $this->error_code = 402;
-            $this->error = 'IP already exists';
+            $this->error = 'IP already exists [' . $ip . ']';
             return false;
         }
         $Count = $this->UserRepository->Count($data['phone']);

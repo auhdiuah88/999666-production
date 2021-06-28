@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\DB;
 class EKPay extends PayStrategy
 {
 
-    protected static $url = 'https://gateway.ekpay.iwins.in/';    // 支付网关
+    protected static $url = 'https://gateway.ekpays.com/';    // 支付网关
 
-    protected static $url_cashout = 'https://gateway.ekpay.iwins.in/'; // 提现网关
+    protected static $url_cashout = 'https://gateway.ekpays.com/'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
