@@ -41,6 +41,7 @@ class Client extends GameStrategy
             return false;
         }
         if($res['retCode'] != 0){
+            Log::channel('plat')->info('wdyy-launch-return333',[$res['retCode']]);
             $this->_msg = 'launch request fail .';
             return false;
         }
