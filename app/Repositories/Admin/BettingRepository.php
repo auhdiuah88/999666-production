@@ -94,7 +94,7 @@ class BettingRepository extends BaseRepository
     public function getModel()
     {
         return $this->Cx_Game_Betting->with(["user" => function ($query) {
-            $query->select(["id", "phone", "nickname", "reg_source_id"]);
+            $query->select(["id", "phone", "nickname", "reg_source_id", "balance", "total_recharge", "cl_withdrawal", "id as total_win_money"]);
         }, "game_name" => function ($query) {
             $query->select(["id", "name"]);
         }, "game_play" => function ($query) {
