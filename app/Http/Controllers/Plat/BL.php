@@ -18,7 +18,7 @@ class BL extends Controller
             [
                 "retCode" => (string)$retCode,
                 "data" => $data,
-//                "msg" => $msg
+                "msg" => $msg
             ]
         )->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
