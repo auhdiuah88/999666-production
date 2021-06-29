@@ -73,6 +73,18 @@ class SpePay extends PayStrategy
         return md5($str);
     }
 
+    public function withdrawSign($params)
+    {
+        $str = sprintf('idCard=%s&merchantId=%s&bankNumber=%s&amount=%s&orderId=%s&accountNumber=%s&key=%s',$params['idCard'],$params['merchantId'],$params['bankNumber'],$params['amount'],$params['orderId'],$params['accountNumber'],$this->withdrawSecretkey);
+        return md5($str);
+    }
+
+    public function withdrawCallbackSign($params)
+    {
+        $str = sprintf('amount=%s&orderId=%s&transferStatus=%s&key=%s',$params['amount'],$params['orderId'],$params['transferStatus'],$this->withdrawSecretkey);
+        return md5($str);
+    }
+
     /**
      * 充值下单接口
      */
@@ -159,31 +171,20 @@ class SpePay extends PayStrategy
             'bankNumber' => 1,
             'bankName' => $withdrawalRecord->bank_name,
             'name' => $withdrawalRecord->account_holder,
-            'accountNumber' => '',
-
-            'appId' => $this->withdrawMerchantID,
-            'terminalType' => 'app',
-            'ts' => time() * 1000,
-            'payType' => 4,
-            'tradeAmount' => intval($money),
-            'outOrderNo' => $order_no,
+            'accountNumber' => $withdrawalRecord->ifsc_code,
+            'accountType' => 4,
             'notifyUrl' => $this->withdrawal_callback_url,
-            'upiAccount' => $withdrawalRecord->bank_number,
-            'ifscCode' => '',
-            'receiveName' => '',
-            'receiveAccount' => '',
-            'bankName' => '',
-            'customerName' => $withdrawalRecord->account_holder,
         ];
-        $params['sign'] = $this->generateSign($params, 2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_withdraw_params', $params);
-        $res = $this->requestService->postFormData(self::$url_cashout, $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_withdraw_return', [$res]);
+        $params['sign'] = $this->withdrawSign($params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('spepay_withdraw_params', $params);
+        $res = dopost(self::$url_cashout, http_build_query($params), []);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('spepay_withdraw_return', [$res]);
+        $res = json_decode($res,true);
         if (!$res) {
-            $this->_msg = '提交代付失败';
+            $this->_msg = "提交代付失败";
             return false;
         }
-        if ($res['code'] != 200 && $res['success'] !== true) {
+        if ($res['status'] != 0) {
             $this->_msg = $res['message'];
             return false;
         }
@@ -198,35 +199,34 @@ class SpePay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('JunHe_withdrawalCallback', $request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('spepay_withdrawalCallback', $request->post());
         $params = $request->post();
-//        if ($params['code'] != 1) {
-//            $this->_msg = 'BRHX-withdrawal-交易未完成';
-//            return false;
-//        }
+        if ($params['status'] != 0) {
+            $this->_msg = 'spepay-withdrawal-交易未完成';
+            return false;
+        }
         $pay_status = 0;
-        $status = (int)$params['orderState'];
-        if ($status == 1) {
+        $status = (int)$params['data']['transferStatus'];
+        if ($status == 2) {
             $pay_status = 1;
         }
-        if ($status == 2) {
+        if ($status == 3) {
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'JunHe-withdrawal-交易未完成';
+            $this->_msg = 'spepay-withdrawal-交易未完成';
             return false;
         }
+        $data = $params['data'];
         // 验证签名
-
-        $sign = $params['sign'];
-        unset($params['sign']);
-        unset($params['type']);
-        if ($this->generateSIgn($params, 2) <> $sign) {
+        $sign = $data['sign'];
+        unset($data['sign']);
+        if ($this->withdrawCallbackSign($data) <> $sign) {
             $this->_msg = 'JunHe-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $params['outOrderNo'],
+            'order_no' => $data['orderId'],
             'plat_order_id' => '',
             'pay_status' => $pay_status
         ];
