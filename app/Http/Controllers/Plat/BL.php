@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Plat;
 
 use App\Http\Controllers\Controller;
 use App\Libs\Games\WDYY\Client;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class BL extends Controller
@@ -49,6 +50,7 @@ class BL extends Controller
 
     public function userinfo()
     {
+        Log::channel('plat')->info('wdyy-userinfo-params',request()->post());
         $validator = Validator::make(request()->input(), [
             'token' => 'required',
             'sign' => 'required',
