@@ -169,7 +169,7 @@ class Client extends GameStrategy
                 throw new \Exception('增加余额变更记录失败');
             }
             ##更新用户余额
-            $res2 = DB::table('users')->where("id",$user_id)->update(['balance', $wc_balance]);
+            $res2 = DB::table('users')->where("id",$user_id)->update(['balance'=>$wc_balance]);
             if($res2 === false)
             {
                 throw new \Exception('变更用户余额失败');
