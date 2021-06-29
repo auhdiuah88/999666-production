@@ -59,7 +59,7 @@ class Client extends GameStrategy
             ];
             return false;
         }
-        $user_id = getUserId($params['token']);
+        $user_id = getUserIdFromToken($params['token']);
         $info = DB::table('users')->where("id",$user_id)->select("phone","code","balance")->first();
         if(empty($info)){
             $this->_msg = '用户不存在';
@@ -92,7 +92,7 @@ class Client extends GameStrategy
                 throw new \Exception('验签失败');
             }
             ##减少用户余额
-            $user_id = getUserId($params['token']);
+            $user_id = getUserIdFromToken($params['token']);
             if(!$this->updateBalance($params,$user_id,ACTION[$params['action']]))
             {
                 throw new \Exception($this->_msg);

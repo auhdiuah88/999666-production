@@ -33,7 +33,9 @@ function checkSign()
 
 function getToken()
 {
-    return request()->header('token');
+    $token = request()->header('token');
+    $user_id = getUserId($token);
+    return Crypt::encrypt($user_id);
 }
 
 function getUserId($token)
@@ -41,6 +43,11 @@ function getUserId($token)
     $token = urldecode($token);
     $data = explode("+", Crypt::decrypt($token));
     return $data[0];
+}
+
+function getUserIdFromToken($token)
+{
+    return Crypt::decrypt($token);
 }
 
 
