@@ -254,7 +254,8 @@ class GameService extends BaseService
             'status' => $this->intInput('status'),
             'sort' => $this->intInput('sort'),
             'cid' => $cid,
-            'link' => $this->strInput('link')
+            'link' => $this->strInput('link'),
+            'other' => $this->strInput('other'),
         ];
     }
 

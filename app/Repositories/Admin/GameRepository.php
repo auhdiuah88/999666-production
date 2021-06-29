@@ -117,7 +117,7 @@ class GameRepository
     public function gameList($where, $size)
     {
         return makeModel($where, $this->Cx_Game_List)
-            ->select("id", "cid", 'label', "icon", 'create_time', 'update_time', "sort", "status", "link")
+            ->select("id", "cid", 'label', "icon", 'create_time', 'update_time', "sort", "status", "link", "other")
             ->with(
                 [
                     'icon_url' => function($query)
