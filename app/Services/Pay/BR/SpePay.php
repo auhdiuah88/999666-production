@@ -156,9 +156,10 @@ class SpePay extends PayStrategy
             'idCard' => $withdrawalRecord->bank_number,
             'orderId' => $order_no,
             'amount' => intval($money),
-            'bankNumber' => '',
+            'bankNumber' => 1,
             'bankName' => $withdrawalRecord->bank_name,
             'name' => $withdrawalRecord->account_holder,
+            'accountNumber' => '',
 
             'appId' => $this->withdrawMerchantID,
             'terminalType' => 'app',

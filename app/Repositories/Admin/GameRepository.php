@@ -138,6 +138,7 @@ class GameRepository
                 ]
             )
             ->orderByDesc("sort")
+            ->orderBy("id", "asc")
             ->paginate($size);
     }
 
