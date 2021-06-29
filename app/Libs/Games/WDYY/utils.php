@@ -25,9 +25,9 @@ function checkSign()
     $params = request()->post();
     $sign = $params['sign'];
     unset($params['sign']);
-    if($sign != generateSign($params)){
-        return false;
-    }
+//    if($sign != generateSign($params)){
+//        return false;
+//    }
     return $params;
 }
 
