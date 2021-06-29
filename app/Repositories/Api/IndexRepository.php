@@ -100,6 +100,11 @@ class IndexRepository
         return $data;
     }
 
+    public function rgGameRecord($game_id)
+    {
+        return $this->getGameRecord($game_id);
+    }
+
     protected function getGameRecord($game_id) : array
     {
         $list = $this->Cx_Game_Play

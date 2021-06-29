@@ -82,6 +82,25 @@ class IndexService extends BaseService
         }
     }
 
+    public function rgGameRecord()
+    {
+        try{
+            ##验证
+            $validator = Validator::make(request()->input(), [
+                'game_id' => 'required|integer|gte:1'
+            ]);
+            if($validator->fails())
+            {
+                throw new \Exception($validator->errors()->first());
+            }
+            $game_id = request()->input('game_id',0);
+            $this->_data = $this->IndexRepository->rgGameRecord($game_id);
+        }catch(\Exception $e){
+            $this->_code = 414;
+            $this->_msg = $e->getMessage();
+        }
+    }
+
     public function adsDetail()
     {
         try{
