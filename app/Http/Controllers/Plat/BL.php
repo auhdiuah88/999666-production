@@ -37,6 +37,7 @@ class BL extends Controller
 
     public function balance()
     {
+        Log::channel('plat')->info('wdyy-balance-params',request()->post());
         $validator = Validator::make(request()->input(), [
             'action' => 'required',
             'token' => 'required',
