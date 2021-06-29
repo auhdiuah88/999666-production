@@ -87,7 +87,8 @@ class Client extends GameStrategy
     {
         try{
             ##验签
-            if(!$params = checkSign())
+            $params = checkSign();
+            if($params === false)
             {
                 throw new \Exception('验签失败');
             }
