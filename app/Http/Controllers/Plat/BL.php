@@ -55,7 +55,7 @@ class BL extends Controller
         ]);
         if($validator->fails())
         {
-            return $this->blReturn(1);
+            return $this->blReturn(1, $validator->errors()->first());
         }
         $this->Client->userInfo();
         return $this->blReturn($this->Client->_data['retCode'],$this->Client->_data['data'],$this->Client->_msg);
