@@ -16,7 +16,7 @@ class BL extends Controller
     {
         return response()->json(
             [
-                "retCode" => $retCode,
+                "retCode" => (string)$retCode,
                 "data" => $data,
 //                "msg" => $msg
             ]
