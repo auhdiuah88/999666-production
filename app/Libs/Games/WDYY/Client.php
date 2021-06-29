@@ -74,10 +74,10 @@ class Client extends GameStrategy
             'account' => $info->phone,
             'name' => $info->code,
             'balance' => $info->balance * 100,
-            'headerUrl' => '',
+            'headerUrl' => 'https://api.goshop6.in/storage/common/v6.png',
         ];
         $this->_data = [
-            'retCode' => 2,
+            'retCode' => 0,
             'data' => $data
         ];
         return true;
