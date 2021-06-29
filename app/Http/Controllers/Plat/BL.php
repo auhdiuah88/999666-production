@@ -14,13 +14,15 @@ class BL extends Controller
 
     public function blReturn($retCode, $data=[], $msg='')
     {
-        return response()->json(
-            [
-                "retCode" => (string)$retCode,
-                "data" => $data,
-//                "msg" => $msg
-            ]
-        )->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        $ret = [
+            "retCode" => (string)$retCode,
+            "data" => $data,
+        ];
+        if(request()->input('is_msg',0) === 1)
+        {
+            $ret['msg'] = $msg;
+        }
+        return response()->json($ret)->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
 
     protected $Client;
