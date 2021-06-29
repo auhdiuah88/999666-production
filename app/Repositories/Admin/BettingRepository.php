@@ -38,9 +38,13 @@ class BettingRepository extends BaseRepository
         $this->Cx_Game_List = $cx_Game_List;
     }
 
-    public function findAll($offset, $limit)
+    public function findAll($offset, $limit, $sort_field="", $sort_sort="")
     {
-        return $this->getModel()->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->setAppends(['win_lose_money'])->toArray();
+        if($sort_field && $sort_sort){
+            return $this->getModel()->orderBy($sort_field, $sort_sort)->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->setAppends(['win_lose_money'])->toArray();
+        }else{
+            return $this->getModel()->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->setAppends(['win_lose_money'])->toArray();
+        }
     }
 
     /**
@@ -61,9 +65,13 @@ class BettingRepository extends BaseRepository
         return $this->whereCondition($data, $this->Cx_Game_Betting)->sum($column);
     }
 
-    public function searchBettingLogs($data, $offset, $limit)
+    public function searchBettingLogs($data, $offset, $limit, $sort_field, $sort_sort)
     {
-        return $this->whereCondition($data, $this->getModel())->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->setAppends(['win_lose_money'])->toArray();
+        if($sort_field && $sort_sort){
+            return $this->whereCondition($data, $this->getModel())->orderBy($sort_field, $sort_sort)->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->setAppends(['win_lose_money'])->toArray();
+        }else{
+            return $this->whereCondition($data, $this->getModel())->orderByDesc("betting_time")->offset($offset)->limit($limit)->get()->setAppends(['win_lose_money'])->toArray();
+        }
     }
 
     public function countSearchBettingLogs($data)

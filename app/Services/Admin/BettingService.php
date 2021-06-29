@@ -23,9 +23,10 @@ class BettingService extends BaseService
         $this->UserRepository = $userRepository;
     }
 
-    public function findAll($page, $limit)
+    public function findAll($page, $limit, $sort=[])
     {
-        $list = $this->BettingRepository->findAll(($page - 1) * $limit, $limit);
+//        print_r($sort);die;
+        $list = $this->BettingRepository->findAll(($page - 1) * $limit, $limit, $sort);
         $total = $this->BettingRepository->countAll([]);
         $this->_data = ["total" => $total, "list" => $list];
     }
@@ -42,9 +43,11 @@ class BettingService extends BaseService
     {
         $page = $data["page"];
         $limit = $data["limit"];
+        $sort_field = $data['sort_field'];
+        $sort_sort = $data['sort_sort'];
         $offset = ($page - 1) * $limit;
         $data = $this->assemblyParameters($data);
-        $list = $this->BettingRepository->searchBettingLogs($data, $offset, $limit);
+        $list = $this->BettingRepository->searchBettingLogs($data, $offset, $limit, $sort_field, $sort_sort);
         $total = $this->BettingRepository->countSearchBettingLogs($data);
         $this->_data = ["total" => $total, "list" => $list];
 
