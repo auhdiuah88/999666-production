@@ -71,7 +71,7 @@ class Client extends GameStrategy
             return false;
         }
         $data = [
-            'account' => $info->phone,
+            'account' => (string)$info->phone,
             'name' => $info->code,
             'balance' => $info->balance * 100,
             'headerUrl' => 'https://api.goshop6.in/storage/common/v6.png',
