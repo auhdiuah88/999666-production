@@ -252,7 +252,7 @@ class BettingRepository extends BaseRepository
                 [
                     'cate' => function($query)
                     {
-                        $query->select('label', 'id', 'status');
+                        $query->select('label', 'id', 'status', 'other');
                     }
                 ]
             )

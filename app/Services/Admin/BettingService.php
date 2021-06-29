@@ -164,9 +164,13 @@ class BettingService extends BaseService
             {
                 throw new \Exception('The game has been taken off the shelves .');
             }
+            if($game->other == '')
+            {
+                throw new \Exception('The game has been taken off the shelves ..');
+            }
             ##
             $Client = new Client();
-            if(!$Client->launch('racing'))
+            if(!$Client->launch($game->other))
             {
                 $this->_msg = $Client->_msg;
                 $this->_code = 415;
