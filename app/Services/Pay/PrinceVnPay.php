@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 class PrinceVnPay extends PayStrategy
 {
 
-    protected static $url = 'https://api.qpr200.site/pay';    // 支付网关
+    protected static $url = 'https://api.princepay.support/pay';    // 支付网关
 
-    protected static $url_cashout = 'https://api.qpr200.site/applyfor'; // 提现网关
+    protected static $url_cashout = 'https://api.princepay.support/applyfor'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
@@ -173,7 +173,7 @@ class PrinceVnPay extends PayStrategy
         $order_no = self::onlyosn();
         $params = [
             'uid' => $this->rechargeMerchantID,
-            'orderid' => substr($order_no,-20),
+            'orderid' => $order_no,
             'channel' => $this->rechargeTypeList[$this->rechargeType],
             'notify_url' => $this->recharge_callback_url,
             'return_url' => env('SHARE_URL',''),
@@ -229,9 +229,9 @@ class PrinceVnPay extends PayStrategy
             return false;
         }
         $params['result'] = json_decode($params['result'],true);
-        $this->amount = $params['result']['amount'];
+        $this->amount = $params['result']['real_amount'];
         $where = [
-            'order_no' => $params['result']['custom'],
+            'order_no' => $params['result']['orderid'],
         ];
         return $where;
     }
@@ -252,7 +252,7 @@ class PrinceVnPay extends PayStrategy
         $userIp = DB::table("users")->where('id','=', $withdrawalRecord->user_id)->value("ip");
         $params = [
             'uid' => $this->withdrawMerchantID,
-            'orderid' => substr($order_no,-20),
+            'orderid' => $order_no,
             'channel' => 712,
             'notify_url' => $this->withdrawal_callback_url,
             'amount' => intval($money),
@@ -308,7 +308,7 @@ class PrinceVnPay extends PayStrategy
         }
         $params['result'] = json_decode($params['result'],true);
         $where = [
-            'order_no' => $params['result']['custom'],
+            'order_no' => $params['result']['orderid'],
             'plat_order_id' => $params['result']['transactionid'],
             'pay_status' => $pay_status
         ];
