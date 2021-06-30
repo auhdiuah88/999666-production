@@ -229,7 +229,7 @@ class PrinceVnPay extends PayStrategy
             return false;
         }
         $params['result'] = json_decode($params['result'],true);
-        $this->amount = $params['result']['real_amount'];
+        $this->amount = $params['result']['amount'];
         $where = [
             'order_no' => $params['result']['orderid'],
         ];
