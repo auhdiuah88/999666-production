@@ -235,7 +235,7 @@ class WithdrawalService extends PayService
 
         $conf = $this->SettingRepository->getWithdrawServiceCharge();
         ##判断提现次数限制
-        if($conf['limit_times'] >= -1)
+        if($conf['limit_times'] > -1)
         {
             $count = $this->WithdrawalRepository->countUserWithdraw($user->id);
             if($count >= $conf['limit_times'])
