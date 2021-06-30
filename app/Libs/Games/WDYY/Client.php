@@ -153,7 +153,17 @@ class Client extends GameStrategy
                 default:
                     throw new \Exception('available type');
             }
-
+            if($money <= 0)
+            {
+                $this->_data = [
+                    'retCode' => 0,
+                    'data' => [
+                        'balance' => $wc_balance * 100
+                    ]
+                ];
+                DB::rollBack();
+                return true;
+            }
             $balance_log_data = [
                 'user_id' => $user_id,
                 'type' => $type,
