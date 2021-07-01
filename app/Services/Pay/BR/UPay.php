@@ -184,14 +184,16 @@ class UPay extends PayStrategy
     function rechargeCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_rechargeCallback',$request->input());
-
-        if(!isset($request->encryptedData)){
-            $this->_msg = 'matthew-recharge-交易未完成.';
+        $params = file_get_contents("php://input");
+        $params = json_decode($params,true);
+        if(!$params)return false;
+        if(!isset($params['encryptedData'])){
+            $this->_msg = 'upay-recharge-交易未完成.';
             return false;
         }
         $Aes = new Aes();
         $key = substr($this->rechargeSecretkey, 0,16);
-        $data = $Aes->decryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
+        $data = $Aes->decryptWithOpenssl($key, $params['encryptedData'], $this->iv);   //提现数据加密
         $data = json_decode($data,true);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_rechargeCallback_decryptWithOpenssl',[$data]);
         if ($data['status'] != '1')  {
@@ -202,19 +204,27 @@ class UPay extends PayStrategy
             'order_no' => $data['thirdOrderNumber'],
         ];
         $this->amount = $data['amount'];
+        $this->rechargeRtn = json_encode([
+          "code" => 1,
+          "message" => "成功",
+          "success" => true
+        ]);
         return $where;
     }
 
     function withdrawalCallback(Request $request)
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_withdrawalCallback',$request->post());
-        if(!isset($request->encryptedData)){
+        $params = file_get_contents("php://input");
+        $params = json_decode($params,true);
+        if(!$params)return false;
+        if(!isset($params['encryptedData'])){
             $this->_msg = 'upay-withdraw-交易未完成.';
             return false;
         }
         $Aes = new Aes();
         $key = substr($this->withdrawSecretkey, 0,16);
-        $data = $Aes->decryptWithOpenssl($key, $request->encryptedData, $this->iv);   //提现数据加密
+        $data = $Aes->decryptWithOpenssl($key, $params['encryptedData'], $this->iv);   //提现数据加密
         $data = json_decode($data,true);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_withdrawCallback_decryptWithOpenssl',[$data]);
         $pay_status = 0;
@@ -229,6 +239,12 @@ class UPay extends PayStrategy
             $this->_msg = 'upay_withdrawal-交易未完成';
             return false;
         }
+
+        $this->withdrawRtn = json_encode([
+            "code" => 1,
+            "message" => "成功",
+            "success" => true
+        ]);
 
         $where = [
             'order_no' => $data['thirdOrderNumber'],
