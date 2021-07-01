@@ -23,7 +23,7 @@ class UPay extends PayStrategy
     protected static $withdrawUrl = 'https://payapitest.soon-ex.com/';
 
 //    protected static $nativeUrl = 'http://pay.soon-ex.com/#/?orderId=';
-    protected static $nativeUrl = 'http://payapitest.soon-ex.com/brazil/#/?orderId=%s&phone=%s&mail=%s';
+    protected static $nativeUrl = 'http://paytest.soon-ex.com/brazil/#/?orderId=%s&phone=%s&mail=%s';
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
