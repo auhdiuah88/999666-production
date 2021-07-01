@@ -41,6 +41,7 @@ Route::get("/agentUrl", "Api\SystemController@agentUrl")->middleware(['params_de
 Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback");
 // 提款回调
 Route::any('/withdrawal_callback', "Api\WithdrawalController@withdrawalCallback");
+Route::any('/recharge_callback_test', "Api\RechargeController@test");
 
 Route::get("/user/language", "Api\SystemController@language")->middleware(['params_decrypt']);    // 语言
 
