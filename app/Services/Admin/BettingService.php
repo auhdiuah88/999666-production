@@ -4,6 +4,7 @@
 namespace App\Services\Admin;
 
 
+use App\Libs\Games\GameContext;
 use App\Libs\Games\WDYY\Client;
 use App\Repositories\Admin\BettingRepository;
 use App\Repositories\Admin\UserRepository;
@@ -11,16 +12,18 @@ use App\Services\BaseService;
 
 class BettingService extends BaseService
 {
-    private $BettingRepository, $UserRepository;
+    private $BettingRepository, $UserRepository, $GameContext;
 
     public function __construct
     (
         BettingRepository $bettingRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        GameContext $gameContext
     )
     {
         $this->BettingRepository = $bettingRepository;
         $this->UserRepository = $userRepository;
+        $this->GameContext = $gameContext;
     }
 
     public function findAll($page, $limit, $sort=[])
@@ -172,7 +175,7 @@ class BettingService extends BaseService
                 throw new \Exception('The game has been taken off the shelves ..');
             }
             ##
-            $Client = new Client();
+            $Client = $this->GameContext->getStrategy('wdyy');
             if(!$Client->launch($game->other))
             {
                 $this->_msg = $Client->_msg;
