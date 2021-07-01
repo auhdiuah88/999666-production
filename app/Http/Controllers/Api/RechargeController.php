@@ -205,8 +205,8 @@ class RechargeController extends Controller
 
     public function test()
     {
-        $secretData = 'K1p6GTtMVGi3KaXuMtu/x4ovzxWGQxtx9H67h6tyrLgyH3yqIweHbOVGlYWoX+XyFZjRE+jQR6NC9klLVrcTQfBe1CWDVq5ZW7XcoEb4bNynHDt9udwlMtXYSL+f7TfkUkgOb+uwu4e10YhfBQo8vO2EaFRnamsCYgn0TdLkTkjai4M1A3xHywsX4+PAAPrie2AiMhCMeAI5K67iX4teeCJsBjlUmV4gFvcRlWFRMGnjHzxYIQ43yc8jJZUeCk3BRZ6aFChzvwtrSFT2ba4mIA';
-        $data = openssl_decrypt(base64_decode($secretData),'AES-128-CBC','f7a9f846feb05feb',OPENSSL_RAW_DATA,'!WFNZFU_{H%M(S|a');
+        $secretData = 'ONlO8QbBp/1CZoKI9ETPCPSFq0SYaHxEp8a+QCs+E8nDRdM+mymjjsf82+HapnDguI7oVhguUdGt63M5alONAbphAp108cqtsHL1dnL+a9WGbLlfy0tLTwROqiUNQjK3zVPMzSmKgcexoFruRkmQyg==';
+        $data = openssl_decrypt(base64_decode($secretData),'AES-128-CBC','6a48c9dc43afbde0',OPENSSL_RAW_DATA,'!WFNZFU_{H%M(S|a');
         var_dump($data);
     }
 
