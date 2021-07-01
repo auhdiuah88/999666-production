@@ -210,6 +210,7 @@ class UPay extends PayStrategy
           "message" => "成功",
           "success" => true
         ]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_rechargeCallback_where',[$where]);
         return $where;
     }
 
