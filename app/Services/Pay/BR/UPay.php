@@ -183,8 +183,9 @@ class UPay extends PayStrategy
 
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_rechargeCallback',$request->input());
+
         $params = file_get_contents("php://input");
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_rechargeCallback',[$params]);
         $params = json_decode($params,true);
         if(!$params)return false;
         if(!isset($params['encryptedData'])){
