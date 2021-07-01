@@ -30,7 +30,6 @@ class Aes{
 
     public function decryptWithOpenssl($key, $data = '', $iv='')
     {
-
         return openssl_decrypt(base64_decode($data), "AES-128-CBC", $key, OPENSSL_RAW_DATA,$iv);
     }
 
