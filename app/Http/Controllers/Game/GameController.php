@@ -139,7 +139,7 @@ class GameController extends Controller
             $data['balance']=$balance;
             return $this->AppReturn(200, "Betting Success",$data);
         } else {
-            return $this->AppReturn(413, 'Insufficient balance or not within the allowed betting time of the period');
+            return $this->AppReturn(413, 'Insufficient balance or abnormal network');
         }
 
     }
