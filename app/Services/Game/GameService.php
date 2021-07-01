@@ -99,6 +99,9 @@ class GameService
         }
         //判断用户余额是否大于投注金额
         $user_info = $this->UserRepository->findByIdUser($user_id);
+        if($user_info->is_transaction == 0){
+            return false;
+        }
 
         if ($data["money"] > $user_info->balance) {
             return false;
