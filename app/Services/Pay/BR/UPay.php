@@ -194,8 +194,6 @@ class UPay extends PayStrategy
         }
         $Aes = new Aes();
         $key = substr($this->rechargeSecretkey, 0,16);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_rechargeCallback2',[$key]);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_rechargeCallback3',[$params['encryptedData']]);
         $data = $Aes->decryptWithOpenssl($key, $params['encryptedData'], $this->iv);   //提现数据加密
         $data = json_decode($data,true);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('upay_rechargeCallback_decryptWithOpenssl',[$data]);

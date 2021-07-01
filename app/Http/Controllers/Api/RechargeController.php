@@ -203,11 +203,4 @@ class RechargeController extends Controller
         );
     }
 
-    public function test()
-    {
-        $secretData = 'ONlO8QbBp/1CZoKI9ETPCPSFq0SYaHxEp8a+QCs+E8nDRdM+mymjjsf82+HapnDguI7oVhguUdGt63M5alONAbphAp108cqtsHL1dnL+a9WGbLlfy0tLTwROqiUNQjK3zVPMzSmKgcexoFruRkmQyg==';
-        $data = openssl_decrypt(base64_decode($secretData),'AES-128-CBC','6a48c9dc43afbde0',OPENSSL_RAW_DATA,'!WFNZFU_{H%M(S|a');
-        var_dump($data);
-    }
-
 }
