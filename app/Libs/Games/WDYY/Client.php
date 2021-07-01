@@ -118,6 +118,7 @@ class Client extends GameStrategy
                 throw new \Exception('用户不存在');
             }
             $balance = $info->balance;
+            $betting = 0;
             switch($type){
                 case 101:  //betting
                     $money = $params['amt'] / 100;
@@ -127,6 +128,7 @@ class Client extends GameStrategy
                     }
                     $wc_balance = bcsub($balance, $money);
                     $msg = sprintf('action:%s,betId:%d,gameName:%s,gameNumber:%s',$params['action'],$params['betId'],$params['gameName'],$params['gameNumber']);
+                    $betting = $money;
                     break;
                 case 102:  //win
                     $amt = $params['betAmt']??$params['amt'];
@@ -183,6 +185,10 @@ class Client extends GameStrategy
             if($res2 === false)
             {
                 throw new \Exception('变更用户余额失败');
+            }
+            if($betting > 0)
+            {
+                $this->addUserBetting($user_id, $betting);
             }
             $this->_data = [
                 'retCode' => 0,

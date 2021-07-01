@@ -14,6 +14,7 @@ use App\Models\Cx_User_Bank;
 use App\Models\Cx_User_Commission_Logs;
 use App\Mongodb;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 
@@ -566,5 +567,15 @@ class UserRepository
     public function getUserWhatsApp($user_id)
     {
         return $this->Cx_User->where('id', '=', $user_id)->where('is_customer_service', '=', 1)->select(['id', 'whats_app_account', 'whats_app_link'])->first();
+    }
+
+    public function addUserBetting($user_id, $betting)
+    {
+        return $this->Cx_User->where('id', '=', $user_id)->update(
+            [
+                'cl_betting' => DB::raw("cl_betting + {$betting}"),
+                'point' => DB::raw("point + {$betting}"),
+            ]
+        );
     }
 }

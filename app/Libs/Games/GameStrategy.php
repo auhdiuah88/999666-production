@@ -4,8 +4,20 @@
 namespace App\Libs\Games;
 
 
+use App\Repositories\Api\UserRepository;
+
 abstract class GameStrategy
 {
+
+    protected $UserRepository;
+
+    public function __construct
+    (
+        UserRepository $userRepository
+    )
+    {
+        $this->UserRepository = $userRepository;
+    }
 
     abstract function launch($productId);
 
@@ -25,6 +37,11 @@ abstract class GameStrategy
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
+    }
+
+    public function addUserBetting($user_id, $betting)
+    {
+        $this->UserRepository->addUserBetting($user_id, $betting);
     }
 
 }
