@@ -14,6 +14,7 @@ class IndiaMessage extends MessageStrategy
 
     function sendRegisterCode($phone): array
     {
+        date_default_timezone_set("Asia/Shanghai");
         $url = "http://sms.skylinelabs.cc:20003/sendsmsV2";
         $phone = "91" . $phone;
         $account = "cs_aheln9";
