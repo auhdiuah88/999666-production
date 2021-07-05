@@ -165,13 +165,13 @@ class SpePay extends PayStrategy
 
         $params = [
             'merchantId' => $this->withdrawMerchantID,
-            'idCard' => $withdrawalRecord->bank_number,
+            'idCard' => $withdrawalRecord->ifsc_code,
             'orderId' => $order_no,
             'amount' => intval($money),
             'bankNumber' => 1,
             'bankName' => $withdrawalRecord->bank_name,
             'name' => $withdrawalRecord->account_holder,
-            'accountNumber' => $withdrawalRecord->ifsc_code,
+            'accountNumber' => $withdrawalRecord->bank_number,
             'accountType' => 4,
             'notifyUrl' => $this->withdrawal_callback_url,
         ];
