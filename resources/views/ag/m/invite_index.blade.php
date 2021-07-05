@@ -36,6 +36,7 @@
 									{{trans('ag.user_type1')}}&nbsp;&nbsp;&nbsp;&nbsp;
 								</span>
                                 </div>
+                                @if(!env('FORCE_ALL_AGENT',false))
                                 <div data-v-5a1bc432="" role="radio" tabindex="0" aria-checked="true"
                                      class="van-radio">
                                     <div class="van-radio__icon van-radio__icon--round" data-usertype="2">
@@ -47,6 +48,7 @@
 									{{trans('ag.user_type2')}}
 								</span>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>
