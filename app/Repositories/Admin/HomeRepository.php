@@ -13,6 +13,7 @@ use App\Models\Cx_User_Balance_Logs;
 use App\Models\Cx_User_Recharge_Logs;
 use App\Models\Cx_Withdrawal_Record;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Predis\Client;
 
@@ -99,7 +100,17 @@ class HomeRepository extends BaseRepository
         }else{
             return $this->Cx_User->count("id");
         }
+    }
 
+    public function countRechargeAgainUserNumber($reg_source_id)
+    {
+        $prefix = DB::getConfig('prefix');
+        if($reg_source_id >= 0){
+            $list = DB::select("select count(url.id) as recharge_num FROM ".$prefix."user_recharge_logs url LEFT JOIN ".$prefix."users u ON u.id = url.user_id WHERE url.status = 2 and u.reg_source_id = ".$reg_source_id." GROUP BY url.user_id HAVING recharge_num > 0");
+        }else{
+            $list = DB::select("select count(url.id) as recharge_num FROM ".$prefix."user_recharge_logs url WHERE url.status = 2 GROUP BY url.user_id HAVING recharge_num > 0");
+        }
+        return count($list);
     }
 
     public function countOrdinaryMembers($timeMap, $reg_source_id)
@@ -229,6 +240,24 @@ class HomeRepository extends BaseRepository
                 ->where("ubl.type", 2)
                 ->where("ubl.is_first_recharge", 1)
                 ->count("ubl.id");
+        }
+    }
+
+    public function countRechargeUserNumber($timeMap, $reg_source_id)
+    {
+        if($reg_source_id >= 0){
+            return $this->Cx_User_Recharge_Logs->from('user_recharge_logs as url')
+                ->leftJoin('users as u','url.user_id','=','u.id')
+                ->where('u.reg_source_id','=',$reg_source_id)
+                ->whereBetween("url.time", $timeMap)
+                ->where("url.status", 2)
+                ->count("url.id");
+
+        }else{
+            return $this->Cx_User_Recharge_Logs
+                ->whereBetween("time", $timeMap)
+                ->where("status", 2)
+                ->count("id");
         }
     }
 

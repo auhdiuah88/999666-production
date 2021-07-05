@@ -65,6 +65,11 @@ class BettingRepository extends BaseRepository
         return $this->whereCondition($data, $this->Cx_Game_Betting)->sum($column);
     }
 
+    public function countByUser($data)
+    {
+        return $this->whereCondition($data, $this->Cx_Game_Betting)->groupBy('user_id')->count("id");
+    }
+
     public function searchBettingLogs($data, $offset, $limit, $sort_field, $sort_sort)
     {
         if($sort_field && $sort_sort){

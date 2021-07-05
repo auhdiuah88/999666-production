@@ -199,6 +199,10 @@ class HomeService extends BaseService
         $item->ordinaryFirstChargeNumber = $this->HomeRepository->countOrdinaryFirstChargeNumber($timeMap, $reg_source_id);
         // 代理首充
         $item->agentFirstChargeNumber = $this->HomeRepository->countAgentFirstChargeNumber($timeMap, $reg_source_id);
+        // 充值人数
+        $item->rechargeUserNumber = $this->HomeRepository->countRechargeUserNumber($timeMap, $reg_source_id);
+        // 二充人数
+        $item->rechargeAgainUserNumber =  $this->HomeRepository->countRechargeAgainUserNumber($reg_source_id);
         // 在线人数
         $item->onlineNum = $this->HomeRepository->sumOnlineNum();
 

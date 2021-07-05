@@ -63,6 +63,7 @@ class BettingService extends BaseService
         $this->_data["betting_money"] = $this->BettingRepository->sumAll($data,"money");
         $this->_data["service_charge"] = $this->BettingRepository->sumAll($data,"service_charge");
         $this->_data["win_money"] = $this->BettingRepository->sumAll($data,"win_money");
+        $this->_data["betting_user"] = $this->BettingRepository->countByUser($data);
     }
 
     public function assemblyParameters($data)
