@@ -170,7 +170,7 @@ class GameService extends BaseService
                     'page' => 'gte:1',
                     'size' => Rule::in(10,20,30,40),
                     'cid' => 'integer|gte:0',
-                    'status' => Rule::in(-1,0,1)
+                    'status' => Rule::in(-1,0,1),
                 ]
             );
             if($validator->fails())
@@ -180,15 +180,19 @@ class GameService extends BaseService
             $where = [];
             $size = $this->sizeInput();
             $cid = $this->intInput('cid');
+            $title = $this->strInput('title');
             if($cid)
             {
-                $cids = $this->GameRepository->cateGetChildren($cid);
-                $where['cid'] = ['in', $cids];
+                $where['cid'] = ['=', $cid];
             }
             $status = $this->intInput('status',-1);
             if($status >= 0)
             {
                 $where['status'] = ['=', $status];
+            }
+            if($title)
+            {
+                $where['label'] = ['like', "%{$title}%"];
             }
             $this->_data = $this->GameRepository->gameList($where, $size);
         }catch(\Exception $e){

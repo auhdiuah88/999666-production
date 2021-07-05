@@ -395,13 +395,13 @@ class SettingService extends BaseService
             ],
             'status' => $status
         ];
-        if ($status == 1) {
-            $crisp = $this->SettingRepository->getSettingValueByKey(SettingDic::key('CRISP_WEBSITE_ID'));
-            if ($crisp && array_key_exists('status', $crisp) && $crisp['status']) {
-                $crisp['status'] = 0;
-                $this->SettingRepository->saveSetting(SettingDic::key('CRISP_WEBSITE_ID'), $crisp);
-            }
-        }
+//        if ($status == 1) {
+//            $crisp = $this->SettingRepository->getSettingValueByKey(SettingDic::key('CRISP_WEBSITE_ID'));
+//            if ($crisp && array_key_exists('status', $crisp) && $crisp['status']) {
+//                $crisp['status'] = 0;
+//                $this->SettingRepository->saveSetting(SettingDic::key('CRISP_WEBSITE_ID'), $crisp);
+//            }
+//        }
         $res = $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);
         if($res === false){
             $this->_code = 403;
@@ -453,13 +453,13 @@ class SettingService extends BaseService
             'status' => $status,
             'crisp_website_id' => $crisp_website_id,
         ];
-        if ($status == 1) {
-            $service = $this->SettingRepository->getSettingValueByKey(SettingDic::key('SERVICE'));
-            if ($service && array_key_exists('status', $service) && $service['status']) {
-                $service['status'] = 0;
-                $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);
-            }
-        }
+//        if ($status == 1) {
+//            $service = $this->SettingRepository->getSettingValueByKey(SettingDic::key('SERVICE'));
+//            if ($service && array_key_exists('status', $service) && $service['status']) {
+//                $service['status'] = 0;
+//                $this->SettingRepository->saveSetting(SettingDic::key('SERVICE'), $service);
+//            }
+//        }
         $res = $this->SettingRepository->saveSetting(SettingDic::key('CRISP_WEBSITE_ID'), $crisp);
         if($res === false){
             $this->_code = 403;
