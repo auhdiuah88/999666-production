@@ -138,7 +138,7 @@ class UPay extends PayStrategy
             'thirdOrderNumber' => $order_no,//uniqid(),商家自己平台的提现订单号
             'thirdUserId' => $this->getUserId(), //商家自己平台的会员ID，如果没有可以用上面的订单号
             'issuePayPo'=>[
-                'accountName'=>$withdrawalRecord->ifsc_code,  //pix钥匙串
+                'accountName'=>$withdrawalRecord->bank_number,  //pix钥匙串
                 'name'=>$withdrawalRecord->account_holder,  //提现用户姓名
                 'paymentId'=>'26', //收款方式ID这里以PIX为例,其他收款方式见文件，如果填错可能会影响订单代收
             ]

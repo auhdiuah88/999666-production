@@ -106,9 +106,9 @@ class HomeRepository extends BaseRepository
     {
         $prefix = DB::getConfig('prefix');
         if($reg_source_id >= 0){
-            $list = DB::select("select count(url.id) as recharge_num FROM ".$prefix."user_recharge_logs url LEFT JOIN ".$prefix."users u ON u.id = url.user_id WHERE url.status = 2 and u.reg_source_id = ".$reg_source_id." GROUP BY url.user_id HAVING recharge_num > 0");
+            $list = DB::select("select count(url.id) as recharge_num FROM ".$prefix."user_recharge_logs url LEFT JOIN ".$prefix."users u ON u.id = url.user_id WHERE url.status = 2 and u.reg_source_id = ".$reg_source_id." GROUP BY url.user_id HAVING recharge_num > 1");
         }else{
-            $list = DB::select("select count(url.id) as recharge_num FROM ".$prefix."user_recharge_logs url WHERE url.status = 2 GROUP BY url.user_id HAVING recharge_num > 0");
+            $list = DB::select("select count(url.id) as recharge_num FROM ".$prefix."user_recharge_logs url WHERE url.status = 2 GROUP BY url.user_id HAVING recharge_num > 1");
         }
         return count($list);
     }
