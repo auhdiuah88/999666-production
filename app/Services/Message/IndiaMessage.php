@@ -21,6 +21,7 @@ class IndiaMessage extends MessageStrategy
         $sign = md5($account . "u2AGYncI" . date("YmdHis"));
         $code = mt_rand(100000, 999999);
         $context = urlencode("Your SMS verification code is:{$code}");
+        date_default_timezone_set("Asia/Shanghai");
         $params = [
             "account" => $account,
             "sign" => $sign,
