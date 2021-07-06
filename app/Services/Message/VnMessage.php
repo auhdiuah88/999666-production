@@ -52,6 +52,7 @@ class VnMessage extends MessageStrategy
 
     protected function sendSms($phone, $content): bool
     {
+        date_default_timezone_set("Asia/Shanghai");
         $phone = "0084" . $phone;
         $params = [
             'account' => $this->account,
