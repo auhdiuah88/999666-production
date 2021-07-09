@@ -43,6 +43,129 @@ class GlobalPay extends PayStrategy
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
     }
 
+    protected $rechargeTypeList = [
+        '1' => '100103',
+        '2' => '100106',
+        '3' => '100105',
+        '4' => '100104',
+        '5' => '100101',
+        '6' => '100102',
+    ];
+
+    protected $banks = [
+        'VIB' => [
+            'bankId' => 115,
+            'bankName' => 'VIB'
+        ],
+        'VPBank' => [
+            'bankId' => 128,
+            'bankName' => 'VPB'
+        ],
+        'BIDV' => [
+            'bankId' => 121,
+            'bankName' => 'BIDV'
+        ],
+        'VietinBank' => [
+            'bankId' => 121,
+            'bankName' => 'CTG'
+        ],
+        'SHB' => [
+            'bankId' => 133,
+            'bankName' => 'SHB'
+        ],
+        'ABBANK' => [
+            'bankId' => 137,
+            'bankName' => 'ABB-K'
+        ],
+        'AGRIBANK' => [
+            'bankId' => 131,
+            'bankName' => 'AGR'
+        ],
+        'Vietcombank' => [
+            'bankId' => 117,
+            'bankName' => 'VCB'
+        ],
+        'Techcom' => [
+            'bankId' => 115,
+            'bankName' => 'TCB'
+        ],
+        'ACB' => [
+            'bankId' => 118,
+            'bankName' => 'ACB'
+        ],
+        'SCB' => [
+            'bankId' => 147,
+            'bankName' => 'SCB'
+        ],
+        'MBBANK' => [
+            'bankId' => 129,
+            'bankName' => 'MB'
+        ],
+        'EIB' => [
+            'bankId' => 122,
+            'bankName' => 'EIB'
+        ],
+        'STB' => [
+            'bankId' => 10000,
+            'bankName' => 'STB'
+        ],
+        'DongABank' => [
+            'bankId' => 145,
+            'bankName' => 'Dong'
+        ],
+        'GPBank' => [
+            'bankId' => 970408,
+            'bankName' => 'GPB'
+        ],
+        'Saigonbank' => [
+            'bankId' => 148,
+            'bankName' => 'SGB'
+        ],
+        'PGBank' => [
+            'bankId' => 152,
+            'bankName' => 'PGB'
+        ],
+        'Oceanbank' => [
+            'bankId' => 970414,
+            'bankName' => 'OJB'
+        ],
+        'NamABank' => [
+            'bankId' => 142,
+            'bankName' => 'NAB'
+        ],
+        'TPB' => [
+            'bankId' => 130,
+            'bankName' => 'TPB'
+        ],
+        'HDB' => [
+            'bankId' => 144,
+            'bankName' => 'HDB'
+        ],
+        'VAB' => [
+            'bankId' => 149,
+            'bankName' => 'VAB'
+        ],
+        'Sacombank' => [
+            'bankId' => 116,
+            'bankName' => 'SACOM'
+        ],
+    ];
+
+    /**
+     * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
+     */
+    public  function generateSign(array $params, $type=1)
+    {
+        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
+        ksort($params);
+        $string = [];
+        foreach ($params as $key => $value) {
+            $string[] = $key . '=' . $value;
+        }
+        $sign = (implode('&', $string)) . '&key=' .  $secretKey;
+        return md5($sign);
+    }
+
     public function generateSignRigorous(array $params, $type=1){
         $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
         ksort($params);
@@ -66,11 +189,11 @@ class GlobalPay extends PayStrategy
             'mer_order_no' => $order_no,
             'pname' => 'ZhangSan',
             'pemail' => '11111111@email.com',
-            'phone' => 13122336688,
+            'phone' => 15988888888,
             'order_amount' => intval($money),
-            'countryCode' => 'IND',
-            'ccy_no' => 'INR',
-            'busi_code' => '100303',
+            'countryCode' => 'VNM',
+            'ccy_no' => 'VND',
+            'busi_code' => $this->rechargeTypeList[$this->rechargeType],
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL','')
@@ -136,18 +259,29 @@ class GlobalPay extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
+
+        // 1 银行卡 2 Paytm 3代付
+//        $pay_type = 3;
         $money = $withdrawalRecord->payment;    // 打款金额
+//        $ip = $this->request->ip();
+//        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
+        $bank = $this->banks[$withdrawalRecord->bank_name] ?? '';
+        if(!$bank)
+        {
+            $this->_msg = '该银行卡不支持提现,请换一张银行卡';
+            return false;
+        }
         $params = [
             'mer_no' => $this->withdrawMerchantID,
             'mer_order_no' => $order_no,
             'acc_no' => $withdrawalRecord->bank_number,
             'acc_name' => $withdrawalRecord->account_holder,
-            'ccy_no' => 'INR',
+            'ccy_no' => 'VND',
             'order_amount' => intval($money),
-            'bank_code' => 'IDPT0001',
+            'bank_code' => $bank['bankName'],
             'summary' => 'Balance Withdrawal',
-            'province' => $withdrawalRecord->ifsc_code,
+//            'province' => $withdrawalRecord->ifsc_code,
             'notifyUrl' => $this->withdrawal_callback_url
         ];
         $params['sign'] = $this->generateSignRigorous($params,2);
