@@ -227,7 +227,6 @@ class UserRepository extends BaseRepository
         return $this->Cx_User->where([
             ['phone', $phone],
             ['is_group_leader',  2],
-            ['is_customer_service', 1]
         ])->select(['id', 'nickname', 'phone'])->first();
     }
 

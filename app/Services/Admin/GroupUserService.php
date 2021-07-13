@@ -195,7 +195,8 @@ class GroupUserService extends UserService
         ##绑定
         $userRes = $this->UserRepository->editUser([
             'id' => $this->intInput('user_id'),
-            'is_group_leader' => 1
+            'is_group_leader' => 1,
+            'is_customer_service' => 1
         ]);
         $adminRes = $this->adminRepository->addAdmin($data);
         if (!$adminRes || !$userRes) {
