@@ -6,6 +6,7 @@ use App\Services\Pay\BR\JunHePay;
 use App\Services\Pay\BR\SpePay;
 use App\Services\Pay\BR\UPay;
 use App\Services\Pay\INDIA\EKPay;
+use App\Services\Pay\INDIA\YBPay;
 
 class PayContext
 {
@@ -56,7 +57,8 @@ class PayContext
         JunHePay $junHePay,
         EKPay $EKPay,
         SpePay $spePay,
-        UPay $UPay
+        UPay $UPay,
+        YBPay $YBPay
     )
     {
         // 每种api地址对应的支付公司
@@ -99,6 +101,7 @@ class PayContext
             'ekpay' => $EKPay,  //印度ek
             'spepay' => $spePay,  //巴西spepay
             'upay' => $UPay,   //巴西upay
+            'ybpay' => $YBPay,  //印度ybpay
         ];
     }
     /**
