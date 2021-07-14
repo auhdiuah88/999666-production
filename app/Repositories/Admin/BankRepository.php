@@ -19,9 +19,18 @@ class BankRepository
 
     public function findAll($offset, $limit)
     {
-        return $this->Cx_User_Bank->with(["user" => function ($query) {
-            $query->select("id", "nickname", "phone");
-        }])->offset($offset)->limit($limit)->get()->toArray();
+        return $this->Cx_User_Bank
+            ->with(
+                [
+                    "user" => function ($query) {
+                        $query->select("id", "nickname", "phone");
+                    },
+                    "bank" => function($query){
+                        $query->select("banks_id", "bank_name");
+                    }
+                ]
+            )
+            ->offset($offset)->limit($limit)->get()->toArray();
     }
 
     public function countAll()

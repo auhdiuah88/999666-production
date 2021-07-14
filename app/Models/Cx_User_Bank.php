@@ -23,4 +23,9 @@ class Cx_User_Bank extends Model
     {
         return $this->belongsTo(Cx_User::class, "user_id", "id");
     }
+
+    public function bank()
+    {
+        return $this->belongsTo(Cx_Banks::class,"bank_type_id","bank_name");
+    }
 }

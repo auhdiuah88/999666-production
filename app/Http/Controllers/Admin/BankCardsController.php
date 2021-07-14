@@ -118,4 +118,47 @@ class BankCardsController extends Controller
         }
     }
 
+    public function bankList()
+    {
+        try{
+            $this->BankCardsService->bankList();
+            return $this->AppReturn(
+                $this->BankCardsService->_code,
+                $this->BankCardsService->_msg,
+                $this->BankCardsService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
+    }
+
+    public function editBankCard()
+    {
+        try{
+            $validator = Validator::make(request()->post(),
+                [
+                    'id' => ['required', 'integer', 'gte:1'],
+                    'bank_type_id' => ['required'],
+                    'ifsc_code' => ['required'],
+                    'account_holder' => ['required'],
+                    'phone' => ['required'],
+                    'mail' => ['required'],
+                    'bank_num' => ['required'],
+                ]
+            );
+            if($validator->fails())
+                return $this->AppReturn(401,$validator->errors()->first());
+            $this->BankCardsService->editBankCard();
+            return $this->AppReturn(
+                $this->BankCardsService->_code,
+                $this->BankCardsService->_msg,
+                $this->BankCardsService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr', $e);
+            return $this->AppReturn(501,$e->getMessage());
+        }
+    }
+
 }

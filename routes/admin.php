@@ -105,6 +105,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::post("/edit", "BankController@editBank");
             Route::post("/del", "BankController@delBank");
             Route::post("/search", "BankController@searchBank");
+            Route::get("/bankList", "BankCardsController@bankList");
+            Route::post("/editBankCard", "BankCardsController@editBankCard");
         });
 
         // 用户管理

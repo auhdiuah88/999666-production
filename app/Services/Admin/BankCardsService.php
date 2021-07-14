@@ -74,4 +74,28 @@ class BankCardsService extends BaseService
         }
     }
 
+    public function bankList()
+    {
+        $this->_data = $this->BankCardsRepository->bankList();
+    }
+
+    public function editBankCard()
+    {
+        $data = [
+            'bank_num' => $this->strInput('bank_num'),
+            'mail' => $this->strInput('mail'),
+            'bank_type_id' => $this->strInput('bank_type_id'),
+            'phone' => $this->strInput('phone'),
+            'account_holder' => $this->strInput('account_holder'),
+            'ifsc_code' => $this->strInput('ifsc_code'),
+        ];
+        $id = $this->intInput('id');
+        $res = $this->BankCardsRepository->editBankCard($id, $data);
+        if($res === false){
+            $this->_code = 401;
+            $this->_msg = '操作失败';
+        }
+        $this->_msg = '操作成功';
+    }
+
 }

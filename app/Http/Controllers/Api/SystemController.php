@@ -151,10 +151,11 @@ class SystemController extends Controller
         $currency = $currency_arr[$country];
 
         $is_check_sms_code = env('IS_CHECK_SMS_CODE',true);
+        $can_edit_bankcard = env('CAN_EDIT_BANKCARD',true);
         return $this->AppReturn(
             200,
             'ok',
-            compact('currency','is_check_sms_code')
+            compact('currency','is_check_sms_code','can_edit_bankcard')
         );
     }
 
