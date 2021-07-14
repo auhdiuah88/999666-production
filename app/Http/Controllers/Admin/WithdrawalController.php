@@ -120,9 +120,47 @@ class WithdrawalController extends Controller
         return $response;
     }
 
+    /**
+     * 取消代付失败订单
+     */
     public function cancellationRefund(Request $request)
     {
         $this->WithdrawalService->cancellationRefund($request->post("id"));
+        return $this->AppReturn(
+            $this->WithdrawalService->_code,
+            $this->WithdrawalService->_msg,
+            $this->WithdrawalService->_data
+        );
+    }
+
+    /**
+     * 切换代付通道
+     */
+    public function exchangeChannel()
+    {
+        $validator = Validator::make(request()->input(), [
+            'id' => 'required|integer|gte:1',
+            'with_type' => 'required'
+        ]);
+        if($validator->fails())
+            return $this->AppReturn(
+                402,
+                $validator->errors()->first()
+            );
+        $this->WithdrawalService->exchangeChannel();
+        return $this->AppReturn(
+            $this->WithdrawalService->_code,
+            $this->WithdrawalService->_msg,
+            $this->WithdrawalService->_data
+        );
+    }
+
+    /**
+     * 代付通道
+     */
+    public function channels()
+    {
+        $this->WithdrawalService->channels();
         return $this->AppReturn(
             $this->WithdrawalService->_code,
             $this->WithdrawalService->_msg,

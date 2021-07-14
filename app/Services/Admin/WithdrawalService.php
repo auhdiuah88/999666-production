@@ -395,4 +395,56 @@ class WithdrawalService extends BaseService
         return true;
     }
 
+    /**
+     * 切换代付通道
+     */
+    public function exchangeChannel()
+    {
+        $id = $this->intInput('id');
+        $with_type = $this->strInput('with_type');
+        ##获取订单详情
+        $order = $this->WithdrawalRepository->findById($id);
+        if(!$order){
+            $this->_code = 414;
+            $this->_msg = '提现订单不存在';
+        }
+        if($order->pay_status == 1){
+            $this->_code = 414;
+            $this->_msg = '订单不支持此操作';
+        }
+        if($with_type == $order->with_type){
+            $this->_msg = '操作成功';
+            return;
+        }
+        $order->with_type = $with_type;
+        $res = $order->save();
+        if($res === false){
+            $this->_code = 414;
+            $this->_msg = '操作失败';
+        }
+        $this->_msg = '操作成功';
+    }
+
+    public function channels()
+    {
+        $withdraw_type = config('pay.withdraw',[]);
+        $setting_value = $this->SettingRepository->getWithdraw();
+        $config = [];
+        foreach($withdraw_type as $key => $item){
+            if(isset($setting_value[$key])){
+                $val = $setting_value[$key];
+                if(isset($val['status']) && $val['status'] == 1)
+                    $config[] = [
+                        'type' => $key,
+                        'limit' => $val['limit'],
+                        'btn' => $val['btn'],
+                        'start_week' => $val['start_week'],
+                        'end_week' => $val['end_week'],
+                        'during_time' => $val['during_time'],
+                    ];
+            }
+        }
+        $this->_data = $config;
+    }
+
 }

@@ -88,6 +88,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::post("/failure", "WithdrawalController@batchFailureRecord");
             Route::post("/pass", "WithdrawalController@batchPassRecord");
             Route::post("/cancel", "WithdrawalController@cancellationRefund");
+            Route::get("/channels", "WithdrawalController@channels");
+            Route::post("/exchange_channel", "WithdrawalController@exchangeChannel");
         });
 
         Route::group(["prefix" => "requestRecharge"], function(){
