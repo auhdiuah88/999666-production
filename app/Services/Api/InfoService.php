@@ -37,6 +37,12 @@ class InfoService extends BaseService
     public function addBank($data, $token)
     {
         $data["user_id"] = $this->getUserId($token);
+        ##检查银行卡是否存在
+        if($this->InfoRepository->checkBankNum($data['bank_num'])){
+            $this->_code = 402;
+            $this->_msg = "Bank card already exists";
+            return;
+        }
         $data["add_time"] = time();
         if ($this->InfoRepository->addBank($data)) {
             $this->_msg = "Added successfully";

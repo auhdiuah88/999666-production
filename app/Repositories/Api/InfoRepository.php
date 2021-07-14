@@ -32,6 +32,11 @@ class InfoRepository
         return $this->Cx_User_Bank->where("id", $id)->first();
     }
 
+    public function checkBankNum($bankNum)
+    {
+        return $this->Cx_User_Bank->where('bank_num', '=', $bankNum)->select(['id', 'bank_num'])->first();
+    }
+
     public function addBank($data)
     {
         return $this->Cx_User_Bank->insertGetId($data);
