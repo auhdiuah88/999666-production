@@ -54,6 +54,12 @@ class InfoService extends BaseService
 
     public function editBank($data, $token)
     {
+        if(!env('CAN_EDIT_BANKCARD',true))
+        {
+            $this->_code = 402;
+            $this->_msg = "Edit failed";
+            return;
+        }
         $data["user_id"] = $this->getUserId($token);
         $data["update_time"] = time();
         if ($this->InfoRepository->editBank($data)) {
@@ -66,6 +72,12 @@ class InfoService extends BaseService
 
     public function delBank($id, $token)
     {
+        if(!env('CAN_EDIT_BANKCARD',true))
+        {
+            $this->_code = 402;
+            $this->_msg = "failed to delete";
+            return;
+        }
         if ($this->InfoRepository->delBank($id)) {
             $this->_msg = "successfully deleted";
         } else {
