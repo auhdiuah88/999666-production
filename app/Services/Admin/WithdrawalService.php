@@ -417,6 +417,7 @@ class WithdrawalService extends BaseService
             return;
         }
         $order->with_type = $with_type;
+        $order->message = '';
         $res = $order->save();
         if($res === false){
             $this->_code = 414;
