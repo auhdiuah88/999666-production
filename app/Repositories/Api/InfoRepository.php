@@ -27,6 +27,11 @@ class InfoRepository
         return $this->Cx_User_Bank->where("user_id", $id)->get()->toArray();
     }
 
+    public function findBankByUserIdFirst($id)
+    {
+        return $this->Cx_User_Bank->where("user_id", $id)->first();
+    }
+
     public function findBankFirst($id)
     {
         return $this->Cx_User_Bank->where("id", $id)->first();

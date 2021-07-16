@@ -37,6 +37,16 @@ class InfoService extends BaseService
     public function addBank($data, $token)
     {
         $data["user_id"] = $this->getUserId($token);
+        if(!env('CAN_EDIT_BANKCARD',true))
+        {
+            ##检查银行卡是否已添加
+            if($this->InfoRepository->findBankByUserIdFirst($data["user_id"]))
+            {
+                $this->_code = 402;
+                $this->_msg = "Add failed.";
+                return;
+            }
+        }
         ##检查银行卡是否存在
         if($this->InfoRepository->checkBankNum($data['bank_num'])){
             $this->_code = 402;
