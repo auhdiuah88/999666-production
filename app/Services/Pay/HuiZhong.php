@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 class HuiZhong extends PayStrategy
 {
 
-    protected static $url = 'http://zvfdh.yudrsu.com/';    // 支付网关
+    protected static $url = 'http://gyials.gdsua.com/';    // 支付网关
 
-    protected static $url_cashout = 'http://wrysc.yudrsu.com/'; // 提现网关
+    protected static $url_cashout = 'http://njsyal.gdsua.com/'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
@@ -22,6 +22,9 @@ class HuiZhong extends PayStrategy
     public $rechargeMerchantID;
     public $rechargeSecretkey;
     public $company = 'huizhong';   // 支付公司名
+
+    public $withdrawRtn = "SUCCESS";
+    public $rechargeRtn = "SUCCESS";
 
     public function _initialize()
     {
@@ -50,18 +53,7 @@ class HuiZhong extends PayStrategy
         ksort($params);
         $string = [];
         foreach ($params as $key => $value) {
-            $string[] = $key . '=' . $value;
-        }
-        $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-        return md5($sign);
-    }
-
-    public function generateSignRigorous(array $params, $type=1){
-        $secretKey = $type == 1 ? $this->rechargeSecretkey : $this->withdrawSecretkey;
-        ksort($params);
-        $string = [];
-        foreach ($params as $key => $value) {
-            if($value != "")
+            if($value != '')
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
@@ -83,19 +75,19 @@ class HuiZhong extends PayStrategy
             'order_amount' => intval($money),
             'countryCode' => 'IND',
             'ccy_no' => 'INR',
-            'busi_code' => 'UPI',
+            'busi_code' => '100303',
             'goods' => 'recharge balance',
             'notifyUrl' => $this->recharge_callback_url,
             'pageUrl' => env('SHARE_URL',''),
         ];
         $params['sign'] = $this->generateSign($params,1);
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder', [$params]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('HZ_rechargeOrder', [$params]);
         $params_string = json_encode($params);
         $header[] = "Content-Type: application/json";
         $header[] = "Content-Length: " . strlen($params_string);
         $res =dopost(self::$url . 'ty/orderPay', $params_string, $header);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrderReturn', [$res]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('HZ_rechargeOrderReturn', [$res]);
 //        $res = $this->requestService->postJsonData(self::$url . 'ty/orderPay' , $params);
         $res = json_decode($res,true);
         if (!$res) {
@@ -103,7 +95,7 @@ class HuiZhong extends PayStrategy
             return false;
         }
         if ($res['status'] != 'SUCCESS') {
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('MTB_rechargeOrder_return', $res);
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('HZ_rechargeOrder_return', $res);
             $this->_msg = $res['err_msg'];
             return false;
         }
@@ -128,10 +120,10 @@ class HuiZhong extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_rechargeCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('HZ_rechargeCallback',$request->post());
 
         if ($request->status != 'SUCCESS')  {
-            $this->_msg = 'MTB-recharge-交易未完成';
+            $this->_msg = 'HZ-recharge-交易未完成';
             return false;
         }
         // 验证签名
@@ -139,13 +131,13 @@ class HuiZhong extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
-        if ($this->generateSignRigorous($params,1) <> $sign) {
-            $this->_msg = 'MTB-签名错误';
+        if ($this->generateSign($params,1) <> $sign) {
+            $this->_msg = 'HZ-签名错误';
             return false;
         }
-
+        $this->amount = $params['pay_amount'];
         $where = [
-            'order_no' => $request->mer_order_no,
+            'order_no' => $params['mer_order_no'],
         ];
         return $where;
     }
@@ -155,12 +147,7 @@ class HuiZhong extends PayStrategy
      */
     public function withdrawalOrder(object $withdrawalRecord)
     {
-
-        // 1 银行卡 2 Paytm 3代付
-//        $pay_type = 3;
         $money = $withdrawalRecord->payment;    // 打款金额
-//        $ip = $this->request->ip();
-//        $order_no = self::onlyosn();
         $order_no = $withdrawalRecord->order_no;
         $params = [
             'mer_no' => $this->withdrawMerchantID,
@@ -175,9 +162,17 @@ class HuiZhong extends PayStrategy
             'notifyUrl' => $this->withdrawal_callback_url
         ];
         $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalOrder',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleOrder', $params);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalOrder',$res);
+        $params_string = json_encode($params);
+        $header[] = "Content-Type: application/json";
+        $header[] = "Content-Length: " . strlen($params_string);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('HZ_withdrawalOrder',$params);
+        $res =dopost(self::$url_cashout . 'withdraw/singleOrder', $params_string, $header);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('HZ_withdrawalOrder',[$res]);
+        $res = json_decode($res,true);
+        if(!$res){
+            $this->_msg = '提交代付失败';
+            return false;
+        }
         if ($res['status'] != 'SUCCESS') {
             $this->_msg = $res['err_msg'];
             return false;
@@ -193,7 +188,7 @@ class HuiZhong extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawalCallback',$request->post());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('HZ_withdrawalCallback',$request->post());
 
         $pay_status = 0;
         $status = (string)($request->status);
@@ -204,15 +199,16 @@ class HuiZhong extends PayStrategy
             $pay_status = 3;
         }
         if ($pay_status == 0) {
-            $this->_msg = 'MTBpay-withdrawal-交易未完成';
+            $this->_msg = 'HZ-withdrawal-交易未完成';
             return false;
         }
         // 验证签名
         $params = $request->post();
         $sign = $params['sign'];
         unset($params['sign']);
-        if ($this->generateSignRigorous($params,2) <> $sign) {
-            $this->_msg = 'MTBpay-签名错误';
+        unset($params['type']);
+        if ($this->generateSign($params,2) <> $sign) {
+            $this->_msg = 'HZ-签名错误';
             return false;
         }
         $where = [
@@ -221,35 +217,6 @@ class HuiZhong extends PayStrategy
             'pay_status' => $pay_status
         ];
         return $where;
-    }
-
-    protected function makeRequestNo($withdraw_id){
-        return date('YmdDis') . $withdraw_id;
-    }
-
-    /**
-     * 请求待付状态
-     * @param $withdrawalRecord
-     * @return array|false|mixed|string
-     */
-    public function callWithdrawBack($withdrawalRecord){
-        $request_no = $this->makeRequestNo($withdrawalRecord->id);
-        $request_time = date("YmdHis");
-        $mer_no = $this->merchantID;
-        $mer_order_no = $withdrawalRecord->order_no;
-
-        $params = compact('request_no','request_time','mer_no','mer_order_no');
-        $params['sign'] = $this->generateSign($params,2);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawSingleQuery_Param',$params);
-        $res = $this->requestService->postJsonData(self::$url_cashout . 'withdraw/singleQuery', $params);
-        if(!$res){
-            return false;
-        }
-        if($res['query_status'] != 'SUCCESS'){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('huizhong_withdrawSingleQuery_Err',$res);
-            return false;
-        }
-        return $res;
     }
 
 }
