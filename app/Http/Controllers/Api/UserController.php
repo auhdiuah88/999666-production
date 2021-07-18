@@ -40,7 +40,7 @@ class UserController extends Controller
                 "phone" => "required",
                 "password" => "required",
             ];
-            Log::channel('kidebug')->debug('server_info',$_SERVER);
+            Log::channel('kidebug')->debug('server_info',[$request->ip()]);
 //        $massages = [
 //            "phone.required" => "手机不能为空",
 //            "password.required" => "密码不能为空",
