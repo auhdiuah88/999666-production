@@ -166,7 +166,7 @@ class PeriodRepository extends BaseRepository
         $prefix = DB::getConfig('prefix');
         $data = DB::selectOne('select sum(gb.money - gb.win_money) as cha, sum(gb.money) as total_betting_money, sum(gb.win_money) as total_win_money from `'.$prefix.'game_betting` gb where gb.game_p_id = '.$id.' and gb.user_id NOT IN ('. implode(',',$test_user_ids) .')');
         $betting_times = DB::selectOne('select count(gb.id) as betting_times from `'.$prefix.'game_betting` gb where gb.game_p_id = '.$id.' and gb.user_id NOT IN ('. implode(',',$test_user_ids) .') group by gb.user_id');
-        $data->betting_times = $betting_times->betting_times;
+        $data->betting_times = $betting_times;
         return $data;
     }
 
