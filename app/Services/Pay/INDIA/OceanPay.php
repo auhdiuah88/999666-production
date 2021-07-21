@@ -85,7 +85,7 @@ class OceanPay extends PayStrategy
             'callbackurl' => $this->recharge_callback_url,
             'merordercode' => $order_no,
         ];
-        $params['sign'] = $this->generateRechargeSign($params);
+        $params['signs'] = $this->generateRechargeSign($params);
         $params['paycode'] = 904;
         $params['starttime'] = time() * 1000;
         $params['ipaddr'] = $user->ip;
@@ -165,7 +165,7 @@ class OceanPay extends PayStrategy
             'merissuingcode' => $order_no,
         ];
 
-        $params['sign'] = $this->generateSign($params,2);
+        $params['signs'] = $this->generateSign($params,2);
         $header[] = 'Content-Type: application/x-www-form-urlencoded';
         \Illuminate\Support\Facades\Log::channel('mytest')->info('oceanpay_withdrawal_params',$params);
         $res =dopost(self::$url_cashout, http_build_query($params), $header);
@@ -205,8 +205,8 @@ class OceanPay extends PayStrategy
             return false;
         }
         // 验证签名
-        $sign = $params['sign'];
-        unset($params['sign']);
+        $sign = $params['signs'];
+        unset($params['signs']);
         unset($params['type']);
         if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'oceanpay-签名错误';
