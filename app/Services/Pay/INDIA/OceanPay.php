@@ -13,7 +13,7 @@ class OceanPay extends PayStrategy
 
     protected static $url = 'https://www.oceanpay.in/api/outer/collections/addOrderByLndia';    // 支付网关
 
-    protected static $url_cashout = 'https://www. oceanpay.in/api/outer/merwithdraw/addPaid'; // 提现网关
+    protected static $url_cashout = 'https://www.oceanpay.in/api/outer/merwithdraw/addPaid'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
