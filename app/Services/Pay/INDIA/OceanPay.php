@@ -86,7 +86,7 @@ class OceanPay extends PayStrategy
             'merordercode' => $order_no,
         ];
         $params['signs'] = $this->generateRechargeSign($params);
-        $params['paycode'] = 904;
+        $params['paycode'] = 909;
         $params['starttime'] = time() * 1000;
         $params['ipaddr'] = $user->ip;
         $params['name'] = $user->phone;
