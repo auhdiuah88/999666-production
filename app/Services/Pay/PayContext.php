@@ -6,6 +6,7 @@ use App\Services\Pay\BR\JunHePay;
 use App\Services\Pay\BR\SpePay;
 use App\Services\Pay\BR\UPay;
 use App\Services\Pay\INDIA\EKPay;
+use App\Services\Pay\INDIA\FastPay;
 use App\Services\Pay\INDIA\OceanPay;
 use App\Services\Pay\INDIA\YBPay;
 
@@ -60,7 +61,8 @@ class PayContext
         SpePay $spePay,
         UPay $UPay,
         YBPay $YBPay,
-        OceanPay $oceanPay
+        OceanPay $oceanPay,
+        FastPay $fastPay
     )
     {
         // 每种api地址对应的支付公司
@@ -105,6 +107,7 @@ class PayContext
             'upay' => $UPay,   //巴西upay
             'ybpay' => $YBPay,  //印度ybpay
             'oceanpay' => $oceanPay,  //印度oceanpay
+            'fastpay' => $fastPay  //印度fastpay
         ];
     }
     /**
