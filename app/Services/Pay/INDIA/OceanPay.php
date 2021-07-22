@@ -102,6 +102,7 @@ class OceanPay extends PayStrategy
         }
         if($res['is'] != 1){
             $this->_msg = $res['msg'];
+            return false;
         }
         $native_url = $res['data']['checkstand'];
         $resData = [

@@ -87,6 +87,7 @@ class FastPay extends PayStrategy
         }
         if($res['code'] != 0){
             $this->_msg = $res['message'];
+            return false;
         }
         $native_url = $res['url'];
         $resData = [

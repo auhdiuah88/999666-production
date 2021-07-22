@@ -98,6 +98,7 @@ class GMPay extends PayStrategy
         }
         if($res['code'] != '0000'){
             $this->_msg = $res['msg'];
+            return false;
         }
         $native_url = $res['data']['payurl'];
         $resData = [
