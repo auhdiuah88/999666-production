@@ -136,7 +136,7 @@ class GMPay extends PayStrategy
         }
         $this->amount = $params['amount'];
         $where = [
-            'order_no' => $params['merchantId'],
+            'order_no' => $params['merOrderId'],
         ];
         return $where;
     }
