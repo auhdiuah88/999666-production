@@ -36,10 +36,10 @@ class V8log extends GameStrategy
             "s" => "0",//固定值，不需修改
             "account" => $info->phone,//用户名
             "money" => $info->balance,//金额
-            "orderid" => V8AGENT.$datetime.$info->phone,
+            "orderid" => V8AGENT.$datetime.$info->phone,//拼接agent,当前时间，用户名
             "ip" => $info->ip,
             "lineCode" => env("LINECODE"),
-            "kid" => "0",
+            "kid" => "0",//固定值，不需修改
         ];
         //加密$param
         $param = $param["s"]."&".$param["account"]."&".$param["money"]."&".$param["orderid"]."&".$param["ip"]."&".$param["kid"];
@@ -52,12 +52,13 @@ class V8log extends GameStrategy
         $url = V8URL."?agent=".V8AGENT."&timestamp=".$timestamp.$milliseconds."&param=".$param."&key=".$key;
 
         //请求三方接口
-        $res = file_get_contents($url);
-        //请求返回日志
+        $res = $this->GetCurl($url);
+//        $res = file_get_contents($url);
+//        //请求返回日志
         Log::channel('kidebug')->debug('v8',[$res]);
-        $res = json_decode($res);
-        $resurl = $res["d"]["url"];
-        return $this->_data = $resurl;
+//        $res = json_decode($res);
+//        $resurl = $res["d"]["url"];
+        return $this->_data = $res;
     }
 
     public function userInfo(): bool
@@ -95,15 +96,5 @@ class V8log extends GameStrategy
         return true;
     }
 
-    //解密
-    public static function decrypt($data, $key) {
-        $encrypted = base64_decode($data);
-        return openssl_decrypt($encrypted, 'aes-128-ecb', base64_decode($key), OPENSSL_RAW_DATA);
-    }
 
-    //加密
-    public static function encrypt($data, $key) {
-        $data =  openssl_encrypt($data, 'aes-128-ecb', base64_decode($key), OPENSSL_RAW_DATA);
-        return base64_encode($data);
-    }
 }
