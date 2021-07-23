@@ -43,7 +43,7 @@ class V8log extends GameStrategy
         ];
         //加密$param
         $param = $param["s"]."&".$param["account"]."&".$param["money"]."&".$param["orderid"]."&".$param["ip"]."&".$param["lineCode"]."&".$param["kid"];
-        Log::channel('kidebug')->info('v8',[$param]);
+//        Log::channel('kidebug')->info('v8',[$param]);
         $aes = new Aes();
         $param = $aes->encryptno64($param,V8DESKEY);
 
@@ -54,8 +54,8 @@ class V8log extends GameStrategy
         $url = V8URL."?agent=".V8AGENT."&timestamp=".$timestamp.$milliseconds."&param=".$param."&key=".$key;
         Log::channel('kidebug')->info('v8',[$url]);
         //请求三方接口
-//        $res = $this->GetCurl($url);
-        $res = file_get_contents($url);
+        $res = $this->GetCurl($url);
+//        $res = file_get_contents($url);
 //        //请求返回日志
         Log::channel('kidebug')->info('v8',[$res]);
         $res = json_decode($res,true);
