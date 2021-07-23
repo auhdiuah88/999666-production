@@ -59,8 +59,8 @@ class V8log extends GameStrategy
 //        //请求返回日志
         Log::channel('kidebug')->info('v8',[$res]);
         $res = json_decode($res,true);
-        $resurl = $res["d"]["url"];
-        return $this->_data = $resurl;
+//        $resurl = $res["d"]["url"];
+        return $this->_data = $res;
     }
 
     public function userInfo(): bool
