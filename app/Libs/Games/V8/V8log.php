@@ -43,7 +43,7 @@ class V8log extends GameStrategy
         ];
         //加密$param
         $param = $param["s"]."&".$param["account"]."&".$param["money"]."&".$param["orderid"]."&".$param["ip"]."&".$param["lineCode"]."&".$param["kid"];
-//        Log::channel('kidebug')->info('v8',[$param]);
+        Log::channel('kidebug')->info('v8',[$param]);
         $aes = new Aes();
         $param = $aes->encryptno64($param,V8DESKEY);
 
