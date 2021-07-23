@@ -50,7 +50,7 @@ class V8log extends GameStrategy
 
         //拼接URL
         $url = V8URL."?agent=".V8AGENT."&timestamp=".$timestamp.$milliseconds."&param=".$param."&key=".$key;
-
+        Log::channel('kidebug')->info('v8',[$url]);
         //请求三方接口
         $res = $this->GetCurl($url);
 //        $res = file_get_contents($url);
