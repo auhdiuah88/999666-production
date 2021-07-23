@@ -640,7 +640,6 @@ class TestController extends Controller
         $string = request()->input('str');
         print_r(json_decode(aesDecrypt($string),true));
     }
-
     public function test3(){
         $data = Cache::rememberForever('test',function(){
             return 12;

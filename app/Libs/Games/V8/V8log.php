@@ -45,7 +45,7 @@ class V8log extends GameStrategy
         $param = "s=".$param["s"]."&account=".$param["account"]."&money=".$param["money"]."&orderid=".$param["orderid"]."&ip=".$param["ip"]."&lineCode=".$param["lineCode"]."&KindID=".$param["kid"];
         Log::channel('kidebug')->info('v8',[$param]);
         $aes = new Aes();
-        $param = $aes->encryptno64($param,V8DESKEY);
+        $param = urlencode($aes->encryptno64($param,V8DESKEY));
 
         //加密KEY
         $key = md5(V8AGENT.$timestamp.$milliseconds.M5KEY);
@@ -59,8 +59,8 @@ class V8log extends GameStrategy
 //        //请求返回日志
         Log::channel('kidebug')->info('v8',[$res]);
         $res = json_decode($res,true);
-//        $resurl = $res["d"]["url"];
-        return $this->_data = $res;
+        $resurl = $res["d"]["url"];
+        return $this->_data = $resurl;
     }
 
     public function userInfo(): bool
