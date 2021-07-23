@@ -4,7 +4,7 @@ namespace App\Libs\Games\V8;
 use App\Libs\Games\GameStrategy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use App\Libs\Aes;
 
 require_once 'config.php';
 class V8log extends GameStrategy
@@ -44,7 +44,8 @@ class V8log extends GameStrategy
         //加密$param
         $param = $param["s"]."&".$param["account"]."&".$param["money"]."&".$param["orderid"]."&".$param["ip"]."&".$param["lineCode"]."&".$param["kid"];
         Log::channel('kidebug')->info('v8',[$param]);
-        $param = $this->encrypt($param,V8DESKEY);
+        $aes = new Aes();
+        $param = $aes->encryptno64($param,V8DESKEY);
 
         //加密KEY
         $key = md5(V8AGENT.$timestamp.$milliseconds.M5KEY);
@@ -56,7 +57,7 @@ class V8log extends GameStrategy
 //        $res = $this->GetCurl($url);
         $res = file_get_contents($url);
 //        //请求返回日志
-        Log::channel('kidebug')->debug('v8',[$res]);
+        Log::channel('kidebug')->info('v8',[$res]);
         $res = json_decode($res,true);
         $resurl = $res["d"]["url"];
         return $this->_data = $resurl;

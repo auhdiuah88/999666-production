@@ -44,17 +44,7 @@ abstract class GameStrategy
         $this->UserRepository->addUserBetting($user_id, $betting);
     }
 
-    //解密
-    public static function decrypt($data, $key) {
-        $encrypted = base64_decode($data);
-        return openssl_decrypt($encrypted, 'aes-128-ecb', base64_decode($key), OPENSSL_RAW_DATA);
-    }
 
-    //加密
-    public static function encrypt($data, $key) {
-        $data =  openssl_encrypt($data, 'aes-128-ecb', base64_decode($key), OPENSSL_RAW_DATA);
-        return base64_encode($data);
-    }
 
     //get请求curl
     public function GetCurl($url){
