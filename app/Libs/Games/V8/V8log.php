@@ -42,7 +42,7 @@ class V8log extends GameStrategy
             "kid" => "0",//固定值，不需修改
         ];
         //加密$param
-        $param = "s=".$param["s"]."&account=".$param["account"]."&money=".$param["money"]."&orderid=".$param["orderid"]."&ip=".$param["ip"]."&lineCode=".$param["lineCode"]."&kindid=".$param["kid"];
+        $param = "s=".$param["s"]."&account=".$param["account"]."&money=".$param["money"]."&orderid=".$param["orderid"]."&ip=".$param["ip"]."&lineCode=".$param["lineCode"]."&KindID=".$param["kid"];
         Log::channel('kidebug')->info('v8',[$param]);
         $aes = new Aes();
         $param = $aes->encryptno64($param,V8DESKEY);
