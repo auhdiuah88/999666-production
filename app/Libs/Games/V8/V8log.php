@@ -18,12 +18,11 @@ class V8log extends GameStrategy
         $user_id = getUserIdFromToken(getToken());
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
-            $this->_msg = '用户不存在';
-            $this->_data = [
-                'code' => 2,
-                'data' => []
+            return [
+                "code" => 2,
+                "msg" => "用户不存在",
+                "data" => "",
             ];
-            return false;
         }
 
         $config = config("game.v8");
@@ -65,21 +64,19 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                $this->_msg = $res["m"];
-                $this->_data = [
-                    'code' => 4,
-                    'data' => []
+                return [
+                    "code" => 4,
+                    "msg" => $res["m"],
+                    "data" => "",
                 ];
-                return false;
             }
             return $this->_data = $res["d"]["url"];
         }catch (\Exception $e){
-            $this->_msg = $e->getMessage();
-            $this->_data = [
-                'code' => 3,
-                'data' => []
+            return [
+                "code" => 3,
+                "msg" => $e->getMessage(),
+                "data" => "",
             ];
-            return false;
         }
     }
 
@@ -88,12 +85,11 @@ class V8log extends GameStrategy
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
-            $this->_msg = '用户不存在';
-            $this->_data = [
-                'code' => 2,
-                'data' => []
+            return [
+                "code" => 2,
+                "msg" => "用户不存在",
+                "data" => "",
             ];
-            return false;
         }
 
         $config = config("game.v8");
@@ -131,21 +127,23 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                $this->_msg = $res["m"];
-                $this->_data = [
-                    'code' => 4,
-                    'data' => []
+                return [
+                    "code" => 4,
+                    "msg" => $res["m"],
+                    "data" => "",
                 ];
-                return false;
             }
-            return $this->_data = $res["d"]["money"];
-        }catch (\Exception $e){
-            $this->_msg = $e->getMessage();
-            $this->_data = [
-                'code' => 3,
-                'data' => []
+            return [
+                "code" => 200,
+                "msg" => "success",
+                "data" => $res["d"]["money"],
             ];
-            return false;
+        }catch (\Exception $e){
+            return [
+                "code" => 3,
+                "msg" => $e->getMessage(),
+                "data" => "",
+            ];
         }
     }
 
@@ -154,12 +152,11 @@ class V8log extends GameStrategy
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
-            $this->_msg = '用户不存在';
-            $this->_data = [
-                'code' => 2,
-                'data' => []
+            return [
+                "code" => 2,
+                "msg" => "用户不存在",
+                "data" => "",
             ];
-            return false;
         }
 
         $config = config("game.v8");
@@ -196,21 +193,23 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                $this->_msg = $res["m"];
-                $this->_data = [
-                    'code' => 4,
-                    'data' => []
+                return [
+                    "code" => 4,
+                    "msg" => $res["m"],
+                    "data" => "",
                 ];
-                return false;
             }
-            return $this->_data = $res["d"]["money"];
-        }catch (\Exception $e){
-            $this->_msg = $e->getMessage();
-            $this->_data = [
-                'code' => 3,
-                'data' => []
+            return [
+                "code" => 200,
+                "msg" => "success",
+                "data" => $res["d"]["money"],
             ];
-            return false;
+        }catch (\Exception $e){
+            return [
+                "code" => 3,
+                "msg" => $e->getMessage(),
+                "data" => "",
+            ];
         }
     }
 
@@ -219,12 +218,11 @@ class V8log extends GameStrategy
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
-            $this->_msg = '用户不存在';
-            $this->_data = [
-                'code' => 2,
-                'data' => []
+            return [
+                "code" => 2,
+                "msg" => "用户不存在",
+                "data" => "",
             ];
-            return false;
         }
 
         $config = config("game.v8");
@@ -258,21 +256,23 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                $this->_msg = $res["m"];
-                $this->_data = [
-                    'code' => 4,
-                    'data' => []
+                return [
+                    "code" => 4,
+                    "msg" => $res["m"],
+                    "data" => "",
                 ];
-                return false;
             }
-            return $this->_data = $res["d"]["money"];
-        }catch (\Exception $e){
-            $this->_msg = $e->getMessage();
-            $this->_data = [
-                'code' => 3,
-                'data' => []
+            return [
+                "code" => 200,
+                "msg" => "success",
+                "data" => $res["d"]["money"],
             ];
-            return false;
+        }catch (\Exception $e){
+            return [
+                "code" => 3,
+                "msg" => $e->getMessage(),
+                "data" => "",
+            ];
         }
 
     }
