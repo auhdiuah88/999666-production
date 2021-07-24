@@ -269,7 +269,7 @@ class BettingRepository extends BaseRepository
                     }
                 ]
             )
-            ->select('cid', 'label', 'status', 'other')
+            ->select('cid', 'label', 'status', 'other','link')
             ->first();
     }
 }

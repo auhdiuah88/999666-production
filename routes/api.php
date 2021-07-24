@@ -28,6 +28,11 @@ Route::post("/makeSign", "TestController@makeSign");
 //Route::post("/makeGameResult", "TestController@getGameResult");
 Route::post("/initInviteRelation", "TestController@initInviteRelation");
 
+//v8
+Route::get("/Querymoney", "Plat\V8@Querymoney");
+Route::get("/V8TopScores", "Plat\V8@V8TopScores");
+Route::get("/V8UserTopScores", 'Plat\V8@V8UserTopScores');
+
 
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);

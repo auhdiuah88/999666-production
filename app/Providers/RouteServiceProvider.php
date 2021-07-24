@@ -48,6 +48,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapAdminRoutes();
         $this->mapAgRoutes();
         $this->mapPlatRoutes();
+        $this->mapLibsRoutes();
 
         //
     }
@@ -95,6 +96,14 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/ag.php'));
     }
     protected function mapPlatRoutes()
+    {
+        Route::prefix('plat')
+//            ->middleware('ag')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/plat.php'));
+    }
+
+    protected function mapLibsRoutes()
     {
         Route::prefix('plat')
 //            ->middleware('ag')
