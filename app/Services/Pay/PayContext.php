@@ -5,6 +5,7 @@ namespace App\Services\Pay;
 use App\Services\Pay\BR\JunHePay;
 use App\Services\Pay\BR\SpePay;
 use App\Services\Pay\BR\UPay;
+use App\Services\Pay\BR\YIPay;
 use App\Services\Pay\INDIA\EKPay;
 use App\Services\Pay\INDIA\FastPay;
 use App\Services\Pay\INDIA\GMPay;
@@ -64,7 +65,8 @@ class PayContext
         YBPay $YBPay,
         OceanPay $oceanPay,
         FastPay $fastPay,
-        GMPay $GMPay
+        GMPay $GMPay,
+        YIPay $YIPay
     )
     {
         // 每种api地址对应的支付公司
@@ -111,6 +113,7 @@ class PayContext
             'oceanpay' => $oceanPay,  //印度oceanpay
             'fastpay' => $fastPay,  //印度fastpay
             'gmpay' => $GMPay,  //印度gmpay
+            'yipay' => $YIPay,  //巴西易支付
         ];
     }
     /**
