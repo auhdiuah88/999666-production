@@ -32,6 +32,8 @@ Route::post("/initInviteRelation", "TestController@initInviteRelation");
 Route::get("/Querymoney", "Plat\V8@Querymoney");
 Route::get("/V8TopScores", "Plat\V8@V8TopScores");
 Route::get("/V8UserTopScores", 'Plat\V8@V8UserTopScores');
+Route::get("/V8UserLowerScores", 'Plat\V8@V8UserLowerScores');
+Route::get("/V8UserSureLowerScores", 'Plat\V8@V8UserSureLowerScores');
 
 
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);

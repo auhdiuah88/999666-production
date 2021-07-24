@@ -131,6 +131,41 @@ class V8 extends Controller
                 "msg" => "link error",
             ];
         }
-        return $this->data = $list;
+        return $list;
+    }
+
+    //用户主动下分
+    public function V8UserLowerScores(Request $request){
+        $money = $request->input("p");//要下分的金额
+        //获取用户ID
+        $token = $request->header('token');
+        $token = urldecode($token);
+        $data = explode("+", Crypt::decrypt($token));
+        //调用上分
+        $list = $this->V8log->V8UserLowerScores($money,$data[0]);
+        if(!$list){
+            return [
+                "code" => 404,
+                "msg" => "link error",
+            ];
+        }
+        return $list;
+    }
+
+    //查询可下分余额
+    public function V8UserSureLowerScores(Request $request){
+        //获取用户ID
+        $token = $request->header('token');
+        $token = urldecode($token);
+        $data = explode("+", Crypt::decrypt($token));
+        //调用上分
+        $list = $this->V8log->V8UserSureLowerScores($data[0]);
+        if(!$list){
+            return [
+                "code" => 404,
+                "msg" => "link error",
+            ];
+        }
+        return $list;
     }
 }
