@@ -83,6 +83,7 @@ class YBPay extends PayStrategy
         }
         if($res['code'] != 1){
             $this->_msg = $res['msg'];
+            return false;
         }
         $native_url = $res['pay_url'];
         $resData = [
