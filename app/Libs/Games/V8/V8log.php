@@ -91,6 +91,14 @@ class V8log extends GameStrategy
                 "data" => "",
             ];
         }
+        if($info->balance < $money){
+            return [
+                "code" => 2,
+                "msg" => "用户余额不足",
+                "data" => "",
+            ];
+        }
+
 
         $config = config("game.v8");
         //获取当前时间（毫秒级）
@@ -103,7 +111,7 @@ class V8log extends GameStrategy
         $param = [
             "s" => "2",//固定值，不需修改
             "account" => $info->phone,//用户名
-            "money" => $info->balance,//金额
+            "money" => $money,//金额
             "orderid" => $config["agent"].$datetime.$info->phone,//拼接agent,当前时间，用户名
         ];
 
@@ -179,7 +187,7 @@ class V8log extends GameStrategy
         $param = [
             "s" => "1",//固定值，不需修改
             "account" => $info->phone,//用户名
-            "money" => $info->balance,//金额
+            "money" => $money,//金额
             "orderid" => $config["agent"].$datetime.$info->phone,//拼接agent,当前时间，用户名
         ];
 
@@ -291,6 +299,7 @@ class V8log extends GameStrategy
                 "update_time" => time(),//更新时间
             ];
             $user_wallet = DB::table("users_wallet")->where("user_id",$user_id)->get();
+            $user_wallet = json_decode(json_encode($user_wallet));
             if(!$user_wallet){
                 DB::table("users_wallet")->where("user_id",$user_id)->insert($user_data);
             }else{
