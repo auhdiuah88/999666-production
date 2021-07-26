@@ -347,6 +347,11 @@ class Ssc_TwoService
         return $this->GameRepository->Ki_Play_Result_Entry($play_id, $result, $type, $winmoney,$lostmoney, $pt_money, $cur_betting_money);
     }
 
+    public function betting_handle_ki()
+    {
+
+    }
+
     public function ssc($play_id)
     {
         $Is_Executive_Prize=$this->GameRepository->Get_Info($play_id);

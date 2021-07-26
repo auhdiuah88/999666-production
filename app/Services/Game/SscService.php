@@ -19,13 +19,11 @@ class SscService
     protected $GameRepository;
     protected $REDIS_LOGIN="REDIS_ZONG_SHALV";
     protected $game_id = 1;
-    protected $GameService;
 
-    public function __construct(SscRepository $SscRepository,GameRepository $GameRepository, GameService $gameService)
+    public function __construct(SscRepository $SscRepository,GameRepository $GameRepository)
     {
         $this->SscRepository=$SscRepository;
         $this->GameRepository=$GameRepository;
-        $this->GameService = $gameService;
     }
     public function Get_Config($id){
         return $this->SscRepository->Get_Config($id);
@@ -871,7 +869,12 @@ class SscService
         $data=$this->GameRepository->Get_Betting($play_id);
         $prize_type = env('PRIZE_TYPE',1);
         if($data){
-            $this->GameService->Settlement_Betting_Queue($data);
+            if (count($data) > 0) {
+                foreach ($data as $val) {
+                    \App\Jobs\GameSettlement::dispatch($val->id, $val->game_id)->onQueue('Settlement_Queue');
+                }
+                return true;
+            }
 //            foreach ($data as $val){
 //                if($prize_type == 1){
 //                    if($val->game_c_x_id==49){
