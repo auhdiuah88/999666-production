@@ -434,7 +434,7 @@ class GameRepository
     //根据期数ID，玩法ID获取用户下注信息
     public function Get_Betting($play_id)
     {
-        $data = $this->Cx_Game_Betting->where("game_p_id", $play_id)->get();
+        $data = $this->Cx_Game_Betting->where("game_p_id", $play_id)->where("is_queue", 0)->get();
         if (count($data) > 0) {
             return $data;
         } else {
