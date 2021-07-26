@@ -285,12 +285,12 @@ class V8log extends GameStrategy
             $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
             $user_data = [
                 "user_id" => $user_id,//用户ID
-                "wallet_name" => $wallet_name["id"],//游戏平台id
+                "wallet_id" => $wallet_name->id,//游戏平台id
                 "total_balance" => $res["d"]["totalMoney"],//用户总余额
                 "withdrawal_balance" => $res["d"]["freeMoney"],//用户可下分余额
                 "update_time" => time(),//更新时间
             ];
-            $user_wallet = DB::table("users_wallet")->where("user_id",$user_id)->select();
+            $user_wallet = DB::table("users_wallet")->where("user_id",$user_id)->get();
             if(!$user_wallet){
                 DB::table("users_wallet")->where("user_id",$user_id)->insert($user_data);
             }else{

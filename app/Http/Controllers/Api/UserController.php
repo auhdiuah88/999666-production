@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 
 class UserController extends Controller
@@ -408,4 +409,21 @@ class UserController extends Controller
         );
     }
 
+    //游戏平台列表接口
+    public function PlatformList(){
+        $info = DB::table('wallet_name')->get();
+        $info = json_decode(json_encode($info));
+        if(!$info){
+            return [
+                "code" => 0,
+                "msg" => "none list",
+                "data" => ""
+            ];
+        }
+        return [
+            "code" => 200,
+            "msg" => "success",
+            "data" => $info
+        ];
+    }
 }
