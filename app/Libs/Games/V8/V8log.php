@@ -142,7 +142,7 @@ class V8log extends GameStrategy
                 ];
             }
             //查询用户总余额
-            $reqmoney = V8QueryScore($user_id);
+            $reqmoney = $this->V8QueryScore($user_id);
             if($reqmoney["code"] != "200"){
                 return [
                     "code" => 5,
@@ -185,7 +185,7 @@ class V8log extends GameStrategy
 
         //拼接可下分余额请求参数
         $param = [
-            "s" => "1",//固定值，不需修改
+            "s" => "3",//固定值，不需修改
             "account" => $info->phone,//用户名
             "money" => $money,//金额
             "orderid" => $config["agent"].$datetime.$info->phone,//拼接agent,当前时间，用户名
@@ -218,7 +218,7 @@ class V8log extends GameStrategy
             }
 
             //查询用户总余额
-            $reqmoney = V8QueryScore($user_id);
+            $reqmoney = $this->V8QueryScore($user_id);
             if($reqmoney["code"] != "200"){
                 return [
                     "code" => 5,
