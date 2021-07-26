@@ -47,11 +47,11 @@ class GameBettingHandle implements ShouldQueue
         if($this->game_id==1){
             $this->SscService->betting_handle_ki($this->id);
         }else if($this->game_id==2){
-            $this->Ssc_TwoService->betting_handle_ki($this->id);
+//            $this->Ssc_TwoService->betting_handle_ki($this->id);
         }else if($this->game_id==3){
-            $this->Ssc_ThreeService->betting_handle_ki($this->id);
+//            $this->Ssc_ThreeService->betting_handle_ki($this->id);
         }else if($this->game_id==4){
-            $this->Ssc_FourService->betting_handle_ki($this->id);
+//            $this->Ssc_FourService->betting_handle_ki($this->id);
         }
     }
 

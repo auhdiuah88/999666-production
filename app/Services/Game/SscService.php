@@ -869,7 +869,7 @@ class SscService
 
     public function Ki_Executive_Prize($result, $play_id, $winmoney, $lostmoney, $type, $pt_money, $cur_betting_money){
         $data=$this->GameRepository->Get_Betting($play_id);
-        $prize_type = env('PRIZE_TYPE',1);
+//        $prize_type = env('PRIZE_TYPE',1);
         if($data){
             $this->GameService->Settlement_Betting_Queue($data);
 //            foreach ($data as $val){
