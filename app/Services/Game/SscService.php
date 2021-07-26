@@ -21,11 +21,11 @@ class SscService
     protected $game_id = 1;
     protected $GameService;
 
-    public function __construct(SscRepository $SscRepository,GameRepository $GameRepository, GameService $gameService)
+    public function __construct(SscRepository $SscRepository,GameRepository $GameRepository)
     {
         $this->SscRepository=$SscRepository;
         $this->GameRepository=$GameRepository;
-        $this->GameService = $gameService;
+//        $this->GameService = $gameService;
     }
     public function Get_Config($id){
         return $this->SscRepository->Get_Config($id);
