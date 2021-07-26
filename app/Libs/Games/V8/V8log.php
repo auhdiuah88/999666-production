@@ -133,6 +133,15 @@ class V8log extends GameStrategy
                     "data" => "",
                 ];
             }
+            //查询用户总余额
+            $reqmoney = V8QueryScore($user_id);
+            if($reqmoney["code"] != "200"){
+                return [
+                    "code" => 5,
+                    "msg" => $reqmoney["msg"],
+                    "data" => "",
+                ];
+            }
             return [
                 "code" => 200,
                 "msg" => "success",
@@ -199,6 +208,17 @@ class V8log extends GameStrategy
                     "data" => "",
                 ];
             }
+
+            //查询用户总余额
+            $reqmoney = V8QueryScore($user_id);
+            if($reqmoney["code"] != "200"){
+                return [
+                    "code" => 5,
+                    "msg" => $reqmoney["msg"],
+                    "data" => "",
+                ];
+            }
+
             return [
                 "code" => 200,
                 "msg" => "success",
@@ -213,8 +233,8 @@ class V8log extends GameStrategy
         }
     }
 
-    //可下分余额
-    public function V8UserSureLowerScores($user_id){
+    //用户总余额
+    public function V8QueryScore($user_id){
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
@@ -234,7 +254,7 @@ class V8log extends GameStrategy
 
         //拼接可下分余额请求参数
         $param = [
-            "s" => "1",//固定值，不需修改
+            "s" => "7",//固定值，不需修改
             "account" => $info->phone,//用户名
         ];
 
@@ -262,10 +282,27 @@ class V8log extends GameStrategy
                     "data" => "",
                 ];
             }
+            $wallet_name = DB::name("wallet_name")->where("wallet_name",$config["name"])->select("id")->first();
+            $user_data = [
+                "user_id" => $user_id,//用户ID
+                "wallet_name" => $wallet_name->id,//游戏平台id
+                "total_balance" => $res["d"]["totalMoney"],//用户总余额
+                "withdrawal_balance" => $res["d"]["freeMoney"],//用户可下分余额
+                "update_time" => time(),//更新时间
+            ];
+            $user_wallet = DB::table("users_wallet")->where("user_id",$user_id)->select();
+            if(!$user_wallet){
+                DB::table("users_wallet")->where("user_id",$user_id)->insert($user_data);
+            }else{
+                DB::table("users_wallet")->where("user_id",$user_id)->update($user_data);
+            }
             return [
                 "code" => 200,
                 "msg" => "success",
-                "data" => $res["d"]["money"],
+                "data" => [
+                    "totalMoney" => $res["d"]["totalMoney"],//用户总余额
+                    "freeMoney" => $res["d"]["freeMoney"],//用户可下分余额
+                ],
             ];
         }catch (\Exception $e){
             return [
@@ -276,6 +313,7 @@ class V8log extends GameStrategy
         }
 
     }
+
 
     //废弃，勿删
     public function userInfo(): bool

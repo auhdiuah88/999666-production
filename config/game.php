@@ -3,6 +3,7 @@ return [
     //V8配置参数
     //测试
     "v8" => [
+        "game_name" => "v8",
         "url" => 'https://wc2-api.twow42.com/channelHandle',//接口地址
         "agent" => "70241",//代理ID
         "deskey" => "276701EA9E3785BA",//des加密KEY

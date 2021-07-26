@@ -26,7 +26,7 @@ class V8 extends Controller
         $url = $request->input();
         $config = config("game.v8");
         $aes = new Aes();
-        $param = $aes->decryptno64($url["param"],$config["deskey"]);
+        $param = urldecode($aes->decryptno64($url["param"],$config["deskey"]));
         parse_str($param, $param);
         //效验
         if($url["agent"] != $config["agent"]){
@@ -62,7 +62,7 @@ class V8 extends Controller
         $url = $request->input();
         $config = config("game.v8");
         $aes = new Aes();
-        $param = $aes->decryptno64($url["param"],$config["deskey"]);
+        $param = urldecode($aes->decryptno64($url["param"],$config["deskey"]));
         parse_str($param, $param);
         //效验
         if($url["agent"] != $config["agent"]){
@@ -141,7 +141,7 @@ class V8 extends Controller
         $token = $request->header('token');
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
-        //调用上分
+        //调用下分
         $list = $this->V8log->V8UserLowerScores($money,$data[0]);
         if(!$list){
             return [
@@ -152,14 +152,14 @@ class V8 extends Controller
         return $list;
     }
 
-    //查询可下分余额
-    public function V8UserSureLowerScores(Request $request){
+    //查询玩家V8总分
+    public function V8QueryScore(Request $request){
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
-        //调用上分
-        $list = $this->V8log->V8UserSureLowerScores($data[0]);
+        //调用查询接口
+        $list = $this->V8log->V8QueryScore($data[0]);
         if(!$list){
             return [
                 "code" => 404,
@@ -168,4 +168,6 @@ class V8 extends Controller
         }
         return $list;
     }
+
+
 }
