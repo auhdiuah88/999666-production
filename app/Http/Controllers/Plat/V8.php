@@ -119,6 +119,7 @@ class V8 extends Controller
     //用户主动上分
     public function V8UserTopScores(Request $request){
         $money = $request->input("p");//要上分的金额
+        $money = json_decode(aesDecrypt($money),true);
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
@@ -137,6 +138,7 @@ class V8 extends Controller
     //用户主动下分
     public function V8UserLowerScores(Request $request){
         $money = $request->input("p");//要下分的金额
+        $money = json_decode(aesDecrypt($money),true);
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
