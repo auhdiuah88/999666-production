@@ -244,7 +244,22 @@ class GameService
         return $this->GameRepository->Game_List($game_id, $limit, ($page - 1) * $limit);
     }
 
-    /*结算定时任务
+    /*结算定时任务--下注
+     *获取可结算的下注加入消费队列
+     */
+    public function Settlement_Betting_Queue($data)
+    {
+        if (count($data) > 0) {
+            foreach ($data as $val) {
+                GameSettlement::dispatch($val->id, $val->game_id)->onQueue('Settlement_Queue');
+            }
+            return true;
+        }
+
+
+    }
+
+    /*结算定时任务--期数
      *获取可结算的期数添加入消费队列
      */
     public function Settlement_Queue()

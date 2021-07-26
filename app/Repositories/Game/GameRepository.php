@@ -441,6 +441,22 @@ class GameRepository
             return false;
         }
     }
+
+    public function Get_Betting_Info($betting_id)
+    {
+        return $this->Cx_Game_Betting
+            ->with(
+                [
+                    'game_play' => function($query)
+                    {
+                        $query->select("id", "prize_number");
+                    }
+                ]
+            )
+            ->where("id", $betting_id)
+            ->first();
+    }
+
     //根据用户id获取用户返点比例
     public function Get_rebate_rate($user_id)
     {
