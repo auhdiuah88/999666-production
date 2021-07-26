@@ -3,6 +3,7 @@
 
 namespace App\Services\Game;
 
+use App\Jobs\GameBettingHandle;
 use App\Libs\PrizeConfig;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Game\SscRepository;
@@ -872,7 +873,7 @@ class SscService
             if (count($data) > 0) {
                 $this->GameRepository->Set_Queue($play_id);
                 foreach ($data as $val) {
-                    \App\Jobs\GameSettlement::dispatch($val->id, $val->game_id)->onQueue('Game_Betting_Settle');
+                    GameBettingHandle::dispatch($val->id, $val->game_id)->onQueue('Game_Betting_Settle');
                 }
             }
 //            foreach ($data as $val){
