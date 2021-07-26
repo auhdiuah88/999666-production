@@ -35,8 +35,11 @@ Route::get("/V8TopScores", "Plat\V8@V8TopScores");
 Route::get("/V8UserTopScores", 'Plat\V8@V8UserTopScores');
 Route::get("/V8UserLowerScores", 'Plat\V8@V8UserLowerScores');
 Route::get("/V8QueryScore", 'Plat\V8@V8QueryScore');
-
+//获取平台列表
 Route::get("/PlatformList", 'Api\UserController@PlatformList');
+
+//ICG
+
 
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);

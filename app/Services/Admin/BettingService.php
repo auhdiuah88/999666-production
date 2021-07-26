@@ -181,6 +181,8 @@ class BettingService extends BaseService
                 $Client = $this->GameContext->getStrategy('v8');
             }else if($game["link"] == "wdyy"){
                 $Client = $this->GameContext->getStrategy('wdyy');
+            }else if($game["link"] == "icg"){
+                $Client = $this->GameContext->getStrategy('icg');
             }
             if(!$Client->launch($game->other))
             {
