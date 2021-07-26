@@ -142,7 +142,7 @@ class V8log extends GameStrategy
                 ];
             }
             //查询用户总余额
-            $reqmoney = V8QueryScore($user_id);
+            $reqmoney = $this->V8QueryScore($user_id);
             if($reqmoney["code"] != "200"){
                 return [
                     "code" => 5,
@@ -218,7 +218,7 @@ class V8log extends GameStrategy
             }
 
             //查询用户总余额
-            $reqmoney = V8QueryScore($user_id);
+            $reqmoney = $this->V8QueryScore($user_id);
             if($reqmoney["code"] != "200"){
                 return [
                     "code" => 5,
