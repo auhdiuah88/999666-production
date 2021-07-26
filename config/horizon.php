@@ -201,6 +201,14 @@ return [
                 'tries' => 1,
 //                'nice' => 0,
             ],
+            'supervisor-4' => [
+                'connection' => 'redis',
+                'queue' => ['Game_Betting_Settle'],
+                'balance' => 'simple',
+                'processes' => 6,
+                'tries' => 1,
+//                'nice' => 0,
+            ],
         ],
     ],
 ];
