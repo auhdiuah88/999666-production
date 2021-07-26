@@ -282,7 +282,7 @@ class V8log extends GameStrategy
                     "data" => "",
                 ];
             }
-            $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["name"])->select("id")->first();
+            $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
             $user_data = [
                 "user_id" => $user_id,//用户ID
                 "wallet_name" => $wallet_name->id,//游戏平台id
