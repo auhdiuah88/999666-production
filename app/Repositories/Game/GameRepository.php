@@ -442,6 +442,12 @@ class GameRepository
         }
     }
 
+    //设置下注记录为已进入队列
+    public function Set_Queue($play_id)
+    {
+        $this->Cx_Game_Betting->where("game_p_id", $play_id)->update(['is_queue'=>1]);
+    }
+
     public function Get_Betting_Info($betting_id)
     {
         return $this->Cx_Game_Betting
