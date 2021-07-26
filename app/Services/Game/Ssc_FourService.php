@@ -235,6 +235,7 @@ class Ssc_FourService
     public function Ki_Executive_Prize($result, $play_id, $winmoney, $lostmoney, $type, $pt_money, $cur_betting_money){
         $data=$this->GameRepository->Get_Betting($play_id);
 //        $prize_type = env('PRIZE_TYPE',1);
+        $this->GameRepository->Ki_Play_Result_Entry($play_id, $result, $type, $winmoney,$lostmoney, $pt_money, $cur_betting_money);
         if($data){
             if (count($data) > 0) {
                 $this->GameRepository->Set_Queue($play_id);
@@ -350,7 +351,7 @@ class Ssc_FourService
 //            }
 
         }
-        return $this->GameRepository->Ki_Play_Result_Entry($play_id, $result, $type, $winmoney,$lostmoney, $pt_money, $cur_betting_money);
+        return true;
     }
 
     public function Betting_Handle_Ki($id)
@@ -941,6 +942,7 @@ class Ssc_FourService
     public function Executive_Prize($play_id,$result,$isWin,$winmoney,$lostmoney,$winmoney1,$result1){
         $data=$this->GameRepository->Get_Betting($play_id);
 //        $prize_type = env('PRIZE_TYPE',1);
+        $this->GameRepository->Play_Result_Entry($play_id,$result,$isWin,$winmoney,$lostmoney,$winmoney1,$result1);
         if($data){
             if (count($data) > 0) {
                 $this->GameRepository->Set_Queue($play_id);
@@ -1056,7 +1058,7 @@ class Ssc_FourService
 //            }
 
         }
-        return $this->GameRepository->Play_Result_Entry($play_id,$result,$isWin,$winmoney,$lostmoney,$winmoney1,$result1);
+        return true;
 
 
     }
