@@ -936,114 +936,120 @@ class Ssc_TwoService
 
     public function Executive_Prize($play_id,$result,$isWin,$winmoney,$lostmoney,$winmoney1,$result1){
         $data=$this->GameRepository->Get_Betting($play_id);
-        $prize_type = env('PRIZE_TYPE',1);
+//        $prize_type = env('PRIZE_TYPE',1);
         if($data){
-            foreach ($data as $val){
-                if($prize_type == 1){
-                    if($val->game_c_x_id==50){
-                        if($result==0){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==13){
-                        if($result==1){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==14){
-                        if($result==2){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==15){
-                        if($result==3){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==16){
-                        if($result==4){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==17){
-                        if($result==5){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==18){
-                        if($result==6){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==19){
-                        if($result==7){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==20){
-                        if($result==8){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==21){
-                        if($result==9){
-                            $this->GameRepository->Result_Entry($val,1,9);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,9);
-                        }
-                    }else if($val->game_c_x_id==22){
-                        if($result==1 || $result==3 || $result==5 || $result==7 || $result==9){
-                            if($result==5){
-                                $this->GameRepository->Result_Entry($val,1,1.5);
-                            }else{
-                                $this->GameRepository->Result_Entry($val,1,2);
-                            }
-
-                        }else{
-                            if($result==5){
-                                $this->GameRepository->Result_Entry($val,2,1.5);
-                            }else{
-                                $this->GameRepository->Result_Entry($val,2,2);
-                            }
-
-                        }
-                    }else if($val->game_c_x_id==23){
-                        if($result==0 || $result==2 || $result==4 || $result==6 || $result==8){
-                            if($result==0){
-                                $this->GameRepository->Result_Entry($val,1,1.5);
-                            }else{
-                                $this->GameRepository->Result_Entry($val,1,2);
-                            }
-                        }else{
-                            if($result==0){
-                                $this->GameRepository->Result_Entry($val,2,1.5);
-                            }else{
-                                $this->GameRepository->Result_Entry($val,2,2);
-                            }
-                        }
-                    }else if($val->game_c_x_id==24){
-                        if($result==0 || $result==5 ){
-                            $this->GameRepository->Result_Entry($val,1,4.5);
-                        }else{
-                            $this->GameRepository->Result_Entry($val,2,4.5);
-                        }
-                    }
-                }else{
-                    ##获取用户返点比例
-                    $rebate_rate = $this->GameRepository->Get_rebate_rate($val->user_id);
-                    $res = PrizeConfig::getRebateRate($rebate_rate,$val,$result);
-                    $this->GameRepository->Result_Entry($val,$res['type'],$res['rebate_rate']);
+            if (count($data) > 0) {
+                $this->GameRepository->Set_Queue($play_id);
+                foreach ($data as $val) {
+                    GameBettingHandle::dispatch($val->id, $val->game_id)->onQueue('Game_Betting_Settle');
                 }
             }
+//            foreach ($data as $val){
+//                if($prize_type == 1){
+//                    if($val->game_c_x_id==50){
+//                        if($result==0){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==13){
+//                        if($result==1){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==14){
+//                        if($result==2){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==15){
+//                        if($result==3){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==16){
+//                        if($result==4){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==17){
+//                        if($result==5){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==18){
+//                        if($result==6){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==19){
+//                        if($result==7){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==20){
+//                        if($result==8){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==21){
+//                        if($result==9){
+//                            $this->GameRepository->Result_Entry($val,1,9);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,9);
+//                        }
+//                    }else if($val->game_c_x_id==22){
+//                        if($result==1 || $result==3 || $result==5 || $result==7 || $result==9){
+//                            if($result==5){
+//                                $this->GameRepository->Result_Entry($val,1,1.5);
+//                            }else{
+//                                $this->GameRepository->Result_Entry($val,1,2);
+//                            }
+//
+//                        }else{
+//                            if($result==5){
+//                                $this->GameRepository->Result_Entry($val,2,1.5);
+//                            }else{
+//                                $this->GameRepository->Result_Entry($val,2,2);
+//                            }
+//
+//                        }
+//                    }else if($val->game_c_x_id==23){
+//                        if($result==0 || $result==2 || $result==4 || $result==6 || $result==8){
+//                            if($result==0){
+//                                $this->GameRepository->Result_Entry($val,1,1.5);
+//                            }else{
+//                                $this->GameRepository->Result_Entry($val,1,2);
+//                            }
+//                        }else{
+//                            if($result==0){
+//                                $this->GameRepository->Result_Entry($val,2,1.5);
+//                            }else{
+//                                $this->GameRepository->Result_Entry($val,2,2);
+//                            }
+//                        }
+//                    }else if($val->game_c_x_id==24){
+//                        if($result==0 || $result==5 ){
+//                            $this->GameRepository->Result_Entry($val,1,4.5);
+//                        }else{
+//                            $this->GameRepository->Result_Entry($val,2,4.5);
+//                        }
+//                    }
+//                }else{
+//                    ##获取用户返点比例
+//                    $rebate_rate = $this->GameRepository->Get_rebate_rate($val->user_id);
+//                    $res = PrizeConfig::getRebateRate($rebate_rate,$val,$result);
+//                    $this->GameRepository->Result_Entry($val,$res['type'],$res['rebate_rate']);
+//                }
+//            }
 
         }
         return $this->GameRepository->Play_Result_Entry($play_id,$result,$isWin,$winmoney,$lostmoney,$winmoney1,$result1);
