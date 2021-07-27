@@ -11,12 +11,14 @@ class GameContext
     public function __construct
     (
         \App\Libs\Games\WDYY\Client $wdyy,
-        \App\Libs\Games\V8\V8log $v8
+        \App\Libs\Games\V8\V8log $v8,
+        \App\Libs\Games\ICG\IcgLog $icg
     )
     {
         $this->GameList = [
             'wdyy' => $wdyy,
-            "v8" => $v8
+            "v8" => $v8,
+            "icg" => $icg
         ];
     }
 
