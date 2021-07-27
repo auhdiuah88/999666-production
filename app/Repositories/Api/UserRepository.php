@@ -330,6 +330,16 @@ class UserRepository
     }
 
     /**
+     * 根据用户ID查询用户详情限制字段
+     * @param $user_id
+     * @return mixed
+     */
+    public function selectByUserId($user_id, $select)
+    {
+        return $this->Cx_User->select($select)->find($user_id);
+    }
+
+    /**
      * 修改代理收益
      * @param $data
      * @return mixed

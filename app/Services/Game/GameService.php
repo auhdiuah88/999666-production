@@ -98,7 +98,8 @@ class GameService
             return false;
         }
         //判断用户余额是否大于投注金额
-        $user_info = $this->UserRepository->findByIdUser($user_id);
+//        $user_info = $this->UserRepository->findByIdUser($user_id);
+        $user_info = $this->UserRepository->selectByUserId($user_id, ['id', 'is_transaction', 'balance', 'invite_relation', 'rebate_rate', 'one_recommend_id', 'two_recommend_id']);
         if($user_info->is_transaction == 0){
             return false;
         }
@@ -140,14 +141,16 @@ class GameService
             try {
                 // 将一级，二级代理人收益添加到数据库
                 if(!empty($user->one_recommend_id)){
-                    $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
+//                    $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
+                    $one = $this->UserRepository->selectByUserId($user->one_recommend_id, ['one_commission', 'commission']);
                     $oneCondition = ["id" => $user->one_recommend_id, "one_commission" => $one->one_commission + $oneCharge, "commission" => $one->commission + $oneCharge];
                     $this->UserRepository->updateAgentMoney($oneCondition);
                     $oneChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->one_recommend_id, "type" => 1, "money" => $oneCharge, "create_time" => time()];
                     $this->UserRepository->addChargeLogs($oneChargeLog);
                 }
                 if(!empty($user->two_recommend_id)){
-                    $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
+//                    $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
+                    $two = $this->UserRepository->selectByUserId($user->two_recommend_id, ['two_commission', 'commission']);
                     $twoCondition = ["id" => $user->two_recommend_id, "two_commission" => $two->two_commission + $twoCharge, "commission" => $two->commission + $twoCharge];
                     $this->UserRepository->updateAgentMoney($twoCondition);
                     $twoChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->two_recommend_id, "type" => 2, "money" => $twoCharge, "create_time" => time()];
@@ -198,7 +201,8 @@ class GameService
             $cur_rate = $user->rebate_rate;
 
             foreach ($relationArr as $item) {
-                $pUser = $this->UserRepository->findByIdUser($item);
+//                $pUser = $this->UserRepository->findByIdUser($item);
+                $pUser = $this->UserRepository->selectByUserId($item, ['id', 'rebate_rate', 'reg_source_id', 'commission']);
                 if ($pUser->rebate_rate > $cur_rate && $pUser->reg_source_id == 0) {
                     $cha_rate = bcsub($pUser->rebate_rate,$cur_rate, 2);
                     $cha_rate = bcmul($cha_rate, 0.01, 3);

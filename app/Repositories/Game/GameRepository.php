@@ -319,7 +319,8 @@ class GameRepository
 //            DB::beginTransaction();
 //            try {
                 //写入投注表
-                $user_obj = $this->Cx_User->where('id', $user->id)->first();
+//                $user_obj = $this->Cx_User->where('id', $user->id)->first();
+                $user_obj = $this->Cx_User->where('id', $user->id)->select(['id', 'balance', 'cl_betting', 'point', 'cl_betting_total', 'balance'])->first();
                 $this->Cx_Game_Betting->insert($arr);
                 //减少用户余额
                 $u_money = $user_obj->balance - $money;
