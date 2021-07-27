@@ -461,6 +461,7 @@ class GameRepository
                 ]
             )
             ->where("id", $betting_id)
+            ->select(['id', 'game_c_x_id', 'game_p_id', 'user_id', 'status', 'money', 'game_id'])
             ->first();
     }
 
