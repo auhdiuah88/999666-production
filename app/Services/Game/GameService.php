@@ -4,6 +4,7 @@
 namespace App\Services\Game;
 
 
+use App\Jobs\GameBettingHandle;
 use App\Jobs\GameSettlement;
 use App\Jobs\GameSettlement_Sd;
 use App\Repositories\Game\GameRepository;
@@ -337,6 +338,38 @@ class GameService
             $data = $this->Ssc_FourService->ssc_se($play_id);
         }
         return $data;
+    }
+
+    public function Open_Game_Betting_SD()
+    {
+        try
+        {
+            $game_play_id = request()->post('game_p_id',0);
+            ##获取这一期信息
+            $game_play = $this->GameRepository->Get_Game_Play_Obj($game_play_id);
+            if(!$game_play)
+            {
+                throw new \Exception('游戏ID错误');
+            }
+            if($game_play->status === 0)
+            {
+                throw new \Exception('游戏尚未开奖');
+            }
+            ##获取尚未派奖投注记录
+            $data = $this->GameRepository->Get_Betting($game_play_id);
+            if(!empty($data))
+            {
+                foreach ($data as $val) {
+                    $this->GameRepository->Set_Betting_Queue($val->id);
+                    GameBettingHandle::dispatch($val->id, $val->game_id)->onQueue('Game_Betting_Settle');
+                }
+            }
+            return true;
+        }
+        catch(\Exception $e)
+        {
+            return $e->getMessage();
+        }
     }
 
 

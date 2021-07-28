@@ -185,4 +185,22 @@ class GameController extends Controller
 
     }
 
+    public function Open_Game_Betting_SD()
+    {
+        $rules = [
+            "game_p_id" => 'required|integer|gte:1',
+        ];
+        $validator = Validator::make(request()->input(), $rules);
+        if ($validator->fails()) {
+            return $this->AppReturn(414, $validator->errors()->first());
+        }
+        $res = $this->GameService->Open_Game_Betting_SD();
+        if($res === true)
+        {
+            return $this->AppReturn(200, '操作成功');
+        }else{
+            return $this->AppReturn(200, $res);
+        }
+    }
+
 }

@@ -449,6 +449,12 @@ class GameRepository
         $this->Cx_Game_Betting->where("game_p_id", $play_id)->update(['is_queue'=>1]);
     }
 
+    //设置单个下注记录为已进入队列
+    public function Set_Betting_Queue($id)
+    {
+        $this->Cx_Game_Betting->where("id", $id)->update(['is_queue'=>1]);
+    }
+
     public function Get_Betting_Info($betting_id)
     {
         return $this->Cx_Game_Betting
@@ -596,6 +602,11 @@ class GameRepository
 
     public function Get_Game_play($id){
         return $this->Cx_Game_Play->where("id", $id)->first()->toArray();
+    }
+
+    public function Get_Game_Play_Obj($id)
+    {
+        return $this->Cx_Game_Play->where("id", $id)->first();
     }
 
     public function Get_Config($game_id){
