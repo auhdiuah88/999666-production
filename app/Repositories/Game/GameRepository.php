@@ -319,7 +319,8 @@ class GameRepository
 //            DB::beginTransaction();
 //            try {
                 //写入投注表
-                $user_obj = $this->Cx_User->where('id', $user->id)->first();
+//                $user_obj = $this->Cx_User->where('id', $user->id)->first();
+                $user_obj = $this->Cx_User->where('id', $user->id)->select(['id', 'balance', 'cl_betting', 'point', 'cl_betting_total', 'balance'])->first();
                 $this->Cx_Game_Betting->insert($arr);
                 //减少用户余额
                 $u_money = $user_obj->balance - $money;
@@ -434,7 +435,7 @@ class GameRepository
     //根据期数ID，玩法ID获取用户下注信息
     public function Get_Betting($play_id)
     {
-        $data = $this->Cx_Game_Betting->where("game_p_id", $play_id)->get();
+        $data = $this->Cx_Game_Betting->where("game_p_id", $play_id)->where("is_queue", 0)->get();
         if (count($data) > 0) {
             return $data;
         } else {
@@ -446,6 +447,12 @@ class GameRepository
     public function Set_Queue($play_id)
     {
         $this->Cx_Game_Betting->where("game_p_id", $play_id)->update(['is_queue'=>1]);
+    }
+
+    //设置单个下注记录为已进入队列
+    public function Set_Betting_Queue($id)
+    {
+        $this->Cx_Game_Betting->where("id", $id)->update(['is_queue'=>1]);
     }
 
     public function Get_Betting_Info($betting_id)
@@ -460,6 +467,7 @@ class GameRepository
                 ]
             )
             ->where("id", $betting_id)
+            ->select(['id', 'game_c_x_id', 'game_p_id', 'user_id', 'status', 'money', 'game_id'])
             ->first();
     }
 
@@ -594,6 +602,11 @@ class GameRepository
 
     public function Get_Game_play($id){
         return $this->Cx_Game_Play->where("id", $id)->first()->toArray();
+    }
+
+    public function Get_Game_Play_Obj($id)
+    {
+        return $this->Cx_Game_Play->where("id", $id)->first();
     }
 
     public function Get_Config($game_id){

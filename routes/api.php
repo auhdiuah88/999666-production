@@ -50,6 +50,7 @@ Route::get("/serviceSetting", "Api\SystemController@serviceSetting")->middleware
 Route::get("/agentUrl", "Api\SystemController@agentUrl")->middleware(['params_decrypt']);
 //Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
 //Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
+Route::post('/open_game_betting', "Game\GameController@Open_Game_Betting_SD");
 
 // 充值回调
 Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback");

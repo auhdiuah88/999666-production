@@ -4,6 +4,7 @@
 namespace App\Services\Game;
 
 
+use App\Jobs\GameBettingHandle;
 use App\Jobs\GameSettlement;
 use App\Jobs\GameSettlement_Sd;
 use App\Repositories\Game\GameRepository;
@@ -98,7 +99,8 @@ class GameService
             return false;
         }
         //判断用户余额是否大于投注金额
-        $user_info = $this->UserRepository->findByIdUser($user_id);
+//        $user_info = $this->UserRepository->findByIdUser($user_id);
+        $user_info = $this->UserRepository->selectByUserId($user_id, ['id', 'is_transaction', 'balance', 'invite_relation', 'rebate_rate', 'one_recommend_id', 'two_recommend_id']);
         if($user_info->is_transaction == 0){
             return false;
         }
@@ -140,14 +142,16 @@ class GameService
             try {
                 // 将一级，二级代理人收益添加到数据库
                 if(!empty($user->one_recommend_id)){
-                    $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
+//                    $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
+                    $one = $this->UserRepository->selectByUserId($user->one_recommend_id, ['one_commission', 'commission']);
                     $oneCondition = ["id" => $user->one_recommend_id, "one_commission" => $one->one_commission + $oneCharge, "commission" => $one->commission + $oneCharge];
                     $this->UserRepository->updateAgentMoney($oneCondition);
                     $oneChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->one_recommend_id, "type" => 1, "money" => $oneCharge, "create_time" => time()];
                     $this->UserRepository->addChargeLogs($oneChargeLog);
                 }
                 if(!empty($user->two_recommend_id)){
-                    $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
+//                    $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
+                    $two = $this->UserRepository->selectByUserId($user->two_recommend_id, ['two_commission', 'commission']);
                     $twoCondition = ["id" => $user->two_recommend_id, "two_commission" => $two->two_commission + $twoCharge, "commission" => $two->commission + $twoCharge];
                     $this->UserRepository->updateAgentMoney($twoCondition);
                     $twoChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->two_recommend_id, "type" => 2, "money" => $twoCharge, "create_time" => time()];
@@ -198,7 +202,8 @@ class GameService
             $cur_rate = $user->rebate_rate;
 
             foreach ($relationArr as $item) {
-                $pUser = $this->UserRepository->findByIdUser($item);
+//                $pUser = $this->UserRepository->findByIdUser($item);
+                $pUser = $this->UserRepository->selectByUserId($item, ['id', 'rebate_rate', 'reg_source_id', 'commission']);
                 if ($pUser->rebate_rate > $cur_rate && $pUser->reg_source_id == 0) {
                     $cha_rate = bcsub($pUser->rebate_rate,$cur_rate, 2);
                     $cha_rate = bcmul($cha_rate, 0.01, 3);
@@ -333,6 +338,38 @@ class GameService
             $data = $this->Ssc_FourService->ssc_se($play_id);
         }
         return $data;
+    }
+
+    public function Open_Game_Betting_SD()
+    {
+        try
+        {
+            $game_play_id = request()->post('game_p_id',0);
+            ##获取这一期信息
+            $game_play = $this->GameRepository->Get_Game_Play_Obj($game_play_id);
+            if(!$game_play)
+            {
+                throw new \Exception('游戏ID错误');
+            }
+            if($game_play->status === 0)
+            {
+                throw new \Exception('游戏尚未开奖');
+            }
+            ##获取尚未派奖投注记录
+            $data = $this->GameRepository->Get_Betting($game_play_id);
+            if(!empty($data))
+            {
+                foreach ($data as $val) {
+                    $this->GameRepository->Set_Betting_Queue($val->id);
+                    GameBettingHandle::dispatch($val->id, $val->game_id)->onQueue('Game_Betting_Settle');
+                }
+            }
+            return true;
+        }
+        catch(\Exception $e)
+        {
+            return $e->getMessage();
+        }
     }
 
 
