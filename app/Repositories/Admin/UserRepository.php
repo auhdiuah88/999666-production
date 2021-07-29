@@ -34,7 +34,7 @@ class UserRepository extends BaseRepository
         if($timeMap)$where["time"] = ['BETWEEN', $timeMap];
         return makeModel($where, $this->Cx_User_Balance_Logs)->with(["admin" => function ($query) {
             $query->select(["id", "nickname"]);
-        }])->offset($offset)->limit($limit)->orderByDesc("time")->select(["*", "type as type_map"])->get()->toArray();
+        }])->offset($offset)->limit($limit)->orderByDesc("time")->orderByDesc("id")->select(["*", "type as type_map"])->get()->toArray();
     }
 
     public function countBalanceLogs($userId, $type, $timeMap)
