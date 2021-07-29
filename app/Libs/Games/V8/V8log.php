@@ -2,7 +2,6 @@
 namespace App\Libs\Games\V8;
 
 use App\Libs\Games\GameStrategy;
-use http\Env\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Libs\Aes;
@@ -101,6 +100,21 @@ class V8log extends GameStrategy
 
 
         $config = config("game.v8");
+
+        //获取钱包
+        $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        //创建转账订单
+        $create_time = time().rand("000","999");
+        $order = [
+            "user_id" => $info->id,
+            "order" => $create_time,
+            "wallet_id" => $wallet->id,
+            "transfer_amount" => $money,
+            "remaining_amount" => $info->balance - $money,
+            "create_time" => time(),
+        ];
+        $order_id = DB::table("order")->insertGetId($order);
+
         //获取当前时间（毫秒级）
         $mtimestamp = sprintf("%.3f", microtime(true)); // 带毫秒的时间戳
         $timestamp = floor($mtimestamp); // 时间戳
@@ -129,7 +143,6 @@ class V8log extends GameStrategy
         Log::channel('kidebug')->info('v8',[$url]);
         //扣除金额并请求三方接口
         try {
-            DB::table("users")->where("id",$user_id)->decrement("balance",$money);
             $res = file_get_contents($url);
             //请求返回日志
             Log::channel('kidebug')->info('v8',[$res]);
@@ -141,6 +154,10 @@ class V8log extends GameStrategy
                     "data" => "",
                 ];
             }
+            //更新用户余额
+            DB::table("users")->where("id",$user_id)->decrement("balance",$money);
+            //更新订单
+            DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
             //查询用户总余额
             $reqmoney = $this->V8QueryScore($user_id);
             if($reqmoney["code"] != "200"){
@@ -177,6 +194,21 @@ class V8log extends GameStrategy
         }
 
         $config = config("game.v8");
+
+        //获取钱包
+        $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        //创建转账订单
+        $create_time = time().rand("000","999");
+        $order = [
+            "user_id" => $info->id,
+            "order" => $create_time,
+            "wallet_id" => $wallet->id,
+            "transfer_amount" => $money,
+            "remaining_amount" => $info->balance + $money,
+            "create_time" => time(),
+        ];
+        $order_id = DB::table("order")->insertGetId($order);
+
         //获取当前时间（毫秒级）
         $mtimestamp = sprintf("%.3f", microtime(true)); // 带毫秒的时间戳
         $timestamp = floor($mtimestamp); // 时间戳
@@ -204,7 +236,6 @@ class V8log extends GameStrategy
         $url = $config["url"]."?agent=".$config["agent"]."&timestamp=".$timestamp.$milliseconds."&param=".$param."&key=".$key;
         Log::channel('kidebug')->info('v8',[$url]);
         try {
-            DB::table("users")->where("id",$user_id)->increment("balance",$money);
             $res = file_get_contents($url);
             //请求返回日志
             Log::channel('kidebug')->info('v8',[$res]);
@@ -216,8 +247,11 @@ class V8log extends GameStrategy
                     "data" => "",
                 ];
             }
-
-            //查询用户总余额
+            //更新用户余额
+            DB::table("users")->where("id",$user_id)->increment("balance",$money);
+            //更新订单
+            DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
+            //更新用户总余额
             $reqmoney = $this->V8QueryScore($user_id);
             if($reqmoney["code"] != "200"){
                 return [
@@ -258,7 +292,6 @@ class V8log extends GameStrategy
         $mtimestamp = sprintf("%.3f", microtime(true)); // 带毫秒的时间戳
         $timestamp = floor($mtimestamp); // 时间戳
         $milliseconds = round(($mtimestamp - $timestamp) * 1000); // 毫秒
-        $datetime = date("YmdHis", $timestamp) . $milliseconds;
 
         //拼接可下分余额请求参数
         $param = [
@@ -298,12 +331,12 @@ class V8log extends GameStrategy
                 "withdrawal_balance" => $res["d"]["freeMoney"],//用户可下分余额
                 "update_time" => time(),//更新时间
             ];
-            $user_wallet = DB::table("users_wallet")->where("user_id",$user_id)->get();
+            $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->get();
             $user_wallet = json_decode(json_encode($user_wallet));
             if(!$user_wallet){
-                DB::table("users_wallet")->where("user_id",$user_id)->insert($user_data);
+                DB::table("users_wallet")->insert($user_data);
             }else{
-                DB::table("users_wallet")->where("user_id",$user_id)->update($user_data);
+                DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->update($user_data);
             }
             return [
                 "code" => 200,

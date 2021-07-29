@@ -188,6 +188,7 @@ class BettingService extends BaseService
             {
                 $this->_msg = $Client->_msg;
                 $this->_code = 415;
+                $this->_data = $Client;
                 return;
             }
             $this->_data = $Client->_data;

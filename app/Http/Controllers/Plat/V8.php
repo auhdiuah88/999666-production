@@ -21,7 +21,7 @@ class V8 extends Controller
         $this->V8log = $V8log;
     }
 
-    //查询余额
+    //游戏平台主动查询余额
     public function Querymoney(Request $request){
         $url = $request->input();
         $config = config("game.v8");
@@ -57,7 +57,7 @@ class V8 extends Controller
         ];
     }
 
-    //上分请求申请
+    //游戏平台主动上分请求申请
     public function V8TopScores(Request $request){
         $url = $request->input();
         $config = config("game.v8");
@@ -120,6 +120,7 @@ class V8 extends Controller
     public function V8UserTopScores(Request $request){
         $money = $request->input("p");//要上分的金额
         $money = json_decode(aesDecrypt($money),true);
+        $money = $money["money"];
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
@@ -139,6 +140,7 @@ class V8 extends Controller
     public function V8UserLowerScores(Request $request){
         $money = $request->input("p");//要下分的金额
         $money = json_decode(aesDecrypt($money),true);
+        $money = $money["money"];
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);

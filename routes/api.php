@@ -17,7 +17,7 @@ Route::get("/test", "TestController@test2");
 Route::get("/testRedis", "TestController@testRedis");
 Route::get("/test2", "TestController@test");
 Route::post("/myDecrypt", "TestController@aesDecrypt");
-//Route::post("/myaesEncrypt", "TestController@aesEncrypt");
+Route::post("/myaesEncrypt", "TestController@aesEncrypt");
 Route::post("/gameRule", "TestController@gameRule");
 Route::post("/ipTest", "TestController@ipTest");
 Route::get("/test3", "TestController@test3");
@@ -39,7 +39,9 @@ Route::get("/V8QueryScore", 'Plat\V8@V8QueryScore');
 Route::get("/PlatformList", 'Api\UserController@PlatformList');
 
 //ICG
-
+Route::get("/ICGUserTopScores", "Plat\ICG@ICGUserTopScores");//上分
+Route::get("/ICGUserLowerScores", "Plat\ICG@ICGUserLowerScores");//下分
+Route::get("/IcgQueryScore", "Plat\ICG@IcgQueryScore");//查询余额
 
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);
