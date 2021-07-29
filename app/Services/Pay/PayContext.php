@@ -11,6 +11,7 @@ use App\Services\Pay\INDIA\FastPay;
 use App\Services\Pay\INDIA\GMPay;
 use App\Services\Pay\INDIA\OceanPay;
 use App\Services\Pay\INDIA\YBPay;
+use App\Services\Pay\INDIA\JPay;
 
 class PayContext
 {
@@ -66,7 +67,8 @@ class PayContext
         OceanPay $oceanPay,
         FastPay $fastPay,
         GMPay $GMPay,
-        YIPay $YIPay
+        YIPay $YIPay,
+        JPay $JPay
     )
     {
         // 每种api地址对应的支付公司
@@ -114,6 +116,7 @@ class PayContext
             'fastpay' => $fastPay,  //印度fastpay
             'gmpay' => $GMPay,  //印度gmpay
             'yipay' => $YIPay,  //巴西易支付
+            'jpay' => $JPay,  //巴西易支付
         ];
     }
     /**
