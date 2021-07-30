@@ -43,6 +43,12 @@ Route::get("/ICGUserTopScores", "Plat\ICG@ICGUserTopScores");//上分
 Route::get("/ICGUserLowerScores", "Plat\ICG@ICGUserLowerScores");//下分
 Route::get("/IcgQueryScore", "Plat\ICG@IcgQueryScore");//查询余额
 
+//wbet
+
+
+//pg
+Route::post("/VerifySession", "Plat\PG@VerifySession");//pg查询令牌
+
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);
 Route::get("/h5Alert", "Api\SystemController@h5Alert")->middleware(['params_decrypt']);

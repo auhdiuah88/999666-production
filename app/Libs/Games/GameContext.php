@@ -12,13 +12,17 @@ class GameContext
     (
         \App\Libs\Games\WDYY\Client $wdyy,
         \App\Libs\Games\V8\V8log $v8,
-        \App\Libs\Games\ICG\IcgLog $icg
+        \App\Libs\Games\ICG\IcgLog $icg,
+        \App\Libs\Games\WBET\WbetLog $wbet,
+        \App\Libs\Games\PG\PgLog $pg
     )
     {
         $this->GameList = [
             'wdyy' => $wdyy,
             "v8" => $v8,
-            "icg" => $icg
+            "icg" => $icg,
+            "wbet" => $wbet,
+            "pg" => $pg
         ];
     }
 

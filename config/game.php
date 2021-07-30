@@ -22,7 +22,9 @@ return [
     //测试
     "pg" => [
         "game_name" => "pg",
-
+        "PgSoftAPIDomain" => "https://api.pg-bo.me/external",//用户相关
+        "operator_token" => "41f5815fe61969ec245e32b07639de7f",
+        "secret_key" => "399c4eeae8536b606659981006b2bd47",
     ],
 
     //ICG
@@ -32,5 +34,15 @@ return [
         "url" => "https://admin-stage.iconic-gaming.com/service/",
         "username" => "ICGx68TBSAPI1688",
         "password" => "123456",
+    ],
+
+    //WBET
+    //测试
+    "wbet" => [
+        "game_name" => "wbet",
+        "url" => "https://wbapi.uat0011.com/",
+        "providercode" => "WB",
+        "Key" => "7EDB68B0112940F786A2015A5693E935",
+        "operator_id" => "gstsseAB",
     ],
 ];

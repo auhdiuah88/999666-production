@@ -36,7 +36,7 @@ class V8log extends GameStrategy
         $param = [
             "s" => "0",//固定值，不需修改
             "account" => $info->phone,//用户名
-            "money" => $info->balance,//金额
+            "money" => 0,//金额
             "orderid" => $config["agent"].$datetime.$info->phone,//拼接agent,当前时间，用户名
             "ip" => $info->ip,
             "lineCode" => env("LINECODE"),
