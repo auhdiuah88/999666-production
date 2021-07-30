@@ -490,56 +490,62 @@ class GameRepository
             $this->Cx_Date_Prize->insert(array("date" => $date));
             $date_data=$this->Cx_Date_Prize->where("date",$date)->first();
         }
+        DB::beginTransaction();
+        try{
+            if ($type == 1) {//赢
+                $user_obj = $this->Cx_User->where('id', $betting->user_id)->lockForUpdate()->first();
+                $arr['settlement_time'] = $time;
+                $arr['status'] = 1;
+                $arr['type'] = 1;
+                $arr['win_money'] = ($odds * $betting->money);
+                $arr['odds'] = $odds;
+                $this->Cx_Game_Betting->where("id", $betting->id)->update($arr);
+                if($user_obj){
+                    $zx_money = $user_obj->balance + $arr['win_money'];
+                    $this->Cx_User->where('id', $betting->user_id)->update(['balance' => $zx_money]);
+                    //增加资金记录
+                    $this->Cx_User_Balance_Logs->insert(array("user_id" => $betting->user_id, "type" => 6, "dq_balance" => $user_obj->balance, "wc_balance" => $zx_money, "time" => $time, "msg" => "中奖增加金额" . $arr['win_money'], "money" => $arr['win_money']));
+                    if($user_obj->reg_source_id==0){
+                        $date_arr =array();
+                        $date_arr['pt_s_money']=$date_data->pt_s_money+ $arr['win_money'];
+                        $date_arr['b_money']=$date_data->b_money+$betting->money;
+                        //$date_arr['pt_money']=$date_arr['b_money']-$date_arr['pt_s_money'];
+                        $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+                    }else if($user_obj->reg_source_id==1){
+                        $date_arr =array();
+                        $date_arr['c_pt_s_money']=$date_data->c_pt_s_money+ $arr['win_money'];
+                        $date_arr['c_b_money']=$date_data->c_b_money+$betting->money;
+                        //$date_arr['c_pt_money']=$date_arr['c_b_money']-$date_arr['c_pt_s_money'];
+                        $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+                    }
+                }
 
-        if ($type == 1) {//赢
-            $arr['settlement_time'] = $time;
-            $arr['status'] = 1;
-            $arr['type'] = 1;
-            $arr['win_money'] = ($odds * $betting->money);
-            $arr['odds'] = $odds;
-            $this->Cx_Game_Betting->where("id", $betting->id)->update($arr);
-            $user_obj = $this->Cx_User->where('id', $betting->user_id)->first();
-            if($user_obj){
-                $zx_money = $user_obj->balance + $arr['win_money'];
-                $this->Cx_User->where('id', $betting->user_id)->update(['balance' => $zx_money]);
-                //增加资金记录
-                $this->Cx_User_Balance_Logs->insert(array("user_id" => $betting->user_id, "type" => 6, "dq_balance" => $user_obj->balance, "wc_balance" => $zx_money, "time" => $time, "msg" => "中奖增加金额" . $arr['win_money'], "money" => $arr['win_money']));
-                if($user_obj->reg_source_id==0){
-                    $date_arr =array();
-                    $date_arr['pt_s_money']=$date_data->pt_s_money+ $arr['win_money'];
-                    $date_arr['b_money']=$date_data->b_money+$betting->money;
-                    //$date_arr['pt_money']=$date_arr['b_money']-$date_arr['pt_s_money'];
-                    $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
-                }else if($user_obj->reg_source_id==1){
-                    $date_arr =array();
-                    $date_arr['c_pt_s_money']=$date_data->c_pt_s_money+ $arr['win_money'];
-                    $date_arr['c_b_money']=$date_data->c_b_money+$betting->money;
-                    //$date_arr['c_pt_money']=$date_arr['c_b_money']-$date_arr['c_pt_s_money'];
-                    $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+            } else if ($type == 2) {//输
+                $arr['settlement_time'] = $time;
+                $arr['status'] = 2;
+                $arr['type'] = 1;
+                $arr['odds'] = $odds;
+                $arr['win_money'] = 0;
+                $this->Cx_Game_Betting->where("id", $betting->id)->update($arr);
+                $user_obj = $this->Cx_User->where('id', $betting->user_id)->first();
+                if($user_obj){
+                    if($user_obj->reg_source_id==0){
+                        $date_arr =array();
+                        $date_arr['b_money']=$date_data->b_money+$betting->money;
+                        $date_arr['pt_money']=$date_data->pt_money+$betting->money;
+                        $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+                    }else if($user_obj->reg_source_id==1){
+                        $date_arr =array();
+                        $date_arr['c_b_money']=$date_data->c_b_money+$betting->money;
+                        $date_arr['c_pt_money']=$date_data->c_pt_money+$betting->money;
+                        $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
+                    }
                 }
             }
-
-        } else if ($type == 2) {//输
-            $arr['settlement_time'] = $time;
-            $arr['status'] = 2;
-            $arr['type'] = 1;
-            $arr['odds'] = $odds;
-            $arr['win_money'] = 0;
-            $this->Cx_Game_Betting->where("id", $betting->id)->update($arr);
-            $user_obj = $this->Cx_User->where('id', $betting->user_id)->first();
-            if($user_obj){
-                if($user_obj->reg_source_id==0){
-                    $date_arr =array();
-                    $date_arr['b_money']=$date_data->b_money+$betting->money;
-                    $date_arr['pt_money']=$date_data->pt_money+$betting->money;
-                    $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
-                }else if($user_obj->reg_source_id==1){
-                    $date_arr =array();
-                    $date_arr['c_b_money']=$date_data->c_b_money+$betting->money;
-                    $date_arr['c_pt_money']=$date_data->c_pt_money+$betting->money;
-                    $this->Cx_Date_Prize->where("id", $date_data->id)->update($date_arr);
-                }
-            }
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollBack();
+            return false;
         }
         return true;
     }
