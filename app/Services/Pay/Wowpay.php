@@ -74,7 +74,7 @@ class Wowpay extends PayStrategy
             'notify_url' => $this->recharge_callback_url,
             'page_url' => env('SHARE_URL',''),
             'mch_order_no' => $order_no,
-            'pay_type' => '122',
+            'pay_type' => env('WOW_PAY_TYPE','122'),
             'trade_amount' => (string)intval($money),
             'order_date' => date('Y-m-d H:i:s'),
             'goods_name' => 'customer recharge',
