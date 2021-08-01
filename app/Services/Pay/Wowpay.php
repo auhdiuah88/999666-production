@@ -81,10 +81,11 @@ class Wowpay extends PayStrategy
         ];
         $params['sign'] = $this->generateSign($params,1);
         $params['sign_type'] = 'MD5';
-
+        $params_string = json_encode($params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_rechargeParams', [$params]);
-
-        $res = dopost(self::$url, http_build_query($params), []);
+        $header[] = "Content-Type: application/json";
+        $header[] = "Content-Length: " . strlen($params_string);
+        $res = dopost(self::$url, $params_string, $header);
 //        $res = $this->requestService->postFormData(self::$url , $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_rechargeOrder_return', [$res]);
         $res = json_decode($res,true);
