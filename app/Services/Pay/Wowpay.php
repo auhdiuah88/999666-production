@@ -58,7 +58,7 @@ class Wowpay extends PayStrategy
                 $string[] = $key . '=' . $value;
         }
         $sign = (implode('&', $string)) . '&key=' .  $secretKey;
-//        \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_sign', [$sign]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_sign', [$sign]);
         return strtolower(md5($sign));
     }
 
@@ -74,18 +74,24 @@ class Wowpay extends PayStrategy
             'notify_url' => $this->recharge_callback_url,
             'page_url' => env('SHARE_URL',''),
             'mch_order_no' => $order_no,
-            'pay_type' => '122',
+            'pay_type' => env('WOW_PAY_TYPE','122'),
             'trade_amount' => (string)intval($money),
             'order_date' => date('Y-m-d H:i:s'),
             'goods_name' => 'customer recharge',
         ];
         $params['sign'] = $this->generateSign($params,1);
         $params['sign_type'] = 'MD5';
-
         \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_rechargeParams', [$params]);
-
-        $res = $this->requestService->postFormData(self::$url , $params);
+        $header[] = "Content-Type: application/x-www-form-urlencoded";
+        $res = dopost(self::$url, http_build_query($params), $header);
+//        $res = $this->requestService->postFormData(self::$url , $params);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('WOW_rechargeOrder_return', [$res]);
+        $res = json_decode($res,true);
+        if(!$res)
+        {
+            $this->_msg = 'request recharge failed.';
+            return false;
+        }
         if ($res['respCode'] != 'SUCCESS') {
             $this->_msg = $res['tradeMsg'];
             return false;
