@@ -13,9 +13,24 @@ class V8log extends GameStrategy
 
     //给V8平台发送登录信息
     public function launch($productId){
+        $config = config("game.v8");
         //获取用户数据
         $user_id = getUserIdFromToken(getToken());
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
+        //判断用户是否拥有钱包
+        $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        $user_data = [
+            "user_id" => $user_id,//用户ID
+            "wallet_id" => $wallet_name->id,//游戏平台id
+            "total_balance" => 0,//用户总余额
+            "withdrawal_balance" => 0,//用户可下分余额
+            "update_time" => time(),//更新时间
+        ];
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->get();
+        $user_wallet = json_decode(json_encode($user_wallet));
+        if(!$user_wallet){
+            DB::table("users_wallet")->insert($user_data);
+        }
         if(empty($info)){
             return [
                 "code" => 2,
@@ -23,9 +38,6 @@ class V8log extends GameStrategy
                 "data" => "",
             ];
         }
-
-        $config = config("game.v8");
-
         //获取当前时间（毫秒级）
         $mtimestamp = sprintf("%.3f", microtime(true)); // 带毫秒的时间戳
         $timestamp = floor($mtimestamp); // 时间戳
@@ -69,7 +81,10 @@ class V8log extends GameStrategy
                     "data" => "",
                 ];
             }
-            return $this->_data = $res["d"]["url"];
+            return $this->_data = [
+                "url" => $res["d"]["url"],
+                "wallet" => $user_wallet["withdrawal_balance"],
+            ];
         }catch (\Exception $e){
             return [
                 "code" => 3,

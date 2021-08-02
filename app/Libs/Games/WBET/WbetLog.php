@@ -78,6 +78,11 @@ class WbetLog extends GameStrategy
         return $this->_data = $res["url"];
     }
 
+    //用户上分
+    public function WBETUserTopScores($user_id,$money){
+
+    }
+
     //废弃，勿删
     public function userInfo(): bool
     {

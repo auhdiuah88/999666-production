@@ -44,7 +44,7 @@ Route::get("/ICGUserLowerScores", "Plat\ICG@ICGUserLowerScores");//下分
 Route::get("/IcgQueryScore", "Plat\ICG@IcgQueryScore");//查询余额
 
 //wbet
-
+Route::get("/WBETUserTopScores", "Plat\WBET@WBETUserTopScores");//上分
 
 //pg
 Route::post("/VerifySession", "Plat\PG@VerifySession");//pg查询令牌
