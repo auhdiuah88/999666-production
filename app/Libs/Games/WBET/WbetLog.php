@@ -40,7 +40,7 @@ class WbetLog extends GameStrategy
         $url = $config["url"]."api/createmember";
         //拼接验证码
         $ukey = mt_rand(00000000,99999999);
-        $signature = md5($config["operator_id"].$ukey.phone.$ukey.$config["Key"]);
+        $signature = md5($config["operator_id"].$ukey.$phone.$ukey.$config["Key"]);
         $params = [
             "signature" => $signature,
             "account_id" => $phone,
@@ -61,7 +61,7 @@ class WbetLog extends GameStrategy
         $url = $config["url"]."api/launchsports";
         //拼接验证码
         $ukey = mt_rand(00000000,99999999);
-        $signature = md5($config["operator_id"].$ukey.phone.$ukey.$config["Key"]);
+        $signature = md5($config["operator_id"].$ukey.$phone.$ukey.$config["Key"]);
         $params = [
             "signature" => $signature,
             "account_id" => $phone,
