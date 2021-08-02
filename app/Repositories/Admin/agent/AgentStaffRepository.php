@@ -7,22 +7,25 @@ namespace App\Repositories\Admin\agent;
 use App\Models\Cx_Game_Betting;
 use App\Models\Cx_User;
 use App\Models\Cx_User_Balance_Logs;
+use App\Models\Cx_Withdrawal_Record;
 
 class AgentStaffRepository
 {
 
-    protected $Cx_User, $Cx_Game_Betting, $Cx_User_Balance_Logs;
+    protected $Cx_User, $Cx_Game_Betting, $Cx_User_Balance_Logs, $Cx_Withdrawal_Record;
 
     public function __construct
     (
         Cx_User $cx_User,
         Cx_Game_Betting  $cx_Game_Betting,
-        Cx_User_Balance_Logs $cx_User_Balance_Logs
+        Cx_User_Balance_Logs $cx_User_Balance_Logs,
+        Cx_Withdrawal_Record $cx_Withdrawal_Record
     )
     {
         $this->Cx_User = $cx_User;
         $this->Cx_Game_Betting = $cx_Game_Betting;
         $this->Cx_User_Balance_Logs = $cx_User_Balance_Logs;
+        $this->Cx_Withdrawal_Record = $cx_Withdrawal_Record;
     }
 
     /**
@@ -53,6 +56,7 @@ class AgentStaffRepository
             $list[$key]['recharge'] = '-1';
             $list[$key]['betting'] = '-1';
             $list[$key]['win_money'] = '-1';
+            $list[$key]['withdraw'] = '-1';
         }
         $total = $model->count();
         return compact('list','total');
@@ -80,6 +84,9 @@ class AgentStaffRepository
                 break;
             case 6:  //今日输赢
                 $data = $this->filterWinMoney($user_ids, $time_map);
+                break;
+            case 7: //今日提现
+                $data = $this->filterWithdraw($user_ids, $time_map);
                 break;
             default:
                 $data = 0;
@@ -127,6 +134,11 @@ class AgentStaffRepository
     protected function filterRecharge($user_ids, $time_map)
     {
         return $this->Cx_User_Balance_Logs->whereIn("user_id", $user_ids)->whereBetween('time', $time_map)->where("type", "=", 2)->sum('money');
+    }
+
+    protected function filterWithdraw($user_ids, $time_map)
+    {
+        return $this->Cx_Withdrawal_Record->whereIn("user_id", $user_ids)->whereBetween('create_time', $time_map)->where("pay_status", "=", 1)->sum('money');
     }
 
     protected function filterWinMoney($user_ids, $time_map)
