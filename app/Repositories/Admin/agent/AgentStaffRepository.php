@@ -56,6 +56,7 @@ class AgentStaffRepository
             $list[$key]['recharge'] = '-1';
             $list[$key]['betting'] = '-1';
             $list[$key]['win_money'] = '-1';
+            $list[$key]['withdraw'] = '-1';
         }
         $total = $model->count();
         return compact('list','total');
