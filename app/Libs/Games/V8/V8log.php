@@ -27,7 +27,6 @@ class V8log extends GameStrategy
             "update_time" => time(),//更新时间
         ];
         $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->get();
-        $user_wallet = json_decode(json_encode($user_wallet,true),true);
         if(!$user_wallet){
             DB::table("users_wallet")->insert($user_data);
         }
@@ -83,7 +82,7 @@ class V8log extends GameStrategy
             }
             return $this->_data = [
                 "url" => $res["d"]["url"],
-                "wallet" => $user_wallet["withdrawal_balance"]
+                "wallet" => $user_wallet->withdrawal_balance
             ];
         }catch (\Exception $e){
             return [
