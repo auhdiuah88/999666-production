@@ -17,6 +17,13 @@ class V8log extends GameStrategy
         //获取用户数据
         $user_id = getUserIdFromToken(getToken());
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
+        if(empty($info)){
+            return [
+                "code" => 2,
+                "msg" => "用户不存在",
+                "data" => "",
+            ];
+        }
         //判断用户是否拥有钱包
         $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         $user_data = [
@@ -26,16 +33,10 @@ class V8log extends GameStrategy
             "withdrawal_balance" => 0,//用户可下分余额
             "update_time" => time(),//更新时间
         ];
-        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->get();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
         if(!$user_wallet){
             DB::table("users_wallet")->insert($user_data);
-        }
-        if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+            $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
         }
         //获取当前时间（毫秒级）
         $mtimestamp = sprintf("%.3f", microtime(true)); // 带毫秒的时间戳
@@ -82,6 +83,7 @@ class V8log extends GameStrategy
             }
             return $this->_data = [
                 "url" => $res["d"]["url"],
+                "wallet" => $user_wallet->withdrawal_balance
             ];
         }catch (\Exception $e){
             return [
@@ -345,7 +347,6 @@ class V8log extends GameStrategy
                 "update_time" => time(),//更新时间
             ];
             $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->get();
-            $user_wallet = json_decode(json_encode($user_wallet));
             if(!$user_wallet){
                 DB::table("users_wallet")->insert($user_data);
             }else{
