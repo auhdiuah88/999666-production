@@ -7,6 +7,7 @@ namespace App\Services\Game;
 use App\Jobs\GameBettingHandle;
 use App\Jobs\GameSettlement;
 use App\Jobs\GameSettlement_Sd;
+use App\Repositories\Api\SettingRepository;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Api\UserRepository;
 use App\Services\Game\Ssc_TwoService;
@@ -27,15 +28,19 @@ class GameService
     protected $Ssc_FourService;
     protected $Ssc_TwoService;
     protected $Ssc_ThreeService;
+    protected $SettingRepository;
 
 
-    public function __construct(
+    public function __construct
+    (
         SscService $SscService,
         GameRepository $GameRepository,
         UserRepository $UserRepository,
         Ssc_FourService $Ssc_FourService,
         Ssc_TwoService $Ssc_TwoService,
-        Ssc_ThreeService $Ssc_ThreeService)
+        Ssc_ThreeService $Ssc_ThreeService,
+        SettingRepository $settingRepository
+    )
     {
         $this->GameRepository = $GameRepository;
         $this->UserRepository = $UserRepository;
@@ -43,6 +48,7 @@ class GameService
         $this->Ssc_FourService = $Ssc_FourService;
         $this->Ssc_TwoService = $Ssc_TwoService;
         $this->Ssc_ThreeService = $Ssc_ThreeService;
+        $this->SettingRepository = $settingRepository;
 
     }
 
@@ -108,17 +114,18 @@ class GameService
         if ($data["money"] > $user_info->balance) {
             return false;
         }
+        $betting_fee = $this->SettingRepository->getBettingSetting();
         if(env('PRIZE_TYPE',1) == 2){
             $prize_info = $this->Calc_Charge($user_info, $data["money"]);
         }else{
             $prize_info = [
-                'serviceCharge' => $data["money"] * 0.03,
+                'serviceCharge' => $data["money"] * $betting_fee,
                 'prize_arr' => []
             ];
         }
         //进行投注
         if ($balance=$this->GameRepository->Betting($user_info, $data, $prize_info)) {
-            $this->CalculateRevenue($user_info, $data["money"], $prize_info['prize_arr']);
+            $this->CalculateRevenue($user_info, $data["money"], $prize_info['prize_arr'], $betting_fee);
             return $balance;
         }
     }
@@ -128,20 +135,21 @@ class GameService
      * @param $user
      * @param $money
      * @param $prize_arr
+     * @param $betting_fee
      */
-    public function CalculateRevenue($user, $money, $prize_arr)
+    public function CalculateRevenue($user, $money, $prize_arr, $betting_fee=0.03)
     {
         $PRIZE_TYPE = env('PRIZE_TYPE',1);
         if($PRIZE_TYPE == 1){  //老代理模式
             // 计算平台收益，一级代理人收益，二级代理人收益
-            $serviceCharge = $money * 0.03;
+            $serviceCharge = $money * $betting_fee;
             $oneCharge = $serviceCharge * 0.3;
             $twoCharge = $serviceCharge * 0.2;
             $platformCharge = $serviceCharge - $oneCharge - $twoCharge;
             DB::beginTransaction();
             try {
                 // 将一级，二级代理人收益添加到数据库
-                if(!empty($user->one_recommend_id)){
+                if(!empty($user->one_recommend_id) && $oneCharge > 0){
 //                    $one = $this->UserRepository->findByIdUser($user->one_recommend_id);
                     $one = $this->UserRepository->selectByUserId($user->one_recommend_id, ['one_commission', 'commission']);
                     $oneCondition = ["id" => $user->one_recommend_id, "one_commission" => $one->one_commission + $oneCharge, "commission" => $one->commission + $oneCharge];
@@ -149,7 +157,7 @@ class GameService
                     $oneChargeLog = ["betting_user_id" => $user->id, "charge_user_id" => $user->one_recommend_id, "type" => 1, "money" => $oneCharge, "create_time" => time()];
                     $this->UserRepository->addChargeLogs($oneChargeLog);
                 }
-                if(!empty($user->two_recommend_id)){
+                if(!empty($user->two_recommend_id) && $twoCharge > 0){
 //                    $two = $this->UserRepository->findByIdUser($user->two_recommend_id);
                     $two = $this->UserRepository->selectByUserId($user->two_recommend_id, ['two_commission', 'commission']);
                     $twoCondition = ["id" => $user->two_recommend_id, "two_commission" => $two->two_commission + $twoCharge, "commission" => $two->commission + $twoCharge];

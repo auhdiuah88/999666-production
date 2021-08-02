@@ -82,6 +82,16 @@ class SettingRepository
     }
 
     /**
+     * 获取投注手续费
+     * @return int
+     */
+    public function getBettingSetting()
+    {
+        $value = $this->getSettingValueByKey(SettingDic::key('BETTING_SETTING'));
+        return $value?$value['service_charge']:0.03;
+    }
+
+    /**
      * 获取setting_value
      * @param $key
      * @param bool $from_cache

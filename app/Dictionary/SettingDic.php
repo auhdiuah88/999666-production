@@ -104,6 +104,10 @@ class SettingDic
             'title' => 'logo',
             'key' => 'LOGO'
         ],
+        'BETTING_SETTING' => [
+            'title' => 'betting setting',
+            'key' => 'BETTING_SETTING'
+        ],
     ];
 
     public static function key($key): string

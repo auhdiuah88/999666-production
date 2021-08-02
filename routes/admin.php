@@ -308,6 +308,8 @@ Route::group(['middleware' => ['token', "auth", 'admin_handle', "params_decrypt"
             Route::get("/withdrawService","SettingController@getWithdrawServiceCharge");
             Route::post("/indexAd","SettingController@indexAdSave");
             Route::get("/indexAd","SettingController@getIndexAd");
+            Route::post("/bettingSetting","SettingController@bettingSettingSave");
+            Route::get("/bettingSetting","SettingController@getBettingSetting");
 
             Route::post("/activity/inviteFriends","ActivityController@inviteFriendsSave");
             Route::get("/activity/inviteFriends","ActivityController@inviteFriends");

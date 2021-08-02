@@ -688,4 +688,42 @@ class SettingController extends Controller
         }
     }
 
+    public function getBettingSetting()
+    {
+        try{
+            $this->SettingService->getBettingSetting();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
+    public function bettingSettingSave()
+    {
+        try{
+            $validator = Validator::make(request()->input(), [
+                'service_charge' => ['required', 'gte:0', 'lte:0.1'],
+            ]);
+            if($validator->fails())
+                return $this->AppReturn(
+                    403,
+                    $validator->errors()->first()
+                );
+            $this->SettingService->bettingSettingSave();
+            return $this->AppReturn(
+                $this->SettingService->_code,
+                $this->SettingService->_msg,
+                $this->SettingService->_data
+            );
+        }catch(\Exception $e){
+            $this->logError('adminerr',$e);
+            return $this->AppReturn(402,$e->getMessage());
+        }
+    }
+
 }

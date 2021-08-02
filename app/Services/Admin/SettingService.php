@@ -616,6 +616,30 @@ class SettingService extends BaseService
         return true;
     }
 
+    public function getBettingSetting()
+    {
+        $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('BETTING_SETTING'));
+        if (!$data){
+            $data = [
+                'service_recharge' => 0.03,
+            ];
+        }
+        $this->_data = $data;
+    }
+
+    public function bettingSettingSave(): bool
+    {
+        $service_charge = $this->floatInput('service_charge');
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('BETTING_SETTING'), compact('service_charge'));
+        if($res === false){
+            $this->_code = 403;
+            $this->_msg = '修改失败';
+            return false;
+        }
+        $this->_msg = '修改成功';
+        return true;
+    }
+
     public function getIndexAd()
     {
         $data = $this->SettingRepository->getSettingValueByKey(SettingDic::key('INDEX_AD'));
