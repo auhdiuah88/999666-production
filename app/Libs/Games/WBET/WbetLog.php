@@ -24,15 +24,26 @@ class WbetLog extends GameStrategy
                 "data" => "",
             ];
         }
+        //创建用户,
+        $this->CreateNewPlayer($info->phone);
+
+        //获取游戏链接
+        $game_link = $this->GameLink($info->phone);
+
+        return $this->_data = $game_link;
+    }
+
+    //创建用户
+    public function CreateNewPlayer($phone){
         //创建用户
         $config = config("game.wbet");
         $url = $config["url"]."api/createmember";
         //拼接验证码
         $ukey = mt_rand(00000000,99999999);
-        $signature = md5($config["operator_id"].$ukey.$info->phone.$ukey.$config["Key"]);
+        $signature = md5($config["operator_id"].$ukey.phone.$ukey.$config["Key"]);
         $params = [
             "signature" => $signature,
-            "account_id" => $info->phone,
+            "account_id" => $phone,
             "operator_id" => $config["operator_id"],
             "ukey" => $ukey,
         ];
@@ -42,6 +53,29 @@ class WbetLog extends GameStrategy
         Log::channel('kidebug')->info('wbet-userlog-return',[$res]);
         $res = json_decode($res,true);
         return $this->_data = $res;
+    }
+
+    //获取游戏链接
+    public function GameLink($phone){
+        $config = config("game.wbet");
+        $url = $config["url"]."api/launchsports";
+        //拼接验证码
+        $ukey = mt_rand(00000000,99999999);
+        $signature = md5($config["operator_id"].$ukey.phone.$ukey.$config["Key"]);
+        $params = [
+            "signature" => $signature,
+            "account_id" => $phone,
+            "operator_id" => $config["operator_id"],
+            "ukey" => $ukey,
+            "lang" => "vi",
+            "type" => "2",
+        ];
+        $params = json_encode($params);
+        Log::channel('kidebug')->info('wbet-userlog-return',[$params]);
+        $res = $this->curl_post($url, $params);
+        Log::channel('kidebug')->info('wbet-userlog-return',[$res]);
+        $res = json_decode($res,true);
+        return $this->_data = $res["url"];
     }
 
     //废弃，勿删
