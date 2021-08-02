@@ -36,8 +36,9 @@ class WbetLog extends GameStrategy
             "operator_id" => $config["operator_id"],
             "ukey" => $ukey,
         ];
+        $header[] = "Content-Type: application/json";
         Log::channel('kidebug')->info('wbet-userlog-return',[$params]);
-        $res = $this->curl_post($url, $params);
+        $res = $this->curl_post($url, $params,$header);
         Log::channel('kidebug')->info('wbet-userlog-return',[$res]);
         $res = json_decode($res,true);
         return $this->_data = $res;
