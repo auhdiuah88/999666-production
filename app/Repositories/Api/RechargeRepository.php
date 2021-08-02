@@ -84,6 +84,14 @@ class RechargeRepository
     }
 
     /**
+     * 根据条件查询充值信息
+     */
+    public function getRechargeInfoByConditionLock(array $where)
+    {
+        return $this->cx_User_Recharge_Log->where($where)->lockForUpdate()->first();
+    }
+
+    /**
      * 充值模拟确认
      * @param $order_no
      * @throws \HttpResponseException

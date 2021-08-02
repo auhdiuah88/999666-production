@@ -330,6 +330,16 @@ class UserRepository
     }
 
     /**
+     * 根据用户ID查询用户详情 | 使用悲观锁
+     * @param $user_id
+     * @return mixed
+     */
+    public function findUserByIdLock($user_id)
+    {
+        return $this->Cx_User->where('id', '=', $user_id)->lockForUpdate()->first();
+    }
+
+    /**
      * 根据用户ID查询用户详情限制字段
      * @param $user_id
      * @return mixed

@@ -174,16 +174,6 @@ class RechargeService extends PayService
         }
 
         // 下面的方法相同
-        $rechargeLog = $this->rechargeRepository->getRechargeInfoByCondition($where);
-        if (!$rechargeLog) {
-            $this->_msg = '找不到此订单';
-            return false;
-        }
-
-        if ($rechargeLog->status == 2) {
-            $this->_msg = '已成功充值,无需再回调';
-            return false;
-        }
 
         ##判断充值金额
 //        if($rechargeLog->money > $money){
@@ -193,6 +183,19 @@ class RechargeService extends PayService
 
         DB::beginTransaction();
         try {
+
+            // 下面的方法相同 -- 将这个充值记录锁住
+            $rechargeLog = $this->rechargeRepository->getRechargeInfoByConditionLock($where);
+            if (!$rechargeLog) {
+                $this->_msg = '找不到此订单';
+                return false;
+            }
+
+            if ($rechargeLog->status == 2) {
+                $this->_msg = '已成功充值,无需再回调';
+                return false;
+            }
+
             $user = $this->userRepository->findByIdUser($rechargeLog->user_id);
 
             // 是否第一次充值
