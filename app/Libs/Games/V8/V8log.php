@@ -81,7 +81,10 @@ class V8log extends GameStrategy
                     "data" => "",
                 ];
             }
-            return $this->_data = $res["d"]["url"];
+            return $this->_data = [
+                "url" => $res["d"]["url"],
+                "wallet" => $user_wallet["withdrawal_balance"]
+            ];
         }catch (\Exception $e){
             return [
                 "code" => 3,
