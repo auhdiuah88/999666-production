@@ -188,4 +188,14 @@ class SystemController extends Controller
         );
     }
 
+    public function bettingFee()
+    {
+        $this->SystemService->bettingFee();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
 }

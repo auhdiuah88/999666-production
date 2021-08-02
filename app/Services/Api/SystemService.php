@@ -202,4 +202,13 @@ class SystemService extends Service
         $this->_data = $data;
     }
 
+    public function bettingFee()
+    {
+        $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key('BETTING_SETTING'));
+        if (!$data){
+            $data = ['service_charge' => 0.03];
+        }
+        $this->_data = $data;
+    }
+
 }
