@@ -22,7 +22,21 @@ class IcgLog extends GameStrategy
                 "data" => "",
             ];
         }
-//        $config = config("game.icg");
+        $config = config("game.icg");
+        //判断用户是否拥有钱包
+        $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        $user_data = [
+            "user_id" => $user_id,//用户ID
+            "wallet_id" => $wallet_name->id,//游戏平台id
+            "total_balance" => 0,//用户总余额
+            "withdrawal_balance" => 0,//用户可下分余额
+            "update_time" => time(),//更新时间
+        ];
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if(!$user_wallet){
+            DB::table("users_wallet")->insert($user_data);
+            $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        }
         //判断缓存中是否存在token
         if (cache('icgtoken')) {
             $token = cache("icgtoken");
@@ -47,7 +61,10 @@ class IcgLog extends GameStrategy
         //获取游戏链接
         $game_link = $this->GameLink($info->phone,$token);
 
-        return $this->_data = $game_link;
+        return $this->_data = [
+            "url" => $game_link,
+            "wallet" => $user_wallet->withdrawal_balance
+        ];
     }
 
     //获取秘钥
@@ -142,6 +159,7 @@ class IcgLog extends GameStrategy
             "transfer_amount" => $money,
             "remaining_amount" => $user->balance - $money,
             "create_time" => time(),
+            "remarks" => "icg上分钱包"
         ];
 
         //判断缓存中是否存在token
@@ -219,6 +237,7 @@ class IcgLog extends GameStrategy
             "transfer_amount" => $money,
             "remaining_amount" => $user->balance + $money,
             "create_time" => time(),
+            "remarks" => "icg下分钱包"
         ];
         $order_id = DB::table("order")->insertGetId($order);
         //判断缓存中是否存在token
@@ -261,7 +280,6 @@ class IcgLog extends GameStrategy
                 "data" => ""
             ];
         }
-        return $order;
     }
 
     //查询用户余额
@@ -297,7 +315,6 @@ class IcgLog extends GameStrategy
                 ];
                 //更新用户钱包
                 $wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_id->id,"user_id" => $user_id])->select()->first();
-                $wallet = json_decode(json_encode($wallet));
                 if(!$wallet){
                     DB::table("users_wallet")->insert($users_wallet);
                 }else{

@@ -643,7 +643,7 @@ class TestController extends Controller
 
     public function aesEncrypt(){
         $string = request()->input('p');
-        print_r(aesEncrypt(json_encode($string)));
+        print_r(aesEncrypt($string));
     }
     public function test3(){
         $data = Cache::rememberForever('test',function(){

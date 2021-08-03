@@ -127,6 +127,7 @@ class V8log extends GameStrategy
             "transfer_amount" => $money,
             "remaining_amount" => $info->balance - $money,
             "create_time" => time(),
+            "remarks" => "v8上分钱包"
         ];
         $order_id = DB::table("order")->insertGetId($order);
 
@@ -221,6 +222,7 @@ class V8log extends GameStrategy
             "transfer_amount" => $money,
             "remaining_amount" => $info->balance + $money,
             "create_time" => time(),
+            "remarks" => "v8下分钱包"
         ];
         $order_id = DB::table("order")->insertGetId($order);
 

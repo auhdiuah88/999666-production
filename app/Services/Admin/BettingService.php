@@ -5,8 +5,6 @@ namespace App\Services\Admin;
 
 
 use App\Libs\Games\GameContext;
-use App\Libs\Games\WDYY\Client;
-use App\Libs\Games\V8\V8log;
 use App\Repositories\Admin\BettingRepository;
 use App\Repositories\Admin\UserRepository;
 use App\Services\BaseService;
@@ -177,17 +175,7 @@ class BettingService extends BaseService
                 throw new \Exception('The game has been taken off the shelves ..');
             }
             ##
-            if($game["link"] == "v8"){
-                $Client = $this->GameContext->getStrategy('v8');
-            }else if($game["link"] == "wdyy"){
-                $Client = $this->GameContext->getStrategy('wdyy');
-            }else if($game["link"] == "icg"){
-                $Client = $this->GameContext->getStrategy('icg');
-            }else if($game["link"] == "wbet"){
-                $Client = $this->GameContext->getStrategy('wbet');
-            }else if($game["link"] == "pg"){
-                $Client = $this->GameContext->getStrategy('pg');
-            }
+            $Client = $this->GameContext->getStrategy($game["link"]);
             if(!$Client->launch($game->other))
             {
                 $this->_msg = $Client->_msg;

@@ -45,6 +45,10 @@ Route::get("/IcgQueryScore", "Plat\ICG@IcgQueryScore");//查询余额
 
 //wbet
 Route::get("/WBETUserTopScores", "Plat\WBET@WBETUserTopScores");//上分
+Route::get("/WBETUserLowerScores", "Plat\WBET@WBETUserLowerScores");//下分
+Route::post("/get_balance", "Plat\WBET@get_balance");//获取用户余额
+Route::post("/bet", "Plat\WBET@bet");//玩家下注
+Route::post("/refund", "Plat\WBET@refund");//退款
 
 //pg
 Route::post("/VerifySession", "Plat\PG@VerifySession");//pg查询令牌
