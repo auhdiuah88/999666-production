@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class WbetGetResult extends Command
 {
@@ -51,8 +52,28 @@ class WbetGetResult extends Command
         $params = json_encode($params);
         $res = $this->curl_post($url, $params);
         $res = json_decode($res,true);
-        print_r($res);
-        exit();
+        if($res["status"] != "1"){
+            echo "接口错误，联系接口提供方";
+            exit();
+        }
+        if(empty($res["value"])){
+            echo "没有新订单";
+            exit();
+        }
+        //获取钱包
+        $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        try {
+            foreach ($res as $k => $v){
+                //用户派彩金额
+                $money = $res[$k]["bet_amount"]+$res[$k]["winlose"];
+                //更新用户钱包
+                DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"phone" => $res[$k]["member_id"]])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
+            }
+            exit();
+        }catch (\Exception $e){
+            echo $e->getMessage();
+            exit();
+        }
     }
 
     //post请求
