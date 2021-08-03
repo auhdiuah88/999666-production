@@ -198,4 +198,14 @@ class SystemController extends Controller
         );
     }
 
+    public function bettingRule()
+    {
+        $this->SystemService->bettingRule();
+        return $this->AppReturn(
+            $this->SystemService->_code,
+            $this->SystemService->_msg,
+            $this->SystemService->_data
+        );
+    }
+
 }

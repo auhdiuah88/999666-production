@@ -76,6 +76,7 @@ Route::group(["namespace" => "Api", 'middleware'=>['params_decrypt']], function 
     Route::get("/activity", "SystemController@activity"); // 获取活动页配置
     Route::get("/logo", "SystemController@logo"); // 获取活动页配置
     Route::get("/bettingFee", "SystemController@bettingFee"); // 获取投注手续费率
+    Route::get("/bettingRule", "SystemController@bettingRule"); // 获取投注规则
 
     ##新首页的接口
     Route::group(["prefix" => "index"], function(){

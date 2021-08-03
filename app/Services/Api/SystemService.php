@@ -208,6 +208,18 @@ class SystemService extends Service
         if (!$data){
             $data = ['service_charge' => 0.03];
         }
+        unset($data['rule']);
+        $this->_data = $data;
+    }
+
+    public function bettingRule()
+    {
+        $data = $this->SystemRepository->getSettingValueByKey(SettingDic::key('BETTING_SETTING'));
+        if (!$data){
+            $data = ['rule' => ''];
+        }
+        unset($data['service_charge']);
+        $data['rule'] = htmlspecialchars_decode($data['rule']);
         $this->_data = $data;
     }
 
