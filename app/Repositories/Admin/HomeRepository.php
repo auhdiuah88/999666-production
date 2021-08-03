@@ -194,7 +194,10 @@ class HomeRepository extends BaseRepository
             return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
                 ->leftJoin('users as u','ubl.user_id','=','u.id')
                 ->where('u.reg_source_id','=',$reg_source_id)
-                ->whereNull("u.two_recommend_id")
+                ->where(function($query){
+                    $query->whereNull("u.two_recommend_id")
+                        ->orWhere("u.two_recommend_id", 0);
+                })
                 ->whereBetween("ubl.time", $timeMap)
                 ->where("ubl.type", 2)
                 ->where("ubl.is_first_recharge", 1)
@@ -203,7 +206,10 @@ class HomeRepository extends BaseRepository
         }else{
             return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
                 ->leftJoin('users as u','ubl.user_id','=','u.id')
-                ->whereNull("u.two_recommend_id")
+                ->where(function($query){
+                    $query->whereNull("u.two_recommend_id")
+                        ->orWhere("u.two_recommend_id", 0);
+                })
                 ->whereBetween("ubl.time", $timeMap)
                 ->where("ubl.type", 2)
                 ->where("ubl.is_first_recharge", 1)
@@ -226,7 +232,10 @@ class HomeRepository extends BaseRepository
             return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
                 ->leftJoin('users as u','ubl.user_id','=','u.id')
                 ->where('u.reg_source_id','=',$reg_source_id)
-                ->whereNotNull("u.two_recommend_id")
+                ->where(function($query){
+                    $query->whereNotNull("u.two_recommend_id")
+                        ->orWhere("u.two_recommend_id", '>', 0);
+                })
                 ->whereBetween("ubl.time", $timeMap)
                 ->where("ubl.type", 2)
                 ->where("ubl.is_first_recharge", 1)
@@ -235,7 +244,10 @@ class HomeRepository extends BaseRepository
         }else{
             return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
                 ->leftJoin('users as u','ubl.user_id','=','u.id')
-                ->whereNotNull("u.two_recommend_id")
+                ->where(function($query){
+                    $query->whereNotNull("u.two_recommend_id")
+                        ->orWhere("u.two_recommend_id", '>', 0);
+                })
                 ->whereBetween("ubl.time", $timeMap)
                 ->where("ubl.type", 2)
                 ->where("ubl.is_first_recharge", 1)
