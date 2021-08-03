@@ -622,15 +622,22 @@ class SettingService extends BaseService
         if (!$data){
             $data = [
                 'service_recharge' => 0.03,
+                'rule' => '',
             ];
         }
+        if(!isset($data['rule']))
+        {
+            $data['rule'] = '';
+        }
+        $data['rule'] = htmlspecialchars_decode($data['rule']);
         $this->_data = $data;
     }
 
     public function bettingSettingSave(): bool
     {
         $service_charge = $this->floatInput('service_charge');
-        $res = $this->SettingRepository->saveSetting(SettingDic::key('BETTING_SETTING'), compact('service_charge'));
+        $rule = $this->htmlInput('rule');
+        $res = $this->SettingRepository->saveSetting(SettingDic::key('BETTING_SETTING'), compact('service_charge','rule'));
         if($res === false){
             $this->_code = 403;
             $this->_msg = '修改失败';
