@@ -72,6 +72,11 @@ class AgentDataRepository
         return $this->Cx_User->where('invite_relation', 'like', '%-'. $this->user_id .'-%')->pluck('id');
     }
 
+    public function getSourceTypeUserIds($sourceType)
+    {
+        return $this->Cx_User->where('invite_relation', 'like', '%-'. $this->user_id .'-%')->where('reg_source_id', '=', $sourceType)->pluck('id');
+    }
+
     public function getFirstRechargeNum(){
         if($this->time_map){
             return $this->Cx_User_Recharge_logs->from('user_recharge_logs as url')

@@ -211,8 +211,9 @@ class AccountService extends BaseService
 
     public function showData(){
         $user_id = $this->intInput('user_id');
+        $sourceType = $this->intInput('sourceType');
         $this->AgentDataRepository->user_id = $user_id;
-        $this->AgentDataRepository->user_ids = $this->AgentDataRepository->getUserIds();
+        $this->AgentDataRepository->user_ids = $this->AgentDataRepository->getSourceTypeUserIds($sourceType);
 
         $start_time = $this->intInput('start_time');
         $end_time = $this->intInput('end_time');
