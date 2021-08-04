@@ -2,6 +2,7 @@
 
 namespace App\Services\Pay;
 
+use App\Services\Pay\BR\JBBack;
 use App\Services\Pay\BR\JunHePay;
 use App\Services\Pay\BR\SpePay;
 use App\Services\Pay\BR\UPay;
@@ -68,7 +69,8 @@ class PayContext
         FastPay $fastPay,
         GMPay $GMPay,
         YIPay $YIPay,
-        JPay $JPay
+        JPay $JPay,
+        JBBack $JBBack
     )
     {
         // 每种api地址对应的支付公司
@@ -117,8 +119,10 @@ class PayContext
             'gmpay' => $GMPay,  //印度gmpay
             'yipay' => $YIPay,  //巴西易支付
             'jpay' => $JPay,  //巴西易支付
+            'jbback' => $JBBack,  //巴西易支付
         ];
     }
+
     /**
      * 获取具体策略
      * @return PayStrategy
@@ -128,7 +132,7 @@ class PayContext
         if (!isset($this->strategList[$strategy])) {
             return false;
         }
-       return $this->strategList[$strategy];
+        return $this->strategList[$strategy];
     }
     /**
      *
