@@ -31,6 +31,7 @@ abstract class PayStrategy
         'princepay',
         'fypay',
         'globalpay',
+        'WOWpay'
     ];
 
     public $rechargeRtn = '';
