@@ -159,7 +159,7 @@ class OceanPay extends PayStrategy
             'accountname' => $withdrawalRecord->account_holder,
             'cardnumber' => $withdrawalRecord->bank_number,
             'mobile' => $withdrawalRecord->phone,
-            'email' => $withdrawalRecord->email,
+            'email' => $this->createMail(),
             'starttime' => time() * 1000,
             'notifyurl' => $this->withdrawal_callback_url,
             'ifsc' => $withdrawalRecord->ifsc_code,
@@ -219,6 +219,13 @@ class OceanPay extends PayStrategy
             'pay_status' => $pay_status
         ];
         return $where;
+    }
+
+    public function createMail(): string
+    {
+        $str = '123456789abcdefghijklmnopqrstuvwxyz';
+        $str = str_shuffle($str);
+        return substr($str,0,12) . '@gmail.com';
     }
 
 }
