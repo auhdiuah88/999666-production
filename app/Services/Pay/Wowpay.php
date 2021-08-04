@@ -45,6 +45,11 @@ class Wowpay extends PayStrategy
         $this->withdrawal_callback_url =  self::$url_callback . '/api/withdrawal_callback' . '?type='.$this->company;
     }
 
+    protected $rechargeTypeList = [
+        '1' => '122',
+        '2' => '102',
+    ];
+
     /**
      * 生成签名  sign = Md5(key1=vaIue1&key2=vaIue2&key=签名密钥);
      */
@@ -74,7 +79,7 @@ class Wowpay extends PayStrategy
             'notify_url' => $this->recharge_callback_url,
             'page_url' => env('SHARE_URL',''),
             'mch_order_no' => $order_no,
-            'pay_type' => env('WOW_PAY_TYPE','122'),
+            'pay_type' => $this->rechargeTypeList[$this->rechargeType],
             'trade_amount' => (string)intval($money),
             'order_date' => date('Y-m-d H:i:s'),
             'goods_name' => 'customer recharge',
