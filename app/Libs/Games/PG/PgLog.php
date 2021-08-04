@@ -11,8 +11,49 @@ class PgLog extends GameStrategy{
 
     //给PG平台发送登录信息
     public function launch($productId){
+        $config = config("game.pg");
         //获取用户数据
         $user_id = getUserIdFromToken(getToken());
+        $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip","token")->first();
+        if(empty($info)){
+            return [
+                "code" => 2,
+                "msg" => "用户不存在",
+                "data" => "",
+            ];
+        }
+        //判断用户是否拥有钱包
+        $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        $user_data = [
+            "user_id" => $user_id,//用户ID
+            "wallet_id" => $wallet_name->id,//游戏平台id
+            "total_balance" => 0,//用户总余额
+            "withdrawal_balance" => 0,//用户可下分余额
+            "update_time" => time(),//更新时间
+        ];
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if(!$user_wallet){
+            DB::table("users_wallet")->insert($user_data);
+            $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        }
+        //判断是否登录大厅
+        if ($productId != "pg"){
+            //拼接游戏url
+            $url = $config["PgSoftPublicDomain"].$productId."/index.html?bet_type=1&operator_token=".$config["operator_token"]."&operator_player_session=".$info->token;
+        }else{
+            //拼接大厅url
+            $url = $config["PgSoftPublicDomain"]."web-lobby/games/?operator_token=".$config["operator_token"]."&operator_player_session=".$info->token;
+        }
+        return $this->_data = [
+            "url" => $url,
+            "wallet" => $user_wallet->withdrawal_balance
+        ];
+    }
+
+    //给PG平台发送查询用户余额
+    public function PgQueryScore($user_id){
+        $config = config("game.pg");
+        //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
             return [
@@ -21,41 +62,78 @@ class PgLog extends GameStrategy{
                 "data" => "",
             ];
         }
-        $config = config("game.pg");
-        //生成guid
-        $guid = $this->getguid();
-
-        //请求参数
-        $params = [
+        $trace_id = $this->guid();
+        //拼接url
+        $url = $config["PgSoftAPIDomain"]."Cash/v3/GetPlayerWallet?trace_id=".$trace_id;
+        //请求数据
+        $param = [
             "operator_token" => $config["operator_token"],
             "secret_key" => $config["secret_key"],
             "player_name" => $info->phone,
-            "currency" => 0
         ];
-
-        //拼接url
-        $url = $config["PgSoftAPIDomain"]."/v3/Player/Create?trace_id=".$guid;
-//        $in_url = 'SERVER_NAME：'.$_SERVER['SERVER_NAME'];
-//        $header = ["Host : $in_url"];
-        $res = $this->curl_post($url, $params);
-        Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
-        $res = json_decode($res,true);
-        return $this->_data = $res;
+        try {
+            $res = $this->curl_post($url,$param);
+            Log::channel('kidebug')->info('pg-PgQueryScore-return',[$res]);
+            $res = json_decode($res,true);
+            if($res["data"] != "null"){
+                //更新用户钱包余额
+                $wallet = $this->updateUserWallet($user_id,$res["data"]["cashBalance"]);
+                if($wallet){
+                    return $this->_data = $res["data"]["cashBalance"];
+                }else{
+                    return [
+                        "code" => "4",
+                        "meg" => "update error",
+                        "data" => ""
+                    ];
+                }
+            }else{
+                return [
+                    "code" => $res["error"]["code"],
+                    "msg" => $res["error"]["message"],
+                    "data" => ""
+                ];
+            }
+        }catch (\Exception $e){
+            return [
+                "code" => 3,
+                "msg" => $e->getMessage(),
+                "data" => ""
+            ];
+        }
     }
 
-    //生成guid
-    public function getguid(){
+    //更新用户钱包
+    public function updateUserWallet($user_id,$balance){
+        $config = config("game.pg");
+        //判断用户是否拥有钱包
+        $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        $user_data = [
+            "user_id" => $user_id,//用户ID
+            "wallet_id" => $wallet_name->id,//游戏平台id
+            "total_balance" => $balance,//用户总余额
+            "withdrawal_balance" => $balance,//用户可下分余额
+            "update_time" => time(),//更新时间
+        ];
+        $res = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->update($user_data);
+        return $res;
+    }
+
+    //生成GUID
+    function guid(){
         if (function_exists('com_create_guid')){
             return com_create_guid();
         }else{
             mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
             $charid = strtoupper(md5(uniqid(rand(), true)));
             $hyphen = chr(45);// "-"
-            $uuid = substr($charid, 0, 8).$hyphen
+            $uuid = chr(123)// "{"
+                .substr($charid, 0, 8).$hyphen
                 .substr($charid, 8, 4).$hyphen
                 .substr($charid,12, 4).$hyphen
                 .substr($charid,16, 4).$hyphen
-                .substr($charid,20,12);
+                .substr($charid,20,12)
+                .chr(125);// "}"
             return $uuid;
         }
     }

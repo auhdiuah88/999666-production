@@ -158,6 +158,7 @@ class WbetLog extends GameStrategy
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         //获取剩余金额
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
         if (!$user){
             return [
                 "code" => 1,
@@ -165,7 +166,7 @@ class WbetLog extends GameStrategy
                 "data" => ""
             ];
         }
-        if ($user->balance < $money){
+        if ($user_wallet->withdrawal_balance < $money){
             return [
                 "code" => 2,
                 "msg" => "余额不足",
@@ -190,6 +191,7 @@ class WbetLog extends GameStrategy
             DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance + $money]);
             //更新用户钱包
             DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->decrement("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance-$money")]);
+            //重新查询余额
             $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
             return [
                 "code" => 200,
@@ -204,6 +206,28 @@ class WbetLog extends GameStrategy
             ];
         }
 
+    }
+
+    //查询用户钱包余额
+    public function WBETQueryScore($user_id){
+        $config = config("game.wbet");
+        //获取钱包
+        $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        //获取剩余金额
+        $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if (!$user){
+            return [
+                "code" => 1,
+                "msg" => "用户不存在",
+                "data" => ""
+            ];
+        }
+        return [
+            "code" => "200",
+            "msg" => "success",
+            "data" => $user_wallet->withdrawal_balance
+        ];
     }
 
     //废弃，勿删

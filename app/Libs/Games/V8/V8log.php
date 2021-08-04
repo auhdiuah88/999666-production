@@ -52,7 +52,7 @@ class V8log extends GameStrategy
             "orderid" => $config["agent"].$datetime.$info->phone,//拼接agent,当前时间，用户名
             "ip" => $info->ip,
             "lineCode" => env("LINECODE"),
-            "kid" => "0",//固定值，不需修改
+            "kid" => $productId == "v8"?"0":$productId,//游戏ID，0为大厅
         ];
 
         //加密$param
@@ -199,6 +199,7 @@ class V8log extends GameStrategy
 
     //下分
     public function V8UserLowerScores($money,$user_id){
+        $config = config("game.v8");
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
@@ -208,11 +209,17 @@ class V8log extends GameStrategy
                 "data" => "",
             ];
         }
-
-        $config = config("game.v8");
-
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if ($user_wallet->withdrawal_balance < $money){
+            return [
+                "code" => 2,
+                "msg" => "余额不足",
+                "data" => ""
+            ];
+        }
+
         //创建转账订单
         $create_time = time().rand("000","999");
         $order = [
@@ -268,7 +275,7 @@ class V8log extends GameStrategy
             DB::table("users")->where("id",$user_id)->increment("balance",$money);
             //更新订单
             DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
-            //更新用户总余额
+            //更新用户钱包余额
             $reqmoney = $this->V8QueryScore($user_id);
             if($reqmoney["code"] != "200"){
                 return [

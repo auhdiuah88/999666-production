@@ -59,7 +59,7 @@ class IcgLog extends GameStrategy
 //        $productId = $this->GameList($token);
 
         //获取游戏链接
-        $game_link = $this->GameLink($info->phone,$token);
+        $game_link = $this->GameLink($info->phone,$token,$productId);
 
         return $this->_data = [
             "url" => $game_link,
@@ -115,13 +115,14 @@ class IcgLog extends GameStrategy
 //    }
 
     //获取游戏链接
-    public function GameLink($user_name,$token){
+    public function GameLink($user_name,$token,$productId){
         $config = config("game.icg");
         $url = $config["url"]."api/v1/games/gamelink";
         $params = [
             "lang" => "en",
         ];
-        $url = $url."?lang=".$params["lang"]."&productId=lobby01&player=".$user_name;
+        $productId = $productId=="icg"?"lobby01":$productId;
+        $url = $url."?lang=".$params["lang"]."&productId=".$productId."&player=".$user_name;
         $header[] = "Authorization: Bearer ".$token;
         $res = $this->GetCurl($url,$header);
         Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
@@ -214,6 +215,7 @@ class IcgLog extends GameStrategy
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         //获取剩余金额
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
         if (!$user){
             return [
                 "code" => 1,
@@ -221,7 +223,7 @@ class IcgLog extends GameStrategy
                 "data" => ""
             ];
         }
-        if ($user->balance < $money){
+        if ($user_wallet->withdrawal_balance < $money){
             return [
                 "code" => 2,
                 "msg" => "余额不足",

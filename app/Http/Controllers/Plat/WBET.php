@@ -57,6 +57,23 @@ class WBET extends Controller{
         return $list;
     }
 
+    //wbet平台查询用户钱包余额
+    public function WBETQueryScore(Request $request){
+        //获取用户ID
+        $token = $request->header('token');
+        $token = urldecode($token);
+        $data = explode("+", Crypt::decrypt($token));
+        //调用查询接口
+        $list = $this->Wbet->WBETQueryScore($data[0]);
+        if(!$list){
+            return [
+                "code" => 404,
+                "msg" => "link error",
+            ];
+        }
+        return $list;
+    }
+
     //wbet平台获取用户余额
     public function get_balance(Request $request){
         $res = $request->input();
@@ -139,7 +156,6 @@ class WBET extends Controller{
             ];
         }
         //创建转账订单
-        $create_time = time().rand("000","999");
         $order = [
             "user_id" => $user->id,
             "order" => $res["ticket_id"],
