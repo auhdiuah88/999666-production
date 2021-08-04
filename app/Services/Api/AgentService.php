@@ -50,7 +50,7 @@ class AgentService extends BaseService
     {
         $id = $this->getUserId($token);
         ##获取总充值金额
-        $this->_data = $this->AgentRepository->getRecommendRecharge($id, $type);
+        $this->_data = ['money' => $this->AgentRepository->getRecommendRecharge($id, $type)];
     }
 
 }
