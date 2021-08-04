@@ -5,15 +5,21 @@ namespace App\Repositories\Api;
 
 
 use App\Models\Cx_User;
+use App\Models\Cx_User_Recharge_Logs;
 use App\Repositories\BaseRepository;
 
 class AgentRepository extends BaseRepository
 {
-    private $Cx_User;
+    private $Cx_User, $Cx_User_Recharge_Logs;
 
-    public function __construct(Cx_User $cx_User)
+    public function __construct
+    (
+        Cx_User $cx_User,
+        Cx_User_Recharge_Logs $cx_User_Recharge_Logs
+    )
     {
         $this->Cx_User = $cx_User;
+        $this->Cx_User_Recharge_Logs = $cx_User_Recharge_Logs;
     }
 
     public function findCommission($id)
@@ -49,5 +55,15 @@ class AgentRepository extends BaseRepository
     public function countExtensionUser($id)
     {
         return $this->Cx_User->where("one_recommend_id", $id)->orWhere("two_recommend_id", $id)->count("id");
+    }
+
+    public function getRecommendRecharge($id, $type)
+    {
+        if($type == 1){
+            $user_ids = $this->Cx_User->where("two_recommend_id", $id)->pluck('id');
+        }else{
+            $user_ids = $this->Cx_User->where("one_recommend_id", $id)->pluck('id');
+        }
+        return $this->Cx_User_Recharge_Logs->whereIn("user_id", $user_ids)->where("status", '=', 2)->sum('arrive_money');
     }
 }

@@ -45,4 +45,12 @@ class AgentService extends BaseService
         $total = $this->AgentRepository->countExtensionUser($id);
         $this->_data = ["total" => $total, "list" => $list];
     }
+
+    public function getRecommendRecharge($token, $type)
+    {
+        $id = $this->getUserId($token);
+        ##获取总充值金额
+        $this->_data = ['money' => $this->AgentRepository->getRecommendRecharge($id, $type)];
+    }
+
 }

@@ -36,4 +36,15 @@ class AgentController extends Controller
             $this->AgentService->_data
         );
     }
+
+    public function getRecommendRecharge(Request $request)
+    {
+        $this->AgentService->getRecommendRecharge($request->header("token"), $request->post("type"));
+        return $this->AppReturn(
+            $this->AgentService->_code,
+            $this->AgentService->_msg,
+            $this->AgentService->_data
+        );
+    }
+
 }
