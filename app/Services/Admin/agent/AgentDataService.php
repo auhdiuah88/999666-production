@@ -82,7 +82,12 @@ class AgentDataService extends BaseAgentService
     {
         $this->getAdmin();
         $this->AgentDataRepository->user_id = $this->admin->user_id;
-        $this->AgentDataRepository->user_ids = $this->AgentDataRepository->getUserIds();
+        $reg_source_id = $this->strInput('reg_source_id');
+        if(in_array($reg_source_id, [0,1])){
+            $this->AgentDataRepository->user_ids = $this->AgentDataRepository->getSourceTypeUserIds($reg_source_id);
+        }else{
+            $this->AgentDataRepository->user_ids = $this->AgentDataRepository->getUserIds();
+        }
 
         $start_time = $this->intInput('start_time');
         $end_time = $this->intInput('end_time');
@@ -151,7 +156,11 @@ class AgentDataService extends BaseAgentService
         $receive_sign_money = $this->AgentDataRepository->getReceiveSIgnMoney();
         ##赠金
         $giveMoney = $this->AgentDataRepository->getGiveMoney();
-        $money_data = compact('recharge_money','success_withdraw_money','wait_withdraw_money','balance_commission','commission_money','sign_money','receive_sign_money','giveMoney','bankcard_recharge_money');
+        ##上分
+        $upBalance = $this->AgentDataRepository->getUpBalance();
+        ##下分
+        $downBalance = $this->AgentDataRepository->getDownBalance();
+        $money_data = compact('recharge_money','success_withdraw_money','wait_withdraw_money','balance_commission','commission_money','sign_money','receive_sign_money','giveMoney','bankcard_recharge_money','upBalance','downBalance');
         return $money_data;
     }
 
