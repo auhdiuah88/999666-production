@@ -41,28 +41,26 @@ class AgentDataRepository
     public function getNewMemberNum(){
         if($this->time_map){
             return $this->Cx_User
-                ->where('invite_relation', 'like', '%-'. $this->user_id .'-%')
+                ->whereIn('id', $this->user_ids)
                 ->whereBetween('reg_time', $this->time_map)
                 ->count();
         }else{
             return $this->Cx_User
-                ->where('invite_relation', 'like', '%-'. $this->user_id .'-%')
+                ->whereIn('id', $this->user_ids)
                 ->count();
         }
     }
 
     public function getActiveMemberNum(){
         if($this->time_map){
-            return $this->Cx_Game_Betting->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->whereBetween('gb.betting_time', $this->time_map)
+            return $this->Cx_Game_Betting
+                ->whereIn('user_id', $this->user_ids)
+                ->whereBetween('betting_time', $this->time_map)
                 ->groupBy('user_id')
                 ->count();
         }else{
-            return $this->Cx_Game_Betting->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
+            return $this->Cx_Game_Betting
+                ->whereIn('user_id', $this->user_ids)
                 ->groupBy('user_id')
                 ->count();
         }
@@ -79,37 +77,33 @@ class AgentDataRepository
 
     public function getFirstRechargeNum(){
         if($this->time_map){
-            return $this->Cx_User_Recharge_logs->from('user_recharge_logs as url')
-                ->leftJoin('users as u','u.id','=','url.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->where('url.is_first_recharge', '=', 1)
-                ->where('url.status', '=', 2)
-                ->whereBetween('url.time', $this->time_map)
+            return $this->Cx_User_Recharge_logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('is_first_recharge', '=', 1)
+                ->where('status', '=', 2)
+                ->whereBetween('time', $this->time_map)
                 ->count();
         }else{
-            return $this->Cx_User_Recharge_logs->from('user_recharge_logs as url')
-                ->leftJoin('users as u','u.id','=','url.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->where('url.is_first_recharge', '=', 1)
-                ->where('url.status', '=', 2)
+            return $this->Cx_User_Recharge_logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('is_first_recharge', '=', 1)
+                ->where('status', '=', 2)
                 ->count();
         }
     }
 
     public function getRechargeMoney(){
         if($this->time_map){
-            return $this->Cx_User_Recharge_logs->from('user_recharge_logs as url')
-                ->leftJoin('users as u','u.id','=','url.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->where('url.status',2)
-                ->whereBetween('url.time',$this->time_map)
-                ->sum('url.money');
+            return $this->Cx_User_Recharge_logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('status',2)
+                ->whereBetween('time',$this->time_map)
+                ->sum('money');
         }else{
-            return $this->Cx_User_Recharge_logs->from('user_recharge_logs as url')
-                ->leftJoin('users as u','u.id','=','url.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->where('url.status',2)
-                ->sum('url.money');
+            return $this->Cx_User_Recharge_logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('status',2)
+                ->sum('money');
         }
     }
 
@@ -145,79 +139,67 @@ class AgentDataRepository
 
     public function getCommissionMoney(){
         if($this->time_map){
-            return $this->Cx_Charge_logs->from('charge_logs as cl')
-                ->leftJoin('users as u','u.id','=','cl.charge_user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->whereBetween('cl.create_time', $this->time_map)
-                ->sum('cl.money');
+            return $this->Cx_Charge_logs
+                ->whereIn('user_id', $this->user_ids)
+                ->whereBetween('create_time', $this->time_map)
+                ->sum('money');
         }else{
-            return $this->Cx_Charge_logs->from('charge_logs as cl')
-                ->leftJoin('users as u','u.id','=','cl.charge_user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->sum('cl.money');
+            return $this->Cx_Charge_logs
+                ->whereIn('user_id', $this->user_ids)
+                ->sum('money');
         }
     }
 
     public function getSignMoney(){
         if($this->time_map){
-            return $this->Cx_Sign_Order->from('sign_orders as so')
-                ->leftJoin('users as u','u.id','=','so.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->whereBetween('so.start_time', $this->time_map)
-                ->sum('so.amount');
+            return $this->Cx_Sign_Order
+                ->whereIn('user_id', $this->user_ids)
+                ->whereBetween('start_time', $this->time_map)
+                ->sum('amount');
         }else{
-            return $this->Cx_Sign_Order->from('sign_orders as so')
-                ->leftJoin('users as u','u.id','=','so.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->sum('so.amount');
+            return $this->Cx_Sign_Order
+                ->whereIn('user_id', $this->user_ids)
+                ->sum('amount');
         }
     }
 
     public function getReceiveSIgnMoney(){
         if($this->time_map){
-            return $this->Cx_Sign_Order->from('sign_orders as so')
-                ->leftJoin('users as u','u.id','=','so.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->whereBetween('so.start_time', $this->time_map)
-                ->sum('so.yet_receive_count');
+            return $this->Cx_Sign_Order
+                ->whereIn('user_id', $this->user_ids)
+                ->whereBetween('start_time', $this->time_map)
+                ->sum('yet_receive_count');
         }else{
-            return $this->Cx_Sign_Order->from('sign_orders as so')
-                ->leftJoin('users as u','u.id','=','so.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->sum('so.yet_receive_count');
+            return $this->Cx_Sign_Order
+                ->whereIn('user_id', $this->user_ids)
+                ->sum('yet_receive_count');
         }
     }
 
     public function getGiveMoney(){
         if($this->time_map){
-            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
-                ->leftJoin('users as u','u.id','=','ubl.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->where('ubl.type','=',8)
-                ->whereBetween('ubl.time', $this->time_map)
-                ->sum('ubl.money');
+            return $this->Cx_User_Balance_Logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('type','=',8)
+                ->whereBetween('time', $this->time_map)
+                ->sum('money');
         }else{
-            return $this->Cx_User_Balance_Logs->from('user_balance_logs as ubl')
-                ->leftJoin('users as u','u.id','=','ubl.user_id')
-                ->where('u.invite_relation', 'like', '%-'. $this->user_id .'-%')
-                ->where('ubl.type','=',8)
-                ->sum('ubl.money');
+            return $this->Cx_User_Balance_Logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('type','=',8)
+                ->sum('money');
         }
     }
 
     public function getOrderNum(){
         if($this->time_map){
             return $this->Cx_Game_Betting
-                ->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->whereBetween('gb.betting_time', $this->time_map)
+                ->whereIn('user_id', $this->user_ids)
+                ->whereBetween('betting_time', $this->time_map)
                 ->count();
         }else{
             return $this->Cx_Game_Betting
-                ->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
+                ->whereIn('user_id', $this->user_ids)
                 ->count();
         }
     }
@@ -225,17 +207,13 @@ class AgentDataRepository
     public function getOrderMoney(){
         if($this->time_map){
             return $this->Cx_Game_Betting
-                ->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->whereBetween('gb.betting_time', $this->time_map)
-                ->sum('gb.money');
+                ->whereIn('user_id', $this->user_ids)
+                ->whereBetween('betting_time', $this->time_map)
+                ->sum('money');
         }else{
             return $this->Cx_Game_Betting
-                ->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->sum('gb.money');
+                ->whereIn('user_id', $this->user_ids)
+                ->sum('money');
         }
     }
 
@@ -262,19 +240,15 @@ class AgentDataRepository
     public function getOrderWinMoney(){
         if($this->time_map){
             return $this->Cx_Game_Betting
-                ->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('gb.type','=', 1)
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->whereBetween('gb.betting_time', $this->time_map)
-                ->sum('gb.win_money');
+                ->whereIn('user_id', $this->user_ids)
+                ->where('type','=', 1)
+                ->whereBetween('betting_time', $this->time_map)
+                ->sum('win_money');
         }else{
             return $this->Cx_Game_Betting
-                ->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('gb.type','=', 1)
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->sum('gb.win_money');
+                ->whereIn('user_id', $this->user_ids)
+                ->where('type','=', 1)
+                ->sum('win_money');
         }
     }
 
@@ -282,42 +256,36 @@ class AgentDataRepository
     {
         if($this->time_map){
             return $this->Cx_Game_Betting
-                ->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->whereBetween('gb.betting_time', $this->time_map)
-                ->sum('gb.service_charge');
+                ->whereIn('user_id', $this->user_ids)
+                ->whereBetween('betting_time', $this->time_map)
+                ->sum('service_charge');
         }else{
             return $this->Cx_Game_Betting
-                ->from('game_betting as gb')
-                ->leftJoin('users as u','u.id','=','gb.user_id')
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->sum('gb.service_charge');
+                ->whereIn('user_id', $this->user_ids)
+                ->sum('service_charge');
         }
     }
 
     protected function getBalance(){
-        return $this->Cx_User->where('invite_relation','like','%-'. $this->user_id .'-%')->sum('balance');
+        return $this->Cx_User->whereIn('id', $this->user_ids)->sum('balance');
     }
 
     protected function getCommission(){
-        return $this->Cx_User->where('invite_relation','like','%-'. $this->user_id .'-%')->sum('commission');
+        return $this->Cx_User->whereIn('id', $this->user_ids)->sum('commission');
     }
 
     protected function getWithdrawMoney($status){
         if($this->time_map){
-            return $this->Cx_Withdrawal_Record->from('withdrawal_record as wr')
-                ->leftJoin('users as u','u.id','=','wr.user_id')
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->where('wr.status','=',$status)
-                ->whereBetween('wr.create_time', $this->time_map)
-                ->sum('wr.money');
+            return $this->Cx_Withdrawal_Record
+                ->whereIn('user_id', $this->user_ids)
+                ->where('status','=',$status)
+                ->whereBetween('create_time', $this->time_map)
+                ->sum('money');
         }else{
-            return $this->Cx_Withdrawal_Record->from('withdrawal_record as wr')
-                ->leftJoin('users as u','u.id','=','wr.user_id')
-                ->where('u.invite_relation','like','%-'. $this->user_id .'-%')
-                ->where('wr.status','=',$status)
-                ->sum('wr.money');
+            return $this->Cx_Withdrawal_Record
+                ->whereIn('user_id', $this->user_ids)
+                ->where('status','=',$status)
+                ->sum('money');
         }
     }
 
