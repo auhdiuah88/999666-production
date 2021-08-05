@@ -107,6 +107,8 @@ class WBET extends Controller{
         //获取玩家钱包余额
         $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user->id])->select("withdrawal_balance")->first();
+        var_dump($user_wallet);
+        die();
         if(!$user_wallet->withdrawal_balance){
             return [
                 "status" => 0,
