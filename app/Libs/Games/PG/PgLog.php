@@ -150,7 +150,7 @@ class PgLog extends GameStrategy{
             "transfer_amount" => $money,
             "remaining_amount" => $user->balance - $money,
             "create_time" => time(),
-            "remarks" => "icg上分钱包"
+            "remarks" => "pg上分钱包"
         ];
         $order_id = DB::table("order")->insertGetId($order);
         try {
@@ -172,6 +172,78 @@ class PgLog extends GameStrategy{
                 DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
                 //更新用户余额
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance - $money]);
+                //更新用户钱包
+                $this->PgQueryScore($user_id);
+                return [
+                    "code" => 200,
+                    "msg" => "success",
+                    "data" => $res["data"]["balanceAmount"],
+                ];
+            }else{
+                throw new \Exception($res["error"]["message"]);
+            }
+        }catch (\Exception $e){
+            return [
+                "code" => 3,
+                "msg" => $e->getMessage(),
+                "data" => ""
+            ];
+        }
+    }
+
+    //下分
+    public function PGUserLowerScores($user_id,$money){
+        $config = config("game.pg");
+        //获取钱包
+        $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        //获取剩余金额
+        $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if (!$user){
+            return [
+                "code" => 1,
+                "msg" => "用户不存在",
+                "data" => ""
+            ];
+        }
+        if ($user_wallet->withdrawal_balance < $money){
+            return [
+                "code" => 2,
+                "msg" => "余额不足",
+                "data" => ""
+            ];
+        }
+        //创建转账订单
+        $create_time = time().rand("000","999");
+        $order = [
+            "user_id" => $user_id,
+            "order" => $create_time,
+            "wallet_id" => $wallet->id,
+            "transfer_amount" => $money,
+            "remaining_amount" => $user->balance + $money,
+            "create_time" => time(),
+            "remarks" => "pg下分钱包"
+        ];
+        $order_id = DB::table("order")->insertGetId($order);
+        try {
+            $trace_id = $this->guid();
+            $url = $config["PgSoftAPIDomain"]."Cash/v3/TransferOut?trace_id=".$trace_id;
+            $params = [
+                "operator_token" => $config["operator_token"],
+                "secret_key" => $config["secret_key"],
+                "player_name" => $user->phone,
+                "amount" => $money * 1000,
+                "transfer_reference" => $create_time,
+                "currency" => "VDN"
+            ];
+            $res = $this->curl_post($url, $params);
+            Log::channel('kidebug')->info('pg-PGUserLowerScores-return',[$res]);
+            $res = json_decode($res,true);
+            if(!empty($res["data"])){
+                //更新订单
+                DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
+                //更新用户余额
+                DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance + $money]);
                 //更新用户钱包
                 $this->PgQueryScore($user_id);
                 return [
