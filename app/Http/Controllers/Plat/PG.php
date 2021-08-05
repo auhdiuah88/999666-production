@@ -22,7 +22,7 @@ class PG extends Controller{
     //PG令牌验证
     public function VerifySession(Request $request){
         $res = $request->input();
-        Log::channel('kidebug')->info('pg-VerifySession',[json_decode($res,true)]);
+        Log::channel('kidebug')->info('pg-VerifySession',[json_encode($res,true)]);
         $config = config("game.pg");
         //判断operator_token是否匹配
         if($res["operator_token"] != $config["operator_token"]){
