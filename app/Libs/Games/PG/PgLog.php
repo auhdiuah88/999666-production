@@ -44,6 +44,7 @@ class PgLog extends GameStrategy{
             //拼接大厅url
             $url = $config["PgSoftPublicDomain"]."web-lobby/games/?operator_token=".$config["operator_token"]."&operator_player_session=".$info->token;
         }
+        Log::channel('kidebug')->info('pg-launch-return',[$url]);
         return $this->_data = [
             "url" => $url,
             "wallet" => $user_wallet->withdrawal_balance

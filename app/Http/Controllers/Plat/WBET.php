@@ -74,9 +74,10 @@ class WBET extends Controller{
         return $list;
     }
 
-    //wbet平台获取用户余额
+    //wbet平台获取用户余额-回调接口
     public function get_balance(Request $request){
         $res = $request->input();
+        $res = json_decode($res,true);
         $config = config("game.wbet");
         //没有用户名
         $user = DB::table("users")->where("phone",$res["account_id"])->select()->first();
@@ -117,6 +118,7 @@ class WBET extends Controller{
     //wbet平台用户下注
     public function bet(Request $request){
         $res = $request->input();
+        $res = json_decode($res,true);
         $config = config("game.wbet");
         //没有用户名
         $user = DB::table("users")->where("phone",$res["account_id"])->select()->first();
@@ -187,6 +189,7 @@ class WBET extends Controller{
     //wbet平台用户退款
     public function refund(Request $request){
         $res = $request->input();
+        $res = json_decode($res,true);
         $config = config("game.wbet");
         //没有用户名
         $user = DB::table("users")->where("phone",$res["account_id"])->select()->first();
