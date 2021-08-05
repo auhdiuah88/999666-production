@@ -140,12 +140,12 @@ class AgentDataRepository
     public function getCommissionMoney(){
         if($this->time_map){
             return $this->Cx_Charge_logs
-                ->whereIn('user_id', $this->user_ids)
+                ->whereIn('charge_user_id', $this->user_ids)
                 ->whereBetween('create_time', $this->time_map)
                 ->sum('money');
         }else{
             return $this->Cx_Charge_logs
-                ->whereIn('user_id', $this->user_ids)
+                ->whereIn('charge_user_id', $this->user_ids)
                 ->sum('money');
         }
     }
