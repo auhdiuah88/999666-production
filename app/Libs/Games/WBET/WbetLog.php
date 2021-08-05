@@ -47,7 +47,7 @@ class WbetLog extends GameStrategy
 
         return $this->_data = [
             "url" => $game_link,
-            "wallet" => $user_wallet["withdrawal_balance"]
+            "wallet" => $user_wallet->withdrawal_balance
         ];
     }
 
@@ -139,7 +139,7 @@ class WbetLog extends GameStrategy
             return [
                 "code" => 200,
                 "msg" => "success",
-                "data" => $user_wallet["withdrawal_balance"],
+                "data" => $user_wallet->withdrawal_balance,
             ];
         }catch (\Exception $e){
             return [
@@ -196,7 +196,7 @@ class WbetLog extends GameStrategy
             return [
                 "code" => 200,
                 "msg" => "success",
-                "data" => $user_wallet["withdrawal_balance"],
+                "data" => $user_wallet->withdrawal_balance,
             ];
         }catch (\Exception $e){
             return [
@@ -226,7 +226,7 @@ class WbetLog extends GameStrategy
         return [
             "code" => "200",
             "msg" => "success",
-            "data" => $user_wallet["withdrawal_balance"]
+            "data" => $user_wallet->withdrawal_balance
         ];
     }
 
