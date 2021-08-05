@@ -46,6 +46,6 @@ return [
         "url" => "https://wbapi.uat0011.com/",
         "providercode" => "WB",
         "Key" => "7EDB68B0112940F786A2015A5693E935",
-        "operator_id" => "gstsseAB",
+        "operator_id" => "gstsseab",
     ],
 ];
