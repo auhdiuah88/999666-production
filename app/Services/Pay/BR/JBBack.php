@@ -122,7 +122,7 @@ class JBBack extends PayStrategy
         }
         // 验证签名
         $sign = $params['sign'];
-        unset($params['channelId']);
+        unset($params['type']);
         unset($params['sign']);
         if ($this->generateSign($params) <> $sign) {
             $this->_msg = 'jbback-签名错误';
@@ -200,7 +200,7 @@ class JBBack extends PayStrategy
         // 验证签名
         $sign = $params['sign'];
         unset($params['sign']);
-        unset($params['channelId']);
+        unset($params['type']);
         if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'yipay-签名错误';
             return false;
