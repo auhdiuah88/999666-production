@@ -91,7 +91,7 @@ class WBET extends Controller{
         if($res["operator_id"] != $config["operator_id"]){
             return [
                 "status" => 0,
-                "statusdesc" => "accountIdRequired",
+                "statusdesc" => "operatorIdRequired",
                 "balance" => "0.00"
             ];
         }
