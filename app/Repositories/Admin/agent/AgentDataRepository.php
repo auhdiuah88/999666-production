@@ -146,7 +146,7 @@ class AgentDataRepository
         }else{
             return $this->Cx_Charge_logs
                 ->whereIn('user_id', $this->user_ids)
-                ->sum('cl.money');
+                ->sum('money');
         }
     }
 
