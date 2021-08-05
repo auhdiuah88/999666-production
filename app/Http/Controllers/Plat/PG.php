@@ -96,4 +96,24 @@ class PG extends Controller{
         }
         return $list;
     }
+
+    //上分
+    public function PGUserTopScores(Request $request){
+        $money = $request->input("p");//要上分的金额
+        $money = json_decode(aesDecrypt($money),true);
+        $money = $money["money"];
+        //获取用户ID
+        $token = $request->header('token');
+        $token = urldecode($token);
+        $data = explode("+", Crypt::decrypt($token));
+        //调用下分
+        $list = $this->Pg->PGUserTopScores($data[0],$money);
+        if(!$list){
+            return [
+                "code" => 404,
+                "msg" => "link error",
+            ];
+        }
+        return $list;
+    }
 }

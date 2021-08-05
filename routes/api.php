@@ -54,6 +54,7 @@ Route::post("/refund", "Plat\WBET@refund");//退款
 //pg
 Route::post("/VerifySession", "Plat\PG@VerifySession");//pg查询令牌
 Route::get("/PGQueryScore", "Plat\PG@PGQueryScore");//查询钱包余额
+Route::get("/PGUserTopScores", "Plat\PG@PGUserTopScores");//上分
 
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);

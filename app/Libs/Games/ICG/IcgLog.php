@@ -130,7 +130,7 @@ class IcgLog extends GameStrategy
         return $res["data"]["url"];
     }
 
-    //用户入金
+    //用户上分
     public function ICGUserTopScores($user_id,$money){
         $config = config("game.icg");
         //获取钱包
@@ -204,11 +204,9 @@ class IcgLog extends GameStrategy
                 "data" => ""
             ];
         }
-
-        return $order;
     }
 
-    //用户出金
+    //用户下分
     public function ICGUserLowerScores($user_id,$money){
         $config = config("game.icg");
         //获取钱包

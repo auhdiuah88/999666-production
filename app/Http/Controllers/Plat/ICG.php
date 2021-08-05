@@ -20,7 +20,7 @@ class ICG extends Controller{
         $this->Icg = $Icg;
     }
 
-    //icg平台用户入金
+    //icg平台用户上分
     public function ICGUserTopScores(Request $request){
         $money = $request->input("p");//要上分的金额
         $money = json_decode(aesDecrypt($money),true);
@@ -40,7 +40,7 @@ class ICG extends Controller{
         return $list;
     }
 
-    //icg平台用户出金
+    //icg平台用户下分
     public function ICGUserLowerScores(Request $request){
         $money = $request->input("p");//要下分的金额
         $money = json_decode(aesDecrypt($money),true);
