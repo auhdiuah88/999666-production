@@ -98,12 +98,12 @@ class AgentDataRepository
                 ->whereIn('user_id', $this->user_ids)
                 ->where('status',2)
                 ->whereBetween('time',$this->time_map)
-                ->sum('money');
+                ->sum('arrive_money');
         }else{
             return $this->Cx_User_Recharge_logs
                 ->whereIn('user_id', $this->user_ids)
                 ->where('status',2)
-                ->sum('money');
+                ->sum('arrive_money');
         }
     }
 
