@@ -252,7 +252,11 @@ class AccountService extends BaseService
         $receive_sign_money = $this->AgentDataRepository->getReceiveSIgnMoney();
         ##赠金
         $giveMoney = $this->AgentDataRepository->getGiveMoney();
-        $money_data = compact('recharge_money','success_withdraw_money','wait_withdraw_money','balance_commission','commission_money','sign_money','receive_sign_money','giveMoney');
+        ##上分
+        $upBalance = $this->AgentDataRepository->getUpBalance();
+        ##下分
+        $downBalance = $this->AgentDataRepository->getDownBalance();
+        $money_data = compact('recharge_money','success_withdraw_money','wait_withdraw_money','balance_commission','commission_money','sign_money','receive_sign_money','giveMoney','upBalance','downBalance');
 
         #订单汇总
         ##订单数

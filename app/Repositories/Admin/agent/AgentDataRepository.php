@@ -191,6 +191,38 @@ class AgentDataRepository
         }
     }
 
+    public function getUpBalance()
+    {
+        if($this->time_map){
+            return $this->Cx_User_Balance_Logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('type','=',9)
+                ->whereBetween('time', $this->time_map)
+                ->sum('money');
+        }else{
+            return $this->Cx_User_Balance_Logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('type','=',9)
+                ->sum('money');
+        }
+    }
+
+    public function getDownBalance()
+    {
+        if($this->time_map){
+            return $this->Cx_User_Balance_Logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('type','=',10)
+                ->whereBetween('time', $this->time_map)
+                ->sum('money');
+        }else{
+            return $this->Cx_User_Balance_Logs
+                ->whereIn('user_id', $this->user_ids)
+                ->where('type','=',10)
+                ->sum('money');
+        }
+    }
+
     public function getOrderNum(){
         if($this->time_map){
             return $this->Cx_Game_Betting
