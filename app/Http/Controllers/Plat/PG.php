@@ -27,7 +27,7 @@ class PG extends Controller{
         //判断operator_token是否匹配
         if($res["operator_token"] != $config["operator_token"]){
             $msg = [
-                "data" => "null",
+                "data" => null,
                 "error" => [
                     "code" => "1034",
                     "message" => "no operator_token"
@@ -38,7 +38,7 @@ class PG extends Controller{
         //判断secret_key是否匹配
         if($res["secret_key"] != $config["secret_key"]){
             $msg = [
-                "data" => "null",
+                "data" => null,
                 "error" => [
                     "code" => "1034",
                     "message" => "no secret_key"
@@ -51,7 +51,7 @@ class PG extends Controller{
         //判断用户token是否存在
         if(!$user){
             $msg = [
-                "data" => "null",
+                "data" => null,
                 "error" => [
                     "code" => "1034",
                     "message" => "no token"
@@ -62,7 +62,7 @@ class PG extends Controller{
         //判断token是否匹配
         if($res["operator_player_session"] != $user->token){
             $msg = [
-                "data" => "null",
+                "data" => null,
                 "error" => [
                     "code" => "1034",
                     "message" => "no operator_player_session"
@@ -75,7 +75,7 @@ class PG extends Controller{
                 "player_name" => $user->phone,
                 "currency" => "VND",
             ],
-            "error" => "null"
+            "error" => null
         ];
         return json_encode($msg,true);
     }
