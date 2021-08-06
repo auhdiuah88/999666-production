@@ -32,31 +32,25 @@ Route::post("/initInviteRelation", "TestController@initInviteRelation");
 //v8
 Route::get("/Querymoney", "Plat\V8@Querymoney");
 Route::get("/V8TopScores", "Plat\V8@V8TopScores");
-Route::get("/V8UserTopScores", 'Plat\V8@V8UserTopScores');
-Route::get("/V8UserLowerScores", 'Plat\V8@V8UserLowerScores');
-Route::get("/V8QueryScore", 'Plat\V8@V8QueryScore');
 
 //获取平台列表
 Route::get("/PlatformList", 'Api\UserController@PlatformList');
+//上分
+Route::get("/TopScores", 'Api\UserController@TopScores');
+//下分
+Route::get("/LowerScores", 'Api\UserController@LowerScores');
+//查询余额
+Route::get("/QueryScore", 'Api\UserController@QueryScore');
 
-//ICG
-Route::get("/ICGUserTopScores", "Plat\ICG@ICGUserTopScores");//上分
-Route::get("/ICGUserLowerScores", "Plat\ICG@ICGUserLowerScores");//下分
-Route::get("/IcgQueryScore", "Plat\ICG@IcgQueryScore");//查询余额
 
 //wbet
-Route::get("/WBETUserTopScores", "Plat\WBET@WBETUserTopScores");//上分
-Route::get("/WBETUserLowerScores", "Plat\WBET@WBETUserLowerScores");//下分
-Route::get("/WBETQueryScore", "Plat\WBET@WBETQueryScore");//查询钱包余额
 Route::post("/get_balance", "Plat\WBET@get_balance");//获取用户余额
 Route::post("/bet", "Plat\WBET@bet");//玩家下注
 Route::post("/refund", "Plat\WBET@refund");//退款
 
 //pg
 Route::post("/VerifySession", "Plat\PG@VerifySession");//pg查询令牌
-Route::get("/PGQueryScore", "Plat\PG@PGQueryScore");//查询钱包余额
-Route::get("/PGUserTopScores", "Plat\PG@PGUserTopScores");//上分
-Route::get("/ICGUserLowerScores", "Plat\PG@ICGUserLowerScores");//下分
+
 
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);

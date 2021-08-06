@@ -131,7 +131,7 @@ class IcgLog extends GameStrategy
     }
 
     //用户上分
-    public function ICGUserTopScores($user_id,$money){
+    public function TopScores($money,$user_id){
         $config = config("game.icg");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
@@ -207,7 +207,7 @@ class IcgLog extends GameStrategy
     }
 
     //用户下分
-    public function ICGUserLowerScores($user_id,$money){
+    public function LowerScores($money,$user_id){
         $config = config("game.icg");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
@@ -283,7 +283,7 @@ class IcgLog extends GameStrategy
     }
 
     //查询用户余额
-    public function IcgQueryScore($user_id){
+    public function QueryScore($user_id){
         $config = config("game.icg");
         //获取用户信息
         $user = DB::table("users")->where("id",$user_id)->select("phone")->first();

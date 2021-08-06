@@ -52,7 +52,7 @@ class PgLog extends GameStrategy{
     }
 
     //给PG平台发送查询用户余额
-    public function PgQueryScore($user_id){
+    public function QueryScore($user_id){
         $config = config("game.pg");
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
@@ -121,7 +121,7 @@ class PgLog extends GameStrategy{
     }
 
     //上分
-    public function PGUserTopScores($user_id,$money){
+    public function TopScores($money,$user_id){
         $config = config("game.pg");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
@@ -192,7 +192,7 @@ class PgLog extends GameStrategy{
     }
 
     //下分
-    public function PGUserLowerScores($user_id,$money){
+    public function LowerScores($money,$user_id){
         $config = config("game.pg");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();

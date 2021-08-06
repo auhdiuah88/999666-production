@@ -18,62 +18,6 @@ class WBET extends Controller{
         $this->Wbet = $Wbet;
     }
 
-    //wbet平台用户入金
-    public function WBETUserTopScores(Request $request){
-        $money = $request->input("p");//要上分的金额
-        $money = json_decode(aesDecrypt($money),true);
-        $money = $money["money"];
-        //获取用户ID
-        $token = $request->header('token');
-        $token = urldecode($token);
-        $data = explode("+", Crypt::decrypt($token));
-
-        $list = $this->Wbet->WBETUserTopScores($data[0],$money);
-        if(!$list){
-            return [
-                "code" => 404,
-                "msg" => "link error",
-            ];
-        }
-        return $list;
-    }
-
-    //wbet平台用户出金
-    public function WBETUserLowerScores(Request $request){
-        $money = $request->input("p");//要上分的金额
-        $money = json_decode(aesDecrypt($money),true);
-        $money = $money["money"];
-        //获取用户ID
-        $token = $request->header('token');
-        $token = urldecode($token);
-        $data = explode("+", Crypt::decrypt($token));
-        $list = $this->Wbet->WBETUserLowerScores($data[0],$money);
-        if(!$list){
-            return [
-                "code" => 404,
-                "msg" => "link error",
-            ];
-        }
-        return $list;
-    }
-
-    //wbet平台查询用户钱包余额
-    public function WBETQueryScore(Request $request){
-        //获取用户ID
-        $token = $request->header('token');
-        $token = urldecode($token);
-        $data = explode("+", Crypt::decrypt($token));
-        //调用查询接口
-        $list = $this->Wbet->WBETQueryScore($data[0]);
-        if(!$list){
-            return [
-                "code" => 404,
-                "msg" => "link error",
-            ];
-        }
-        return $list;
-    }
-
     //wbet平台获取用户余额-回调接口
     public function get_balance(Request $request){
         $res = $request->input();

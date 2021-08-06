@@ -95,7 +95,7 @@ class V8log extends GameStrategy
     }
 
     //上分
-    public function V8UserTopScores($money,$user_id){
+    public function TopScores($money,$user_id){
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
@@ -121,7 +121,7 @@ class V8log extends GameStrategy
         //创建转账订单
         $create_time = time().rand("000","999");
         $order = [
-            "user_id" => $info->id,
+            "user_id" => $user_id,
             "order" => $create_time,
             "wallet_id" => $wallet->id,
             "transfer_amount" => $money,
@@ -198,7 +198,7 @@ class V8log extends GameStrategy
     }
 
     //下分
-    public function V8UserLowerScores($money,$user_id){
+    public function LowerScores($money,$user_id){
         $config = config("game.v8");
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
@@ -223,7 +223,7 @@ class V8log extends GameStrategy
         //创建转账订单
         $create_time = time().rand("000","999");
         $order = [
-            "user_id" => $info->id,
+            "user_id" => $user_id,
             "order" => $create_time,
             "wallet_id" => $wallet->id,
             "transfer_amount" => $money,
@@ -299,8 +299,8 @@ class V8log extends GameStrategy
         }
     }
 
-    //用户总余额
-    public function V8QueryScore($user_id){
+    //查询用户余额
+    public function QueryScore($user_id){
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){

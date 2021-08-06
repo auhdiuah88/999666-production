@@ -97,7 +97,7 @@ class WbetLog extends GameStrategy
     }
 
     //用户上分
-    public function WBETUserTopScores($user_id,$money){
+    public function TopScores($money,$user_id){
         $config = config("game.wbet");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
@@ -152,7 +152,7 @@ class WbetLog extends GameStrategy
     }
 
     //用户下分
-    public function WBETUserLowerScores($user_id,$money){
+    public function LowerScores($money,$user_id){
         $config = config("game.wbet");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
@@ -209,7 +209,7 @@ class WbetLog extends GameStrategy
     }
 
     //查询用户钱包余额
-    public function WBETQueryScore($user_id){
+    public function QueryScore($user_id){
         $config = config("game.wbet");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();

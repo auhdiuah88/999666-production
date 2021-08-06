@@ -12,21 +12,24 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Libs\Games\GameContext;
 
 
 class UserController extends Controller
 {
-    protected $UserService, $UserBalanceService;
+    protected $UserService, $UserBalanceService,$GameContext;
 
 
     public function __construct
     (
         UserService $userService,
-        UserBalanceService $userBalanceService
+        UserBalanceService $userBalanceService,
+        GameContext $GameContext
     )
     {
         $this->UserService = $userService;
         $this->UserBalanceService = $userBalanceService;
+        $this->GameContext =$GameContext;
     }
 
     /**
@@ -431,5 +434,74 @@ class UserController extends Controller
             "msg" => "success",
             "data" => $info
         ];
+    }
+
+    //上分
+    public function TopScores(Request $request){
+        $res = $request->input("p");
+        $res = json_decode(aesDecrypt($res),true);
+        //获取用户ID
+        $token = $request->header('token');
+        $token = urldecode($token);
+        $data = explode("+", Crypt::decrypt($token));
+        $user_id = $data[0];
+        ##获取游戏信息
+        $game = DB::table("game_list")->where("id",$res["game_id"])->select()->first();
+        $link = $game->link;
+        $Scores = $this->GameContext->getStrategy($link);
+        if(!$Scores->TopScores($res["money"],$user_id))
+        {
+            $this->_msg = $Scores->_msg;
+            $this->_code = 415;
+            $this->_data = $Scores;
+            return;
+        }
+        return $Scores->_data;
+    }
+
+    //下分
+    public function LowerScores(Request $request){
+        $res = $request->input("p");
+        $res = json_decode(aesDecrypt($res),true);
+        //获取用户ID
+        $token = $request->header('token');
+        $token = urldecode($token);
+        $data = explode("+", Crypt::decrypt($token));
+        $user_id = $data[0];
+        ##获取游戏信息
+        $game = DB::table("game_list")->where("id",$res["game_id"])->select()->first();
+        $link = $game->link;
+        $Scores = $this->GameContext->getStrategy($link);
+        if(!$Scores->LowerScores($res["money"],$user_id))
+        {
+            $this->_msg = $Scores->_msg;
+            $this->_code = 415;
+            $this->_data = $Scores;
+            return;
+        }
+        return $Scores->_data;
+    }
+
+    //查询余额
+    public function QueryScore(Request $request){
+        $res = $request->input("p");
+        $res = json_decode(aesDecrypt($res),true);
+        //获取用户ID
+        $token = $request->header('token');
+        $token = urldecode($token);
+        $data = explode("+", Crypt::decrypt($token));
+        $user_id = $data[0];
+        ##获取游戏信息
+        $game = DB::table("game_list")->where("id",$res["game_id"])->select()->first();
+        $link = $game->link;
+        $Scores = $this->GameContext->getStrategy($link);
+        if(!$Scores->QueryScore($user_id))
+        {
+            $this->_msg = $Scores->_msg;
+            $this->_code = 415;
+            $this->_data = $Scores;
+            return;
+        }
+        return $Scores->_data;
     }
 }
