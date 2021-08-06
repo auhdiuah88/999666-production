@@ -30,7 +30,7 @@ class PG extends Controller{
                 "data" => "null",
                 "error" => [
                     "code" => "1034",
-                    "message" => "无效请求"
+                    "message" => "no operator_token"
                 ]
             ];
             return json_encode($msg,true);
@@ -41,7 +41,7 @@ class PG extends Controller{
                 "data" => "null",
                 "error" => [
                     "code" => "1034",
-                    "message" => "无效请求"
+                    "message" => "no secret_key"
                 ]
             ];
             return json_encode($msg,true);
@@ -54,7 +54,7 @@ class PG extends Controller{
                 "data" => "null",
                 "error" => [
                     "code" => "1034",
-                    "message" => "无效请求"
+                    "message" => "no token"
                 ]
             ];
             return json_encode($msg,true);
@@ -65,7 +65,7 @@ class PG extends Controller{
                 "data" => "null",
                 "error" => [
                     "code" => "1034",
-                    "message" => "无效请求"
+                    "message" => "no operator_player_session"
                 ]
             ];
             return json_encode($msg,true);
