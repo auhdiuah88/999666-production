@@ -35,6 +35,7 @@ Route::get("/V8TopScores", "Plat\V8@V8TopScores");
 Route::get("/V8UserTopScores", 'Plat\V8@V8UserTopScores');
 Route::get("/V8UserLowerScores", 'Plat\V8@V8UserLowerScores');
 Route::get("/V8QueryScore", 'Plat\V8@V8QueryScore');
+
 //获取平台列表
 Route::get("/PlatformList", 'Api\UserController@PlatformList');
 
@@ -55,6 +56,7 @@ Route::post("/refund", "Plat\WBET@refund");//退款
 Route::post("/VerifySession", "Plat\PG@VerifySession");//pg查询令牌
 Route::get("/PGQueryScore", "Plat\PG@PGQueryScore");//查询钱包余额
 Route::get("/PGUserTopScores", "Plat\PG@PGUserTopScores");//上分
+Route::get("/ICGUserLowerScores", "Plat\PG@ICGUserLowerScores");//下分
 
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);
