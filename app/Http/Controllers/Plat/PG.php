@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Libs\Games\Pg\PgLog;
+use App\Libs\Games\PG\PgLog;
 use Illuminate\Support\Facades\Crypt;
 
 class PG extends Controller{
