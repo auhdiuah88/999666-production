@@ -502,6 +502,7 @@ class UserController extends Controller
             $this->_data = $Scores;
             return;
         }
-        return $Scores;
+        $this->_data = $Scores;
+        return;
     }
 }
