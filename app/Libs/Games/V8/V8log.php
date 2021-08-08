@@ -361,14 +361,7 @@ class V8log extends GameStrategy
             }else{
                 DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->update($user_data);
             }
-            return [
-                "code" => 200,
-                "msg" => "success",
-                "data" => [
-                    "totalMoney" => $res["d"]["totalMoney"],//用户总余额
-                    "freeMoney" => $res["d"]["freeMoney"],//用户可下分余额
-                ],
-            ];
+            return $this->_data = $res["d"]["freeMoney"];
         }catch (\Exception $e){
             return [
                 "code" => 3,

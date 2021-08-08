@@ -420,7 +420,7 @@ class UserController extends Controller
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
         $user_id = $data[0];
-        $info = DB::table('users_wallet')->join("wallet_name","users_wallet.wallet_id","=","wallet_name.id")->where("user_id",$user_id)->select("users_wallet.id","wallet_name.wallet_name")->first();
+        $info = DB::table('users_wallet')->join("wallet_name","users_wallet.wallet_id","=","wallet_name.id")->where("user_id",$user_id)->get()->toArray();
         $info = json_decode(json_encode($info));
         if(!$info){
             return [
@@ -492,8 +492,8 @@ class UserController extends Controller
         $data = explode("+", Crypt::decrypt($token));
         $user_id = $data[0];
         ##获取游戏信息
-        $game = DB::table("game_list")->where("id",$res["game_id"])->select()->first();
-        $link = $game->link;
+        $wallet_name = DB::table("wallet_name")->where("id",$res["game_id"])->select()->first();
+        $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
         if(!$Scores->QueryScore($user_id))
         {
@@ -502,7 +502,6 @@ class UserController extends Controller
             $this->_data = $Scores;
             return;
         }
-        $this->_data = $Scores;
-        return;
+        return $this->_data = $Scores;
     }
 }
