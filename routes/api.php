@@ -33,14 +33,7 @@ Route::post("/initInviteRelation", "TestController@initInviteRelation");
 Route::get("/Querymoney", "Plat\V8@Querymoney");
 Route::get("/V8TopScores", "Plat\V8@V8TopScores");
 
-//获取平台列表
-Route::get("/PlatformList", 'Api\UserController@PlatformList');
-//上分
-Route::get("/TopScores", 'Api\UserController@TopScores');
-//下分
-Route::get("/LowerScores", 'Api\UserController@LowerScores');
-//查询余额
-Route::get("/QueryScore", 'Api\UserController@QueryScore');
+
 
 
 //wbet
@@ -78,6 +71,15 @@ Route::group(["namespace" => "Api", 'middleware'=>['params_decrypt']], function 
     Route::get("/app", "SystemController@appSetting"); // 获取三方客服配置
     Route::get("/activity", "SystemController@activity"); // 获取活动页配置
     Route::get("/logo", "SystemController@logo"); // 获取活动页配置
+
+    //获取平台列表
+    Route::get("/PlatformList", 'Api\UserController@PlatformList');
+    //上分
+    Route::get("/TopScores", 'Api\UserController@TopScores');
+    //下分
+    Route::get("/LowerScores", 'Api\UserController@LowerScores');
+    //查询余额
+    Route::get("/QueryScore", 'Api\UserController@QueryScore');
 
     ##新首页的接口
     Route::group(["prefix" => "index"], function(){

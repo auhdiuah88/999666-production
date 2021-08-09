@@ -429,11 +429,7 @@ class UserController extends Controller
                 "data" => ""
             ];
         }
-        return [
-            "code" => 200,
-            "msg" => "success",
-            "data" => $info
-        ];
+        return $this->_data = $info;
     }
 
     //上分
