@@ -60,7 +60,7 @@ class PG extends Controller{
             return json_encode($msg,true);
         }
         //判断token是否匹配
-        if($res["operator_player_session"] != $user->token){
+        if($res["operator_player_session"] != $user->id){
             $msg = [
                 "data" => null,
                 "error" => [
