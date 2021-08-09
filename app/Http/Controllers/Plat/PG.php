@@ -47,7 +47,7 @@ class PG extends Controller{
             return json_encode($msg,true);
         }
         //通过token查找用户
-        $user = DB::table("users")->where("token",$res["operator_player_session"])->select()->first();
+        $user = DB::table("users")->where("id",$res["operator_player_session"])->select()->first();
         //判断用户token是否存在
         if(!$user){
             $msg = [
