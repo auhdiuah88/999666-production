@@ -206,11 +206,12 @@ class BettingService extends BaseService
         $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
         $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
-        if(!$Scores->TopScores($money,$user_id))
+        $Scores = $Scores->TopScores($money,$user_id);
+        if(!is_float($Scores))
         {
-            $this->_msg = $Scores->_msg;
+            $this->_msg = $Scores;
             $this->_code = 415;
-            $this->_data = $Scores;
+            $this->_data = "";
             return;
         }
         return $this->_data = $Scores->_data;
@@ -226,11 +227,12 @@ class BettingService extends BaseService
         $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
         $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
-        if(!$Scores->LowerScores($money,$user_id))
+        $Scores = $Scores->LowerScores($money,$user_id);
+        if(!is_float($Scores))
         {
-            $this->_msg = $Scores->_msg;
+            $this->_msg = $Scores;
             $this->_code = 415;
-            $this->_data = $Scores;
+            $this->_data = "";
             return;
         }
         return $this->_data = $Scores->_data;
