@@ -482,14 +482,14 @@ class UserController extends Controller
 
     //查询余额
     public function QueryScore(Request $request){
-        $game_id = $this->intInput('game_id');
+        $res = $request->input("p");
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
         $user_id = $data[0];
         ##获取游戏信息
-        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
+        $wallet_name = DB::table("wallet_name")->where("id",$res["game_id"])->select()->first();
         $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
         if(!$Scores->QueryScore($user_id))
