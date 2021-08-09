@@ -56,12 +56,8 @@ class PgLog extends GameStrategy{
         $config = config("game.pg");
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
-        if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+        if (!$info){
+            return $this->_msg = "用户不存在";
         }
         $trace_id = $this->guid();
         //拼接url
@@ -80,7 +76,7 @@ class PgLog extends GameStrategy{
                 //更新用户钱包余额
                 $wallet = $this->updateUserWallet($user_id,$res["data"]["cashBalance"]);
                 if($wallet){
-                    return $this->_data = $res["data"]["cashBalance"];
+                    return $this->_data = sprintf('%01.2f',$res["data"]["cashBalance"]);
                 }else{
                     return [
                         "code" => "4",
@@ -96,11 +92,7 @@ class PgLog extends GameStrategy{
                 ];
             }
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 

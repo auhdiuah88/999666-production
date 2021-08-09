@@ -303,12 +303,8 @@ class V8log extends GameStrategy
     public function QueryScore($user_id){
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
-        if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+        if (!$info){
+            return $this->_msg = "用户不存在";
         }
 
         $config = config("game.v8");
@@ -361,13 +357,9 @@ class V8log extends GameStrategy
             }else{
                 DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->update($user_data);
             }
-            return $this->_data = $res["d"]["freeMoney"];
+            return $this->_data = sprintf('%01.2f',$res["d"]["freeMoney"]);
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => "",
-            ];
+            return $this->_msg = $e->getMessage();
         }
 
     }

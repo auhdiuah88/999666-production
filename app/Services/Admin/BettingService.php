@@ -8,6 +8,9 @@ use App\Libs\Games\GameContext;
 use App\Repositories\Admin\BettingRepository;
 use App\Repositories\Admin\UserRepository;
 use App\Services\BaseService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class BettingService extends BaseService
 {
@@ -190,6 +193,66 @@ class BettingService extends BaseService
             $this->_code = 414;
             return;
         }
+    }
+
+
+    //上分
+    public function TopScores(){
+        $game_id = $this->intInput('game_id');
+        $money = $this->intInput('money');
+        //获取用户ID
+        $user_id = getUserIdFromToken(getToken());
+        ##获取游戏信息
+        $game = DB::table("game_list")->where("id",$game_id)->select()->first();
+        $link = $game->link;
+        $Scores = $this->GameContext->getStrategy($link);
+        if(!$Scores->TopScores($money,$user_id))
+        {
+            $this->_msg = $Scores->_msg;
+            $this->_code = 415;
+            $this->_data = $Scores;
+            return;
+        }
+        return $this->_data = $Scores->_data;
+    }
+
+    //下分
+    public function LowerScores(){
+        $game_id = $this->intInput('game_id');
+        $money = $this->intInput('money');
+        //获取用户ID
+        $user_id = getUserIdFromToken(getToken());
+        ##获取游戏信息
+        $game = DB::table("game_list")->where("id",$game_id)->select()->first();
+        $link = $game->link;
+        $Scores = $this->GameContext->getStrategy($link);
+        if(!$Scores->LowerScores($money,$user_id))
+        {
+            $this->_msg = $Scores->_msg;
+            $this->_code = 415;
+            $this->_data = $Scores;
+            return;
+        }
+        return $this->_data = $Scores->_data;
+    }
+
+    //查询余额
+    public function QueryScore(){
+        $game_id = $this->intInput('game_id');
+        //获取用户ID
+        $user_id = getUserIdFromToken(getToken());
+        ##获取游戏信息
+        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
+        $link = $wallet_name->wallet_name;
+        $Scores = $this->GameContext->getStrategy($link);
+        if(!$Scores->QueryScore($user_id))
+        {
+            $this->_msg = $Scores->_msg;
+            $this->_code = 415;
+            $this->_data = $Scores;
+            return;
+        }
+        return $this->_data = $Scores->_data;
     }
 
 }

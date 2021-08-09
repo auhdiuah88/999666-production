@@ -98,22 +98,6 @@ class IcgLog extends GameStrategy
         return 1;
     }
 
-    //创建游戏链接
-//    public function GameList($token){
-//        $config = config("game.icg");
-//        $url = $config["url"]."api/v1/games";
-//        $params = [
-//            "type" => "all",
-//            "lang" => "en"
-//        ];
-//        $url = $url."?lang=".$params["lang"];
-//        $header[] = "Authorization: Bearer ".$token;
-//        $res = $this->GetCurl($url,$header);
-//        Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
-//        $res = json_decode($res,true);
-//        return $res["data"][0]["productId"];
-//    }
-
     //获取游戏链接
     public function GameLink($user_name,$token,$productId){
         $config = config("game.icg");
@@ -287,6 +271,9 @@ class IcgLog extends GameStrategy
         $config = config("game.icg");
         //获取用户信息
         $user = DB::table("users")->where("id",$user_id)->select("phone")->first();
+        if (!$user){
+            return $this->_msg = "用户不存在";
+        }
         //判断缓存中是否存在token
         if (cache('icgtoken')) {
             $token = cache("icgtoken");
@@ -320,18 +307,10 @@ class IcgLog extends GameStrategy
                 }else{
                     DB::table("users_wallet")->where(["wallet_id" => $wallet_id->id,"user_id" => $user_id])->update($users_wallet);
                 }
-                return [
-                    "code" => 200,
-                    "msg" => "success",
-                    "data" => $res["data"][0]["balance"] / 100,
-                ];
+                return $this->_data = sprintf('%01.2f',$res["data"][0]["balance"] / 100);
             }
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 

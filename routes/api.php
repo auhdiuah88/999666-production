@@ -74,12 +74,6 @@ Route::group(["namespace" => "Api", 'middleware'=>['params_decrypt']], function 
 
     //获取平台列表
     Route::get("/PlatformList", 'UserController@PlatformList');
-    //上分
-    Route::get("/TopScores", 'UserController@TopScores');
-    //下分
-    Route::get("/LowerScores", 'UserController@LowerScores');
-    //查询余额
-    Route::get("/QueryScore", 'UserController@QueryScore');
 
     ##新首页的接口
     Route::group(["prefix" => "index"], function(){
@@ -122,6 +116,13 @@ Route::group(["namespace" => "Api", "prefix" => "setting", 'middleware'=>['param
 Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'params_decrypt']], function () {
 
     Route::get("/launch", "BettingController@launch");
+    //上分
+    Route::get("/TopScores", 'BettingController@TopScores');
+    //下分
+    Route::get("/LowerScores", 'BettingController@LowerScores');
+    //查询余额
+    Route::get("/QueryScore", 'BettingController@QueryScore');
+
 
     Route::group(["prefix" => "user"], function () {
         Route::get("/info", "InfoController@getInfo"); // 查询用户基本信息

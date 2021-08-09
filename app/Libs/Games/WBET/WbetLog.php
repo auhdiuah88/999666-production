@@ -217,17 +217,9 @@ class WbetLog extends GameStrategy
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
         $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
         if (!$user){
-            return [
-                "code" => 1,
-                "msg" => "用户不存在",
-                "data" => ""
-            ];
+            return $this->_msg = "用户不存在";
         }
-        return [
-            "code" => "200",
-            "msg" => "success",
-            "data" => $user_wallet->withdrawal_balance
-        ];
+        return $this->_data = sprintf('%01.2f',$user_wallet->withdrawal_balance);
     }
 
     //废弃，勿删
