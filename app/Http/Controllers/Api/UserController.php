@@ -413,7 +413,7 @@ class UserController extends Controller
         );
     }
 
-    //游戏平台列表接口
+    //游戏平台列表
     public function PlatformList(Request $request){
         //获取用户ID
         $token = $request->header('token');

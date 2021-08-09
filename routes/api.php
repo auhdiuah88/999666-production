@@ -35,7 +35,6 @@ Route::get("/V8TopScores", "Plat\V8@V8TopScores");
 
 
 
-
 //wbet
 Route::post("/get_balance", "Plat\WBET@get_balance");//获取用户余额
 Route::post("/bet", "Plat\WBET@bet");//玩家下注
@@ -72,14 +71,15 @@ Route::group(["namespace" => "Api", 'middleware'=>['params_decrypt']], function 
     Route::get("/activity", "SystemController@activity"); // 获取活动页配置
     Route::get("/logo", "SystemController@logo"); // 获取活动页配置
 
+
     //获取平台列表
-    Route::get("/PlatformList", 'Api\UserController@PlatformList');
+    Route::get("/PlatformList", 'UserController@PlatformList');
     //上分
-    Route::get("/TopScores", 'Api\UserController@TopScores');
+    Route::get("/TopScores", 'UserController@TopScores');
     //下分
-    Route::get("/LowerScores", 'Api\UserController@LowerScores');
+    Route::get("/LowerScores", 'UserController@LowerScores');
     //查询余额
-    Route::get("/QueryScore", 'Api\UserController@QueryScore');
+    Route::get("/QueryScore", 'UserController@QueryScore');
 
     ##新首页的接口
     Route::group(["prefix" => "index"], function(){
