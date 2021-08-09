@@ -203,8 +203,8 @@ class BettingService extends BaseService
         //获取用户ID
         $user_id = getUserIdFromToken(getToken());
         ##获取游戏信息
-        $game = DB::table("game_list")->where("id",$game_id)->select()->first();
-        $link = $game->link;
+        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
+        $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
         if(!$Scores->TopScores($money,$user_id))
         {
@@ -223,8 +223,8 @@ class BettingService extends BaseService
         //获取用户ID
         $user_id = getUserIdFromToken(getToken());
         ##获取游戏信息
-        $game = DB::table("game_list")->where("id",$game_id)->select()->first();
-        $link = $game->link;
+        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
+        $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
         if(!$Scores->LowerScores($money,$user_id))
         {

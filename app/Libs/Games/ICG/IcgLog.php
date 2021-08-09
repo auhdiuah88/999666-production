@@ -15,12 +15,8 @@ class IcgLog extends GameStrategy
         //获取用户数据
         $user_id = getUserIdFromToken(getToken());
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
-        if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+        if (!$info){
+            return $this->_msg = "用户不存在";
         }
         $config = config("game.icg");
         //判断用户是否拥有钱包
@@ -122,18 +118,10 @@ class IcgLog extends GameStrategy
         //获取剩余金额
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
         if (!$user){
-            return [
-                "code" => 1,
-                "msg" => "用户不存在",
-                "data" => ""
-            ];
+            return $this->_msg = "用户不存在";
         }
         if ($user->balance < $money){
-            return [
-                "code" => 2,
-                "msg" => "余额不足",
-                "data" => ""
-            ];
+            return $this->_msg = "余额不足";
         }
         //创建转账订单
         $create_time = time().rand("000","999");
@@ -174,19 +162,11 @@ class IcgLog extends GameStrategy
                 //更新用户余额
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance - $money]);
                 //更新用户钱包
-                $this->IcgQueryScore($user_id);
-                return [
-                    "code" => 200,
-                    "msg" => "success",
-                    "data" => $res["data"]["balance"] / 100,
-                ];
+                $this->QueryScore($user_id);
+                return $this->_data = sprintf('%01.2f',$res["data"][0]["balance"] / 100);
             }
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 
@@ -199,18 +179,10 @@ class IcgLog extends GameStrategy
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
         $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
         if (!$user){
-            return [
-                "code" => 1,
-                "msg" => "用户不存在",
-                "data" => ""
-            ];
+            return $this->_msg = "用户不存在";
         }
         if ($user_wallet->withdrawal_balance < $money){
-            return [
-                "code" => 2,
-                "msg" => "余额不足",
-                "data" => ""
-            ];
+            return $this->_msg = "余额不足";
         }
         //创建转账订单
         $create_time = time().rand("000","999");
@@ -250,19 +222,11 @@ class IcgLog extends GameStrategy
                 //更新用户余额
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance + $money]);
                 //更新用户钱包
-                $this->IcgQueryScore($user_id);
-                return [
-                    "code" => 200,
-                    "msg" => "success",
-                    "data" => $res["data"]["balance"] / 100,
-                ];
+                $this->QueryScore($user_id);
+                return $this->_data = sprintf('%01.2f',$res["data"][0]["balance"] / 100);
             }
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 
