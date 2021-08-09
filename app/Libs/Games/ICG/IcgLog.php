@@ -182,7 +182,7 @@ class IcgLog extends GameStrategy
             ];
             $header[] = "Authorization: Bearer ".$token;
             $res = $this->curl_post($url, $params,$header);
-            Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
+            Log::channel('kidebug')->info('icg-TopScores-return',[$res]);
             $res = json_decode($res,true);
             if(isset($res["data"])){
                 //更新订单
@@ -258,7 +258,7 @@ class IcgLog extends GameStrategy
             ];
             $header[] = "Authorization: Bearer ".$token;
             $res = $this->curl_post($url, $params,$header);
-            Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
+            Log::channel('kidebug')->info('icg-LowerScores-return',[$res]);
             $res = json_decode($res,true);
             if(isset($res["data"])){
                 //更新订单
@@ -303,7 +303,7 @@ class IcgLog extends GameStrategy
         $header[] = "Authorization: Bearer ".$token;
         try {
             $res = $this->GetCurl($url,$header);
-            Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
+            Log::channel('kidebug')->info('icg-QueryScore-return',[$res]);
             $res = json_decode($res,true);
             if (isset($res["data"])){
                 $users_wallet = [

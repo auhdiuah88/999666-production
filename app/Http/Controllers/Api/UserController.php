@@ -439,7 +439,6 @@ class UserController extends Controller
     //上分
     public function TopScores(Request $request){
         $res = $request->input("p");
-        $res = json_decode(aesDecrypt($res),true);
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
@@ -462,7 +461,6 @@ class UserController extends Controller
     //下分
     public function LowerScores(Request $request){
         $res = $request->input("p");
-        $res = json_decode(aesDecrypt($res),true);
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
@@ -485,7 +483,6 @@ class UserController extends Controller
     //查询余额
     public function QueryScore(Request $request){
         $res = $request->input("p");
-        $res = json_decode(aesDecrypt($res),true);
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
