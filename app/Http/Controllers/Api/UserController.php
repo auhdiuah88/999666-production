@@ -482,7 +482,7 @@ class UserController extends Controller
 
     //查询余额
     public function QueryScore(Request $request){
-        $res = $request->input("p");
+        $res = $request->input("p",0);
         //获取用户ID
         $token = $request->header('token');
         $token = urldecode($token);
