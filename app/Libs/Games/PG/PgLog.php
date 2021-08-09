@@ -39,10 +39,10 @@ class PgLog extends GameStrategy{
         //判断是否登录大厅
         if ($productId != "pg"){
             //拼接游戏url
-            $url = $config["PgSoftPublicDomain"].$productId."/index.html?bet_type=1&operator_token=".$config["operator_token"]."&operator_player_session=".$info->id;
+            $url = $config["PgSoftPublicDomain"].$productId."/index.html?bet_type=1&operator_token=".$config["operator_token"]."&operator_player_session=".$user_id;
         }else{
             //拼接大厅url
-            $url = $config["PgSoftPublicDomain"]."web-lobby/games/?operator_token=".$config["operator_token"]."&operator_player_session=".$info->id;
+            $url = $config["PgSoftPublicDomain"]."web-lobby/games/?operator_token=".$config["operator_token"]."&operator_player_session=".$user_id;
         }
         Log::channel('kidebug')->info('pg-launch-return',[$url]);
         return $this->_data = [
