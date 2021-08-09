@@ -413,7 +413,7 @@ class UserController extends Controller
         );
     }
 
-    //游戏平台列表
+    //游戏平台列表接口
     public function PlatformList(Request $request){
         //获取用户ID
         $token = $request->header('token');
@@ -429,7 +429,11 @@ class UserController extends Controller
                 "data" => ""
             ];
         }
-        return $this->_data = $info;
+        return [
+            "code" => 200,
+            "msg" => "success",
+            "data" => $info
+        ];
     }
 
     //上分
