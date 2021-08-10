@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class WbetGetResult extends Command
 {
@@ -51,6 +52,7 @@ class WbetGetResult extends Command
         ];
         $params = json_encode($params);
         $res = $this->curl_post($url, $params);
+        Log::channel('kidebug')->info('wbet-handle-return',[$res]);
         $res = json_decode($res,true);
         if($res["status"] != "1"){
             echo "接口错误，联系接口提供方";
