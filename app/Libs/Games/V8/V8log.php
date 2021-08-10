@@ -18,11 +18,7 @@ class V8log extends GameStrategy
         $user_id = getUserIdFromToken(getToken());
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+            return $this->_msg = "用户不存在";
         }
         //判断用户是否拥有钱包
         $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
@@ -75,22 +71,14 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                return [
-                    "code" => 4,
-                    "msg" => $res["m"],
-                    "data" => "",
-                ];
+                return $this->_msg = $res["m"];
             }
             return $this->_data = [
                 "url" => $res["d"]["url"],
                 "wallet" => $user_wallet->withdrawal_balance
             ];
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => "",
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 
@@ -161,10 +149,7 @@ class V8log extends GameStrategy
             //更新订单
             DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
             //查询用户总余额
-            $reqmoney = $this->QueryScore($user_id);
-            if($reqmoney["code"] != "200"){
-                return $this->_msg = $reqmoney["msg"];
-            }
+            $this->QueryScore($user_id);
             return $this->_data = sprintf('%01.2f',$res["d"]["money"]);
         }catch (\Exception $e){
             return $this->_msg = $e->getMessage();
@@ -238,10 +223,7 @@ class V8log extends GameStrategy
             //更新订单
             DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
             //更新用户钱包余额
-            $reqmoney = $this->QueryScore($user_id);
-            if($reqmoney["code"] != "200"){
-                return $this->_msg = $reqmoney["msg"];
-            }
+            $this->QueryScore($user_id);
             return $this->_data = sprintf('%01.2f',$res["d"]["money"]);
         }catch (\Exception $e){
             return $this->_msg = $e->getMessage();
@@ -286,11 +268,7 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                return [
-                    "code" => 4,
-                    "msg" => $res["m"],
-                    "data" => "",
-                ];
+                return $this->_msg = $res["m"];
             }
             $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
             $user_data = [
