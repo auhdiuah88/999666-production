@@ -207,14 +207,14 @@ class BettingService extends BaseService
         $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
         $Scores = $Scores->TopScores($money,$user_id);
-        if(!is_float($Scores))
+        if(!is_numeric($Scores))
         {
             $this->_msg = $Scores;
             $this->_code = 415;
             $this->_data = "";
             return;
         }
-        return $this->_data = $Scores->_data;
+        return $this->_data = $Scores;
     }
 
     //下分
@@ -228,14 +228,14 @@ class BettingService extends BaseService
         $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
         $Scores = $Scores->LowerScores($money,$user_id);
-        if(!is_float($Scores))
+        if(!is_numeric($Scores))
         {
             $this->_msg = $Scores;
             $this->_code = 415;
             $this->_data = "";
             return;
         }
-        return $this->_data = $Scores->_data;
+        return $this->_data = $Scores;
     }
 
     //查询余额

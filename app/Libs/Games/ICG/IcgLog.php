@@ -163,7 +163,7 @@ class IcgLog extends GameStrategy
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance - $money]);
                 //更新用户钱包
                 $this->QueryScore($user_id);
-                return $this->_data = sprintf('%01.2f',$res["data"][0]["balance"] / 100);
+                return $this->_data = sprintf('%01.2f',$res["data"]["balance"] / 100);
             }
         }catch (\Exception $e){
             return $this->_msg = $e->getMessage();
@@ -223,7 +223,7 @@ class IcgLog extends GameStrategy
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance + $money]);
                 //更新用户钱包
                 $this->QueryScore($user_id);
-                return $this->_data = sprintf('%01.2f',$res["data"][0]["balance"] / 100);
+                return $this->_data = sprintf('%01.2f',$res["data"]["balance"] / 100);
             }
         }catch (\Exception $e){
             return $this->_msg = $e->getMessage();
