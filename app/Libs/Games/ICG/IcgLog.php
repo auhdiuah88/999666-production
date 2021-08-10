@@ -157,6 +157,20 @@ class IcgLog extends GameStrategy
             Log::channel('kidebug')->info('icg-TopScores-return',[$res]);
             $res = json_decode($res,true);
             if(isset($res["data"])){
+                $balance_log_data = [
+                    'user_id' => $user_id,
+                    'type' => 2,
+                    'dq_balance' => $user->balance,
+                    'wc_balance' => $user->balance - $money,
+                    'time' => time(),
+                    'msg' => "icg钱包充值".sprintf('%01.2f',$money),
+                    'money' => $money
+                ];
+                $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+                if($log_data === false)
+                {
+                    throw new \Exception('增加余额变更记录失败');
+                }
                 //更新订单
                 DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
                 //更新用户余额
@@ -217,6 +231,20 @@ class IcgLog extends GameStrategy
             Log::channel('kidebug')->info('icg-LowerScores-return',[$res]);
             $res = json_decode($res,true);
             if(isset($res["data"])){
+                $balance_log_data = [
+                    'user_id' => $user_id,
+                    'type' => 2,
+                    'dq_balance' => $user->balance,
+                    'wc_balance' => $user->balance + $money,
+                    'time' => time(),
+                    'msg' => "icg钱包提现".sprintf('%01.2f',$money),
+                    'money' => $money
+                ];
+                $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+                if($log_data === false)
+                {
+                    throw new \Exception('增加余额变更记录失败');
+                }
                 //更新订单
                 DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
                 //更新用户余额

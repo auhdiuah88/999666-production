@@ -144,6 +144,20 @@ class V8log extends GameStrategy
             if($res["d"]["code"] != "0"){
                 return $this->_msg = $res["m"];
             }
+            $balance_log_data = [
+                'user_id' => $user_id,
+                'type' => 2,
+                'dq_balance' => $info->balance,
+                'wc_balance' => $info->balance - $money,
+                'time' => time(),
+                'msg' => "v8钱包充值".sprintf('%01.2f',$money),
+                'money' => $money
+            ];
+            $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+            if($log_data === false)
+            {
+                throw new \Exception('增加余额变更记录失败');
+            }
             //更新用户余额
             DB::table("users")->where("id",$user_id)->decrement("balance",$money);
             //更新订单
@@ -217,6 +231,20 @@ class V8log extends GameStrategy
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
                 return $this->_msg = $res["m"];
+            }
+            $balance_log_data = [
+                'user_id' => $user_id,
+                'type' => 2,
+                'dq_balance' => $info->balance,
+                'wc_balance' => $info->balance + $money,
+                'time' => time(),
+                'msg' => "v8钱包提现".sprintf('%01.2f',$money),
+                'money' => $money
+            ];
+            $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+            if($log_data === false)
+            {
+                throw new \Exception('增加余额变更记录失败');
             }
             //更新用户余额
             DB::table("users")->where("id",$user_id)->increment("balance",$money);

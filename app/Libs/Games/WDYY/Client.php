@@ -135,7 +135,7 @@ class Client extends GameStrategy
             {
                 throw new \Exception('用户不存在');
             }
-            $balance = $info->balance;
+//            $balance = $info->balance;
             $betting = 0;
             //获取用户钱包
             $wallet_name = DB::table("wallet_name")->where("wallet_name","wdyy")->select("id")->first();
@@ -205,7 +205,7 @@ class Client extends GameStrategy
             ##更新用户余额
 //            $res2 = DB::table('users')->where("id",$user_id)->update(['balance'=>$wc_balance]);
             //更新用户余额
-            $res2 = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->update(["balance" => $wallet_balance]);
+            $res2 = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->update(["total_balance" => $wc_balance,"withdrawal_balance"=>$wc_balance]);
             if($res2 === false)
             {
                 throw new \Exception('变更用户余额失败');

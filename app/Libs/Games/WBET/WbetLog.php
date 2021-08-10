@@ -123,6 +123,20 @@ class WbetLog extends GameStrategy
         ];
         DB::table("order")->insert($order);
         try {
+            $balance_log_data = [
+                'user_id' => $user_id,
+                'type' => 2,
+                'dq_balance' => $user->balance,
+                'wc_balance' => $user->balance - $money,
+                'time' => time(),
+                'msg' => "wbet钱包充值".sprintf('%01.2f',$money),
+                'money' => $money
+            ];
+            $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+            if($log_data === false)
+            {
+                throw new \Exception('增加余额变更记录失败');
+            }
             //更新用户余额
             DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance - $money]);
             //更新用户钱包
@@ -164,6 +178,20 @@ class WbetLog extends GameStrategy
         ];
         DB::table("order")->insert($order);
         try {
+            $balance_log_data = [
+                'user_id' => $user_id,
+                'type' => 2,
+                'dq_balance' => $user->balance,
+                'wc_balance' => $user->balance + $money,
+                'time' => time(),
+                'msg' => "wbet钱包提现".sprintf('%01.2f',$money),
+                'money' => $money
+            ];
+            $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+            if($log_data === false)
+            {
+                throw new \Exception('增加余额变更记录失败');
+            }
             //更新用户余额
             DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance + $money]);
             //更新用户钱包
