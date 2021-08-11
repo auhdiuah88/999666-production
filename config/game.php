@@ -24,7 +24,7 @@ return [
         "game_name" => "pg",
         "PgSoftAPIDomain" => "https://api.pg-bo.me/external/",
         "DataGrabAPIDomain" => "https://api.pg-bo.me/external-datagrabber/",
-        "PgSoftPublicDomain" => "https://public.pg-redirect.net/",
+        "PgSoftPublicDomain" => "https://m.pg-redirect.net/",
         "operator_token" => "28f461b94907603fc57272a9bfdc3610",
         "secret_key" => "9ab57402eddd0237865545da062abb08",
         "salt" => "da73af656d9f64038b7e9141d03fc98e"
