@@ -73,7 +73,7 @@ class WbetGetResult extends Command
                 //更新用户钱包
                 DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
 
-                $result_list = [
+                $result_list[$k] = [
                     "a" => $res["value"][$k]["result_list"]
                 ];
             }
