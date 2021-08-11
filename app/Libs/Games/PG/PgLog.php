@@ -143,7 +143,7 @@ class PgLog extends GameStrategy{
                 "player_name" => $user->phone,
                 "amount" => $money * 1000,
                 "transfer_reference" => $create_time,
-                "currency" => "VDN"
+                "currency" => "VND"
             ];
             Log::channel('kidebug')->info('pg-PgQueryScore-request',[$params]);
             $res = $this->curl_post($url, $params);
@@ -214,7 +214,7 @@ class PgLog extends GameStrategy{
                 "player_name" => $user->phone,
                 "amount" => $money * 1000,
                 "transfer_reference" => $create_time,
-                "currency" => "VDN"
+                "currency" => "VND"
             ];
             $res = $this->curl_post($url, $params);
             Log::channel('kidebug')->info('pg-PGUserLowerScores-return',[$res]);
