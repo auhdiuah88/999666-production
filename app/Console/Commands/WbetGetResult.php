@@ -65,7 +65,7 @@ class WbetGetResult extends Command
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         try {
-            foreach ($res as $k => $v){
+            foreach ($res["value"] as $k => $v){
                 //用户派彩金额
                 $money = $res[$k]["bet_amount"]+$res[$k]["winlose"];
                 //更新用户钱包
