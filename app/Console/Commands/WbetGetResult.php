@@ -74,11 +74,9 @@ class WbetGetResult extends Command
                 DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
 
                 $result_list[$k] = [
-                    "a" => $res["value"][$k]["result_list"]
+                    "a" => $res["value"][$k]["result_id"]
                 ];
             }
-            print_r($result_list);
-            exit();
             $config = config("game.wbet");
             $url = $config["url"]."api/launchsports";
             //拼接验证码
