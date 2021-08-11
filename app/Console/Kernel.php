@@ -39,8 +39,7 @@ class Kernel extends ConsoleKernel
 //            ->everyTenMinutes()
 //            ->withoutOverlapping()
 //            ->runInBackground();
-        $schedule->command("WbetGetResult")
-            ->everyMinute();
+        $schedule->command("WbetGetResult");
     }
 
     /**
