@@ -86,11 +86,7 @@ class PgLog extends GameStrategy{
                     ];
                 }
             }else{
-                return [
-                    "code" => $res["error"]["code"],
-                    "msg" => $res["error"]["message"],
-                    "data" => ""
-                ];
+                return $this->_msg = $res["error"]["message"];
             }
         }catch (\Exception $e){
             return $this->_msg = $e->getMessage();
@@ -149,6 +145,7 @@ class PgLog extends GameStrategy{
                 "transfer_reference" => $create_time,
                 "currency" => "VDN"
             ];
+            Log::channel('kidebug')->info('pg-PgQueryScore-request',[$params]);
             $res = $this->curl_post($url, $params);
             Log::channel('kidebug')->info('pg-PGUserTopScores-return',[$res]);
             $res = json_decode($res,true);

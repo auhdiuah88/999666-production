@@ -72,6 +72,7 @@ class WbetGetResult extends Command
                 DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"phone" => $res["value"][$k]["member_id"]])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
             }
             echo "更新用户钱包成功";
+            Log::channel('kidebug')->info('wbet-handle-return',"更新用户钱包成功");
             exit();
         }catch (\Exception $e){
             echo $e->getMessage();
