@@ -200,17 +200,9 @@ class BettingService extends BaseService
     public function TopScores(){
         $money = $this->intInput('money');
         $game_id = $this->intInput('game_id');
-        $wallet_id = $this->intInput('wallet_id');
         //获取用户ID
         $user_id = getUserIdFromToken(getToken());
-        if($game_id != 0){
-            //获取游戏名称
-            $game_list = DB::table("game_list")->where("id",$game_id)->select("link")->first();
-            ##获取游戏信息
-            $wallet_name = DB::table("wallet_name")->where("wallet_name",$game_list->link)->select()->first();
-        }else{
-            $wallet_name = DB::table("wallet_name")->where("id",$wallet_id)->select()->first();
-        }
+        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
         $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
         $Scores = $Scores->TopScores($money,$user_id);
@@ -228,17 +220,9 @@ class BettingService extends BaseService
     public function LowerScores(){
         $money = $this->intInput('money');
         $game_id = $this->intInput('game_id');
-        $wallet_id = $this->intInput('wallet_id');
         //获取用户ID
         $user_id = getUserIdFromToken(getToken());
-        if($game_id != 0){
-            //获取游戏名称
-            $game_list = DB::table("game_list")->where("id",$game_id)->select("link")->first();
-            ##获取游戏信息
-            $wallet_name = DB::table("wallet_name")->where("wallet_name",$game_list->link)->select()->first();
-        }else{
-            $wallet_name = DB::table("wallet_name")->where("id",$wallet_id)->select()->first();
-        }
+        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
         $link = $wallet_name->wallet_name;
         $Scores = $this->GameContext->getStrategy($link);
         $Scores = $Scores->LowerScores($money,$user_id);
