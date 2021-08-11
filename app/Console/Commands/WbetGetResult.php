@@ -89,7 +89,7 @@ class WbetGetResult extends Command
             ];
             $params = json_encode($params);
             $res = $this->curl_post($url, $params);
-            Log::channel('kidebug')->info('wbet-handle-return',[$res]);
+            Log::channel('kidebug')->info('wbet-handle-return',[$result_list]);
             exit();
         }catch (\Exception $e){
             echo $e->getMessage();
