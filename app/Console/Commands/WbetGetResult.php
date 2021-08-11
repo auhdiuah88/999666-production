@@ -52,7 +52,6 @@ class WbetGetResult extends Command
         ];
         $params = json_encode($params);
         $res = $this->curl_post($url, $params);
-//        Log::channel('kidebug')->info('wbet-handle-return',[$res]);
         $res = json_decode($res,true);
         if($res["status"] != "1"){
             echo "接口错误，联系接口提供方";
@@ -67,42 +66,18 @@ class WbetGetResult extends Command
         try {
             $result_list = [];
             foreach ($res["value"] as $k => $v){
-                //用户派彩金额
-                $money = $res["value"][$k]["bet_amount"]+$res["value"][$k]["winlose"];
-                $user = DB::table("users")->where("phone",$res["value"][$k]["member_id"])->select("id")->first();
-                //更新用户钱包
-                DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
-
-                $result_list[$k] = [
-                    "a" => $res["value"][$k]["result_id"]
-                ];
+                if($res["value"][$k]["result_status"] == "END"){
+                    //用户派彩金额
+                    $money = $res["value"][$k]["bet_amount"]+$res["value"][$k]["winlose"];
+                    $user = DB::table("users")->where("phone",$res["value"][$k]["member_id"])->select("id")->first();
+                    //更新用户钱包
+                    DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
+                    $result_list[$k] = [
+                        "a" => $res["value"][$k]["result_id"]
+                    ];
+                }
             }
-            $config = config("game.wbet");
-            $url = $config["url"]."api/launchsports";
-            //拼接验证码
-            $ukey = mt_rand(00000000,99999999);
-            $signature = md5($config["operator_id"].$ukey.$ukey.$config["Key"]);
-            $params = [
-                "signature" => $signature,
-                "operator_id" => $config["operator_id"],
-                "ukey" => $ukey,
-                "result_list" => $result_list
-            ];
-//            $params = [
-//                "Request" => [
-//                    "signature" => $signature,
-//                    "operator_id" => $config["operator_id"],
-//                    "ukey" => $ukey,
-//                    "result_list" => $result_list
-//                ],
-//                "Response" => [
-//                    "status" => 1,
-//                    "statusdesc" => "ok"
-//                ]
-//            ];
-            $params = json_encode($params);
-            $res = $this->curl_post($url, $params);
-            Log::channel('kidebug')->info('wbet-handle-return',[$res]);
+            Log::channel('kidebug')->info('wbet-handle-return',[$result_list]);
             exit();
         }catch (\Exception $e){
             echo $e->getMessage();
