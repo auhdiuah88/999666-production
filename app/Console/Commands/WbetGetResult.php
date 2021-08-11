@@ -88,9 +88,21 @@ class WbetGetResult extends Command
                 "ukey" => $ukey,
                 "result_list" => $result_list
             ];
+//            $params = [
+//                "Request" => [
+//                    "signature" => $signature,
+//                    "operator_id" => $config["operator_id"],
+//                    "ukey" => $ukey,
+//                    "result_list" => $result_list
+//                ],
+//                "Response" => [
+//                    "status" => 1,
+//                    "statusdesc" => "ok"
+//                ]
+//            ];
             $params = json_encode($params);
             $res = $this->curl_post($url, $params);
-            Log::channel('kidebug')->info('wbet-handle-return',[$result_list]);
+            Log::channel('kidebug')->info('wbet-handle-return',[$res]);
             exit();
         }catch (\Exception $e){
             echo $e->getMessage();
