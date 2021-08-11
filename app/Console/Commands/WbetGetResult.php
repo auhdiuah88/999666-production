@@ -65,14 +65,31 @@ class WbetGetResult extends Command
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         try {
+            $result_list = [];
             foreach ($res["value"] as $k => $v){
                 //用户派彩金额
-                $money = $res[$k]["bet_amount"]+$res[$k]["winlose"];
+                $money = $res["value"][$k]["bet_amount"]+$res["value"][$k]["winlose"];
                 //更新用户钱包
                 DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"phone" => $res["value"][$k]["member_id"]])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
+
+                $result_list = [
+                    "a" => $res["value"][$k]["result_list"]
+                ];
             }
-            echo "更新用户钱包成功";
-            Log::channel('kidebug')->info('wbet-handle-return',"更新用户钱包成功");
+            $config = config("game.wbet");
+            $url = $config["url"]."api/launchsports";
+            //拼接验证码
+            $ukey = mt_rand(00000000,99999999);
+            $signature = md5($config["operator_id"].$ukey.$ukey.$config["Key"]);
+            $params = [
+                "signature" => $signature,
+                "operator_id" => $config["operator_id"],
+                "ukey" => $ukey,
+                "result_list" => $result_list
+            ];
+            $params = json_encode($params);
+            $res = $this->curl_post($url, $params);
+            Log::channel('kidebug')->info('wbet-handle-return',[$res]);
             exit();
         }catch (\Exception $e){
             echo $e->getMessage();
