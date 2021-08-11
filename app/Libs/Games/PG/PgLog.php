@@ -47,7 +47,8 @@ class PgLog extends GameStrategy{
         Log::channel('kidebug')->info('pg-launch-return',[$url]);
         return $this->_data = [
             "url" => $url,
-            "wallet" => $user_wallet->withdrawal_balance
+            "wallet" => $user_wallet->withdrawal_balance,
+            "game_id" => $wallet_name->id,
         ];
     }
 

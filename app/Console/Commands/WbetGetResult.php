@@ -69,7 +69,7 @@ class WbetGetResult extends Command
                 //用户派彩金额
                 $money = $res[$k]["bet_amount"]+$res[$k]["winlose"];
                 //更新用户钱包
-                DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"phone" => $res[$k]["member_id"]])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
+                DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"phone" => $res["value"][$k]["member_id"]])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
             }
             echo "更新用户钱包成功";
             exit();

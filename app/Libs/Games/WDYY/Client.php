@@ -61,7 +61,8 @@ class Client extends GameStrategy
         }
         return $this->_data = [
             "url" => $res['data']['gameUrl'],
-            "wallet" => $user_wallet->withdrawal_balance
+            "wallet" => $user_wallet->withdrawal_balance,
+            "game_id" => $wallet_name->id,
         ];
     }
 
