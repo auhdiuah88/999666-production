@@ -420,6 +420,7 @@ class UserController extends Controller
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
         $user_id = $data[0];
+        //获取用户钱包
         $info = DB::table('users_wallet')->join("wallet_name","users_wallet.wallet_id","=","wallet_name.id")->where("user_id",$user_id)->get()->toArray();
         $info = json_decode(json_encode($info));
         if(!$info){

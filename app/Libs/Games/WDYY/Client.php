@@ -87,10 +87,13 @@ class Client extends GameStrategy
             ];
             return false;
         }
+        //获取用户钱包
+        $wallet_name = DB::table("wallet_name")->where("wallet_name","wdyy")->select("id")->first();
+        $users_wallet = DB::table("users_wallet")->where("wallet_id",$wallet_name->id)->select()->first();
         $data = [
             'account' => (string)$info->phone,
             'name' => $info->code,
-            'balance' => $info->balance * 100,
+            'balance' => $users_wallet->withdrawal_balance * 100,
             'headerUrl' => 'https://api.goshop6.in/storage/common/v6.png',
         ];
         $this->_data = [

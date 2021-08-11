@@ -49,7 +49,6 @@ class BettingController extends Controller
     public function TopScores()
     {
         $validator = Validator::make(request()->input(),[
-            'game_id' => 'required|integer|gte:1',
             'money' => 'required'
         ]);
         if($validator->fails())
@@ -67,7 +66,6 @@ class BettingController extends Controller
     public function LowerScores()
     {
         $validator = Validator::make(request()->input(),[
-            'game_id' => 'required|integer|gte:1',
             'money' => 'required'
         ]);
         if($validator->fails())
@@ -85,7 +83,7 @@ class BettingController extends Controller
     public function QueryScore()
     {
         $validator = Validator::make(request()->input(),[
-            'game_id' => 'required|integer|gte:1'
+
         ]);
         if($validator->fails())
         {

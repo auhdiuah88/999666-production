@@ -59,7 +59,8 @@ class IcgLog extends GameStrategy
 
         return $this->_data = [
             "url" => $game_link,
-            "wallet" => $user_wallet->withdrawal_balance
+            "wallet" => $user_wallet->withdrawal_balance,
+            "game_name" => $productId,
         ];
     }
 
