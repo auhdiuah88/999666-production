@@ -15,14 +15,24 @@ class IcgLog extends GameStrategy
         //获取用户数据
         $user_id = getUserIdFromToken(getToken());
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
-        if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+        if (!$info){
+            return $this->_msg = "用户不存在";
         }
-//        $config = config("game.icg");
+        $config = config("game.icg");
+        //判断用户是否拥有钱包
+        $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        $user_data = [
+            "user_id" => $user_id,//用户ID
+            "wallet_id" => $wallet_name->id,//游戏平台id
+            "total_balance" => 0,//用户总余额
+            "withdrawal_balance" => 0,//用户可下分余额
+            "update_time" => time(),//更新时间
+        ];
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if(!$user_wallet){
+            DB::table("users_wallet")->insert($user_data);
+            $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        }
         //判断缓存中是否存在token
         if (cache('icgtoken')) {
             $token = cache("icgtoken");
@@ -45,9 +55,13 @@ class IcgLog extends GameStrategy
 //        $productId = $this->GameList($token);
 
         //获取游戏链接
-        $game_link = $this->GameLink($info->phone,$token);
+        $game_link = $this->GameLink($info->phone,$token,$productId);
 
-        return $this->_data = $game_link;
+        return $this->_data = [
+            "url" => $game_link,
+            "wallet" => $user_wallet->withdrawal_balance,
+            "game_id" => $wallet_name->id,
+        ];
     }
 
     //获取秘钥
@@ -81,30 +95,15 @@ class IcgLog extends GameStrategy
         return 1;
     }
 
-    //创建游戏链接
-//    public function GameList($token){
-//        $config = config("game.icg");
-//        $url = $config["url"]."api/v1/games";
-//        $params = [
-//            "type" => "all",
-//            "lang" => "en"
-//        ];
-//        $url = $url."?lang=".$params["lang"];
-//        $header[] = "Authorization: Bearer ".$token;
-//        $res = $this->GetCurl($url,$header);
-//        Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
-//        $res = json_decode($res,true);
-//        return $res["data"][0]["productId"];
-//    }
-
     //获取游戏链接
-    public function GameLink($user_name,$token){
+    public function GameLink($user_name,$token,$productId){
         $config = config("game.icg");
         $url = $config["url"]."api/v1/games/gamelink";
         $params = [
             "lang" => "en",
         ];
-        $url = $url."?lang=".$params["lang"]."&productId=lobby01&player=".$user_name;
+        $productId = $productId=="icg"?"lobby01":$productId;
+        $url = $url."?lang=".$params["lang"]."&productId=".$productId."&player=".$user_name;
         $header[] = "Authorization: Bearer ".$token;
         $res = $this->GetCurl($url,$header);
         Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
@@ -112,26 +111,18 @@ class IcgLog extends GameStrategy
         return $res["data"]["url"];
     }
 
-    //用户入金
-    public function ICGUserTopScores($user_id,$money){
+    //用户上分
+    public function TopScores($money,$user_id){
         $config = config("game.icg");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         //获取剩余金额
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
         if (!$user){
-            return [
-                "code" => 1,
-                "msg" => "用户不存在",
-                "data" => ""
-            ];
+            return $this->_msg = "用户不存在";
         }
         if ($user->balance < $money){
-            return [
-                "code" => 2,
-                "msg" => "余额不足",
-                "data" => ""
-            ];
+            return $this->_msg = "余额不足";
         }
         //创建转账订单
         $create_time = time().rand("000","999");
@@ -142,6 +133,7 @@ class IcgLog extends GameStrategy
             "transfer_amount" => $money,
             "remaining_amount" => $user->balance - $money,
             "create_time" => time(),
+            "remarks" => "icg上分钱包"
         ];
 
         //判断缓存中是否存在token
@@ -163,52 +155,49 @@ class IcgLog extends GameStrategy
             ];
             $header[] = "Authorization: Bearer ".$token;
             $res = $this->curl_post($url, $params,$header);
-            Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
+            Log::channel('kidebug')->info('icg-TopScores-return',[$res]);
             $res = json_decode($res,true);
             if(isset($res["data"])){
+                $balance_log_data = [
+                    'user_id' => $user_id,
+                    'type' => 2,
+                    'dq_balance' => $user->balance,
+                    'wc_balance' => $user->balance - $money,
+                    'time' => time(),
+                    'msg' => "icg钱包充值".sprintf('%01.2f',$money),
+                    'money' => $money
+                ];
+                $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+                if($log_data === false)
+                {
+                    throw new \Exception('增加余额变更记录失败');
+                }
                 //更新订单
                 DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
                 //更新用户余额
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance - $money]);
                 //更新用户钱包
-                $this->IcgQueryScore($user_id);
-                return [
-                    "code" => 200,
-                    "msg" => "success",
-                    "data" => $res["data"]["balance"] / 100,
-                ];
+                $this->QueryScore($user_id);
+                return $this->_data = sprintf('%01.2f',$res["data"]["balance"] / 100);
             }
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
-
-        return $order;
     }
 
-    //用户出金
-    public function ICGUserLowerScores($user_id,$money){
+    //用户下分
+    public function LowerScores($money,$user_id){
         $config = config("game.icg");
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         //获取剩余金额
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
         if (!$user){
-            return [
-                "code" => 1,
-                "msg" => "用户不存在",
-                "data" => ""
-            ];
+            return $this->_msg = "用户不存在";
         }
-        if ($user->balance < $money){
-            return [
-                "code" => 2,
-                "msg" => "余额不足",
-                "data" => ""
-            ];
+        if ($user_wallet->withdrawal_balance < $money){
+            return $this->_msg = "余额不足";
         }
         //创建转账订单
         $create_time = time().rand("000","999");
@@ -219,6 +208,7 @@ class IcgLog extends GameStrategy
             "transfer_amount" => $money,
             "remaining_amount" => $user->balance + $money,
             "create_time" => time(),
+            "remarks" => "icg下分钱包"
         ];
         $order_id = DB::table("order")->insertGetId($order);
         //判断缓存中是否存在token
@@ -239,36 +229,44 @@ class IcgLog extends GameStrategy
             ];
             $header[] = "Authorization: Bearer ".$token;
             $res = $this->curl_post($url, $params,$header);
-            Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
+            Log::channel('kidebug')->info('icg-LowerScores-return',[$res]);
             $res = json_decode($res,true);
             if(isset($res["data"])){
+                $balance_log_data = [
+                    'user_id' => $user_id,
+                    'type' => 2,
+                    'dq_balance' => $user->balance,
+                    'wc_balance' => $user->balance + $money,
+                    'time' => time(),
+                    'msg' => "icg钱包提现".sprintf('%01.2f',$money),
+                    'money' => $money
+                ];
+                $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+                if($log_data === false)
+                {
+                    throw new \Exception('增加余额变更记录失败');
+                }
                 //更新订单
                 DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
                 //更新用户余额
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance + $money]);
                 //更新用户钱包
-                $this->IcgQueryScore($user_id);
-                return [
-                    "code" => 200,
-                    "msg" => "success",
-                    "data" => $res["data"]["balance"] / 100,
-                ];
+                $this->QueryScore($user_id);
+                return $this->_data = sprintf('%01.2f',$res["data"]["balance"] / 100);
             }
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
-        return $order;
     }
 
     //查询用户余额
-    public function IcgQueryScore($user_id){
+    public function QueryScore($user_id){
         $config = config("game.icg");
         //获取用户信息
         $user = DB::table("users")->where("id",$user_id)->select("phone")->first();
+        if (!$user){
+            return $this->_msg = "用户不存在";
+        }
         //判断缓存中是否存在token
         if (cache('icgtoken')) {
             $token = cache("icgtoken");
@@ -285,7 +283,7 @@ class IcgLog extends GameStrategy
         $header[] = "Authorization: Bearer ".$token;
         try {
             $res = $this->GetCurl($url,$header);
-            Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
+            Log::channel('kidebug')->info('icg-QueryScore-return',[$res]);
             $res = json_decode($res,true);
             if (isset($res["data"])){
                 $users_wallet = [
@@ -297,24 +295,15 @@ class IcgLog extends GameStrategy
                 ];
                 //更新用户钱包
                 $wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_id->id,"user_id" => $user_id])->select()->first();
-                $wallet = json_decode(json_encode($wallet));
                 if(!$wallet){
                     DB::table("users_wallet")->insert($users_wallet);
                 }else{
                     DB::table("users_wallet")->where(["wallet_id" => $wallet_id->id,"user_id" => $user_id])->update($users_wallet);
                 }
-                return [
-                    "code" => 200,
-                    "msg" => "success",
-                    "data" => $res["data"][0]["balance"] / 100,
-                ];
+                return $this->_data = sprintf('%01.2f',$res["data"][0]["balance"] / 100);
             }
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 

@@ -22,9 +22,12 @@ return [
     //测试
     "pg" => [
         "game_name" => "pg",
-        "PgSoftAPIDomain" => "https://api.pg-bo.me/external",//用户相关
-        "operator_token" => "41f5815fe61969ec245e32b07639de7f",
-        "secret_key" => "399c4eeae8536b606659981006b2bd47",
+        "PgSoftAPIDomain" => "https://api.pg-bo.me/external/",
+        "DataGrabAPIDomain" => "https://api.pg-bo.me/external-datagrabber/",
+        "PgSoftPublicDomain" => "https://m.pg-redirect.net/",
+        "operator_token" => "28f461b94907603fc57272a9bfdc3610",
+        "secret_key" => "9ab57402eddd0237865545da062abb08",
+        "salt" => "da73af656d9f64038b7e9141d03fc98e"
     ],
 
     //ICG
@@ -43,6 +46,6 @@ return [
         "url" => "https://wbapi.uat0011.com/",
         "providercode" => "WB",
         "Key" => "7EDB68B0112940F786A2015A5693E935",
-        "operator_id" => "gstsseAB",
+        "operator_id" => "gstsseab",
     ],
 ];

@@ -12,21 +12,24 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Libs\Games\GameContext;
 
 
 class UserController extends Controller
 {
-    protected $UserService, $UserBalanceService;
+    protected $UserService, $UserBalanceService,$GameContext;
 
 
     public function __construct
     (
         UserService $userService,
-        UserBalanceService $userBalanceService
+        UserBalanceService $userBalanceService,
+        GameContext $GameContext
     )
     {
         $this->UserService = $userService;
         $this->UserBalanceService = $userBalanceService;
+        $this->GameContext =$GameContext;
     }
 
     /**
@@ -417,7 +420,8 @@ class UserController extends Controller
         $token = urldecode($token);
         $data = explode("+", Crypt::decrypt($token));
         $user_id = $data[0];
-        $info = DB::table('users_wallet')->join("wallet_name","users_wallet.wallet_id","=","wallet_name.id")->where("user_id",$user_id)->select("users_wallet.id","wallet_name.wallet_name")->first();
+        //获取用户钱包
+        $info = DB::table('users_wallet')->join("wallet_name","users_wallet.wallet_id","=","wallet_name.id")->where("user_id",$user_id)->get()->toArray();
         $info = json_decode(json_encode($info));
         if(!$info){
             return [
@@ -432,4 +436,5 @@ class UserController extends Controller
             "data" => $info
         ];
     }
+
 }
