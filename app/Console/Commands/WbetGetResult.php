@@ -77,6 +77,8 @@ class WbetGetResult extends Command
                     "a" => $res["value"][$k]["result_list"]
                 ];
             }
+            print_r($result_list);
+            exit();
             $config = config("game.wbet");
             $url = $config["url"]."api/launchsports";
             //拼接验证码
