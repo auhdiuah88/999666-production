@@ -52,7 +52,7 @@ class WbetGetResult extends Command
         ];
         $params = json_encode($params);
         $res = $this->curl_post($url, $params);
-        Log::channel('kidebug')->info('wbet-handle-return',[$res]);
+//        Log::channel('kidebug')->info('wbet-handle-return',[$res]);
         $res = json_decode($res,true);
         if($res["status"] != "1"){
             echo "接口错误，联系接口提供方";
@@ -71,6 +71,7 @@ class WbetGetResult extends Command
                 //更新用户钱包
                 DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"phone" => $res[$k]["member_id"]])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
             }
+            echo "更新用户钱包成功";
             exit();
         }catch (\Exception $e){
             echo $e->getMessage();
