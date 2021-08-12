@@ -240,18 +240,10 @@ class Client extends GameStrategy
         //获取剩余金额
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
         if (!$user){
-            return [
-                "code" => 1,
-                "msg" => "用户不存在",
-                "data" => ""
-            ];
+            return $this->_msg = "用户不存在";
         }
         if ($user->balance < $money){
-            return [
-                "code" => 2,
-                "msg" => "余额不足",
-                "data" => ""
-            ];
+            return $this->_msg = "余额不足";
         }
         //创建转账订单
         $create_time = time().rand("000","999");
@@ -272,17 +264,9 @@ class Client extends GameStrategy
             //更新用户钱包
             DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
             $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
-            return [
-                "code" => 200,
-                "msg" => "success",
-                "data" => $user_wallet->withdrawal_balance,
-            ];
+            return $this->_data = sprintf('%01.2f',$user_wallet->withdrawal_balance);
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
 
     }
@@ -295,18 +279,10 @@ class Client extends GameStrategy
         $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
         $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
         if (!$user){
-            return [
-                "code" => 1,
-                "msg" => "用户不存在",
-                "data" => ""
-            ];
+            return $this->_msg = "用户不存在";
         }
         if ($user_wallet->withdrawal_balance < $money){
-            return [
-                "code" => 2,
-                "msg" => "余额不足",
-                "data" => ""
-            ];
+            return $this->_msg = "余额不足";
         }
         //创建转账订单
         $create_time = time().rand("000","999");
@@ -328,17 +304,9 @@ class Client extends GameStrategy
             DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->decrement("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance-$money")]);
             //重新查询余额
             $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
-            return [
-                "code" => 200,
-                "msg" => "success",
-                "data" => $user_wallet->withdrawal_balance,
-            ];
+            return $this->_data = sprintf('%01.2f',$user_wallet->withdrawal_balance);
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => ""
-            ];
+            return $this->_msg = $e->getMessage();
         }
 
     }
