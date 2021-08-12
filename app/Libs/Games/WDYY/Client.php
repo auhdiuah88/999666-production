@@ -90,7 +90,7 @@ class Client extends GameStrategy
         }
         //获取用户钱包
         $wallet_name = DB::table("wallet_name")->where("wallet_name","wdyy")->select("id")->first();
-        $users_wallet = DB::table("users_wallet")->where("wallet_id",$wallet_name->id)->select()->first();
+        $users_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select()->first();
         $data = [
             'account' => (string)$info->phone,
             'name' => $info->code,
