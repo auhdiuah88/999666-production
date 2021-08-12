@@ -77,7 +77,21 @@ class WbetGetResult extends Command
                     ];
                 }
             }
-            Log::channel('kidebug')->info('wbet-handle-return',[$result_list]);
+            //发送已更新订单
+            $url = $config["url"]."api/markfetchresult";
+            //拼接验证码
+            $ukey = mt_rand(00000000,99999999);
+            $signature = md5($config["operator_id"].$ukey.$ukey.$config["Key"]);
+            $params = [
+                "signature" => $signature,
+                "operator_id" => $config["operator_id"],
+                "ukey" => $ukey,
+                "result_list" => $result_list
+            ];
+            $params = json_encode($params);
+            $res = $this->curl_post($url, $params);
+            $res = json_decode($res,true);
+            Log::channel('kidebug')->info('wbet-handle-return',[$res]);
             exit();
         }catch (\Exception $e){
             echo $e->getMessage();
