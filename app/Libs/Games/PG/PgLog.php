@@ -79,11 +79,7 @@ class PgLog extends GameStrategy{
                 if($wallet){
                     return $this->_data = sprintf('%01.2f',$res["data"]["cashBalance"]);
                 }else{
-                    return [
-                        "code" => "4",
-                        "meg" => "update error",
-                        "data" => ""
-                    ];
+                    return $this->_msg = "update error";
                 }
             }else{
                 return $this->_msg = $res["error"]["message"];
@@ -170,7 +166,7 @@ class PgLog extends GameStrategy{
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance - $money]);
                 //更新用户钱包
                 $this->QueryScore($user_id);
-                return $this->_data = sprintf('%01.2f',$res["data"]["balanceAmount"]);
+                return $this->_data = sprintf('%01.2f',$res["data"]["balanceAmount"]/1000);
             }else{
                 throw new \Exception($res["error"]["message"]);
             }
@@ -240,7 +236,7 @@ class PgLog extends GameStrategy{
                 DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance + $money]);
                 //更新用户钱包
                 $this->QueryScore($user_id);
-                return $this->_data = sprintf('%01.2f',$res["data"]["balanceAmount"]);
+                return $this->_data = sprintf('%01.2f',$res["data"]["balanceAmount"]/1000);
             }else{
                 throw new \Exception($res["error"]["message"]);
             }
