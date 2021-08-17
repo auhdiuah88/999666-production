@@ -38,17 +38,15 @@ class IcgLog extends GameStrategy
             $token = cache("icgtoken");
         }else{
             //获取秘钥
-            $gettoken = $this->GetToken();
-            $token = $gettoken["token"];
-            cache(["icgtoken" => $token]);
+            $this->GetToken();
+            $token = cache("icgtoken");
         }
         //创建玩家
         $getuser = $this->CreateNewPlayer($info->phone,$token);
         if($getuser == 2){
             //重新获取秘钥
-            $gettoken = $this->GetToken();
-            $token = $gettoken["token"];
-            cache(["icgtoken" => $token]);
+            $this->GetToken();
+            $token = cache("icgtoken");
         }
 
         //获取游戏ID
@@ -75,6 +73,11 @@ class IcgLog extends GameStrategy
         $res = $this->curl_post($url, $params);
         Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
         $res = json_decode($res,true);
+        if(!$res["token"]){
+            cache(["icgtoken" => ""]);
+        }else{
+            cache(["icgtoken" => $res["token"]]);
+        }
         return $res;
     }
 
@@ -87,7 +90,7 @@ class IcgLog extends GameStrategy
         ];
         $header[] = "Authorization: Bearer ".$token;
         $res = $this->curl_post($url, $params,$header);
-        Log::channel('kidebug')->info('icg-GetToken-return',[$res]);
+        Log::channel('kidebug')->info('icg-CreateNewPlayer-return',[$res]);
         $res = json_decode($res,true);
         if(isset($res["error"]) && $res["error"]["status"] == "401"){
             return 2;

@@ -51,7 +51,7 @@ return [
     //正式
     "icg" => [
         "game_name" => "icg",
-        "url" => "https://admin-stage.iconic-gaming.com/service/",
+        "url" => "https://admin.iconic-gaming.com/service/",
         "username" => "ICGqqwwee1688",
         "password" => "zzxxcc1688S",
     ],
