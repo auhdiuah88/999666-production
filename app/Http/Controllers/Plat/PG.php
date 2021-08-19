@@ -21,6 +21,7 @@ class PG extends Controller{
 
     //PG令牌验证
     public function VerifySession(Request $request){
+        header('Content-Type: application/json');
         $res = $request->input();
         Log::channel('kidebug')->info('pg-VerifySession',[json_encode($res,true)]);
         $config = config("game.pg");
@@ -72,7 +73,7 @@ class PG extends Controller{
         }
         $msg = [
             "data" => [
-                "player_name" => $user->phone,
+                "player_name" => "$user->phone",
                 "currency" => "VND",
             ],
             "error" => null
