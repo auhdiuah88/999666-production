@@ -21,9 +21,11 @@ class PG extends Controller{
 
     //PG令牌验证
     public function VerifySession(Request $request){
-        header('Content-Type: application/json');
-        $res = $request->input();
-        Log::channel('kidebug')->info('pg-VerifySession',[json_encode($res,true)]);
+        header("Content-type: application/json",true);
+        $res["operator_token"] = $_POST["operator_token"];
+        $res["operator_player_session"] = $_POST["operator_player_session"];
+        $res["secret_key"] = $_POST["secret_key"];
+        Log::channel('kidebug')->info('pg-VerifySession',[$res,true]);
         $config = config("game.pg");
         //判断operator_token是否匹配
         if($res["operator_token"] != $config["operator_token"]){
@@ -78,7 +80,8 @@ class PG extends Controller{
             ],
             "error" => null
         ];
-        return json_encode($msg,true);
+        echo json_encode($msg,true);
+        die();
     }
 
 }
