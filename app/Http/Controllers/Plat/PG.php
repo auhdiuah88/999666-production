@@ -36,7 +36,8 @@ class PG extends Controller{
                     "message" => "no operator_token"
                 ]
             ];
-            return json_encode($msg,true);
+            echo json_encode($msg,true);
+            die();
         }
         //判断secret_key是否匹配
         if($res["secret_key"] != $config["secret_key"]){
@@ -47,7 +48,8 @@ class PG extends Controller{
                     "message" => "no secret_key"
                 ]
             ];
-            return json_encode($msg,true);
+            echo json_encode($msg,true);
+            die();
         }
         //通过token查找用户
         $user = DB::table("users")->where("id",$res["operator_player_session"])->select()->first();
@@ -60,7 +62,8 @@ class PG extends Controller{
                     "message" => "no token"
                 ]
             ];
-            return json_encode($msg,true);
+            echo json_encode($msg,true);
+            die();
         }
         //判断token是否匹配
         if($res["operator_player_session"] != $user->id){
@@ -71,7 +74,8 @@ class PG extends Controller{
                     "message" => "no operator_player_session"
                 ]
             ];
-            return json_encode($msg,true);
+            echo json_encode($msg,true);
+            die();
         }
         $msg = [
             "data" => [
