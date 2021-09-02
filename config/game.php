@@ -20,16 +20,6 @@ return [
 
     //pg
     //测试
-    "pg" => [
-        "game_name" => "pg",
-        "PgSoftAPIDomain" => "https://api.pg-bo.me/external/",
-        "DataGrabAPIDomain" => "https://api.pg-bo.me/external-datagrabber/",
-        "PgSoftPublicDomain" => "https://m.pg-redirect.net/",
-        "operator_token" => "28f461b94907603fc57272a9bfdc3610",
-        "secret_key" => "9ab57402eddd0237865545da062abb08",
-        "salt" => "da73af656d9f64038b7e9141d03fc98e"
-    ],
-    //正式
 //    "pg" => [
 //        "game_name" => "pg",
 //        "PgSoftAPIDomain" => "https://api.pg-bo.me/external/",
@@ -39,6 +29,16 @@ return [
 //        "secret_key" => "9ab57402eddd0237865545da062abb08",
 //        "salt" => "da73af656d9f64038b7e9141d03fc98e"
 //    ],
+    //正式
+    "pg" => [
+        "game_name" => "pg",
+        "PgSoftAPIDomain" => "https://api.pg-bo.net/external/",
+        "DataGrabAPIDomain" => "https://api.pg-bo.net/external-datagrabber/",
+        "PgSoftPublicDomain" => "https://public.pgjksonc.club/",
+        "operator_token" => "8AF88208-8A51-4EE3-803C-F2FCBEAB91BC",
+        "secret_key" => "CD9CFC07D28B40F09B77C617B2A17840",
+        "salt" => "98D32026428B436AA138D6FF8300ED"
+    ],
 
     //ICG
     //测试
