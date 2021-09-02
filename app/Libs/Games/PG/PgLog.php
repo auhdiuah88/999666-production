@@ -75,9 +75,9 @@ class PgLog extends GameStrategy{
             $res = json_decode($res,true);
             if($res["data"] != "null"){
                 //更新用户钱包余额
-                $wallet = $this->updateUserWallet($user_id,$res["data"]["cashBalance"]);
+                $wallet = $this->updateUserWallet($user_id,$res["data"]["cashBalance"]/1000);
                 if($wallet){
-                    return $this->_data = sprintf('%01.2f',$res["data"]["cashBalance"]);
+                    return $this->_data = sprintf('%01.2f',$res["data"]["cashBalance"]/1000);
                 }else{
                     return $this->_msg = "update error";
                 }
