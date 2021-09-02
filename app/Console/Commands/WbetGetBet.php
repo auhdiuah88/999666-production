@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class WbetGetResult extends Command
+class WbetGetBet extends Command
 {
 
     /**
@@ -14,14 +14,14 @@ class WbetGetResult extends Command
      *
      * @var string
      */
-    protected $signature = 'WbetGetResult';
+    protected $signature = 'WbetGetBet';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'wbet结算玩家投注订单';
+    protected $description = 'wbet结算玩家投注拒绝订单';
 
     /**
      * Create a new command instance.
@@ -41,7 +41,7 @@ class WbetGetResult extends Command
     public function handle()
     {
         $config = config("game.wbet");
-        $url = $config["url"]."api/getresult";
+        $url = $config["url"]."api/getbetlist";
         //拼接验证码
         $ukey = mt_rand(00000000,99999999);
         $signature = md5($config["operator_id"].$ukey.$ukey.$config["Key"]);
@@ -66,32 +66,24 @@ class WbetGetResult extends Command
         try {
             $result_list = [];
             foreach ($res["value"] as $k => $v){
-                if($res["value"][$k]["result_status"] == "END"){
-                    //用户派彩金额
-                    $money = $res["value"][$k]["payout"];
+                if($res["value"][$k]["bet_status"] == "Cancel" || $res["value"][$k]["bet_status"] == "Rejected"){
+                    //用户退款金额
+                    $money = $res["value"][$k]["actual_bet_amount"];
                     $user = DB::table("users")->where("phone",$res["value"][$k]["member_id"])->select("id")->first();
                     //更新用户钱包
                     DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
                     $result_list[$k] = [
-                        "a" => $res["value"][$k]["result_id"]
+                        "a" => $res["value"][$k]["bet_id"]
                     ];
                 }else{
-                    //用户派彩金额
-                    $money = $res["value"][$k]["payout"];
-                    $user = DB::table("users")->where("phone",$res["value"][$k]["member_id"])->select("id")->first();
-                    //更新用户钱包
-                    DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->decrement("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance-$money")]);
                     $result_list[$k] = [
-                        "a" => $res["value"][$k]["result_id"]
-                    ];
-                    $result_list[$k] = [
-                        "a" => $res["value"][$k]["result_id"]
+                        "a" => $res["value"][$k]["bet_id"]
                     ];
                 }
             }
             if(!empty($result_list)){
                 //发送已更新订单
-                $url = $config["url"]."api/markfetchresult";
+                $url = $config["url"]."api/markfetchbetlist";
                 //拼接验证码
                 $ukey = mt_rand(00000000,99999999);
                 $signature = md5($config["operator_id"].$ukey.$ukey.$config["Key"]);
@@ -99,12 +91,12 @@ class WbetGetResult extends Command
                     "signature" => $signature,
                     "operator_id" => $config["operator_id"],
                     "ukey" => $ukey,
-                    "result_list" => $result_list
+                    "bet_list" => $result_list
                 ];
                 $params = json_encode($params);
                 $res = $this->curl_post($url, $params);
                 $res = json_decode($res,true);
-                Log::channel('kidebug')->info('wbet-result-return',[$res]);
+                Log::channel('kidebug')->info('wbet-bet-return',[$res]);
             }
             exit();
         }catch (\Exception $e){

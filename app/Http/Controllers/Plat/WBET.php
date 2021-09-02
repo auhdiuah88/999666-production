@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Libs\Games\WBET\WbetLog;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class WBET extends Controller{
     private $Wbet;
@@ -138,6 +139,7 @@ class WBET extends Controller{
     //wbet平台用户退款
     public function refund(Request $request){
         $res = $request->input();
+        Log::channel('kidebug')->info('wbet-refund-input',[$res]);
         $config = config("game.wbet");
         //没有用户名
         $user = DB::table("users")->where("phone",$res["account_id"])->select()->first();
