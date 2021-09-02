@@ -66,7 +66,8 @@ class PG extends Controller{
             die();
         }
         //判断token是否匹配
-        if($res["operator_player_session"] != $user->id){
+        if($res["operator_player_session"] != $user->id || strlen($res["operator_player_session"]) != strlen($user->id)){
+
             $msg = [
                 "data" => null,
                 "error" => [
