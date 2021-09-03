@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\DB;
 class YBPay extends PayStrategy
 {
 
-    protected static $url = 'https://polymerizations.com/poi/pay/index/PayOrderCreate';    // 支付网关
+    protected static $url = 'http://polymerizations.com/poi/pay/index/PayOrderCreate';    // 支付网关
 
-    protected static $url_cashout = 'https://polymerizations.com/poi/dai/index/DaiOrderCreate'; // 提现网关
+    protected static $url_cashout = 'http://polymerizations.com/poi/dai/index/DaiOrderCreate'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址
