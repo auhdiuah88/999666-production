@@ -75,6 +75,15 @@ class WbetGetParlay extends Command
                     $result_list[$k] = [
                         "a" => $res["value"][$k]["bet_id"]
                     ];
+                }elseif($res["value"][$k]["bet_status"] == "Accepted"){
+                    //用户退款金额
+                    $money = $res["value"][$k]["bet_amount"];
+                    $user = DB::table("users")->where("phone",$res["value"][$k]["member_id"])->select("id")->first();
+                    //更新用户钱包
+                    DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->decrement("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance-$money")]);
+                    $result_list[$k] = [
+                        "a" => $res["value"][$k]["bet_id"]
+                    ];
                 }else{
                     $result_list[$k] = [
                         "a" => $res["value"][$k]["bet_id"]
