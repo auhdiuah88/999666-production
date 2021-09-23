@@ -61,6 +61,7 @@ class WbetGetBet extends Command
             echo "没有新订单";
             exit();
         }
+        $data = [];
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
         try {
@@ -75,12 +76,29 @@ class WbetGetBet extends Command
                     $result_list[$k] = [
                         "a" => $res["value"][$k]["bet_id"]
                     ];
+                    $data["bet_id"] = $res["value"][$k]["bet_id"];
+                    $data["actual_bet_amount"] = $money;
+                    $data["status"] = $res["value"][$k]["bet_status"];
+                    $order = Db::name("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->find();
+                    if(!$order){
+                        Db::name("wbet_order")->insert($data);
+                    }else{
+                        Db::name("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->update($data);
+                    }
                 }elseif($res["value"][$k]["bet_status"] == "Accepted"){
-                    //用户退款金额
-                    $money = $res["value"][$k]["actual_bet_amount"];
-                    $user = DB::table("users")->where("phone",$res["value"][$k]["member_id"])->select("id")->first();
-                    //更新用户钱包
-                    DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->decrement("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance-$money")]);
+                    $order = Db::name("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->find();
+                    if(!$order){
+                        $data["bet_id"] = $res["value"][$k]["bet_id"];
+                        $data["actual_bet_amount"] = $money;
+                        $data["status"] = $res["value"][$k]["bet_status"];
+                        Db::name("wbet_order")->insert($data);
+                    }else{
+                        //用户退款金额
+                        $money = $res["value"][$k]["actual_bet_amount"];
+                        $user = DB::table("users")->where("phone",$res["value"][$k]["member_id"])->select("id")->first();
+                        //更新用户钱包
+                        DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user->id])->decrement("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance-$money")]);
+                    }
                     $result_list[$k] = [
                         "a" => $res["value"][$k]["bet_id"]
                     ];
