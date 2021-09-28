@@ -55,11 +55,9 @@ class WbetGetResult extends Command
         Log::channel('kidebug')->info('wbet-result-input',[$res]);
         $res = json_decode($res,true);
         if($res["status"] != "1"){
-            Log::channel('kidebug')->info('wbet-result-input',["接口错误，联系接口提供方"]);
             exit();
         }
         if(empty($res["value"])){
-            Log::channel('kidebug')->info('wbet-result-input',["没有新订单"]);
             exit();
         }
         //获取钱包
@@ -104,12 +102,11 @@ class WbetGetResult extends Command
                 ];
                 $params = json_encode($params);
                 $res = $this->curl_post($url, $params);
-                $res = json_decode($res,true);
-                Log::channel('kidebug')->info('wbet-result-return',[$res]);
+                Log::channel('kidebug')->info('wbet-result-return',[$params]);
             }
             exit();
         }catch (\Exception $e){
-            echo $e->getMessage();
+            Log::channel('kidebug')->info('wbet-result-error',[$e->getMessage()]);
             exit();
         }
     }
