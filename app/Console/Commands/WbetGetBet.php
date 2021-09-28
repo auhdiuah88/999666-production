@@ -80,14 +80,14 @@ class WbetGetBet extends Command
                     $data["bet_id"] = $res["value"][$k]["bet_id"];
                     $data["actual_bet_amount"] = $money;
                     $data["status"] = $res["value"][$k]["bet_status"];
-                    $order = DB::table("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->find();
+                    $order = DB::table("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->select();
                     if(!$order){
                         DB::table("wbet_order")->insert($data);
                     }else{
                         DB::table("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->update($data);
                     }
                 }elseif($res["value"][$k]["bet_status"] == "Accepted"){
-                    $order = DB::table("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->find();
+                    $order = DB::table("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->select();
                     if(!$order){
                         $data["bet_id"] = $res["value"][$k]["bet_id"];
                         $data["actual_bet_amount"] = $money;
