@@ -55,11 +55,11 @@ class WbetGetResult extends Command
         Log::channel('kidebug')->info('wbet-result-input',[$res]);
         $res = json_decode($res,true);
         if($res["status"] != "1"){
-            echo "接口错误，联系接口提供方";
+            Log::channel('kidebug')->info('wbet-result-input',["接口错误，联系接口提供方"]);
             exit();
         }
         if(empty($res["value"])){
-            echo "没有新订单";
+            Log::channel('kidebug')->info('wbet-result-input',["没有新订单"]);
             exit();
         }
         //获取钱包

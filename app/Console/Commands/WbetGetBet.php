@@ -55,11 +55,11 @@ class WbetGetBet extends Command
         Log::channel('kidebug')->info('wbet-bet-input',[$res]);
         $res = json_decode($res,true);
         if($res["status"] != "1"){
-            echo "接口错误，联系接口提供方";
+            Log::channel('kidebug')->info('wbet-result-input',["接口错误，联系接口提供方"]);
             exit();
         }
         if(empty($res["value"])){
-            echo "没有新订单";
+            Log::channel('kidebug')->info('wbet-result-input',["没有新订单"]);
             exit();
         }
         $data = [];
@@ -80,19 +80,19 @@ class WbetGetBet extends Command
                     $data["bet_id"] = $res["value"][$k]["bet_id"];
                     $data["actual_bet_amount"] = $money;
                     $data["status"] = $res["value"][$k]["bet_status"];
-                    $order = Db::name("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->find();
+                    $order = DB::table("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->find();
                     if(!$order){
-                        Db::name("wbet_order")->insert($data);
+                        DB::table("wbet_order")->insert($data);
                     }else{
-                        Db::name("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->update($data);
+                        DB::table("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->update($data);
                     }
                 }elseif($res["value"][$k]["bet_status"] == "Accepted"){
-                    $order = Db::name("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->find();
+                    $order = DB::table("wbet_order")->where("bet_id",$res["value"][$k]["bet_id"])->find();
                     if(!$order){
                         $data["bet_id"] = $res["value"][$k]["bet_id"];
                         $data["actual_bet_amount"] = $money;
                         $data["status"] = $res["value"][$k]["bet_status"];
-                        Db::name("wbet_order")->insert($data);
+                        DB::table("wbet_order")->insert($data);
                     }else{
                         //用户退款金额
                         $money = $res["value"][$k]["actual_bet_amount"];
@@ -109,7 +109,6 @@ class WbetGetBet extends Command
                     ];
                 }
             }
-            Log::channel('kidebug')->info('wbet-bet-return',[$result_list]);
             if(!empty($result_list)){
                 //发送已更新订单
                 $url = $config["url"]."api/markfetchbetlist";
