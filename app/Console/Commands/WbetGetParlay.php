@@ -110,7 +110,7 @@ class WbetGetParlay extends Command
             }
             exit();
         }catch (\Exception $e){
-            echo $e->getMessage();
+            Log::channel('kidebug')->info('wbet-parlay-error',[$e->getMessage()]);
             exit();
         }
     }
