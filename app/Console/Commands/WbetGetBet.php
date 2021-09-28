@@ -109,6 +109,7 @@ class WbetGetBet extends Command
                     ];
                 }
             }
+            Log::channel('kidebug')->info('wbet-bet-return',[$result_list]);
             if(!empty($result_list)){
                 //发送已更新订单
                 $url = $config["url"]."api/markfetchbetlist";
