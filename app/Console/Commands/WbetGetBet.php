@@ -52,6 +52,7 @@ class WbetGetBet extends Command
         ];
         $params = json_encode($params);
         $res = $this->curl_post($url, $params);
+        Log::channel('kidebug')->info('wbet-bet-input',[$res]);
         $res = json_decode($res,true);
         if($res["status"] != "1"){
             echo "接口错误，联系接口提供方";
