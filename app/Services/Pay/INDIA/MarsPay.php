@@ -159,6 +159,9 @@ class MarsPay extends PayStrategy
         $sign = $params['sign'];
         unset($params['channelId']);
         unset($params['sign']);
+        if($params['replacementOrderNo'] == "null"){
+            unset($params['replacementOrderNo']);
+        }
         if ($this->generateSign($params) <> $sign) {
             $this->_msg = 'marspay-签名错误';
             return false;
