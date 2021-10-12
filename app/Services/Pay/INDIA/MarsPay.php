@@ -131,7 +131,9 @@ class MarsPay extends PayStrategy
         $header[] = 'Content-Length: ' . strlen($params_string);
         \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_params',$params);
         $res =dopost(self::$url_withdraw, $params_string, $header);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_return',$res);
+        print_r($res);
+        die();
+//        \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_return',$res);
         $res = json_decode($res,true);
         if(!$res){
             $this->_msg = '提交代付失败';
