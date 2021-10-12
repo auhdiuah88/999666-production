@@ -153,7 +153,8 @@ class MarsPay extends PayStrategy
             $params = $request->input();
             \Illuminate\Support\Facades\Log::channel('mytest')->info('recharge_callback_marspay',$request->input());
             if ($params['status'] != 1)  {
-                $this->_msg = 'marspay-recharge-交易未完成';
+//                $this->_msg = 'marspay-recharge-交易未完成';
+                \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_return','marspay-recharge-交易未完成');
                 return false;
             }
             // 验证签名
@@ -161,7 +162,8 @@ class MarsPay extends PayStrategy
             unset($params['channelId']);
             unset($params['sign']);
             if ($this->generateSign($params) <> $sign) {
-                $this->_msg = 'marspay-签名错误';
+//                $this->_msg = 'marspay-签名错误';
+                \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_return','marspay-签名错误');
                 return false;
             }
             $this->amount = $params['amount'];
