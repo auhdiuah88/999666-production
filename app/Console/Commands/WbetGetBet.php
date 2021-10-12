@@ -52,7 +52,7 @@ class WbetGetBet extends Command
         ];
         $params = json_encode($params);
         $res = $this->curl_post($url, $params);
-        Log::channel('kidebug')->info('wbet-bet-input',[$res]);
+//        Log::channel('kidebug')->info('wbet-bet-input',[$res]);
         $res = json_decode($res,true);
         if($res["status"] != "1"){
             exit();
@@ -121,7 +121,7 @@ class WbetGetBet extends Command
                 ];
                 $params = json_encode($params);
                 $res = $this->curl_post($url, $params);
-                Log::channel('kidebug')->info('wbet-bet-return',[$params]);
+//                Log::channel('kidebug')->info('wbet-bet-return',[$params]);
             }
             exit();
         }catch (\Exception $e){
