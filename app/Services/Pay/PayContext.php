@@ -70,7 +70,7 @@ class PayContext
         GMPay $GMPay,
         YIPay $YIPay,
         JPay $JPay,
-        MarsPay $MarsPay,
+        MarsPay $MarsPay
     )
     {
         // 每种api地址对应的支付公司
