@@ -63,7 +63,7 @@ class MarsPay extends PayStrategy
         return $sign;
     }
 
-    function rechargeOrder($way, $money)
+    function rechargeOrder($pay_type, $money)
     {
         $order_no = self::onlyosn();
         $params = [
@@ -97,7 +97,7 @@ class MarsPay extends PayStrategy
 
         $resData = [
             'out_trade_no' => $order_no,
-            'channel' => $this->channelId,
+            'pay_type' => $pay_type,
             'order_no' => $order_no,
             'native_url' => $native_url,
             'notify_url' => $this->recharge_callback_url,
