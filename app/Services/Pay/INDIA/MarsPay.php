@@ -129,11 +129,9 @@ class MarsPay extends PayStrategy
         $params_string = json_encode($params);
         $header[] = "Content-Type: application/json; charset=utf-8";
         $header[] = 'Content-Length: ' . strlen($params_string);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_params',$params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_params',[$params]);
         $res =dopost(self::$url_withdraw, $params_string, $header);
-        print_r($res);
-        die();
-//        \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_return',$res);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_return',[$res]);
         $res = json_decode($res,true);
         if(!$res){
             $this->_msg = '提交代付失败';
@@ -155,8 +153,7 @@ class MarsPay extends PayStrategy
             $params = $request->input();
             \Illuminate\Support\Facades\Log::channel('mytest')->info('recharge_callback_marspay',$request->input());
             if ($params['status'] != 1)  {
-//                $this->_msg = 'marspay-recharge-交易未完成';
-                \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_return','marspay-recharge-交易未完成');
+                $this->_msg = 'marspay-recharge-交易未完成';
                 return false;
             }
             // 验证签名
@@ -164,8 +161,7 @@ class MarsPay extends PayStrategy
             unset($params['channelId']);
             unset($params['sign']);
             if ($this->generateSign($params) <> $sign) {
-//                $this->_msg = 'marspay-签名错误';
-                \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_return','marspay-签名错误');
+                $this->_msg = 'marspay-签名错误';
                 return false;
             }
             $this->amount = $params['amount'];
@@ -174,7 +170,7 @@ class MarsPay extends PayStrategy
             ];
             return $where;
         }catch(\Exception $e){
-//            Log::mylog('marspay_recharge_error',[$e->getMessage()],'recharge');
+            \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_error',[$e->getMessage()]);
             return [];
         }
     }
