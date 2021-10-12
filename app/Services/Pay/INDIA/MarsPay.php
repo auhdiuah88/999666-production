@@ -149,30 +149,26 @@ class MarsPay extends PayStrategy
 
     function rechargeCallback(Request $request)
     {
-        try{
-            $params = $request->input();
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('recharge_callback_marspay',$request->input());
-            if ($params['status'] != 1)  {
-                $this->_msg = 'marspay-recharge-交易未完成';
-                return false;
-            }
-            // 验证签名
-            $sign = $params['sign'];
-            unset($params['channelId']);
-            unset($params['sign']);
-            if ($this->generateSign($params) <> $sign) {
-                $this->_msg = 'marspay-签名错误';
-                return false;
-            }
-            $this->amount = $params['amount'];
-            $where = [
-                'order_no' => $params['orderNo'],
-            ];
-            return $where;
-        }catch(\Exception $e){
-            \Illuminate\Support\Facades\Log::channel('mytest')->info('marspay_withdraw_error',[$e->getMessage()]);
-            return [];
+        $params = $request->input();
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('recharge_callback_marspay',$request->input());
+        if ($params['status'] != 1)  {
+            $this->_msg = 'marspay-recharge-交易未完成';
+            return false;
         }
+        // 验证签名
+        $sign = $params['sign'];
+        unset($params['channelId']);
+        unset($params['sign']);
+        if ($this->generateSign($params) <> $sign) {
+            $this->_msg = 'marspay-签名错误';
+            return false;
+        }
+        $this->amount = $params['amount'];
+        $where = [
+            'order_no' => $params['orderNo'],
+        ];
+        return $where;
+
     }
 
     function withdrawalCallback(Request $request)
