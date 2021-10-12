@@ -172,7 +172,7 @@ class MarsPay extends PayStrategy
             ];
             return $where;
         }catch(\Exception $e){
-            Log::mylog('marspay_recharge_error',[$e->getMessage()],'recharge');
+//            Log::mylog('marspay_recharge_error',[$e->getMessage()],'recharge');
             return [];
         }
     }
