@@ -159,6 +159,7 @@ class MarsPay extends PayStrategy
         $sign = $params['sign'];
         unset($params['channelId']);
         unset($params['sign']);
+        unset($params['type']);
         if($params['replacementOrderNo'] == "null"){
             unset($params['replacementOrderNo']);
         }
