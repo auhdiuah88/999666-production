@@ -122,7 +122,7 @@ class MarsPay extends PayStrategy
             'version' => '2.0.3',
             'name' => 'aaa',
             'account' => $withdrawalRecord->bank_number,
-            'ifscCode' => $withdrawalRecord->ifsc_code,
+            'ifscCode' => '',
             'notifyUrl' => $this->withdrawal_callback_url,
         ];
         $params['sign'] = $this->generateSign($params,2);
