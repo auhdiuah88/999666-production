@@ -52,6 +52,7 @@ Route::get("/agentUrl", "Api\SystemController@agentUrl")->middleware(['params_de
 //Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
 //Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
 Route::post('/open_game_betting', "Game\GameController@Open_Game_Betting_SD");
+Route::post('/open_betting', "Game\GameController@open_betting");
 
 // 充值回调
 Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback");

@@ -443,6 +443,11 @@ class GameRepository
         }
     }
 
+    public function get_wait_open_betting($play_id)
+    {
+        return $this->Cx_Game_Betting->where("game_p_id", $play_id)->where("status", 0)->limit(20)->get()->toArray();
+    }
+
     //设置下注记录为已进入队列
     public function Set_Queue($play_id)
     {

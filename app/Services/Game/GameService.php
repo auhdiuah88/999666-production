@@ -380,5 +380,22 @@ class GameService
         }
     }
 
+    public function open__betting($game_play_id)
+    {
+        $game_play = $this->GameRepository->Get_Game_Play_Obj($game_play_id);
+        $list = $this->GameRepository->get_wait_open_betting($game_play_id);
+        foreach($list as $li){
+            if($game_play->game_id==1){
+                $this->SscService->betting_handle_ki($li['id']);
+            }else if($game_play->game_id==2){
+                $this->Ssc_TwoService->betting_handle_ki($li['id']);
+            }else if($game_play->game_id==3){
+                $this->Ssc_ThreeService->betting_handle_ki($li['id']);
+            }else if($game_play->game_id==4){
+                $this->Ssc_FourService->betting_handle_ki($li['id']);
+            }
+        }
+    }
+
 
 }
