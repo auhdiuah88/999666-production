@@ -128,6 +128,7 @@ class WowPay extends PayStrategy
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['type']);
+        unset($params['signType']);
         if ($this->generateSign($params) <> $sign) {
             $this->_msg = 'wowpay-签名错误';
             return false;
@@ -215,6 +216,7 @@ class WowPay extends PayStrategy
         $sign = $data['sign'];
         unset($data['sign']);
         unset($data['type']);
+        unset($data['signType']);
         if ($this->generateSign($data,2) <> $sign) {
             $this->_msg = 'wowpay-签名错误';
             return false;
