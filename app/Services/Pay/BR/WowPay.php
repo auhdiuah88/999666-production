@@ -27,7 +27,7 @@ class WowPay extends PayStrategy
     public $rechargeRtn = "success";
     public $withdrawRtn = 'success';
 
-    public $company = 'br-wowpay';   // 支付公司名
+    public $company = 'brwowpay';   // 支付公司名
 
     public function _initialize()
     {
