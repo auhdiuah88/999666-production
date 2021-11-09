@@ -22,7 +22,7 @@ class YBPay extends PayStrategy
     public $withdrawSecretkey;
     public $rechargeMerchantID;
     public $rechargeSecretkey;
-    public $company = 'ybpay';   // 支付公司名 -- 印度
+    public $company = 'brybpay';   // 支付公司名 -- 印度
 
     public $rechargeRtn = "success";
     public $withdrawRtn = 'success';
@@ -63,9 +63,9 @@ class YBPay extends PayStrategy
             'pemail' => '123123123@gmail.com',
             'phone' => '88888888',
             'order_amount' => intval($money),
-            'country_code' => 'IND',
-            'cyy_no' => 'INR',
-            'pay_type' => 'UPI',
+            'country_code' => 'BRA',
+            'cyy_no' => 'BRL',
+            'pay_type' => 'PIX',
             'notify_url' => $this->recharge_callback_url,
             'callback_url' => env('SHARE_URL',''),
         ];
@@ -141,8 +141,8 @@ class YBPay extends PayStrategy
             'mer_no' => $this->withdrawMerchantID,
             'mer_order_no' => $order_no,
             'order_amount' => intval($money),
-            'pay_type' => 'BANK',
-            'cyy_no' => 'INR',
+            'pay_type' => 'PIX',
+            'cyy_no' => 'BRL',
             'acc_no' => $withdrawalRecord->bank_number,
             'acc_name' => $withdrawalRecord->account_holder,
             'province' => $withdrawalRecord->ifsc_code,
