@@ -73,9 +73,9 @@ class BrYbPay extends PayStrategy
         $params_string = json_encode($params);
         $header[] = "Content-Type: application/json";
         $header[] = "Content-Length: " . strlen($params_string);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('ybpay_rechargeOrder', [$params]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('brybpay_rechargeOrder', [$params]);
         $res =dopost(self::$url, $params_string, $header);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('ybpay_rechargeOrder_return', [$res]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('brybpay_rechargeOrder_return', [$res]);
         $res = json_decode($res,true);
         if (!$res) {
             $this->_msg = "prepay failed";
@@ -105,7 +105,7 @@ class BrYbPay extends PayStrategy
      */
     function rechargeCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('ybpay_rechargeCallback',$request->input());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('brybpay_rechargeCallback',$request->input());
         $params = $request->input();
         if($params['code'] != 1){
             $this->_msg = 'YB-recharge-接口状态异常';
@@ -154,9 +154,9 @@ class BrYbPay extends PayStrategy
         $params_string = json_encode($params);
         $header[] = "Content-Type: application/json";
         $header[] = "Content-Length: " . strlen($params_string);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('ybpay_withdrawal_params',$params);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('brybpay_withdrawal_params',$params);
         $res =dopost(self::$url_cashout, $params_string, $header);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('ybpay_withdrawal_return', [$res]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('brybpay_withdrawal_return', [$res]);
         $res = json_decode($res,true);
         if(!$res){
             $this->_msg = '提交代付失败';
@@ -177,7 +177,7 @@ class BrYbPay extends PayStrategy
      */
     function withdrawalCallback(Request $request)
     {
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('yb_withdrawalCallback',$request->input());
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('bryb_withdrawalCallback',$request->input());
         $params = $request->input();
         if($params['code'] != 1){
             $this->_msg = 'yb-withdrawal-接口状态异常';
