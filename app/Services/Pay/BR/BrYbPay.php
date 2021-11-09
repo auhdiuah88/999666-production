@@ -145,6 +145,7 @@ class BrYbPay extends PayStrategy
             'cyy_no' => 'BRL',
             'acc_no' => $withdrawalRecord->bank_number,
             'acc_name' => $withdrawalRecord->account_holder,
+            'cpf' => '01798029251',
             'province' => $withdrawalRecord->ifsc_code,
             'summary' => 'customer withdraw',
             'notifyurl' => $this->withdrawal_callback_url,
