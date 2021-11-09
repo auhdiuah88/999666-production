@@ -2,7 +2,6 @@
 
 namespace App\Services\Pay;
 
-use App\Services\Pay\BR\JBBack;
 use App\Services\Pay\BR\JunHePay;
 use App\Services\Pay\BR\SpePay;
 use App\Services\Pay\BR\UPay;
@@ -13,6 +12,8 @@ use App\Services\Pay\INDIA\GMPay;
 use App\Services\Pay\INDIA\OceanPay;
 use App\Services\Pay\INDIA\YBPay;
 use App\Services\Pay\INDIA\JPay;
+use App\Services\Pay\INDIA\MarsPay;
+use App\Services\Pay\BR\BrYbPay;
 
 class PayContext
 {
@@ -70,7 +71,10 @@ class PayContext
         GMPay $GMPay,
         YIPay $YIPay,
         JPay $JPay,
-        JBBack $JBBack
+        MarsPay $MarsPay,
+        \App\Services\Pay\BR\WowPay $BrWowPay,
+        \App\Services\Pay\BR\WWWPay $BrWWWPay,
+        BrYbPay $BrYbPay
     )
     {
         // 每种api地址对应的支付公司
@@ -119,10 +123,12 @@ class PayContext
             'gmpay' => $GMPay,  //印度gmpay
             'yipay' => $YIPay,  //巴西易支付
             'jpay' => $JPay,  //巴西易支付
-            'jbback' => $JBBack,  //巴西易支付
+            'marspay' => $MarsPay,//墨西哥支付
+            'brwowpay' => $BrWowPay,  //巴西wowpay
+            'brybpay' => $BrYbPay,//巴西ybpay
+            'brwwwpay' => $BrWWWPay,//巴西wowpay
         ];
     }
-
     /**
      * 获取具体策略
      * @return PayStrategy

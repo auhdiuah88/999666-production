@@ -5,11 +5,12 @@ namespace App\Services\Admin;
 
 
 use App\Libs\Games\GameContext;
-use App\Libs\Games\WDYY\Client;
-use App\Libs\Games\V8\V8log;
 use App\Repositories\Admin\BettingRepository;
 use App\Repositories\Admin\UserRepository;
 use App\Services\BaseService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class BettingService extends BaseService
 {
@@ -177,17 +178,7 @@ class BettingService extends BaseService
                 throw new \Exception('The game has been taken off the shelves ..');
             }
             ##
-            if($game["link"] == "v8"){
-                $Client = $this->GameContext->getStrategy('v8');
-            }else if($game["link"] == "wdyy"){
-                $Client = $this->GameContext->getStrategy('wdyy');
-            }else if($game["link"] == "icg"){
-                $Client = $this->GameContext->getStrategy('icg');
-            }else if($game["link"] == "wbet"){
-                $Client = $this->GameContext->getStrategy('wbet');
-            }else if($game["link"] == "pg"){
-                $Client = $this->GameContext->getStrategy('pg');
-            }
+            $Client = $this->GameContext->getStrategy($game["link"]);
             if(!$Client->launch($game->other))
             {
                 $this->_msg = $Client->_msg;
@@ -202,6 +193,66 @@ class BettingService extends BaseService
             $this->_code = 414;
             return;
         }
+    }
+
+
+    //上分
+    public function TopScores(){
+        $money = $this->intInput('money');
+        $game_id = $this->intInput('game_id');
+        //获取用户ID
+        $user_id = getUserIdFromToken(getToken());
+        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
+        $link = $wallet_name->wallet_name;
+        $Scores = $this->GameContext->getStrategy($link);
+        $Scores = $Scores->TopScores($money,$user_id);
+        if(!is_numeric($Scores))
+        {
+            $this->_msg = $Scores;
+            $this->_code = 415;
+            $this->_data = "";
+            return;
+        }
+        return $this->_data = $Scores;
+    }
+
+    //下分
+    public function LowerScores(){
+        $money = $this->intInput('money');
+        $game_id = $this->intInput('game_id');
+        //获取用户ID
+        $user_id = getUserIdFromToken(getToken());
+        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
+        $link = $wallet_name->wallet_name;
+        $Scores = $this->GameContext->getStrategy($link);
+        $Scores = $Scores->LowerScores($money,$user_id);
+        if(!is_numeric($Scores))
+        {
+            $this->_msg = $Scores;
+            $this->_code = 415;
+            $this->_data = "";
+            return;
+        }
+        return $this->_data = $Scores;
+    }
+
+    //查询余额
+    public function QueryScore(){
+        $game_id = $this->intInput('game_id');
+        //获取用户ID
+        $user_id = getUserIdFromToken(getToken());
+        $wallet_name = DB::table("wallet_name")->where("id",$game_id)->select()->first();
+
+        $link = $wallet_name->wallet_name;
+        $Scores = $this->GameContext->getStrategy($link);
+        if(!$Scores->QueryScore($user_id))
+        {
+            $this->_msg = $Scores->_msg;
+            $this->_code = 415;
+            $this->_data = $Scores;
+            return;
+        }
+        return $this->_data = $Scores->_data;
     }
 
 }

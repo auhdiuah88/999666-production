@@ -32,22 +32,17 @@ Route::post("/initInviteRelation", "TestController@initInviteRelation");
 //v8
 Route::get("/Querymoney", "Plat\V8@Querymoney");
 Route::get("/V8TopScores", "Plat\V8@V8TopScores");
-Route::get("/V8UserTopScores", 'Plat\V8@V8UserTopScores');
-Route::get("/V8UserLowerScores", 'Plat\V8@V8UserLowerScores');
-Route::get("/V8QueryScore", 'Plat\V8@V8QueryScore');
-//获取平台列表
-Route::get("/PlatformList", 'Api\UserController@PlatformList');
 
-//ICG
-Route::get("/ICGUserTopScores", "Plat\ICG@ICGUserTopScores");//上分
-Route::get("/ICGUserLowerScores", "Plat\ICG@ICGUserLowerScores");//下分
-Route::get("/IcgQueryScore", "Plat\ICG@IcgQueryScore");//查询余额
+
 
 //wbet
-Route::get("/WBETUserTopScores", "Plat\WBET@WBETUserTopScores");//上分
+Route::post("/get_balance", "Plat\WBET@get_balance");//获取用户余额
+Route::post("/bet", "Plat\WBET@bet");//玩家下注
+Route::post("/refund", "Plat\WBET@refund");//退款
 
 //pg
 Route::post("/VerifySession", "Plat\PG@VerifySession");//pg查询令牌
+
 
 Route::post("/login", "Api\UserController@Login")->middleware(['params_decrypt']);
 Route::post("/register", "Api\UserController@Register")->middleware(['params_decrypt']);
@@ -57,6 +52,7 @@ Route::get("/agentUrl", "Api\SystemController@agentUrl")->middleware(['params_de
 //Route::get('/settlement_queue', "Game\GameController@Settlement_Queue");
 //Route::get('/settlement_queue_test', "Game\GameController@Settlement_Queue_Test");
 Route::post('/open_game_betting', "Game\GameController@Open_Game_Betting_SD");
+Route::post('/open_betting', "Game\GameController@open_betting");
 
 // 充值回调
 Route::any('/recharge_callback', "Api\RechargeController@rechargeCallback");
@@ -77,6 +73,10 @@ Route::group(["namespace" => "Api", 'middleware'=>['params_decrypt']], function 
     Route::get("/logo", "SystemController@logo"); // 获取活动页配置
     Route::get("/bettingFee", "SystemController@bettingFee"); // 获取投注手续费率
     Route::get("/bettingRule", "SystemController@bettingRule"); // 获取投注规则
+
+
+    //获取平台列表
+    Route::get("/PlatformList", 'UserController@PlatformList');
 
     ##新首页的接口
     Route::group(["prefix" => "index"], function(){
@@ -119,6 +119,13 @@ Route::group(["namespace" => "Api", "prefix" => "setting", 'middleware'=>['param
 Route::group(["namespace" => "Api", 'middleware' => ['user_token', 'params_decrypt']], function () {
 
     Route::get("/launch", "BettingController@launch");
+    //上分
+    Route::get("/TopScores", 'BettingController@TopScores');
+    //下分
+    Route::get("/LowerScores", 'BettingController@LowerScores');
+    //查询余额
+    Route::get("/QueryScore", 'BettingController@QueryScore');
+
 
     Route::group(["prefix" => "user"], function () {
         Route::get("/info", "InfoController@getInfo"); // 查询用户基本信息

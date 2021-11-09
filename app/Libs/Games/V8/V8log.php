@@ -18,11 +18,7 @@ class V8log extends GameStrategy
         $user_id = getUserIdFromToken(getToken());
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
         if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+            return $this->_msg = "用户不存在";
         }
         //判断用户是否拥有钱包
         $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
@@ -52,7 +48,7 @@ class V8log extends GameStrategy
             "orderid" => $config["agent"].$datetime.$info->phone,//拼接agent,当前时间，用户名
             "ip" => $info->ip,
             "lineCode" => env("LINECODE"),
-            "kid" => "0",//固定值，不需修改
+            "kid" => $productId == "v8"?"0":$productId,//游戏ID，0为大厅
         ];
 
         //加密$param
@@ -75,45 +71,27 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                return [
-                    "code" => 4,
-                    "msg" => $res["m"],
-                    "data" => "",
-                ];
+                return $this->_msg = $res["m"];
             }
             return $this->_data = [
                 "url" => $res["d"]["url"],
                 "wallet" => $user_wallet->withdrawal_balance
             ];
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => "",
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 
     //上分
-    public function V8UserTopScores($money,$user_id){
+    public function TopScores($money,$user_id){
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
-        if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+        if (!$info){
+            return $this->_msg = "用户不存在";
         }
-        if($info->balance < $money){
-            return [
-                "code" => 2,
-                "msg" => "用户余额不足",
-                "data" => "",
-            ];
+        if ($info->balance < $money){
+            return $this->_msg = "余额不足";
         }
-
-
         $config = config("game.v8");
 
         //获取钱包
@@ -121,12 +99,13 @@ class V8log extends GameStrategy
         //创建转账订单
         $create_time = time().rand("000","999");
         $order = [
-            "user_id" => $info->id,
+            "user_id" => $user_id,
             "order" => $create_time,
             "wallet_id" => $wallet->id,
             "transfer_amount" => $money,
             "remaining_amount" => $info->balance - $money,
             "create_time" => time(),
+            "remarks" => "v8上分钱包"
         ];
         $order_id = DB::table("order")->insertGetId($order);
 
@@ -163,64 +142,59 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                return [
-                    "code" => 4,
-                    "msg" => $res["m"],
-                    "data" => "",
-                ];
+                return $this->_msg = $res["m"];
+            }
+            $balance_log_data = [
+                'user_id' => $user_id,
+                'type' => 2,
+                'dq_balance' => $info->balance,
+                'wc_balance' => $info->balance - $money,
+                'time' => time(),
+                'msg' => "v8钱包充值".sprintf('%01.2f',$money),
+                'money' => $money
+            ];
+            $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+            if($log_data === false)
+            {
+                throw new \Exception('增加余额变更记录失败');
             }
             //更新用户余额
             DB::table("users")->where("id",$user_id)->decrement("balance",$money);
             //更新订单
             DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
             //查询用户总余额
-            $reqmoney = $this->V8QueryScore($user_id);
-            if($reqmoney["code"] != "200"){
-                return [
-                    "code" => 5,
-                    "msg" => $reqmoney["msg"],
-                    "data" => "",
-                ];
-            }
-            return [
-                "code" => 200,
-                "msg" => "success",
-                "data" => $res["d"]["money"],
-            ];
+            $this->QueryScore($user_id);
+            return $this->_data = sprintf('%01.2f',$res["d"]["money"]);
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => "",
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 
     //下分
-    public function V8UserLowerScores($money,$user_id){
+    public function LowerScores($money,$user_id){
+        $config = config("game.v8");
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
-        if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+        if (!$info){
+            return $this->_msg = "用户不存在";
         }
-
-        $config = config("game.v8");
-
         //获取钱包
         $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if ($user_wallet->withdrawal_balance < $money){
+            return $this->_msg = "余额不足";
+        }
+
         //创建转账订单
         $create_time = time().rand("000","999");
         $order = [
-            "user_id" => $info->id,
+            "user_id" => $user_id,
             "order" => $create_time,
             "wallet_id" => $wallet->id,
             "transfer_amount" => $money,
             "remaining_amount" => $info->balance + $money,
             "create_time" => time(),
+            "remarks" => "v8下分钱包"
         ];
         $order_id = DB::table("order")->insertGetId($order);
 
@@ -256,50 +230,40 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                return [
-                    "code" => 4,
-                    "msg" => $res["m"],
-                    "data" => "",
-                ];
+                return $this->_msg = $res["m"];
+            }
+            $balance_log_data = [
+                'user_id' => $user_id,
+                'type' => 2,
+                'dq_balance' => $info->balance,
+                'wc_balance' => $info->balance + $money,
+                'time' => time(),
+                'msg' => "v8钱包提现".sprintf('%01.2f',$money),
+                'money' => $money
+            ];
+            $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+            if($log_data === false)
+            {
+                throw new \Exception('增加余额变更记录失败');
             }
             //更新用户余额
             DB::table("users")->where("id",$user_id)->increment("balance",$money);
             //更新订单
             DB::table("order")->where("id",$order_id)->update(["status" => "1"]);
-            //更新用户总余额
-            $reqmoney = $this->V8QueryScore($user_id);
-            if($reqmoney["code"] != "200"){
-                return [
-                    "code" => 5,
-                    "msg" => $reqmoney["msg"],
-                    "data" => "",
-                ];
-            }
-
-            return [
-                "code" => 200,
-                "msg" => "success",
-                "data" => $res["d"]["money"],
-            ];
+            //更新用户钱包余额
+            $this->QueryScore($user_id);
+            return $this->_data = sprintf('%01.2f',$res["d"]["money"]);
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => "",
-            ];
+            return $this->_msg = $e->getMessage();
         }
     }
 
-    //用户总余额
-    public function V8QueryScore($user_id){
+    //查询用户余额
+    public function QueryScore($user_id){
         //获取用户数据
         $info = DB::table('users')->where("id",$user_id)->select("phone","balance","ip")->first();
-        if(empty($info)){
-            return [
-                "code" => 2,
-                "msg" => "用户不存在",
-                "data" => "",
-            ];
+        if (!$info){
+            return $this->_msg = "用户不存在";
         }
 
         $config = config("game.v8");
@@ -332,11 +296,7 @@ class V8log extends GameStrategy
             Log::channel('kidebug')->info('v8',[$res]);
             $res = json_decode($res,true);
             if($res["d"]["code"] != "0"){
-                return [
-                    "code" => 4,
-                    "msg" => $res["m"],
-                    "data" => "",
-                ];
+                return $this->_msg = $res["m"];
             }
             $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
             $user_data = [
@@ -352,20 +312,9 @@ class V8log extends GameStrategy
             }else{
                 DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->update($user_data);
             }
-            return [
-                "code" => 200,
-                "msg" => "success",
-                "data" => [
-                    "totalMoney" => $res["d"]["totalMoney"],//用户总余额
-                    "freeMoney" => $res["d"]["freeMoney"],//用户可下分余额
-                ],
-            ];
+            return $this->_data = sprintf('%01.2f',$res["d"]["freeMoney"]);
         }catch (\Exception $e){
-            return [
-                "code" => 3,
-                "msg" => $e->getMessage(),
-                "data" => "",
-            ];
+            return $this->_msg = $e->getMessage();
         }
 
     }

@@ -203,4 +203,12 @@ class GameController extends Controller
         }
     }
 
+    public function open_betting()
+    {
+        $game_play_id = request('id',0);
+        ##获取该期数下面20期未开奖的
+        $this->GameService->open__betting($game_play_id);
+        return $this->AppReturn(200, '操作成功');
+    }
+
 }

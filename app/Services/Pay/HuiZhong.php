@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 class HuiZhong extends PayStrategy
 {
 
-    protected static $url = 'http://gyials.gdsua.com/';    // 支付网关
+    protected static $url = 'https://goobal.gdsua.com/';    // 支付网关
 
-    protected static $url_cashout = 'http://njsyal.gdsua.com/'; // 提现网关
+    protected static $url_cashout = 'https://yugob.gdsua.com/'; // 提现网关
 
     private  $recharge_callback_url = '';     // 充值回调地址
     private  $withdrawal_callback_url = '';  //  提现回调地址

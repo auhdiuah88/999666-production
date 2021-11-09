@@ -24,13 +24,32 @@ class WbetLog extends GameStrategy
                 "data" => "",
             ];
         }
+        $config = config("game.wbet");
+        //判断用户是否拥有钱包
+        $wallet_name = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        $user_data = [
+            "user_id" => $user_id,//用户ID
+            "wallet_id" => $wallet_name->id,//游戏平台id
+            "total_balance" => 0,//用户总余额
+            "withdrawal_balance" => 0,//用户可下分余额
+            "update_time" => time(),//更新时间
+        ];
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if(!$user_wallet){
+            DB::table("users_wallet")->insert($user_data);
+            $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet_name->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        }
         //创建用户,
         $this->CreateNewPlayer($info->phone);
 
         //获取游戏链接
         $game_link = $this->GameLink($info->phone);
 
-        return $this->_data = $game_link;
+        return $this->_data = [
+            "url" => $game_link,
+            "wallet" => $user_wallet->withdrawal_balance,
+            "game_id" => $wallet_name->id,
+        ];
     }
 
     //创建用户
@@ -79,8 +98,127 @@ class WbetLog extends GameStrategy
     }
 
     //用户上分
-    public function WBETUserTopScores($user_id,$money){
+    public function TopScores($money,$user_id){
+        $config = config("game.wbet");
+        //获取钱包
+        $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        //获取剩余金额
+        $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
+        if (!$user){
+            return $this->_msg = "用户不存在";
+        }
+        if ($user->balance < $money){
+            return $this->_msg = "余额不足";
+        }
+        //创建转账订单
+        $create_time = time().rand("000","999");
+        $order = [
+            "user_id" => $user_id,
+            "order" => $create_time,
+            "wallet_id" => $wallet->id,
+            "transfer_amount" => $money,
+            "remaining_amount" => $user->balance - $money,
+            "status" => "1",
+            "create_time" => time(),
+            "remarks" => "wbet上分钱包"
+        ];
+        DB::table("order")->insert($order);
+        try {
+            $balance_log_data = [
+                'user_id' => $user_id,
+                'type' => 2,
+                'dq_balance' => $user->balance,
+                'wc_balance' => $user->balance - $money,
+                'time' => time(),
+                'msg' => "wbet钱包充值".sprintf('%01.2f',$money),
+                'money' => $money
+            ];
+            $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+            if($log_data === false)
+            {
+                throw new \Exception('增加余额变更记录失败');
+            }
+            //更新用户余额
+            DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance - $money]);
+            //更新用户钱包
+            DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->increment("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance+$money")]);
+            $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
 
+            return $this->_data = sprintf('%01.2f',$user_wallet->withdrawal_balance);
+        }catch (\Exception $e){
+            return $this->_msg = $e->getMessage();
+        }
+
+    }
+
+    //用户下分
+    public function LowerScores($money,$user_id){
+        $config = config("game.wbet");
+        //获取钱包
+        $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        //获取剩余金额
+        $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if (!$user){
+            return $this->_msg = "用户不存在";
+        }
+        if ($user_wallet->withdrawal_balance < $money){
+            return $this->_msg = "余额不足";
+        }
+        //创建转账订单
+        $create_time = time().rand("000","999");
+        $order = [
+            "user_id" => $user_id,
+            "order" => $create_time,
+            "wallet_id" => $wallet->id,
+            "transfer_amount" => $money,
+            "remaining_amount" => $user->balance + $money,
+            "status" => "1",
+            "create_time" => time(),
+            "remarks" => "wbet下分钱包"
+        ];
+        DB::table("order")->insert($order);
+        try {
+            $balance_log_data = [
+                'user_id' => $user_id,
+                'type' => 2,
+                'dq_balance' => $user->balance,
+                'wc_balance' => $user->balance + $money,
+                'time' => time(),
+                'msg' => "wbet钱包提现".sprintf('%01.2f',$money),
+                'money' => $money
+            ];
+            $log_data = DB::table('user_balance_logs')->insert($balance_log_data);
+            if($log_data === false)
+            {
+                throw new \Exception('增加余额变更记录失败');
+            }
+            //更新用户余额
+            DB::table("users")->where("id",$user_id)->update(["balance" => $user->balance + $money]);
+            //更新用户钱包
+            DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->decrement("total_balance",$money,['withdrawal_balance'=>DB::raw("withdrawal_balance-$money")]);
+            //重新查询余额
+            $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+
+            return $this->_data = sprintf('%01.2f',$user_wallet->withdrawal_balance);
+        }catch (\Exception $e){
+            return $this->_msg = $e->getMessage();
+        }
+
+    }
+
+    //查询用户钱包余额
+    public function QueryScore($user_id){
+        $config = config("game.wbet");
+        //获取钱包
+        $wallet = DB::table("wallet_name")->where("wallet_name",$config["game_name"])->select("id")->first();
+        //获取剩余金额
+        $user = DB::table("users")->where("id",$user_id)->select("balance","phone")->first();
+        $user_wallet = DB::table("users_wallet")->where(["wallet_id" => $wallet->id,"user_id" => $user_id])->select("withdrawal_balance")->first();
+        if (!$user){
+            return $this->_msg = "用户不存在";
+        }
+        return $this->_data = sprintf('%01.2f',$user_wallet->withdrawal_balance);
     }
 
     //废弃，勿删
