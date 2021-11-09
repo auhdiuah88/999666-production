@@ -13,6 +13,7 @@ use App\Services\Pay\INDIA\OceanPay;
 use App\Services\Pay\INDIA\YBPay;
 use App\Services\Pay\INDIA\JPay;
 use App\Services\Pay\INDIA\MarsPay;
+use App\Services\Pay\BR\BrYbPay;
 
 class PayContext
 {
@@ -72,7 +73,7 @@ class PayContext
         JPay $JPay,
         MarsPay $MarsPay,
         \App\Services\Pay\BR\WowPay $BrWowPay,
-        \App\Services\Pay\BR\YBPay $BrYBPay
+        BrYbPay $BrYbPay
     )
     {
         // 每种api地址对应的支付公司
@@ -123,7 +124,7 @@ class PayContext
             'jpay' => $JPay,  //巴西易支付
             'marspay' => $MarsPay,//墨西哥支付
             'brwowpay' => $BrWowPay,  //巴西wowpay
-            'brybpay' => $BrYBPay,//巴西ybpay
+            'brybpay' => $BrYbPay,//巴西ybpay
         ];
     }
     /**

@@ -1,14 +1,14 @@
 <?php
 
 
-namespace App\Services\Pay\INDIA;
+namespace App\Services\Pay\BR;
 
 
 use App\Services\Pay\PayStrategy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class YBPay extends PayStrategy
+class BrYbPay extends PayStrategy
 {
 
     protected static $url = 'http://polymerizations.com/poi/pay/index/PayOrderCreate';    // 支付网关
@@ -22,7 +22,7 @@ class YBPay extends PayStrategy
     public $withdrawSecretkey;
     public $rechargeMerchantID;
     public $rechargeSecretkey;
-    public $company = 'brybpay';   // 支付公司名 -- 印度
+    public $company = 'brybpay';   // 支付公司名 -- 巴西
 
     public $rechargeRtn = "success";
     public $withdrawRtn = 'success';
