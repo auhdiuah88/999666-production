@@ -27,7 +27,7 @@ class WWWPay extends PayStrategy
     public $rechargeRtn = "success";
     public $withdrawRtn = 'success';
 
-    public $company = 'brwowpay';   // 支付公司名
+    public $company = 'brwwwpay';   // 支付公司名
 
     public function _initialize()
     {
@@ -80,9 +80,9 @@ class WWWPay extends PayStrategy
         $params['sign_type'] = 'MD5';
         $header[] = "Content-Type: application/x-www-form-urlencoded";
 
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('wowpay-rechargeOrder', [$params]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('wwwpay-rechargeOrder', [$params]);
         $res = dopost(self::$url, http_build_query($params), $header);
-        \Illuminate\Support\Facades\Log::channel('mytest')->info('wowpay-rechargeOrder_return', [$res]);
+        \Illuminate\Support\Facades\Log::channel('mytest')->info('wwwpay-rechargeOrder_return', [$res]);
         $res = json_decode($res,true);
         if (!$res) {
             $this->_msg = "prepay failed";
