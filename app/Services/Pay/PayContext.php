@@ -71,7 +71,8 @@ class PayContext
         YIPay $YIPay,
         JPay $JPay,
         MarsPay $MarsPay,
-        \App\Services\Pay\BR\WowPay $BrWowPay
+        \App\Services\Pay\BR\WowPay $BrWowPay,
+        \App\Services\Pay\BR\YBPay $BrYBPay
     )
     {
         // 每种api地址对应的支付公司
@@ -122,6 +123,7 @@ class PayContext
             'jpay' => $JPay,  //巴西易支付
             'marspay' => $MarsPay,//墨西哥支付
             'brwowpay' => $BrWowPay,  //巴西wowpay
+            'brybpay' => $BrYBPay,//巴西ybpay
         ];
     }
     /**
