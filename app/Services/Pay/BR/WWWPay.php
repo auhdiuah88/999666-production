@@ -71,7 +71,7 @@ class WWWPay extends PayStrategy
             'notify_url' => $this->recharge_callback_url,
             'page_url' => env('APP_URL',''),
             'mch_order_no' => $order_no,
-            'pay_type' => 620,
+            'pay_type' => 600,
             'trade_amount' => (string)intval($money),
             'order_date' => date('Y-m-d H:i:s'),
             'goods_name' => 'customer recharge',
