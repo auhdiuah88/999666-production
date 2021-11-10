@@ -195,7 +195,7 @@ class WowPay extends PayStrategy
     {
         \Illuminate\Support\Facades\Log::channel('mytest')->info('wowpay-withdrawalCallback', $request->post());
         $params = $request->post();
-        if ($params['status'] != 0) {
+        if ($params['respCode'] != 'SUCCESS') {
             $this->_msg = 'wowpay-withdrawal-交易未完成';
             return false;
         }
@@ -211,18 +211,17 @@ class WowPay extends PayStrategy
             $this->_msg = 'wowpay-withdrawal-交易未完成';
             return false;
         }
-        $data = $params['data'];
         // 验证签名
-        $sign = $data['sign'];
-        unset($data['sign']);
-        unset($data['type']);
-        unset($data['signType']);
-        if ($this->generateSign($data,2) <> $sign) {
+        $sign = $params['sign'];
+        unset($params['sign']);
+        unset($params['type']);
+        unset($params['signType']);
+        if ($this->generateSign($params,2) <> $sign) {
             $this->_msg = 'wowpay-签名错误';
             return false;
         }
         $where = [
-            'order_no' => $data['merTransferId'],
+            'order_no' => $params['merTransferId'],
             'plat_order_id' => $params['tradeNo'],
             'pay_status' => $pay_status
         ];
